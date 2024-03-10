@@ -29,6 +29,7 @@ data class Release(
     val announce: String?,
     val favoriteInfo: FavoriteInfo,
     val link: String?,
+    val franchises: List<Franchise>,
 
     // full
     val showDonateDialog: Boolean,

@@ -1,56 +1,70 @@
 package ru.radiationx.data.datasource.holders
 
-import kotlinx.coroutines.flow.Flow
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import ru.radiationx.data.entity.common.PlayerQuality
 
 /**
  * Created by radiationx on 03.02.18.
  */
 interface PreferencesHolder {
-    companion object {
-        const val QUALITY_NO = -1
-        const val QUALITY_SD = 0
-        const val QUALITY_HD = 1
-        const val QUALITY_ALWAYS = 2
-        const val QUALITY_FULL_HD = 3
 
-        const val PLAYER_TYPE_NO = -1
-        const val PLAYER_TYPE_EXTERNAL = 0
-        const val PLAYER_TYPE_INTERNAL = 1
-        const val PLAYER_TYPE_ALWAYS = 2
+    val newDonationRemind: AppPreference<Boolean>
 
-        const val PIP_BUTTON = 0
-        const val PIP_AUTO = 1
+    val releaseRemind: AppPreference<Boolean>
+
+    val searchRemind: AppPreference<Boolean>
+
+    val episodesIsReverse: AppPreference<Boolean>
+
+    val playerQuality: AppPreference<PlayerQuality>
+
+    val playSpeed: AppPreference<Float>
+
+    val playerSkips: AppPreference<Boolean>
+
+    val playerSkipsTimer: AppPreference<Boolean>
+
+    val playerInactiveTimer: AppPreference<Boolean>
+
+    val notificationsAll: AppPreference<Boolean>
+
+    val notificationsService: AppPreference<Boolean>
+
+}
+
+class AppPreference<T>(
+    private val key: String,
+    private val sharedPreferences: SharedPreferences,
+    private val get: SharedPreferences.(key: String) -> T,
+    private val set: SharedPreferences.Editor.(key: String, value: T) -> Unit,
+) : StateFlow<T> {
+
+    private val _state by lazy { MutableStateFlow(value) }
+
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == this.key) {
+            _state.value = value
+        }
     }
 
-    fun observeNewDonationRemind(): Flow<Boolean>
-    var newDonationRemind: Boolean
+    init {
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+    }
 
-    fun observeReleaseRemind(): Flow<Boolean>
-    var releaseRemind: Boolean
+    override val replayCache: List<T>
+        get() = _state.replayCache
 
-    fun observeSearchRemind(): Flow<Boolean>
-    var searchRemind: Boolean
+    override var value: T
+        get() = get(sharedPreferences, key)
+        set(value) {
+            sharedPreferences.edit { set(key, value) }
+        }
 
-    fun observeEpisodesIsReverse(): Flow<Boolean>
-    val episodesIsReverse: Boolean
-
-    fun getQuality(): Int
-    fun setQuality(value: Int)
-    fun observeQuality(): Flow<Int>
-
-    fun getPlayerType(): Int
-    fun setPlayerType(value: Int)
-
-    var playSpeed: Float
-    fun observePlaySpeed(): Flow<Float>
-
-    var pipControl: Int
-
-
-    var notificationsAll: Boolean
-    fun observeNotificationsAll(): Flow<Boolean>
-
-    var notificationsService: Boolean
-    fun observeNotificationsService(): Flow<Boolean>
-
+    override suspend fun collect(collector: FlowCollector<T>): Nothing {
+        _state.collect(collector)
+    }
 }

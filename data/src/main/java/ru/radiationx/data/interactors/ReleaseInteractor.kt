@@ -1,7 +1,14 @@
 package ru.radiationx.data.interactors
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.update
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
@@ -116,30 +123,6 @@ class ReleaseInteractor @Inject constructor(
 
     suspend fun resetEpisodesHistory(releaseId: ReleaseId) {
         episodesCheckerStorage.remove(releaseId)
-    }
-
-    fun getQuality() = preferencesHolder.getQuality()
-
-    fun setQuality(value: Int) = preferencesHolder.setQuality(value)
-
-    fun observeQuality() = preferencesHolder.observeQuality()
-
-    fun getPlayerType() = preferencesHolder.getPlayerType()
-
-    fun setPlayerType(value: Int) = preferencesHolder.setPlayerType(value)
-
-    fun getPlaySpeed() = preferencesHolder.playSpeed
-
-    fun setPlaySpeed(value: Float) {
-        preferencesHolder.playSpeed = value
-    }
-
-    fun observePlaySpeed(): Flow<Float> = preferencesHolder.observePlaySpeed()
-
-    fun getPIPControl() = preferencesHolder.pipControl
-
-    fun setPIPControl(value: Int) {
-        preferencesHolder.pipControl = value
     }
 
 

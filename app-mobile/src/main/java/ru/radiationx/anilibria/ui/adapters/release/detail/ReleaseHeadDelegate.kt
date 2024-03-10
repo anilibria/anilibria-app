@@ -60,6 +60,7 @@ class ReleaseHeadDelegate(
                 itemListener.onClickSomeLink(it)
                 true
             }
+            binding.fullDescription.setAnimationDuration(225)
             binding.fullDescription.movementMethod = LinkMovementMethod {
                 itemListener.onClickSomeLink(it)
                 true

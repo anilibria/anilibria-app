@@ -57,6 +57,15 @@ class ReleaseApi @Inject constructor(
             .fetchListApiResponse(moshi)
     }
 
+    suspend fun getFullReleasesByIds(ids: List<Int>): List<ReleaseResponse> {
+        val args: MutableMap<String, String> = mutableMapOf(
+            "query" to "info",
+            "id" to ids.joinToString(","),
+        )
+        return client.post(apiConfig.apiUrl, args)
+            .fetchListApiResponse(moshi)
+    }
+
     suspend fun getReleases(page: Int): PaginatedResponse<ReleaseResponse> {
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "list",

@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.history
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
@@ -25,12 +27,15 @@ import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.quill.viewModel
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
+import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 /**
@@ -39,7 +44,16 @@ import ru.radiationx.shared.ktx.android.showWithLifecycle
 class HistoryFragment :
     BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
-    ReleasesAdapter.ItemListener {
+    ReleasesAdapter.ItemListener,
+    TopScroller {
+
+    companion object {
+        private const val ARG_IMPORT_URI = "import_uri"
+
+        fun newInstance(importUri: Uri?) = HistoryFragment().putExtra {
+            putParcelable(ARG_IMPORT_URI, importUri)
+        }
+    }
 
     override var sharedViewLocal: View? = null
 
@@ -54,6 +68,12 @@ class HistoryFragment :
     private val adapter = ReleasesAdapter(
         loadMoreListener = { },
         loadRetryListener = {},
+        importListener = {
+            importLauncher.launch("application/json")
+        },
+        exportListener = {
+            fileViewModel.onExportClick()
+        },
         listener = this,
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_history,
@@ -72,6 +92,13 @@ class HistoryFragment :
     }
 
     private val viewModel by viewModel<HistoryViewModel>()
+    private val fileViewModel by viewModel<HistoryFileViewModel>()
+
+    private val importLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        if (it != null) {
+            fileViewModel.onImportFileSelected(it)
+        }
+    }
 
     override val statusBarVisible: Boolean = true
 
@@ -151,6 +178,12 @@ class HistoryFragment :
         viewModel.state.onEach {
             showState(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        val importUri = getExtra<Uri>(ARG_IMPORT_URI)
+        if (importUri != null) {
+            fileViewModel.onImportFileSelected(importUri)
+            arguments?.remove(ARG_IMPORT_URI)
+        }
     }
 
     override fun updateDimens(dimensions: Dimensions) {
@@ -184,6 +217,7 @@ class HistoryFragment :
                         Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
                             .show()
                     }
+
                     1 -> viewModel.onShareClick(item)
                     2 -> viewModel.onShortcutClick(item)
                     3 -> viewModel.onDeleteClick(item)
@@ -197,10 +231,15 @@ class HistoryFragment :
         this.sharedViewLocal = view
     }
 
+    override fun scrollToTop() {
+        binding.recyclerView.scrollToPosition(0)
+        baseBinding.appbarLayout.setExpanded(true, true)
+    }
+
     private fun showState(state: HistoryScreenState) {
         binding.progressBarList.isVisible = state.data.emptyLoading
         binding.refreshLayout.isRefreshing = state.data.refreshLoading
-        adapter.bindState(state.data)
+        adapter.bindState(state.data, withExport = true)
         searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }
 }

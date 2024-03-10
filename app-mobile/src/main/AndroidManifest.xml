@@ -42,26 +42,35 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="anilibria.tv"
-                    android:pathPattern="/release/.*"
-                    android:scheme="http" />
-                <data
-                    android:host="www.anilibria.tv"
-                    android:pathPattern="/release/.*"
-                    android:scheme="http" />
-                <data
-                    android:host="anilibria.tv"
-                    android:pathPattern="/release/.*"
-                    android:scheme="https" />
-                <data
-                    android:host="www.anilibria.tv"
-                    android:pathPattern="/release/.*"
-                    android:scheme="https" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="anilibria.tv" />
+                <data android:host="www.anilibria.tv" />
+                <data android:host="iss.ink" />
+                <data android:pathPattern="/release/.*" />
+            </intent-filter>
 
-                <data
-                    android:host="anilibria.app"
-                    android:scheme="app" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="app" />
+                <data android:host="anilibria.app" />
+            </intent-filter>
+
+            <intent-filter
+                android:label="Импорт истории"
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:mimeType="application/json" />
+                <data android:mimeType="text/json" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
 
@@ -78,18 +87,18 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.activities.MyPlayerActivity"
+            android:name=".ui.activities.player.VideoPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout|screenSize"
             android:exported="false"
             android:launchMode="singleTask"
             android:supportsPictureInPicture="true"
-            android:theme="@style/PlayerTheme" />
+            android:theme="@style/MediaPlayerTheme" />
 
         <activity
             android:name=".ui.activities.WebPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
             android:exported="false"
-            android:theme="@style/PlayerTheme" />
+            android:theme="@style/MediaPlayerTheme" />
 
         <activity
             android:name=".ui.activities.updatechecker.UpdateCheckerActivity"

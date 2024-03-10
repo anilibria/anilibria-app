@@ -5,8 +5,6 @@ package ru.radiationx.data.analytics.profile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsAuthState
-import ru.radiationx.data.analytics.features.mapper.toAnalyticsPip
-import ru.radiationx.data.analytics.features.mapper.toAnalyticsPlayer
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.DownloadsHolder
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
@@ -40,31 +38,23 @@ class AnalyticsProfileDataSource(
     }
 
     fun getQualitySettings(): Flow<String> = single {
-        preferencesHolder.getQuality().toAnalyticsQuality().value
-    }
-
-    fun getPlayerSettings(): Flow<String> = single {
-        preferencesHolder.getPlayerType().toAnalyticsPlayer().value
-    }
-
-    fun getPipSettings(): Flow<String> = single {
-        preferencesHolder.pipControl.toAnalyticsPip().value
+        preferencesHolder.playerQuality.value.toAnalyticsQuality().value
     }
 
     fun getPlaySpeedSettings(): Flow<Float> = single {
-        preferencesHolder.playSpeed
+        preferencesHolder.playSpeed.value
     }
 
     fun getNotificationsAllSettings(): Flow<Boolean> = single {
-        preferencesHolder.notificationsAll
+        preferencesHolder.notificationsAll.value
     }
 
     fun getNotificationsServiceSettings(): Flow<Boolean> = single {
-        preferencesHolder.notificationsService
+        preferencesHolder.notificationsService.value
     }
 
     fun getEpisodeOrderSettings(): Flow<Boolean> = single {
-        preferencesHolder.episodesIsReverse
+        preferencesHolder.episodesIsReverse.value
     }
 
     fun getAuthState(): Flow<String> = single {

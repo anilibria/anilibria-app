@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference android:layout="@layout/preference_shadow_top" />
     <PreferenceCategory
@@ -44,17 +45,44 @@
             android:summary="Порядок серий при просмотре страницы релиза"
             android:title="Обратный порядок серий" />
 
+    </PreferenceCategory>
+
+    <Preference android:layout="@layout/preference_shadow_top" />
+    <PreferenceCategory
+        android:layout="@layout/preference_category_custom"
+        android:title="Плеер">
+
         <Preference
-            android:key="quality"
+            android:key="player_quality"
             android:layout="@layout/preference_custom"
             android:title="Качество видео" />
 
-        <Preference
-            android:key="player_type"
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="player_skips"
             android:layout="@layout/preference_custom"
-            android:title="Плеер" />
+            android:summary="Показывать кнопки пропуска опенинга и эндинга"
+            android:title="Кнопки пропуска"
+            app:icon="@drawable/ic_skip_forward" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="player_skips_timer"
+            android:layout="@layout/preference_custom"
+            android:summary="Автоматически пропускать опенинг и эндинг по таймеру"
+            android:title="Пропуск опенинга по таймеру"
+            app:icon="@drawable/ic_av_timer" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="player_inactive_timer"
+            android:layout="@layout/preference_custom"
+            android:summary="Экран заблокируется, если бездействовать более 1ч"
+            android:title="Таймер на бездействие"
+            app:icon="@drawable/ic_timer_outline" />
 
     </PreferenceCategory>
+
     <Preference android:layout="@layout/preference_shadow_double" />
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"

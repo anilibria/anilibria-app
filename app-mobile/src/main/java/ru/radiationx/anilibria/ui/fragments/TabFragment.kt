@@ -31,7 +31,7 @@ import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 
-class TabFragment : Fragment(), BackButtonListener, IntentHandler {
+class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller {
 
     companion object {
         private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
@@ -117,6 +117,13 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler {
             return true
         }
         return false
+    }
+
+    override fun scrollToTop() {
+        val fragment = childFragmentManager.findFragmentById(R.id.fragments_container)
+        if (fragment is TopScroller) {
+            fragment.scrollToTop()
+        }
     }
 
     private fun needsToInitialScreen(): Boolean {

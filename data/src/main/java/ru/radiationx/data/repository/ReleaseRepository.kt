@@ -44,9 +44,16 @@ class ReleaseRepository @Inject constructor(
             .also { updateMiddleware.handle(it) }
     }
 
-    suspend fun getReleasesById(ids: List<Int>): List<Release> = withContext(Dispatchers.IO) {
+    suspend fun getReleasesById(ids: List<ReleaseId>): List<Release> = withContext(Dispatchers.IO) {
         releaseApi
-            .getReleasesByIds(ids)
+            .getReleasesByIds(ids.map { it.id })
+            .map { it.toDomain(apiUtils, apiConfig) }
+            .also { updateMiddleware.handle(it) }
+    }
+
+    suspend fun getFullReleasesById(ids: List<ReleaseId>): List<Release> = withContext(Dispatchers.IO) {
+        releaseApi
+            .getFullReleasesByIds(ids.map { it.id })
             .map { it.toDomain(apiUtils, apiConfig) }
             .also { updateMiddleware.handle(it) }
     }

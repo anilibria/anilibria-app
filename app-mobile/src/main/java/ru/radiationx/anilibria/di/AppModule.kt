@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.MobileCheckerSources
 import ru.radiationx.anilibria.apptheme.AnalyticsThemeProviderImpl
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.apptheme.AppThemeControllerImpl
+import ru.radiationx.anilibria.ads.NativeAdsRepository
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
@@ -93,6 +94,8 @@ class AppModule(application: Application) : QuillModule() {
         singleImpl<IErrorHandler, ErrorHandler>()
         singleImpl<LibriaImageLoader, CoilLibriaImageLoaderImpl>()
 
+        /* Ads */
+        single<NativeAdsRepository>()
 
         /* Analytics */
         single<CodecsProfileAnalytics>()
@@ -114,6 +117,9 @@ class AppModule(application: Application) : QuillModule() {
             singleImpl<AnalyticsProfile, AppMetricaAnalyticsProfile>()
             singleImpl<AnalyticsErrorReporter, AppMetricaErrorReporter>()
         }
+
+        /* Player */
+
     }
 
 }

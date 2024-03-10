@@ -26,6 +26,7 @@ import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.quill.viewModel
@@ -39,7 +40,8 @@ import ru.radiationx.shared.ktx.android.showWithLifecycle
 class FavoritesFragment :
     BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
-    ReleasesAdapter.ItemListener {
+    ReleasesAdapter.ItemListener,
+    TopScroller {
 
     private val adapter: ReleasesAdapter = ReleasesAdapter(
         loadMoreListener = { viewModel.loadMore() },
@@ -189,6 +191,7 @@ class FavoritesFragment :
                         Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
                             .show()
                     }
+
                     1 -> viewModel.onShareClick(item)
                     2 -> viewModel.onShortcutClick(item)
                     3 -> viewModel.deleteFav(item.id)
@@ -196,6 +199,11 @@ class FavoritesFragment :
             }
             .showWithLifecycle(viewLifecycleOwner)
         return false
+    }
+
+    override fun scrollToTop() {
+        binding.recyclerView.scrollToPosition(0)
+        baseBinding.appbarLayout.setExpanded(true, true)
     }
 
     private fun showState(state: FavoritesScreenState) {

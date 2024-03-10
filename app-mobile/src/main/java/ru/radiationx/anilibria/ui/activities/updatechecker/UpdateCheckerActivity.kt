@@ -77,7 +77,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
             finish()
             return
         }
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             binding.toolbar.updatePadding(top = systemBarInsets.top)
             binding.updateContent.updatePadding(bottom = systemBarInsets.bottom)
@@ -107,7 +107,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         }.launchIn(lifecycleScope)
 
         viewModel.openDownloadedFileAction.observe().onEach {
-            systemUtils.openRemoteFile(it.local, it.remote.name, it.remote.mimeType)
+            systemUtils.openLocalFile(it)
         }.launchInResumed(this)
     }
 

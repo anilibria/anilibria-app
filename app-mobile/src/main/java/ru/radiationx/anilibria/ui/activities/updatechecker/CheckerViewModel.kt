@@ -10,8 +10,10 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.downloader.DownloadedFile
+import ru.radiationx.data.downloader.LocalFile
 import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.RemoteFile
+import ru.radiationx.data.downloader.toLocalFile
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.quill.QuillExtra
@@ -40,7 +42,7 @@ class CheckerViewModel(
         MutableStateFlow<Map<UpdateData.UpdateLink, MutableStateFlow<Int>>>(emptyMap())
     private val _currentData = MutableStateFlow(CheckerScreenState())
 
-    val openDownloadedFileAction = EventFlow<DownloadedFile>()
+    val openDownloadedFileAction = EventFlow<LocalFile>()
 
     val state = combine(
         _currentLoadings,
@@ -98,7 +100,7 @@ class CheckerViewModel(
             coRunCatching {
                 remoteFileRepository.loadFile(link.url, RemoteFile.Bucket.AppUpdates, progress)
             }.onSuccess {
-                openDownloadedFileAction.set(it)
+                openDownloadedFileAction.set(it.toLocalFile())
             }.onFailure {
                 errorHandler.handle(it)
             }

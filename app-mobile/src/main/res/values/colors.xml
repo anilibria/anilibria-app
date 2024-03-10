@@ -10,8 +10,6 @@
     <color name="md_green">#4caf50</color>
 
 
-    <color name="playerColorPrimary">#66000000</color>
-
     <color name="brand_patreon">#F96854</color>
     <color name="brand_patreon_1">#052a49</color>
     <color name="brand_vk">#45668e</color>
@@ -22,6 +20,9 @@
     <color name="brand_donationalerts">#F57D07</color>
     <color name="brand_boosty">#F15F2C</color>
     <color name="brand_rustore">#0077FF</color>
+
+
+    <color name="control_gray">#5000</color>
 
 
     <!-- LIGHT THEME -->

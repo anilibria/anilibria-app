@@ -4,23 +4,50 @@ import android.Manifest
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withTimeout
 import ru.mintrocket.lib.mintpermissions.MintPermissionsController
 import ru.mintrocket.lib.mintpermissions.ext.isGranted
 import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsDialogFlow
-import ru.radiationx.anilibria.model.*
+import ru.radiationx.anilibria.ads.NativeAdItem
+import ru.radiationx.anilibria.ads.NativeAdsRepository
+import ru.radiationx.anilibria.ads.addAdAt
+import ru.radiationx.anilibria.ads.convert
+import ru.radiationx.anilibria.model.DonationCardItemState
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.model.ScheduleItemState
+import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.model.loading.DataLoadingController
 import ru.radiationx.anilibria.model.loading.PageLoadParams
 import ru.radiationx.anilibria.model.loading.ScreenStateAction
 import ru.radiationx.anilibria.model.loading.mapData
+import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.ShortcutHelper
+import ru.radiationx.data.ads.AdsConfigRepository
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.analytics.features.*
+import ru.radiationx.data.analytics.features.DonationCardAnalytics
+import ru.radiationx.data.analytics.features.DonationDetailAnalytics
+import ru.radiationx.data.analytics.features.FastSearchAnalytics
+import ru.radiationx.data.analytics.features.FeedAnalytics
+import ru.radiationx.data.analytics.features.ReleaseAnalytics
+import ru.radiationx.data.analytics.features.ScheduleAnalytics
+import ru.radiationx.data.analytics.features.UpdaterAnalytics
+import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.domain.feed.FeedItem
@@ -35,17 +62,26 @@ import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
-import ru.radiationx.shared.ktx.*
+import ru.radiationx.shared.ktx.asDayNameDeclension
+import ru.radiationx.shared.ktx.asDayPretext
+import ru.radiationx.shared.ktx.asMsk
+import ru.radiationx.shared.ktx.coRunCatching
+import ru.radiationx.shared.ktx.getDayOfWeek
+import ru.radiationx.shared.ktx.isSameDay
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /* Created by radiationx on 05.11.17. */
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @InjectConstructor
 class FeedViewModel(
+    private val nativeAdsRepository: NativeAdsRepository,
+    private val adsConfigRepository: AdsConfigRepository,
     private val feedRepository: FeedRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val scheduleRepository: ScheduleRepository,
@@ -132,7 +168,7 @@ class FeedViewModel(
         }.launchIn(viewModelScope)
 
         appPreferences
-            .observeNewDonationRemind()
+            .newDonationRemind
             .flatMapLatest { enabled ->
                 donationRepository.observerDonationInfo().map {
                     Pair(it.cardNewDonations, enabled)
@@ -271,7 +307,7 @@ class FeedViewModel(
         when (state.tag) {
             DONATION_NEW_TAG -> {
                 donationCardAnalytics.onNewDonationClick(AnalyticsConstants.screen_feed)
-                appPreferences.newDonationRemind = false
+                appPreferences.newDonationRemind.value = false
             }
         }
         donationDetailAnalytics.open(AnalyticsConstants.screen_feed)
@@ -282,7 +318,7 @@ class FeedViewModel(
         when (state.tag) {
             DONATION_NEW_TAG -> {
                 donationCardAnalytics.onNewDonationCloseClick(AnalyticsConstants.screen_feed)
-                appPreferences.newDonationRemind = false
+                appPreferences.newDonationRemind.value = false
             }
         }
     }
@@ -320,13 +356,19 @@ class FeedViewModel(
     }
 
     private fun findRelease(id: ReleaseId): Release? {
-        val feedItems = loadingController.currentState.data?.feedItems
-        return feedItems?.mapNotNull { it.release }?.find { it.id == id }
+        val feedItems = loadingController.currentState.data?.feedItems ?: return null
+        return feedItems
+            .filterIsInstance<NativeAdItem.Data<FeedItem>>()
+            .mapNotNull { it.data.release }
+            .find { it.id == id }
     }
 
     private fun findYoutube(id: YoutubeId): YoutubeItem? {
-        val feedItems = loadingController.currentState.data?.feedItems
-        return feedItems?.mapNotNull { it.youtube }?.find { it.id == id }
+        val feedItems = loadingController.currentState.data?.feedItems ?: return null
+        return feedItems
+            .filterIsInstance<NativeAdItem.Data<FeedItem>>()
+            .mapNotNull { it.data.youtube }
+            .find { it.id == id }
     }
 
     private fun submitPageAnalytics(page: Int) {
@@ -365,45 +407,58 @@ class FeedViewModel(
 
 
     private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<FeedData> {
-        val feedSource = flow {
-            val newPage = getFeedSource(params.page)
-            val value = if (params.isFirstPage) {
-                newPage
-            } else {
-                loadingController.currentState.data?.feedItems.orEmpty() + newPage
+        return supervisorScope {
+            val adsConfig = adsConfigRepository.getConfig().feedNative
+            val newPageAsync = async { getFeedSource(params.page) }
+            val scheduleAsync = async {
+                if (params.isFirstPage) {
+                    getScheduleSource()
+                } else {
+                    loadingController.currentState.data?.schedule ?: getScheduleSource()
+                }
             }
-            emit(value)
-        }
-        val scheduleDataSource = flow {
-            val value = if (params.isFirstPage) {
-                getScheduleSource()
-            } else {
-                loadingController.currentState.data?.schedule ?: getScheduleSource()
+            val adsAsync = async {
+                if (adsConfig.enabled) {
+                    withTimeout(adsConfig.timeoutMillis) {
+                        val request = NativeAdRequestConfiguration
+                            .Builder(adsConfig.unitId)
+                            .setContextTags(adsConfig.contextTags)
+                            .build()
+                        nativeAdsRepository.load(request)
+                    }
+                } else {
+                    null
+                }
             }
-            emit(value)
-        }
 
-        return combine(feedSource, scheduleDataSource) { feedItems, scheduleState ->
-            Pair(feedItems, scheduleState)
-        }
-            .map { (feedItems, scheduleState) ->
+            coRunCatching {
+                val newPage = newPageAsync.await()
+                val schedule = scheduleAsync.await()
+                val ad = runCatching { adsAsync.await() }
+                    .onFailure { Timber.e(it) }
+                    .getOrNull()
+
+                val newPageWithAds = newPage.addAdAt(adsConfig.listInsertPosition, ad)
+                val newFeedItems = if (params.isFirstPage) {
+                    newPageWithAds
+                } else {
+                    loadingController.currentState.data?.feedItems.orEmpty() + newPageWithAds
+                }
                 val feedDataState = FeedData(
-                    feedItems = feedItems,
-                    schedule = scheduleState
+                    feedItems = newFeedItems,
+                    schedule = schedule
                 )
-                ScreenStateAction.Data(feedDataState, feedItems.isNotEmpty())
-            }
-            .catch {
+                ScreenStateAction.Data(feedDataState, newPage.isNotEmpty())
+            }.onFailure {
                 if (params.isFirstPage) {
                     errorHandler.handle(it)
                 }
-                throw it
-            }
-            .first()
+            }.getOrThrow()
+        }
     }
 
     private data class FeedData(
-        val feedItems: List<FeedItem> = emptyList(),
+        val feedItems: List<NativeAdItem<FeedItem>> = emptyList(),
         val schedule: FeedScheduleData? = null,
     )
 
@@ -414,7 +469,9 @@ class FeedViewModel(
 
     private fun FeedData.toState(updates: Map<ReleaseId, ReleaseUpdate>): FeedDataState =
         FeedDataState(
-            feedItems.map { it.toState(updates) },
+            feedItems.map { adItem ->
+                adItem.convert { it.toState(updates) }
+            },
             schedule?.toState()
         )
 

@@ -3,4 +3,7 @@
     <cache-path
         name="anilibria_remote"
         path="anilibria_remote/" />
+    <cache-path
+        name="anilibria_export"
+        path="anilibria_export/" />
 </paths>

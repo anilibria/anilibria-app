@@ -24,6 +24,7 @@ data class ReleaseResponse(
     @Json(name = "description") val description: String?,
     @Json(name = "announce") val announce: String?,
     @Json(name = "favorite") val favorite: FavoriteInfoResponse?,
+    @Json(name = "franchises") val franchises: List<FranchiseResponse>?,
 
     // full
     @Json(name = "showDonateDialog") val showDonateDialog: Boolean?,
@@ -31,5 +32,5 @@ data class ReleaseResponse(
     @Json(name = "moon") val moonwalkLink: String?,
     @Json(name = "playlist") val episodes: List<EpisodeResponse>?,
     @Json(name = "externalPlaylist") val externalPlaylists: List<ExternalPlaylistResponse>?,
-    @Json(name = "torrents") val torrents: List<TorrentResponse>?
+    @Json(name = "torrents") val torrents: List<TorrentResponse>?,
 )

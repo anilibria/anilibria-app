@@ -19,10 +19,4 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="PlayerTheme" parent="BasePlayerTheme">
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/playerColorPrimary</item>
-        <item name="android:navigationBarColor">@color/playerColorPrimary</item>
-    </style>
-
 </resources>

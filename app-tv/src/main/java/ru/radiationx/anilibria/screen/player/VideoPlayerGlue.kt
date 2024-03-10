@@ -22,9 +22,13 @@ import androidx.leanback.media.PlaybackTransportControlGlue
 import androidx.leanback.widget.Action
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.PlaybackControlsRow
-import androidx.leanback.widget.PlaybackControlsRow.*
+import androidx.leanback.widget.PlaybackControlsRow.FastForwardAction
+import androidx.leanback.widget.PlaybackControlsRow.MultiAction
+import androidx.leanback.widget.PlaybackControlsRow.RewindAction
+import androidx.leanback.widget.PlaybackControlsRow.SkipNextAction
+import androidx.leanback.widget.PlaybackControlsRow.SkipPreviousAction
 import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
-import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.common.PlayerQuality
 import java.util.concurrent.TimeUnit
 
 /**
@@ -164,12 +168,11 @@ class VideoPlayerGlue(
         }
     }
 
-    fun setQuality(quality: Int) {
+    fun setQuality(quality: PlayerQuality) {
         qualityAction.index = when (quality) {
-            PreferencesHolder.QUALITY_SD -> QualityAction.INDEX_SD
-            PreferencesHolder.QUALITY_HD -> QualityAction.INDEX_HD
-            PreferencesHolder.QUALITY_FULL_HD -> QualityAction.INDEX_FHD
-            else -> QualityAction.INDEX_SD
+            PlayerQuality.SD -> QualityAction.INDEX_SD
+            PlayerQuality.HD -> QualityAction.INDEX_HD
+            PlayerQuality.FULLHD -> QualityAction.INDEX_FHD
         }
         controlsRow?.also {
             notifyActionChanged(

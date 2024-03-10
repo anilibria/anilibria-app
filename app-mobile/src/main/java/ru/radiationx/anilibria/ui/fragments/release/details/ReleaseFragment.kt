@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -22,6 +21,7 @@ import ru.radiationx.anilibria.databinding.FragmentPagedBinding
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedReceiver
+import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -38,12 +38,11 @@ import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.imageloader.showImageUrl
-import java.util.concurrent.TimeUnit
 
 
 /* Created by radiationx on 16.11.17. */
 open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.fragment_paged),
-    SharedReceiver, BackButtonListener {
+    SharedReceiver, BackButtonListener, TopScroller {
     companion object {
         private const val ARG_ID: String = "release_id"
         private const val ARG_ID_CODE: String = "release_id_code"
@@ -227,6 +226,15 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
     override fun onDestroyView() {
         toolbarHelperJob?.cancel()
         super.onDestroyView()
+    }
+
+    override fun scrollToTop() {
+        baseBinding.appbarLayout.setExpanded(true, true)
+        val position = binding.viewPagerPaged.currentItem
+        val fragment = pagerAdapter.getItem(position)
+        if (fragment is TopScroller) {
+            fragment.scrollToTop()
+        }
     }
 
     @Suppress("DEPRECATION")

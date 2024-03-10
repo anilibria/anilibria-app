@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.ui.adapters.CommentRouteListItem
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.NativeAdListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseBlockedListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseDonateListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeControlItem
@@ -16,6 +17,7 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
+import ru.radiationx.anilibria.ui.adapters.ads.NativeAdDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
@@ -30,6 +32,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseTorrentDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.data.entity.domain.types.TorrentId
 
 class ReleaseInfoAdapter(
     headListener: ReleaseHeadDelegate.Listener,
@@ -37,8 +40,8 @@ class ReleaseInfoAdapter(
     episodeControlListener: ReleaseEpisodeControlDelegate.Listener,
     donationListener: (DonationCardItemState) -> Unit,
     donationCloseListener: (DonationCardItemState) -> Unit,
-    torrentClickListener: (ReleaseTorrentItemState) -> Unit,
-    torrentCancelClickListener: (ReleaseTorrentItemState) -> Unit,
+    torrentClickListener: (TorrentId) -> Unit,
+    torrentCancelClickListener: (TorrentId) -> Unit,
     commentsClickListener: () -> Unit,
     episodesTabListener: (String) -> Unit,
     remindCloseListener: () -> Unit,
@@ -66,6 +69,7 @@ class ReleaseInfoAdapter(
         addDelegate(ReleaseBlockedDelegate())
         addDelegate(CommentRouteDelegate(commentsClickListener))
         addDelegate(DividerShadowItemDelegate())
+        addDelegate(NativeAdDelegate())
     }
 
     fun bindState(releaseState: ReleaseDetailState, screenState: ReleaseDetailScreenState) {
@@ -171,6 +175,11 @@ class ReleaseInfoAdapter(
         newItems.add(DividerShadowListItem("episodes"))
         newItems.add(CommentRouteListItem("comments"))
         newItems.add(DividerShadowListItem("comments"))
+
+        if (screenState.nativeAd != null) {
+            newItems.add(NativeAdListItem(screenState.nativeAd))
+            newItems.add(DividerShadowListItem("nativeAd"))
+        }
 
         items = newItems
     }

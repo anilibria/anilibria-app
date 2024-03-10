@@ -2,20 +2,25 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import ru.radiationx.anilibria.ads.NativeAdsRepository
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
-import ru.radiationx.anilibria.ui.activities.toPrefQuality
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
+import ru.radiationx.data.ads.AdsConfigRepository
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.CatalogAnalytics
@@ -27,18 +32,20 @@ import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
-import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.downloader.DownloadedFile
+import ru.radiationx.data.downloader.LocalFile
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.downloader.RemoteFileRepository
+import ru.radiationx.data.downloader.toLocalFile
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -48,6 +55,7 @@ import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -72,6 +80,8 @@ class ReleaseInfoViewModel(
     private val donationDetailAnalytics: DonationDetailAnalytics,
     private val teamsAnalytics: TeamsAnalytics,
     private val remoteFileRepository: RemoteFileRepository,
+    private val adsConfigRepository: AdsConfigRepository,
+    private val nativeAdsRepository: NativeAdsRepository,
 ) : ViewModel() {
 
     private val remindText =
@@ -90,12 +100,12 @@ class ReleaseInfoViewModel(
     val playContinueAction = EventFlow<ActionContinue>()
     val playWebAction = EventFlow<ActionPlayWeb>()
     val playEpisodeAction = EventFlow<ActionPlayEpisode>()
-    val loadEpisodeAction = EventFlow<ActionLoadEpisode>()
     val showUnauthAction = EventFlow<Unit>()
     val showFileDonateAction = EventFlow<String>()
     val showEpisodesMenuAction = EventFlow<Unit>()
     val showContextEpisodeAction = EventFlow<Episode>()
-    val openDownloadedFileAction = EventFlow<DownloadedFile>()
+    val openDownloadedFileAction = EventFlow<LocalFile>()
+    val shareDownloadedFileAction = EventFlow<LocalFile>()
 
     private fun updateModifiers(block: (ReleaseDetailModifiersState) -> ReleaseDetailModifiersState) {
         _state.update {
@@ -124,7 +134,7 @@ class ReleaseInfoViewModel(
             .launchIn(viewModelScope)
 
         appPreferences
-            .observeEpisodesIsReverse()
+            .episodesIsReverse
             .onEach { episodesReversed ->
                 updateModifiers {
                     it.copy(episodesReversed = episodesReversed)
@@ -133,7 +143,7 @@ class ReleaseInfoViewModel(
             .launchIn(viewModelScope)
 
         appPreferences
-            .observeReleaseRemind()
+            .releaseRemind
             .onEach { remindEnabled ->
                 _state.update {
                     it.copy(remindText = remindText.takeIf { remindEnabled })
@@ -148,15 +158,27 @@ class ReleaseInfoViewModel(
             updateLocalRelease(it, _currentLoadings.value)
         }
         observeRelease()
+
+        viewModelScope.launch {
+            coRunCatching {
+                val config = adsConfigRepository.getConfig().releaseNative
+                if (!config.enabled) return@coRunCatching
+                val releaseTags = _state.mapNotNull { it.data?.info }.first().let {
+                    listOf(it.titleRus, it.titleEng)
+                }
+                val contextTags = config.contextTags + releaseTags
+                val request = NativeAdRequestConfiguration.Builder(config.unitId)
+                    .setContextTags(contextTags)
+                    .build()
+                val nativeAd = withTimeout(config.timeoutMillis) {
+                    nativeAdsRepository.load(request)
+                }
+                _state.update { it.copy(nativeAd = nativeAd) }
+            }.onFailure {
+                Timber.e(it, "Error while load ads for release")
+            }
+        }
     }
-
-    fun getQuality() = releaseInteractor.getQuality()
-
-    fun setQuality(value: Int) = releaseInteractor.setQuality(value)
-
-    fun getPlayerType() = releaseInteractor.getPlayerType()
-
-    fun setPlayerType(value: Int) = releaseInteractor.setPlayerType(value)
 
     private fun observeRelease() {
         updateModifiers {
@@ -164,7 +186,7 @@ class ReleaseInfoViewModel(
         }
         releaseInteractor
             .observeFull(argExtra.id, argExtra.code)
-            .onEach { release ->
+            .onEach {
                 updateModifiers {
                     it.copy(detailLoading = false)
                 }
@@ -218,23 +240,27 @@ class ReleaseInfoViewModel(
     }
 
     fun onRemindCloseClick() {
-        appPreferences.releaseRemind = false
+        appPreferences.releaseRemind.value = false
     }
 
-    fun onTorrentClick(item: ReleaseTorrentItemState) {
-        val torrentItem = currentData?.torrents?.find { it.id == item.id } ?: return
+    fun onTorrentClick(id: TorrentId, action: TorrentAction) {
+        val torrentItem = currentData?.torrents?.find { it.id == id } ?: return
         val isHevc = torrentItem.quality?.contains("HEVC", true) == true
         releaseAnalytics.torrentClick(isHevc, torrentItem.id.id)
-        loadTorrent(torrentItem)
+        when (action) {
+            TorrentAction.Open, TorrentAction.Share -> loadTorrent(torrentItem, action)
+            TorrentAction.OpenUrl -> systemUtils.externalLink(torrentItem.url.orEmpty())
+            TorrentAction.ShareUrl -> systemUtils.shareText(torrentItem.url.orEmpty())
+        }
     }
 
-    fun onCancelTorrentClick(item: ReleaseTorrentItemState) {
-        loadingJobs[item.id]?.cancel()
-        loadingJobs.remove(item.id)
-        _currentLoadings.update { it.minus(item.id) }
+    fun onCancelTorrentClick(ud: TorrentId) {
+        loadingJobs[ud]?.cancel()
+        loadingJobs.remove(ud)
+        _currentLoadings.update { it.minus(ud) }
     }
 
-    private fun loadTorrent(item: TorrentItem) {
+    private fun loadTorrent(item: TorrentItem, action: TorrentAction) {
         val url = item.url ?: return
         if (loadingJobs[item.id]?.isActive == true) {
             return
@@ -248,7 +274,13 @@ class ReleaseInfoViewModel(
                 val bucket = RemoteFile.Bucket.Torrent(item.id.releaseId)
                 remoteFileRepository.loadFile(url, bucket, progress)
             }.onSuccess {
-                openDownloadedFileAction.set(it)
+                when (action) {
+                    TorrentAction.Open -> openDownloadedFileAction.set(it.toLocalFile())
+                    TorrentAction.Share -> shareDownloadedFileAction.set(it.toLocalFile())
+                    TorrentAction.OpenUrl, TorrentAction.ShareUrl -> {
+                        // do nothing
+                    }
+                }
             }.onFailure {
                 errorHandler.handle(it)
             }
@@ -298,8 +330,14 @@ class ReleaseInfoViewModel(
         }
     }
 
-    fun submitPlayerOpenAnalytics(playerType: AnalyticsPlayer, quality: AnalyticsQuality) {
-        playerAnalytics.open(AnalyticsConstants.screen_release, playerType, quality)
+    fun submitPlayerOpenAnalytics(episodeId: EpisodeId) {
+        val quality = appPreferences.playerQuality.value.toAnalyticsQuality()
+        playerAnalytics.open(
+            AnalyticsConstants.screen_release,
+            AnalyticsPlayer.INTERNAL,
+            quality,
+            episodeId
+        )
     }
 
     fun onClickEpisodesMenu() {
@@ -328,36 +366,35 @@ class ReleaseInfoViewModel(
     private fun onSourceEpisodeClick(
         release: Release,
         episode: SourceEpisode,
-        quality: Int? = null,
+        quality: PlayerQuality?,
     ) {
-        val analyticsQuality =
-            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+        val savedQuality = appPreferences.playerQuality.value
+        val finalQuality = quality ?: savedQuality
+        val analyticsQuality = savedQuality.toAnalyticsQuality()
         releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id.id)
-        loadEpisodeAction.set(ActionLoadEpisode(episode, quality))
+        val url = episode.qualityInfo.getUrlFor(finalQuality) ?: return
+        onDownloadLinkSelected(url)
     }
 
     private fun onOnlineEpisodeClick(
         release: Release,
         episode: Episode,
-        playFlag: Int? = null,
-        quality: Int? = null,
     ) {
-        val analyticsQuality =
-            quality?.toPrefQuality()?.toAnalyticsQuality() ?: AnalyticsQuality.NONE
+        val savedQuality = appPreferences.playerQuality.value
+        val analyticsQuality = savedQuality.toAnalyticsQuality()
         releaseAnalytics.episodePlayClick(analyticsQuality, release.id.id)
-        playEpisodeAction.set(ActionPlayEpisode(release, episode, playFlag, quality))
+        playEpisodeAction.set(ActionPlayEpisode(release, episode))
     }
 
     fun onEpisodeClick(
         episodeState: ReleaseEpisodeItemState,
-        playFlag: Int? = null,
-        quality: Int? = null,
+        quality: PlayerQuality?,
     ) {
         val release = currentData ?: return
         when (episodeState.type) {
             ReleaseEpisodeItemType.ONLINE -> {
                 val episodeItem = getEpisodeItem(episodeState) ?: return
-                onOnlineEpisodeClick(release, episodeItem, playFlag, quality)
+                onOnlineEpisodeClick(release, episodeItem)
             }
 
             ReleaseEpisodeItemType.SOURCE -> {
@@ -564,6 +601,13 @@ class ReleaseInfoViewModel(
 
 }
 
+enum class TorrentAction {
+    Open,
+    Share,
+    OpenUrl,
+    ShareUrl
+}
+
 
 data class ActionContinue(
     val release: Release,
@@ -578,11 +622,4 @@ data class ActionPlayWeb(
 data class ActionPlayEpisode(
     val release: Release,
     val episode: Episode,
-    val playFlag: Int?,
-    val quality: Int?,
-)
-
-data class ActionLoadEpisode(
-    val episode: SourceEpisode,
-    val quality: Int?,
 )

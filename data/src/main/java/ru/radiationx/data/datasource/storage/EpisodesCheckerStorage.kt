@@ -12,6 +12,7 @@ import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.entity.db.EpisodeAccessDb
 import ru.radiationx.data.entity.db.EpisodeAccessLegacyDb
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.mapper.toDb
 import ru.radiationx.data.entity.mapper.toDomain
@@ -22,7 +23,7 @@ import javax.inject.Inject
  */
 class EpisodesCheckerStorage @Inject constructor(
     @DataPreferences private val sharedPreferences: SharedPreferences,
-    private val moshi: Moshi
+    private val moshi: Moshi,
 ) : EpisodesCheckerHolder {
 
     companion object {
@@ -79,6 +80,10 @@ class EpisodesCheckerStorage @Inject constructor(
 
     override suspend fun getEpisodes(releaseId: ReleaseId): List<EpisodeAccess> {
         return localEpisodesRelay.getValue().filter { it.id.releaseId == releaseId }
+    }
+
+    override suspend fun getEpisode(episodeId: EpisodeId): EpisodeAccess? {
+        return localEpisodesRelay.getValue().find { it.id == episodeId }
     }
 
     override suspend fun remove(releaseId: ReleaseId) {

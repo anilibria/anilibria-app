@@ -24,7 +24,7 @@
         android:textStyle="bold"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/item_subtitle"
-        app:layout_constraintEnd_toStartOf="@id/quality_sd"
+        app:layout_constraintEnd_toStartOf="@id/barrierActions"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,6 +55,13 @@
         app:layout_constraintTop_toBottomOf="@id/item_subtitle"
         tools:text="Обновлена 12.12.12 12:00"
         tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrierActions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="quality_sd, tvAction" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/quality_sd"

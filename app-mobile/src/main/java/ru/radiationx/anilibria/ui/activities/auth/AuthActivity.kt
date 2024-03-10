@@ -4,10 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.WindowCompat
-import androidx.core.view.isGone
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.databinding.ActivityMainBinding
+import ru.radiationx.anilibria.databinding.ActivityAuthBinding
 import ru.radiationx.anilibria.navigation.BaseAppScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -35,7 +34,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
             }
     }
 
-    private val binding by viewBinding<ActivityMainBinding>()
+    private val binding by viewBinding<ActivityAuthBinding>()
 
     private val router by inject<Router>()
 
@@ -47,9 +46,6 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
-
-        binding.bottomShadow.isGone = true
-        binding.tabsRecycler.isGone = true
 
         binding.initInsets(dimensionsProvider)
 

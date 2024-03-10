@@ -165,7 +165,7 @@
         android:background="?divider_line" />
 
 
-    <at.blogc.android.views.ExpandableTextView
+    <ru.radiationx.anilibria.ui.widgets.ExpandableTextView
         android:id="@+id/full_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -175,7 +175,6 @@
         android:maxLines="10"
         android:textColor="?textDefault"
         android:textSize="16sp"
-        app:animation_duration="225"
         tools:text="Descriptionsalkdfhsdjkalh fjklsadhfjkl shdjkla fhasjkldh fkljsadh kljfs dkljfh askljdh fkljsadh fkljs adklf asjkld hlfkjsadhfjk " />
 
     <com.google.android.material.button.MaterialButton

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.BlockedInfo
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
@@ -207,9 +208,9 @@ fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     updatedAt = updatedAt,
     isViewed = false,
     hasUpdate = false,
-    hasSd = urlSd != null,
-    hasHd = urlHd != null,
-    hasFullHd = urlFullHd != null,
+    hasSd = PlayerQuality.SD in qualityInfo,
+    hasHd = PlayerQuality.HD in qualityInfo,
+    hasFullHd = PlayerQuality.FULLHD in qualityInfo,
     type = ReleaseEpisodeItemType.SOURCE,
     tag = "source",
     actionTitle = null,
@@ -234,13 +235,13 @@ fun Episode.toState(): ReleaseEpisodeItemState {
         updatedAt = updatedAt,
         isViewed = access.isViewed,
         hasUpdate = hasUpdate,
-        hasSd = urlSd != null,
-        hasHd = urlHd != null,
-        hasFullHd = urlFullHd != null,
+        hasSd = false,
+        hasHd = false,
+        hasFullHd = false,
         type = ReleaseEpisodeItemType.ONLINE,
         tag = "online",
-        actionTitle = null,
-        hasActionUrl = false,
+        actionTitle = "Смотреть",
+        hasActionUrl = true,
         actionIconRes = null,
         actionColorRes = null
     )

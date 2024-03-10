@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is a part of the Yandex Advertising Network
+  ~
+  ~ Version for Android (C) 2021 YANDEX
+  ~
+  ~ You may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at https://legal.yandex.com/partner_ch/
+  -->
+
+<com.yandex.mobile.ads.nativeads.NativeAdView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/native_ad_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/favicon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="4dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/domain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="?textSecond"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@id/sponsored"
+                app:layout_constraintStart_toEndOf="@id/favicon"
+                app:layout_constraintTop_toTopOf="@id/favicon"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="https://browser.yandex.com"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/sponsored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="?textSecond"
+                android:textSize="11sp"
+                app:layout_constraintBottom_toBottomOf="@id/favicon"
+                app:layout_constraintStart_toEndOf="@id/favicon"
+                app:layout_constraintTop_toBottomOf="@id/domain"
+                tools:text="Yandex.Direct"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="?textSecond"
+                app:layout_constraintBottom_toBottomOf="@id/sponsored"
+                app:layout_constraintStart_toEndOf="@id/sponsored"
+                app:layout_constraintTop_toTopOf="@id/sponsored"
+                tools:text="18+"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/feedback"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?actionBarItemBackground"
+                android:src="@drawable/ic_dots_vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.yandex.mobile.ads.nativeads.MediaView
+            android:id="@+id/media"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            tools:layout_height="200dp"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toTopOf="@id/barrier_body"
+            app:layout_constraintEnd_toStartOf="@id/barrier_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrier_top"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@id/rating"
+            app:layout_constraintEnd_toStartOf="@id/barrier_rating"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/barrier_icon"
+            app:layout_constraintTop_toBottomOf="@id/barrier_body"
+            tools:text="Free"
+            tools:visibility="visible" />
+
+        <com.monetization.ads.fullscreen.template.view.ColorizedRatingView
+            android:id="@+id/rating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="4dp"
+            android:numStars="5"
+            android:stepSize="0.5"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/review_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?textSecond"
+            android:textSize="13sp"
+            tools:text="review count"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="2"
+            android:textSize="15sp"
+            tools:text="Yandex.Browser for iPhone and Android"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="3"
+            android:textSize="13sp"
+            tools:text="Your bookmarks and favorite sites are available to you on any device with Yandex.Browser. You will never lose them, even if you lose your device or break it."
+            tools:visibility="visible" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/call_to_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textAllCaps="false"
+            tools:text="Install"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?backgroundColor"
+            android:paddingLeft="8dp"
+            android:paddingTop="4dp"
+            android:paddingRight="8dp"
+            android:textColor="?textSecond"
+            android:textSize="13sp"
+            android:visibility="gone"
+            tools:text="We strongly recommend avoiding this type of website and not clicking the Ignore this warning button!"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</com.yandex.mobile.ads.nativeads.NativeAdView>

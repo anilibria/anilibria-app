@@ -1,58 +1,35 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="BasePlayerTheme" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="MediaPlayerTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
 
-        <item name="colorPrimary">@color/dark_colorAccent</item>
-        <item name="colorSecondary">@color/dark_colorAccent</item>
+        <item name="colorPrimary">@color/light_colorAccent</item>
+        <item name="colorSecondary">@color/light_colorAccent</item>
         <item name="colorSecondaryVariant">@color/dark_contrast_icon</item>
         <item name="android:colorBackground">@color/dark_windowBackground</item>
         <item name="colorSurface">@color/dark_cardBackground</item>
         <item name="colorOnPrimary">@color/dark_contrast_icon</item>
         <item name="colorOnSecondary">@color/dark_contrast_icon</item>
-        <item name="colorOnBackground">@color/dark_base_icon</item>
-        <item name="colorOnSurface">@color/dark_base_icon</item>
-
-        <item name="actionModeBackground">@color/dark_colorPrimary</item>
-        <item name="actionModeCloseButtonStyle">@style/actionModeCloseButtonStyle</item>
-        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
-        <item name="alertDialogTheme">@style/DayNightAppTheme.Dialog</item>
+        <item name="colorOnBackground">@color/dark_contrast_icon</item>
+        <item name="colorOnSurface">@color/dark_contrast_icon</item>
         <item name="android:windowBackground">@color/dark_windowBackground</item>
 
-        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
 
         <item name="android:textColorPrimary">@color/dark_textDefault</item>
         <item name="android:textColorPrimaryInverse">@color/dark_textDefault</item>
         <item name="android:textColorLink">@color/dark_textLink</item>
 
-        <item name="bottomSheetDialogTheme">@style/DayNightAppTheme.BottomSheetDialog</item>
-
-
-        <!-- Attrs -->
-        <item name="divider_line">@color/dark_divider_line</item>
-        <item name="btn_border">@color/dark_btn_border</item>
-        <item name="gradientBackground">@drawable/bg_google_pay_gradient_dark</item>
-        <item name="imageBackground">@color/dark_imageBackground</item>
-
-        <item name="episode_even">@color/dark_episode_even</item>
-        <item name="bg_fav_btn">@drawable/bg_btn_favorite_dark</item>
-        <item name="bg_release_remind">@drawable/bg_release_remind_dark</item>
-        <item name="bg_schedule_day">@drawable/bg_schedule_day_dark</item>
-        <item name="bgDonationIconPt">@drawable/bg_donation_icon_pt_dark</item>
-        <item name="bgDonationIconBt">@drawable/bg_donation_icon_bt_dark</item>
-        <item name="bgDonationIconYm">@drawable/bg_donation_icon_ym_dark</item>
-        <item name="bgDonationIconDa">@drawable/bg_donation_icon_da_dark</item>
-
         <item name="textDefault">@color/dark_textDefault</item>
         <item name="textSecond">@color/dark_textSecond</item>
 
-        <item name="playerColorPrimary">@color/playerColorPrimary</item>
-
-        <item name="app_bar_overlay">@style/DayNightAppTheme.AppBarOverlay</item>
-        <item name="popup_overlay">@style/DayNightAppTheme.PopupOverlay</item>
+        <item name="bottomSheetDialogTheme">@style/DayNightAppTheme.BottomSheetDialog</item>
+        <item name="alertDialogTheme">@style/DayNightAppTheme.Dialog</item>
     </style>
-
-    <style name="PlayerTheme" parent="BasePlayerTheme" />
 
     <!-- Base application theme. -->
     <style name="DayNightAppTheme" parent="Theme.MaterialComponents.DayNight">
@@ -97,8 +74,6 @@
 
         <item name="textDefault">@color/light_textDefault</item>
         <item name="textSecond">@color/light_textSecond</item>
-
-        <item name="playerColorPrimary">@color/playerColorPrimary</item>
 
         <item name="app_bar_overlay">@style/DayNightAppTheme.AppBarOverlay</item>
         <item name="popup_overlay">@style/DayNightAppTheme.PopupOverlay</item>

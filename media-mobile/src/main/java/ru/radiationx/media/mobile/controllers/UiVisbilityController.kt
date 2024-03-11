@@ -56,7 +56,7 @@ internal class UiVisbilityController(
             val seekerVisible =
                 (internalState.scrollSeeker || internalState.doubleTapSeeker || internalState.longTapSeeker) && !internalState.liveScale
             val mainVisible =
-                (internalState.main || internalState.slider) && !internalState.liveScale
+                (internalState.main || internalState.slider || hasError) && !internalState.liveScale
             val hasPip = internalState.pip
 
             _state.value = UiVisibilityState(

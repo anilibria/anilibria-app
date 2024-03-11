@@ -231,7 +231,7 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
     override fun scrollToTop() {
         baseBinding.appbarLayout.setExpanded(true, true)
         val position = binding.viewPagerPaged.currentItem
-        val fragment = pagerAdapter.getItem(position)
+        val fragment = pagerAdapter.instantiateItem(binding.viewPagerPaged, position)
         if (fragment is TopScroller) {
             fragment.scrollToTop()
         }

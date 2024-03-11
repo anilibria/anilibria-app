@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.player
 
+import android.net.Uri
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.analytics.AnalyticsListener
@@ -8,6 +9,8 @@ import androidx.media3.exoplayer.source.MediaLoadData
 import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.PlayerAnalytics
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import timber.log.Timber
 import java.io.IOException
@@ -19,6 +22,7 @@ class PlayerAnalyticsListener @Inject constructor(
     private val playerAnalytics: PlayerAnalytics,
     private val buildConfig: SharedBuildConfig,
     private val sharedPlayerData: SharedPlayerData,
+    private val preferences: PreferencesHolder,
 ) : AnalyticsListener {
 
     private val times = LinkedList<Long>()
@@ -26,6 +30,8 @@ class PlayerAnalyticsListener @Inject constructor(
 
     private val episodeId: EpisodeId
         get() = sharedPlayerData.episodeId.value
+
+    private var latestLoadData: LoadData? = null
 
     @UnstableApi
     override fun onLoadError(
@@ -35,6 +41,7 @@ class PlayerAnalyticsListener @Inject constructor(
         error: IOException,
         wasCanceled: Boolean,
     ) {
+        latestLoadData = loadEventInfo.toLoadData()
         Timber.e(error, "onLoadError")
     }
 
@@ -43,7 +50,8 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         error: PlaybackException,
     ) {
-        playerAnalytics.playerError(error, episodeId)
+        val info = "${error.errorCode}, ${error.errorCodeName}"
+        playerAnalytics.playerError(error, createErrorData(eventTime, info))
     }
 
     @UnstableApi
@@ -51,7 +59,7 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         audioCodecError: Exception,
     ) {
-        playerAnalytics.playerAudioCodecError(audioCodecError, episodeId)
+        playerAnalytics.playerAudioCodecError(audioCodecError, createErrorData(eventTime, null))
     }
 
     @UnstableApi
@@ -59,7 +67,7 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         audioSinkError: Exception,
     ) {
-        playerAnalytics.playerAudioSinkError(audioSinkError, episodeId)
+        playerAnalytics.playerAudioSinkError(audioSinkError, createErrorData(eventTime, null))
     }
 
     @UnstableApi
@@ -67,7 +75,7 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         videoCodecError: Exception,
     ) {
-        playerAnalytics.playerVideoCodecError(videoCodecError, episodeId)
+        playerAnalytics.playerVideoCodecError(videoCodecError, createErrorData(eventTime, null))
     }
 
     @UnstableApi
@@ -97,4 +105,35 @@ class PlayerAnalyticsListener @Inject constructor(
             .tag("onLoadCompleted")
             .d("loadEventInfo.loadDurationMs $durationMs, average $average, protocol $protocol, hostname $frontHost[$hostCount]")
     }
+
+    @UnstableApi
+    private fun createErrorData(
+        eventTime: AnalyticsListener.EventTime,
+        info: String?,
+    ): PlayerAnalytics.ErrorData = PlayerAnalytics.ErrorData(
+        episodeId = episodeId,
+        position = eventTime.currentPlaybackPositionMs,
+        quality = preferences.playerQuality.value.toAnalyticsQuality(),
+        info = info,
+        latestLoadUri = latestLoadData?.uri,
+        headerProtocol = latestLoadData?.protocol,
+        headerHost = latestLoadData?.hostName
+    )
+
+    @UnstableApi
+    private fun LoadEventInfo.toLoadData() = LoadData(
+        uri = uri,
+        protocol = responseHeaders.let {
+            (it["x-server-proto"] ?: it["X-Server-Proto"])?.firstOrNull()
+        },
+        hostName = responseHeaders.let {
+            (it["front-hostname"] ?: it["Front-Hostname"])?.firstOrNull()
+        }
+    )
+
+    private data class LoadData(
+        val uri: Uri,
+        val protocol: String?,
+        val hostName: String?,
+    )
 }

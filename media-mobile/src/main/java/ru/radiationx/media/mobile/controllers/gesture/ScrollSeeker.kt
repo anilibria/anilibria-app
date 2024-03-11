@@ -1,18 +1,22 @@
 package ru.radiationx.media.mobile.controllers.gesture
 
-import android.util.Log
 import android.view.View
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import ru.radiationx.media.mobile.PlayerFlow
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 import kotlin.math.pow
 
 internal class ScrollSeeker(
     private val playerFlow: PlayerFlow,
     private val gestureView: View,
 ) {
+
+    companion object {
+        private const val START_SECS = 3
+    }
 
     private var _ignoreEventId: Long? = null
 
@@ -26,8 +30,12 @@ internal class ScrollSeeker(
         val percent = ((deltaX / gestureView.width) * 100).toInt()
         val sign = if (percent < 0) -1 else 1
         val seconds = percent.toDouble().pow(2.0).div(25).times(sign).toLong()
-        val newDeltaSeek = TimeUnit.SECONDS.toMillis(seconds)
 
+        if (abs(seconds) < START_SECS && !_state.value.isActive) {
+            return
+        }
+
+        val newDeltaSeek = TimeUnit.SECONDS.toMillis(seconds)
         _state.update {
             val newInitialSeek = if (it.isActive) {
                 it.initialSeek

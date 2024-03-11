@@ -240,9 +240,11 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     override fun onDestroy() {
         super.onDestroy()
-        player.getPlayer().removeAnalyticsListener(analyticsListener)
-        binding.playerView.setPlayer(null)
-        player.destroy()
+        if (!isLaunchedFromHistory()) {
+            player.getPlayer().removeAnalyticsListener(analyticsListener)
+            binding.playerView.setPlayer(null)
+            player.destroy()
+        }
     }
 
     override fun onUserInteraction() {

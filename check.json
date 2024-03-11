@@ -1,22 +1,24 @@
 {
   "update": {
-    "version_code": "67",
-    "version_name": "2.11.0",
+    "version_code": "68",
+    "version_name": "2.11.1",
     "version_build": "0",
-    "build_date": "10 марта 2024 г.",
+    "build_date": "11 марта 2024 г.",
     "links": [
       {
         "name": "AniLibria App",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.11.0/AniLibria_v2.11.0.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.11.1/AniLibria_v2.11.1.apk",
         "type": "file"
       },
       {
         "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.11.0/AniLibria_Lite_v2.11.0.apk",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.11.1/AniLibria_Lite_v2.11.1.apk",
         "type": "file"
       }
     ],
-    "important": [],
+    "important": [
+      "Исправлены баги версии 2.11.0"
+    ],
     "added": [
       "Импорт/экспорт истории",
       "Просмотр нескольких сезонов подряд",

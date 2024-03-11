@@ -171,7 +171,6 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         })
 
         binding.viewPagerPaged.adapter = pagerAdapter
-        binding.viewPagerPaged.offscreenPageLimit = 1
 
         viewModel.state.onEach {
             showState(it)
@@ -227,7 +226,6 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
     override fun onDestroyView() {
         toolbarHelperJob?.cancel()
         super.onDestroyView()
-        binding.viewPagerPaged.adapter = null
     }
 
     override fun scrollToTop() {

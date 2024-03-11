@@ -108,11 +108,11 @@ internal class GestureController(
         }
 
         doubleTapSeeker.applyListener = {
-            playerFlow.seekTo(it.initialSeek + it.deltaSeek)
+            applySeekerState(it)
         }
 
         scrollSeeker.applyListener = {
-            playerFlow.seekTo(it.initialSeek + it.deltaSeek)
+            applySeekerState(it)
         }
 
         doubleTapSeeker.state.onEach {
@@ -126,6 +126,13 @@ internal class GestureController(
         longTapSeeker.state.onEach {
             seekerTime.text = "2x"
         }.launchIn(coroutineScope)
+    }
+
+    private fun applySeekerState(state: SeekerState) {
+        if (state.deltaSeek == 0L) {
+            return
+        }
+        playerFlow.seekTo(state.initialSeek + state.deltaSeek)
     }
 }
 

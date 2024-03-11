@@ -101,6 +101,7 @@ class PlayerViewModel(
     }
 
     fun initialPlayEpisode(episodeId: EpisodeId) {
+        _dataState.value = LoadingState()
         _episodeId.value = episodeId
         loadData(episodeId)
     }

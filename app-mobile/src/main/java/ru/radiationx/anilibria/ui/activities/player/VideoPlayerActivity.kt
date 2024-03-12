@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
@@ -114,6 +115,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         super.attachBaseContext(newBase)
     }
 
+    @UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
@@ -132,6 +134,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         initPipController()
         initDialogController()
         player.init(this)
+        analyticsListener.transport = player.selectedTransport
         player.getPlayer().addAnalyticsListener(analyticsListener)
         binding.playerView.setPlayer(player.getPlayer())
 

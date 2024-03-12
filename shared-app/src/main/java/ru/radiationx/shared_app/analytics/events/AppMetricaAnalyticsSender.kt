@@ -22,7 +22,7 @@ class AppMetricaAnalyticsSender : AnalyticsSender {
     override fun error(groupId: String, message: String, throwable: Throwable) {
         try {
             val rootCause = throwable.findRootCause()
-            val groupName = "$groupId ${rootCause.message}"
+            val groupName = "$groupId ${throwable::class.simpleName} ${rootCause.message}"
             YandexMetrica.reportError(groupName, message, throwable)
         } catch (e: Throwable) {
             Timber.e(e, "Error while sending error to appmetrica")

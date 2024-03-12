@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import ru.radiationx.data.datasource.holders.AppPreference
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.entity.common.PlayerTransport
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -20,6 +21,7 @@ class PreferencesStorage @Inject constructor(
         private const val SEARCH_REMIND_KEY = "search_remind"
         private const val EPISODES_IS_REVERSE_KEY = "episodes_is_reverse"
         private const val PLAYER_QUALITY_KEY = "player_quality"
+        private const val PLAYER_TRANSPORT_KEY = "player_transport"
         private const val PLAY_SPEED_KEY = "play_speed"
         private const val PLAYER_SKIPS_KEY = "player_skips"
         private const val PLAYER_SKIPS_TIMER_KEY = "player_skips_timer"
@@ -74,6 +76,17 @@ class PreferencesStorage @Inject constructor(
         },
         set = { key, value ->
             putBoolean(key, value)
+        }
+    )
+
+    override val playerTransport: AppPreference<PlayerTransport> = AppPreference(
+        key = PLAYER_TRANSPORT_KEY,
+        sharedPreferences = sharedPreferences,
+        get = { key ->
+            getString(key, null)?.asPlayerTransport() ?: PlayerTransport.OKHTTP
+        },
+        set = { key, value ->
+            putString(key, value.asPrefString())
         }
     )
 
@@ -168,6 +181,23 @@ class PreferencesStorage @Inject constructor(
             PlayerQuality.SD -> "sd"
             PlayerQuality.HD -> "hd"
             PlayerQuality.FULLHD -> "fullhd"
+        }
+    }
+
+    private fun String.asPlayerTransport(): PlayerTransport? {
+        return when (this) {
+            "system" -> PlayerTransport.SYSTEM
+            "okhttp" -> PlayerTransport.OKHTTP
+            "cronet" -> PlayerTransport.CRONET
+            else -> null
+        }
+    }
+
+    private fun PlayerTransport.asPrefString(): String {
+        return when (this) {
+            PlayerTransport.SYSTEM -> "system"
+            PlayerTransport.OKHTTP -> "okhttp"
+            PlayerTransport.CRONET -> "cronet"
         }
     }
 }

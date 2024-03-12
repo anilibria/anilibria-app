@@ -1,27 +1,31 @@
 package ru.radiationx.anilibria.ui.activities.player
 
 import android.content.Context
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
-import ru.radiationx.data.di.providers.PlayerOkHttpProvider
+import ru.radiationx.data.entity.common.PlayerTransport
 import java.util.UUID
 import javax.inject.Inject
 
 class PlayerHolder @Inject constructor(
-    private val playerOkHttpProvider: PlayerOkHttpProvider,
+    private val dataSourceProvider: PlayerDataSourceProvider,
 ) {
 
     private var _player: ExoPlayer? = null
 
     private var _mediaSession: MediaSession? = null
 
+    var selectedTransport: PlayerTransport? = null
+        private set
+
+    @UnstableApi
     fun init(context: Context) {
-        val okHttpClient = playerOkHttpProvider.get()
-        val okHttpDataSourceFactory = OkHttpDataSource.Factory(okHttpClient)
-        val dataSourceFactory = DefaultDataSource.Factory(context, okHttpDataSourceFactory)
+        val dataSourceType = dataSourceProvider.get()
+        selectedTransport = dataSourceType.transport
+        val dataSourceFactory = DefaultDataSource.Factory(context, dataSourceType.factory)
         val mediaSourceFactory = DefaultMediaSourceFactory(context).apply {
             setDataSourceFactory(dataSourceFactory)
         }

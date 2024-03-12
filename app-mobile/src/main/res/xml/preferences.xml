@@ -81,6 +81,11 @@
             android:title="Таймер на бездействие"
             app:icon="@drawable/ic_timer_outline" />
 
+        <Preference
+            android:key="player_transport"
+            android:layout="@layout/preference_custom"
+            android:title="Сетевой движок" />
+
     </PreferenceCategory>
 
     <Preference android:layout="@layout/preference_shadow_double" />

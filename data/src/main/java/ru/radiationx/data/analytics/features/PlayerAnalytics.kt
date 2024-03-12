@@ -9,6 +9,7 @@ import ru.radiationx.data.analytics.features.extensions.toPlayerParam
 import ru.radiationx.data.analytics.features.extensions.toQualityParam
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
+import ru.radiationx.data.analytics.features.model.AnalyticsTransport
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.shared.ktx.asTimeSecString
 import toothpick.InjectConstructor
@@ -59,17 +60,21 @@ class PlayerAnalytics(
         val position: Long,
         val quality: AnalyticsQuality,
         val info: String?,
+        val transport: AnalyticsTransport?,
+        val duration: Long?,
         val latestLoadUri: Uri?,
         val headerProtocol: String?,
         val headerHost: String?,
     ) {
         fun message(): String {
-            val time = Date(position.coerceAtLeast(0L)).asTimeSecString()
+            val posStr = Date(position.coerceAtLeast(0L)).asTimeSecString()
             val params = listOf(
                 "Episode" to "rid=${episodeId.releaseId.id}, eid=${episodeId.id}",
-                "Pos" to time,
+                "Pos" to posStr,
                 "Quality" to quality.value,
                 "Info" to info,
+                "Transport" to transport?.value,
+                "Duration" to duration?.toString(),
                 "HeaderProtocol" to headerProtocol,
                 "HeaderHost" to headerHost,
                 "Uri" to latestLoadUri?.toString(),

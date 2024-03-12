@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.entity.common.PlayerTransport
 
 /**
  * Created by radiationx on 03.02.18.
@@ -19,6 +20,8 @@ interface PreferencesHolder {
     val searchRemind: AppPreference<Boolean>
 
     val episodesIsReverse: AppPreference<Boolean>
+
+    val playerTransport: AppPreference<PlayerTransport>
 
     val playerQuality: AppPreference<PlayerQuality>
 

@@ -10,7 +10,9 @@ import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsTransport
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.common.PlayerTransport
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import timber.log.Timber
 import java.io.IOException
@@ -32,6 +34,8 @@ class PlayerAnalyticsListener @Inject constructor(
         get() = sharedPlayerData.episodeId.value
 
     private var latestLoadData: LoadData? = null
+
+    var transport: PlayerTransport? = null
 
     @UnstableApi
     override fun onLoadError(
@@ -115,6 +119,8 @@ class PlayerAnalyticsListener @Inject constructor(
         position = eventTime.currentPlaybackPositionMs,
         quality = preferences.playerQuality.value.toAnalyticsQuality(),
         info = info,
+        transport = transport?.toAnalyticsTransport(),
+        duration = latestLoadData?.duration,
         latestLoadUri = latestLoadData?.uri,
         headerProtocol = latestLoadData?.protocol,
         headerHost = latestLoadData?.hostName
@@ -128,12 +134,14 @@ class PlayerAnalyticsListener @Inject constructor(
         },
         hostName = responseHeaders.let {
             (it["front-hostname"] ?: it["Front-Hostname"])?.firstOrNull()
-        }
+        },
+        duration = loadDurationMs
     )
 
     private data class LoadData(
         val uri: Uri,
         val protocol: String?,
         val hostName: String?,
+        val duration: Long,
     )
 }

@@ -15,6 +15,7 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.entity.common.PlayerTransport
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.showWithLifecycle
 
@@ -91,6 +92,24 @@ class SettingsFragment : BaseSettingFragment() {
             }
         }
 
+        findPreference<Preference>("player_transport")?.apply {
+            val savedTransport = appPreferences.playerTransport.value
+            summary = getTransportTitle(savedTransport)
+            setOnPreferenceClickListener { preference ->
+                val values = PlayerTransport.entries
+                val titles = values.map { getTransportTitle(it) }.toTypedArray()
+                AlertDialog.Builder(preference.context)
+                    .setTitle(preference.title)
+                    .setItems(titles) { _, which ->
+                        val transport = values[which]
+                        appPreferences.playerTransport.value = transport
+                        summary = getTransportTitle(transport)
+                    }
+                    .showWithLifecycle(viewLifecycleOwner)
+                false
+            }
+        }
+
         findPreference<Preference>("about.application")?.apply {
             summary = "Версия ${sharedBuildConfig.versionName} (${sharedBuildConfig.buildDate})"
         }
@@ -120,6 +139,14 @@ class SettingsFragment : BaseSettingFragment() {
             PlayerQuality.SD -> "480p"
             PlayerQuality.HD -> "720p"
             PlayerQuality.FULLHD -> "1080p"
+        }
+    }
+
+    private fun getTransportTitle(transport: PlayerTransport): String {
+        return when (transport) {
+            PlayerTransport.SYSTEM -> "Системный"
+            PlayerTransport.OKHTTP -> "OkHttp"
+            PlayerTransport.CRONET -> "Cronet"
         }
     }
 

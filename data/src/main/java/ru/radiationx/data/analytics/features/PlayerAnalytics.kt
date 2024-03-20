@@ -12,8 +12,11 @@ import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsTransport
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.shared.ktx.asTimeSecString
+import timber.log.Timber
 import toothpick.InjectConstructor
+import java.net.SocketTimeoutException
 import java.util.Date
+import javax.net.ssl.SSLException
 
 @InjectConstructor
 class PlayerAnalytics(
@@ -40,20 +43,55 @@ class PlayerAnalytics(
         error: Throwable,
         data: ErrorData,
     ) {
-        sender.error("playerError", data.message(), error)
+        sendError("playerError", data.message(), error)
     }
 
     fun playerAudioCodecError(error: Throwable, data: ErrorData) {
-        sender.error("playerAudioCodecError", data.message(), error)
+        sendError("playerAudioCodecError", data.message(), error)
     }
 
     fun playerAudioSinkError(error: Throwable, data: ErrorData) {
-        sender.error("playerAudioSinkError", data.message(), error)
+        val params = listOf(
+            data.episodeId.toEpisodeParam(),
+            data.position.toPositionParam(),
+        )
+        val customMessage = params.toParamsString()
+        sendError("playerAudioSinkError", data.message(), error, customMessage)
     }
 
     fun playerVideoCodecError(error: Throwable, data: ErrorData) {
-        sender.error("playerVideoCodecError", data.message(), error)
+        sendError("playerVideoCodecError", data.message(), error)
     }
+
+    private fun sendError(
+        groupId: String,
+        message: String,
+        throwable: Throwable,
+        customCauseMessage: String? = null,
+    ) {
+        try {
+            val rootCause = throwable.findRootCause()
+            val causeMessage = when (rootCause) {
+                is SocketTimeoutException -> "Grouped timeout"
+                is SSLException -> "Grouped ssl"
+                else -> rootCause.message
+            }
+            val groupName =
+                "$groupId ${rootCause::class.simpleName} ${customCauseMessage ?: causeMessage}"
+            sender.error(groupName, message, throwable)
+        } catch (e: Throwable) {
+            Timber.e(e, "Error while sending error to appmetrica")
+        }
+    }
+
+    private fun Throwable.findRootCause(): Throwable {
+        var rootCause: Throwable? = this
+        while (rootCause?.cause != null && rootCause.cause !== rootCause) {
+            rootCause = rootCause.cause
+        }
+        return rootCause ?: this
+    }
+
 
     data class ErrorData(
         val episodeId: EpisodeId,
@@ -62,24 +100,60 @@ class PlayerAnalytics(
         val info: String?,
         val transport: AnalyticsTransport?,
         val duration: Long?,
+        val bytes: Long?,
+        val networkType: NetworkType?,
         val latestLoadUri: Uri?,
         val headerProtocol: String?,
         val headerHost: String?,
-    ) {
-        fun message(): String {
-            val posStr = Date(position.coerceAtLeast(0L)).asTimeSecString()
-            val params = listOf(
-                "Episode" to "rid=${episodeId.releaseId.id}, eid=${episodeId.id}",
-                "Pos" to posStr,
-                "Quality" to quality.value,
-                "Info" to info,
-                "Transport" to transport?.value,
-                "Duration" to duration?.toString(),
-                "HeaderProtocol" to headerProtocol,
-                "HeaderHost" to headerHost,
-                "Uri" to latestLoadUri?.toString(),
-            )
-            return params.joinToString { "${it.first}='${it.second}'" }
-        }
+        val headerRange: String?,
+        val headerLength: String?,
+        val headerCacheZone: String?,
+        val headerCacheStatus: String?,
+    )
+
+    fun ErrorData.message(): String {
+        val params = listOf(
+            episodeId.toEpisodeParam(),
+            position.toPositionParam(),
+            "Qlt" to quality.value,
+            "Drtn" to duration?.toString(),
+            "Ntwk" to networkType?.value,
+            "Info" to info,
+            "Tprt" to transport?.value,
+            "Bts" to bytes?.toString(),
+            "H-Lngt" to headerLength,
+            "H-Rng" to headerRange,
+            "H-Ptcl" to headerProtocol,
+            "H-C-St" to headerCacheStatus,
+            "H-C-Zn" to headerCacheZone,
+            "Uri" to latestLoadUri?.toString(),
+        )
+        return params.toParamsString()
+    }
+
+    private fun List<Pair<String, String?>>.toParamsString(): String {
+        return joinToString { "${it.first}='${it.second}'" }
+    }
+
+    private fun EpisodeId.toEpisodeParam(): Pair<String, String> {
+        return "Ep" to "rid=${releaseId.id}, eid=${id}"
+    }
+
+    private fun Long.toPositionParam(): Pair<String, String> {
+        return "Pos" to Date(coerceAtLeast(0L)).asTimeSecString()
+    }
+
+    enum class NetworkType(val value: String) {
+        Unknown("Unknown"),
+        Offline("Offline"),
+        WiFi("WiFi"),
+        Cell2g("Cell2g"),
+        Cell3g("Cell3g"),
+        Cell4g("Cell4g"),
+        Cell5gSA("Cell5gSA"),
+        Cell5gNSA("Cell5gNSA"),
+        CellUnknown("CellUnknown"),
+        Ethernet("Ethernet"),
+        Other("Other")
     }
 }

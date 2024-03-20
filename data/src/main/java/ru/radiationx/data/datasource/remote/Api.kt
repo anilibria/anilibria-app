@@ -8,7 +8,7 @@ import ru.radiationx.data.datasource.remote.address.ApiProxy
 object Api {
     private const val WIDGETS_SITE_URL = "https://www.anilibria.tv"
     private const val SITE_URL = "https://www.anilibria.tv"
-    private const val BASE_URL_IMAGES = "https://static.anilibria.tv/"
+    private const val BASE_URL_IMAGES = "https://www.anilibria.tv/"
     private const val BASE_URL = "https://www.anilibria.tv"
     private const val API_URL = "https://www.anilibria.tv/public/api/index.php"
     private val DEFAULT_IP_ADDRESSES = listOf<String>()

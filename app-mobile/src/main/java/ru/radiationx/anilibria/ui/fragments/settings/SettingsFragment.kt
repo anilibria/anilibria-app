@@ -93,6 +93,7 @@ class SettingsFragment : BaseSettingFragment() {
         }
 
         findPreference<Preference>("player_transport")?.apply {
+            isVisible = sharedBuildConfig.debug
             val savedTransport = appPreferences.playerTransport.value
             summary = getTransportTitle(savedTransport)
             setOnPreferenceClickListener { preference ->

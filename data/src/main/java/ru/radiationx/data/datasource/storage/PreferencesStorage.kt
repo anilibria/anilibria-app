@@ -1,6 +1,7 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.holders.AppPreference
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
@@ -13,6 +14,7 @@ import javax.inject.Inject
  */
 class PreferencesStorage @Inject constructor(
     private val sharedPreferences: SharedPreferences,
+    private val sharedBuildConfig: SharedBuildConfig,
 ) : PreferencesHolder {
 
     companion object {
@@ -84,10 +86,16 @@ class PreferencesStorage @Inject constructor(
         key = PLAYER_TRANSPORT_KEY,
         sharedPreferences = sharedPreferences,
         get = { key ->
-            getString(key, null)?.asPlayerTransport() ?: PlayerTransport.OKHTTP
+            if (sharedBuildConfig.debug) {
+                PlayerTransport.OKHTTP
+            } else {
+                getString(key, null)?.asPlayerTransport() ?: PlayerTransport.OKHTTP
+            }
         },
         set = { key, value ->
-            putString(key, value.asPrefString())
+            if (!sharedBuildConfig.debug) {
+                putString(key, value.asPrefString())
+            }
         }
     )
 

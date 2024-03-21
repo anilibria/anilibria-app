@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import androidx.transition.AutoTransition
@@ -155,7 +156,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
                     if (action.seek != null && action.seek != 0L && action.seek != binding.playerView.timelineState.value.position) {
                         binding.playerView.seekTo(action.seek)
                     }
-                    binding.playerView.play()
+                    // fix case when app hidden before "play" called
+                    if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                        binding.playerView.play()
+                    }
                 }
 
                 is PlayerAction.ShowSettings -> {

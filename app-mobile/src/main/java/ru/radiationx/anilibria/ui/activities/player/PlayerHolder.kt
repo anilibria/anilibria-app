@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.SimpleExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import ru.radiationx.data.entity.common.PlayerTransport
@@ -35,18 +34,26 @@ class PlayerHolder @Inject constructor(
             .setHandleAudioBecomingNoisy(true)
             .build()
 
-        val sessionId = UUID.randomUUID().toString()
-        val mediaSession = MediaSession.Builder(context, player).setId(sessionId).build()
-
-        _mediaSession = mediaSession
         _player = player
     }
 
-    fun destroy() {
+    fun startMediaSession(context: Context) {
+        stopMediaSession()
+        val sessionId = UUID.randomUUID().toString()
+        val mediaSession = MediaSession.Builder(context, getPlayer()).setId(sessionId).build()
+        _mediaSession = mediaSession
+    }
+
+    fun stopMediaSession() {
         _mediaSession?.release()
         _mediaSession = null
+    }
+
+    fun destroy() {
+        stopMediaSession()
         _player?.release()
         _player = null
+        selectedTransport = null
     }
 
     fun getPlayer(): ExoPlayer {

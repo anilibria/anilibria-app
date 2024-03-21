@@ -229,8 +229,14 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         handleEpisode(intent, null)
     }
 
+    override fun onStart() {
+        super.onStart()
+        player.startMediaSession(this)
+    }
+
     override fun onStop() {
         super.onStop()
+        player.stopMediaSession()
         binding.playerView.pause()
 
         val timeline = binding.playerView.timelineState.value.takeIf { it.duration > 0 }

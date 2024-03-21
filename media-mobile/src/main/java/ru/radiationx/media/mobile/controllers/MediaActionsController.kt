@@ -68,11 +68,11 @@ internal class MediaActionsController(
         mediaActionScale.isVisible = state
     }
 
-    fun setScaleFill(state: Boolean) {
-        val icRes = if (state) {
-            R.drawable.ic_media_aspect_ratio_24
-        } else {
-            R.drawable.ic_media_settings_overscan_24
+    fun setScaleType(type: OutputController.ScaleType) {
+        val icRes = when (type) {
+            OutputController.ScaleType.Fit -> R.drawable.ic_fit_to_screen
+            OutputController.ScaleType.Crop -> R.drawable.ic_media_aspect_ratio_24
+            OutputController.ScaleType.Fill -> R.drawable.ic_media_settings_overscan_24
         }
         mediaActionScale.setCompatDrawable(icRes)
     }

@@ -223,7 +223,7 @@ class PlayerView @JvmOverloads constructor(
         }
 
         mediaActionsController.onScaleClick = {
-            outputController.toggleFill()
+            outputController.toggleTarget()
         }
 
         mediaActionsController.onSettingsClick = {
@@ -280,7 +280,7 @@ class PlayerView @JvmOverloads constructor(
     private fun initOutput() {
         outputController.state.onEach {
             mediaActionsController.setScaleVisible(it.canApply)
-            mediaActionsController.setScaleFill(it.targetFill)
+            mediaActionsController.setScaleType(it.target)
         }.launchIn(coroutineScope)
     }
 

@@ -33,6 +33,8 @@ interface PreferencesHolder {
 
     val playerInactiveTimer: AppPreference<Boolean>
 
+    val playerAutoplay: AppPreference<Boolean>
+
     val notificationsAll: AppPreference<Boolean>
 
     val notificationsService: AppPreference<Boolean>

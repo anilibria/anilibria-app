@@ -60,6 +60,8 @@ class PlayerViewModel(
 
     val inactiveTimerEnabled: StateFlow<Boolean> = preferencesHolder.playerInactiveTimer
 
+    val autoplayEnabled: StateFlow<Boolean> = preferencesHolder.playerAutoplay
+
     private val _episodeId = sharedPlayerData.episodeId
     val episodeId = _episodeId.asStateFlow()
 
@@ -120,7 +122,8 @@ class PlayerViewModel(
                 availableQualities = episode.qualityInfo.available,
                 skipsEnabled = preferencesHolder.playerSkips.value,
                 skipsTimerEnabled = preferencesHolder.playerSkipsTimer.value,
-                inactiveTimerEnabled = preferencesHolder.playerInactiveTimer.value
+                inactiveTimerEnabled = preferencesHolder.playerInactiveTimer.value,
+                autoplayEnabled = preferencesHolder.playerAutoplay.value
             )
             _actions.emit(PlayerAction.ShowSettings(settingsState))
         }
@@ -150,6 +153,10 @@ class PlayerViewModel(
 
     fun onInactiveTimerEnabledChange(state: Boolean) {
         preferencesHolder.playerInactiveTimer.value = state
+    }
+
+    fun onAutoplayEnabledChange(state: Boolean) {
+        preferencesHolder.playerAutoplay.value = state
     }
 
     @OptIn(DelicateCoroutinesApi::class)

@@ -26,6 +26,7 @@ class PreferencesStorage @Inject constructor(
         private const val PLAYER_SKIPS_KEY = "player_skips"
         private const val PLAYER_SKIPS_TIMER_KEY = "player_skips_timer"
         private const val PLAYER_INACTIVE_TIMER_KEY = "player_inactive_timer"
+        private const val PLAYER_AUTO_PLAY_KEY = "player_auto_play"
         private const val NOTIFICATIONS_ALL_KEY = "notifications.all"
         private const val NOTIFICATIONS_SERVICE_KEY = "notifications.service"
 
@@ -139,6 +140,17 @@ class PreferencesStorage @Inject constructor(
         sharedPreferences = sharedPreferences,
         get = { key ->
             getBoolean(key, false)
+        },
+        set = { key, value ->
+            putBoolean(key, value)
+        }
+    )
+
+    override val playerAutoplay: AppPreference<Boolean> = AppPreference(
+        key = PLAYER_AUTO_PLAY_KEY,
+        sharedPreferences = sharedPreferences,
+        get = { key ->
+            getBoolean(key, true)
         },
         set = { key, value ->
             putBoolean(key, value)

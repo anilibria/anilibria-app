@@ -196,6 +196,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             binding.playerView.setSkipsTimerEnabled(it)
         }.launchIn(lifecycleScope)
 
+        viewModel.autoplayEnabled.onEach {
+            player.getPlayer().pauseAtEndOfMediaItems = !it
+        }.launchIn(lifecycleScope)
+
         binding.playerView.timelineState
             .sample(10000)
             .filter { it.duration > 0 }
@@ -290,6 +294,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
         dialogController.onInactiveTimerSelected = {
             viewModel.onInactiveTimerEnabledChange(it)
+        }
+
+        dialogController.onAutoplaytSelected = {
+            viewModel.onAutoplayEnabledChange(it)
         }
     }
 

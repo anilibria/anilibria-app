@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.SimpleExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import ru.radiationx.data.entity.common.PlayerTransport
@@ -31,6 +32,7 @@ class PlayerHolder @Inject constructor(
         }
         val player = ExoPlayer.Builder(context.applicationContext)
             .setMediaSourceFactory(mediaSourceFactory)
+            .setHandleAudioBecomingNoisy(true)
             .build()
 
         val sessionId = UUID.randomUUID().toString()

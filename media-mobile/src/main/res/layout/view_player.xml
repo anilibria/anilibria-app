@@ -51,6 +51,30 @@
             android:layout_height="match_parent"
             android:background="@drawable/bg_media_scale_stroke" />
 
+        <FrameLayout
+            android:id="@+id/mediaLockContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/mediaButtonUnlock"
+                style="?materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:text="Разблокировать"
+                android:textAllCaps="false"
+                android:textColor="?colorOnSurface"
+                android:visibility="gone"
+                app:backgroundTint="#6000"
+                app:icon="@drawable/ic_lock_open_outline"
+                app:iconTint="?colorOnSurface"
+                app:strokeColor="#6fff"
+                tools:visibility="visible" />
+        </FrameLayout>
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/mediaButtonsContainer"
             android:layout_width="match_parent"
@@ -144,7 +168,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="Обновить" />
+                android:text="Обновить"
+                android:textColor="?colorOnSurface" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -243,6 +268,14 @@
                         android:textColor="?colorOnSurface"
                         android:textSize="14sp"
                         tools:text="10:10:10 / 10:10:10" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/mediaActionLock"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?actionBarItemBackground"
+                        app:srcCompat="@drawable/ic_lock_outline"
+                        app:tint="?colorOnSurface" />
 
                     <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/mediaActionPip"

@@ -11,6 +11,7 @@ import ru.radiationx.shared.ktx.android.setCompatDrawable
 internal class MediaActionsController(
     private val coroutineScope: CoroutineScope,
     private val playerFlow: PlayerFlow,
+    private val mediaActionLock: ImageButton,
     private val mediaActionPip: ImageButton,
     private val mediaActionScale: ImageButton,
     private val mediaActionSettings: ImageButton,
@@ -19,12 +20,18 @@ internal class MediaActionsController(
 
     var onAnyTap: (() -> Unit)? = null
 
+    var onLockClick: (() -> Unit)? = null
     var onPipClick: (() -> Unit)? = null
     var onScaleClick: (() -> Unit)? = null
     var onSettingsClick: (() -> Unit)? = null
     var onFullscreenClick: (() -> Unit)? = null
 
     init {
+        mediaActionLock.setOnClickListener {
+            onAnyTap?.invoke()
+            onLockClick?.invoke()
+        }
+
         mediaActionPip.setOnClickListener {
             onAnyTap?.invoke()
             onPipClick?.invoke()

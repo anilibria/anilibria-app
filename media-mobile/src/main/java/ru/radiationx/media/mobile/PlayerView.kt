@@ -14,12 +14,14 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.media.mobile.controllers.ErrorController
+import ru.radiationx.media.mobile.controllers.LockController
 import ru.radiationx.media.mobile.controllers.MediaActionsController
 import ru.radiationx.media.mobile.controllers.MediaButtonsController
 import ru.radiationx.media.mobile.controllers.OutputController
@@ -68,10 +70,18 @@ class PlayerView @JvmOverloads constructor(
     private val mediaActionsController = MediaActionsController(
         coroutineScope = coroutineScope,
         playerFlow = playerFlow,
+        mediaActionLock = binding.mediaActionLock,
         mediaActionPip = binding.mediaActionPip,
         mediaActionScale = binding.mediaActionScale,
         mediaActionSettings = binding.mediaActionSettings,
         mediaActionFullscreen = binding.mediaActionFullscreen,
+    )
+
+    private val lockController = LockController(
+        coroutineScope = coroutineScope,
+        playerFlow = playerFlow,
+        container = binding.mediaLockContainer,
+        button = binding.mediaButtonUnlock
     )
 
     private val timelineController = TimelineController(
@@ -111,6 +121,9 @@ class PlayerView @JvmOverloads constructor(
 
     private val _uiShowState = MutableStateFlow(false)
     val uiShowState = _uiShowState.asStateFlow()
+
+    private val _uiLockState = MutableStateFlow(false)
+    val uiLockState = _uiLockState.asStateFlow()
 
     val outputState = outputController.outputState
     val playerState = playerFlow.playerState
@@ -204,6 +217,15 @@ class PlayerView @JvmOverloads constructor(
         skipsController.setTimerEnabled(state)
     }
 
+    fun onInteraction() {
+        if (uiLockState.value) {
+            coroutineScope.launch {
+                delay(300)
+                lockController.onInteraction()
+            }
+        }
+    }
+
     private fun attachControllers() {
         holder.addListener(playerFlow)
         holder.addListener(outputController)
@@ -214,17 +236,29 @@ class PlayerView @JvmOverloads constructor(
         holder.addListener(skipsController)
         holder.addListener(errorController)
         holder.addListener(speedController)
+        holder.addListener(lockController)
     }
 
     private fun initUi() {
-        uiVisbilityController.state.map { it.mainVisible }.onEach {
-            _uiShowState.value = it
+        uiVisbilityController.state.onEach {
+            _uiShowState.value = it.mainVisible
+            _uiLockState.value = it.lockVisible
         }.launchIn(coroutineScope)
+
+        lockController.onUnlockClick = {
+            uiVisbilityController.updateLock(false)
+            uiVisbilityController.showMain()
+        }
     }
 
     private fun initMediaActions() {
         mediaActionsController.onAnyTap = {
             uiVisbilityController.showMain()
+        }
+
+        mediaActionsController.onLockClick = {
+            uiVisbilityController.updateLock(true)
+            lockController.onInteraction()
         }
 
         mediaActionsController.onPipClick = {
@@ -304,6 +338,11 @@ class PlayerView @JvmOverloads constructor(
                 left = footerInsets.left,
                 top = footerInsets.top,
                 right = footerInsets.right,
+                bottom = footerInsets.bottom
+            )
+
+            binding.mediaLockContainer.updatePadding(
+                top = footerInsets.top,
                 bottom = footerInsets.bottom
             )
 

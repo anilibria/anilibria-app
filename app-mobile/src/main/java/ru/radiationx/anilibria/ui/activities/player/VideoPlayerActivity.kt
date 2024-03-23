@@ -245,6 +245,12 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         handleEpisode(intent, null)
     }
 
+    override fun onBackPressed() {
+        if (!binding.playerView.uiLockState.value) {
+            super.onBackPressed()
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         player.startMediaSession(this)
@@ -279,6 +285,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
     override fun onUserInteraction() {
         super.onUserInteraction()
         keepScreenOnController.onUserInteraction()
+        binding.playerView.onInteraction()
     }
 
     private fun handleEpisode(intent: Intent, bundle: Bundle?) {

@@ -44,7 +44,7 @@ internal class UiVisbilityController(
             binding.mediaScrim,
             binding.mediaSkipContainer,
             binding.mediaErrorContainer,
-            binding.mediaScaleStroke
+            binding.mediaScaleStroke,
         )
         val transitionHelper = TransitionHelper(binding.mediaOverlay, targetViews)
 
@@ -58,16 +58,18 @@ internal class UiVisbilityController(
             val mainVisible =
                 (internalState.main || internalState.slider || hasError) && !internalState.liveScale
             val hasPip = internalState.pip
+            val hasLock = internalState.lock
 
             _state.value = UiVisibilityState(
-                mainVisible = !hasPip && mainVisible,
-                controlsVisible = !hasPip && !seekerVisible && mainVisible && !hasError,
-                seekerVisible = !hasPip && seekerVisible,
+                mainVisible = !hasPip && !hasLock && mainVisible,
+                controlsVisible = !hasPip && !hasLock && !seekerVisible && mainVisible && !hasError,
+                seekerVisible = !hasPip && !hasLock && seekerVisible,
                 loadingVisible = playerState.isBlockingLoading,
-                skipVisible = !hasPip && internalState.skip && !internalState.liveScale,
+                skipVisible = !hasPip && !hasLock && internalState.skip && !internalState.liveScale,
                 errorVisible = !hasPip && !seekerVisible && hasError,
                 errorInPipVisible = hasPip && hasError,
-                liveScaleVisible = !hasPip && internalState.liveScale,
+                liveScaleVisible = !hasPip && !hasLock && internalState.liveScale,
+                lockVisible = hasLock,
                 needsTransition = !hasPip
             )
         }.launchIn(coroutineScope)
@@ -87,6 +89,7 @@ internal class UiVisbilityController(
             binding.mediaErrorContainer.isVisible = it.errorVisible
             binding.mediaErrorInPip.isVisible = it.errorInPipVisible
             binding.mediaScaleStroke.isVisible = it.liveScaleVisible
+            binding.mediaLockContainer.isVisible = it.lockVisible
         }.launchIn(coroutineScope)
     }
 
@@ -131,6 +134,10 @@ internal class UiVisbilityController(
         _internalState.update { it.copy(pip = active) }
     }
 
+    fun updateLock(active: Boolean) {
+        _internalState.update { it.copy(lock = active) }
+    }
+
     private fun startDelayedHideControls() {
         tapJob?.cancel()
         setMainState(true)
@@ -158,6 +165,7 @@ internal class UiVisbilityController(
         val skip: Boolean = false,
         val liveScale: Boolean = false,
         val pip: Boolean = false,
+        val lock: Boolean = false,
     )
 
     internal data class UiVisibilityState(
@@ -169,6 +177,7 @@ internal class UiVisbilityController(
         val errorVisible: Boolean = false,
         val errorInPipVisible: Boolean = false,
         val liveScaleVisible: Boolean = false,
+        val lockVisible: Boolean = false,
         val needsTransition: Boolean = false,
     )
 }

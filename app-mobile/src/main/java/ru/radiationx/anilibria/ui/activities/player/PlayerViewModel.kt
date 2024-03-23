@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -66,6 +67,7 @@ class PlayerViewModel(
     val episodeId = _episodeId.asStateFlow()
 
     private val _dataState = sharedPlayerData.dataState
+    private var _dataJob: Job? = null
 
     private val _loadingState = MutableStateFlow(LoadingState<PlayerDataState>())
     val loadingState = _loadingState.asStateFlow()
@@ -103,8 +105,6 @@ class PlayerViewModel(
     }
 
     fun initialPlayEpisode(episodeId: EpisodeId) {
-        _dataState.value = LoadingState()
-        _episodeId.value = episodeId
         loadData(episodeId)
     }
 
@@ -196,12 +196,16 @@ class PlayerViewModel(
     }
 
     private fun loadData(episodeId: EpisodeId) {
-        viewModelScope.launch {
+        _dataJob?.cancel()
+        _dataJob = null
+        _dataState.value = LoadingState()
+        _episodeId.value = episodeId
+        _dataJob = viewModelScope.launch {
             _dataState.update { LoadingState(loading = true) }
             coRunCatching {
                 loadAllData(episodeId)
-            }.onSuccess { release ->
-                _dataState.update { it.copy(data = PlayerData(release)) }
+            }.onSuccess { releases ->
+                _dataState.update { it.copy(data = PlayerData(releases)) }
                 playEpisode(episodeId)
             }.onFailure { error ->
                 _dataState.update { it.copy(error = error) }

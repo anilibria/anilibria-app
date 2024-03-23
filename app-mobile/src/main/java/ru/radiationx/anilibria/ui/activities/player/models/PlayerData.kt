@@ -11,7 +11,7 @@ data class PlayerData(
 
     fun getRelease(releaseId: ReleaseId): PlayerRelease {
         return requireNotNull(releases.find { it.id == releaseId }) {
-            "No loaded release for id $releaseId"
+            "No loaded release for id ${releaseId.id} in ${releases.map { it.id.id }}"
         }
     }
 

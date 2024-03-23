@@ -99,6 +99,7 @@ class PlayerView @JvmOverloads constructor(
     private val errorController = ErrorController(
         coroutineScope = coroutineScope,
         playerFlow = playerFlow,
+        errorTitleText = binding.mediaErrorTitle,
         errorMessageText = binding.mediaErrorMessage,
         errorButtonAction = binding.mediaErrorAction
     )

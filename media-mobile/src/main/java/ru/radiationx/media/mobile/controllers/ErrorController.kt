@@ -14,6 +14,7 @@ import ru.radiationx.media.mobile.holder.PlayerAttachListener
 class ErrorController(
     private val coroutineScope: CoroutineScope,
     private val playerFlow: PlayerFlow,
+    private val errorTitleText: TextView,
     private val errorMessageText: TextView,
     private val errorButtonAction: Button,
 ) : PlayerAttachListener {
@@ -23,10 +24,13 @@ class ErrorController(
             playerFlow.play()
         }
         playerFlow.playerState
-            .map { it.errorMessage }
+            .map { it.error }
             .filterNotNull()
             .distinctUntilChanged()
-            .onEach { errorMessageText.text = it }
+            .onEach {
+                errorTitleText.text = it.title
+                errorMessageText.text = it.message
+            }
             .launchIn(coroutineScope)
     }
 }

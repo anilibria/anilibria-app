@@ -6,7 +6,7 @@ data class PlayerState(
     val isLoading: Boolean = false,
     val playbackState: PlaybackState = PlaybackState.IDLE,
     val videoSize: VideoSizeState = VideoSizeState(),
-    val errorMessage: String? = null,
+    val error: PlayerErrorState? = null,
     val commands: PlayerCommandsState = PlayerCommandsState(),
 ) {
     val isBlockingLoading = !isPlaying && isLoading && playbackState == PlaybackState.BUFFERING

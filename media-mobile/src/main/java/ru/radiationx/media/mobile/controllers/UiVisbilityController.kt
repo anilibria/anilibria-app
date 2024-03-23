@@ -52,7 +52,7 @@ internal class UiVisbilityController(
             _internalState,
             playerFlow.playerState
         ) { internalState, playerState ->
-            val hasError = playerState.errorMessage != null
+            val hasError = playerState.error != null
             val seekerVisible =
                 (internalState.scrollSeeker || internalState.doubleTapSeeker || internalState.longTapSeeker) && !internalState.liveScale
             val mainVisible =

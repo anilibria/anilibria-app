@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.TextView
 import androidx.core.view.GestureDetectorCompat
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +25,7 @@ internal class GestureController(
     private val mediaAspectRatio: View,
 ) : PlayerAttachListener {
 
-    private val gestureListener = GestureListener()
+    private val gestureListener = GestureListener(ViewConfiguration.get(gestureView.context))
     private val gestureDetector = GestureDetectorCompat(gestureView.context, gestureListener)
 
     // todo use for youtube scale gestures
@@ -102,6 +103,7 @@ internal class GestureController(
                     scrollSeeker.onTouchEnd(event.downTime)
                     scrollSeeker.setIgnore(null)
                     longTapSeeker.onTouchEnd()
+                    gestureListener.onTouchEnd()
                 }
             }
             result

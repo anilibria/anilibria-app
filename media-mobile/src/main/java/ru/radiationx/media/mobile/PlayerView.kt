@@ -158,6 +158,14 @@ class PlayerView @JvmOverloads constructor(
         playerFlow.pause()
     }
 
+    fun prev() {
+        playerFlow.prev()
+    }
+
+    fun next() {
+        playerFlow.next()
+    }
+
     fun handlePlayClick() {
         mediaButtonsController.handlePlayClick()
     }

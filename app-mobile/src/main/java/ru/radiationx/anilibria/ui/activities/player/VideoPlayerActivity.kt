@@ -89,6 +89,18 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         icRes = R.drawable.ic_media_replay_24
     )
 
+    private val prevAction = PictureInPictureController.Action(
+        code = 4,
+        title = "Предыдущая",
+        icRes = R.drawable.ic_media_skip_previous_24
+    )
+
+    private val nextAction = PictureInPictureController.Action(
+        code = 5,
+        title = "Слудующая",
+        icRes = R.drawable.ic_media_skip_next_24
+    )
+
     private val pipController by lazy { PictureInPictureController(this) }
 
     private val fullScreenController by lazy { FullScreenController(this) }
@@ -415,14 +427,20 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             }
         }.launchIn(lifecycleScope)
 
-        binding.playerView.playButtonState.onEach { playButtonState ->
-            val actions = buildList {
+        combine(
+            binding.playerView.playerState.map { it.commands }.distinctUntilChanged(),
+            binding.playerView.playButtonState
+        ) { commands, playButtonState ->
+            buildList {
+                add(prevAction.copy(isEnabled = commands.seekToPreviousMediaItem))
                 when (playButtonState) {
                     PlayButtonState.PLAY -> add(playAction)
                     PlayButtonState.PAUSE -> add(pauseAction)
                     PlayButtonState.REPLAY -> add(replayAction)
                 }
+                add(nextAction.copy(isEnabled = commands.seekToNextMediaItem))
             }
+        }.onEach { actions ->
             pipController.updateParams {
                 it.copy(actions = actions)
             }
@@ -438,8 +456,18 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         }
 
         pipController.actionsListener = {
-            when (it) {
-                playAction, pauseAction, replayAction -> binding.playerView.handlePlayClick()
+            when (it.code) {
+                prevAction.code -> {
+                    binding.playerView.prev()
+                }
+
+                nextAction.code -> {
+                    binding.playerView.next()
+                }
+
+                playAction.code, pauseAction.code, replayAction.code -> {
+                    binding.playerView.handlePlayClick()
+                }
             }
         }
     }

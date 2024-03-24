@@ -66,8 +66,8 @@ class HistoryFragment :
     private var searchView: SearchMenuItem? = null
 
     private val adapter = ReleasesAdapter(
-        loadMoreListener = { },
-        loadRetryListener = {},
+        loadMoreListener = { viewModel.loadMore() },
+        loadRetryListener = { viewModel.loadMore() },
         importListener = {
             importLauncher.launch("application/json")
         },

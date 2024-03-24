@@ -41,6 +41,7 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
+import ru.radiationx.anilibria.ui.fragments.TabResetter
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.DimensionsProvider
@@ -374,6 +375,15 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
                 }
             }
             viewModel.selectTab(tab.screen.screenKey)
+        }
+
+        override fun onTabLongClick(tab: Tab) {
+            if (viewModel.state.value.selectedTab == tab.screen.screenKey) {
+                val fragment = supportFragmentManager.findFragmentByTag(tab.screen.screenKey)
+                if (fragment is TabResetter) {
+                    fragment.resetTab()
+                }
+            }
         }
     }
 

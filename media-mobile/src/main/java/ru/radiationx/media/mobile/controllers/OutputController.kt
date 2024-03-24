@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import ru.radiationx.media.mobile.PlayerFlow
-import ru.radiationx.media.mobile.R
 import ru.radiationx.media.mobile.holder.PlayerAttachListener
 import ru.radiationx.media.mobile.models.VideoOutputState
 import ru.radiationx.media.mobile.views.AspectRatioFrameLayout
@@ -26,6 +25,10 @@ internal class OutputController(
     private val mediaAspectRatio: AspectRatioFrameLayout,
     private val scaleContainer: FrameLayout,
 ) : PlayerAttachListener {
+
+    companion object {
+        private val fitScale = Scale(1f, 1f)
+    }
 
     private val _state = MutableStateFlow(ScaleState())
     val state = _state.asStateFlow()
@@ -53,13 +56,8 @@ internal class OutputController(
         }
 
         _state.filter { !it.isLiveScale }.onEach { state ->
-            val isFillScale = state.canApply && state.targetFill
-            val scale = if (isFillScale) {
-                getFillScale()
-            } else {
-                1f
-            }
-            mediaAspectRatio.animate().scaleX(scale).scaleY(scale).start()
+            val scale = state.getScaleFor(state.target)
+            mediaAspectRatio.animate().scaleX(scale.x).scaleY(scale.y).start()
         }.launchIn(coroutineScope)
     }
 
@@ -78,31 +76,48 @@ internal class OutputController(
         }
 
         val internalState = _state.value
-        val layoutScale = internalState.applyibleScale
-        val coercedScale = scale.coerceIn(0.95f, layoutScale * 1.05f)
-        val layoutScaleDiff = layoutScale - 1f
-
-        _state.update {
-            val targetFill = if (internalState.canApply) {
-                coercedScale >= (1f + layoutScaleDiff / 2)
-            } else {
-                it.targetFill
-            }
-            it.copy(isLiveScale = true, targetFill = targetFill)
+        val nextTarget = when (internalState.target) {
+            ScaleType.Fit -> ScaleType.Crop
+            ScaleType.Crop -> ScaleType.Crop
+            ScaleType.Fill -> ScaleType.Fill
         }
-        mediaAspectRatio.scaleX = coercedScale
-        mediaAspectRatio.scaleY = coercedScale
+        val layoutScale = internalState.getScaleFor(nextTarget)
+
+        val coercedScale = Scale(
+            scale.coerceIn(0.95f, layoutScale.x * 1.05f),
+            scale.coerceIn(0.95f, layoutScale.y * 1.05f)
+        )
+        val layoutScaleDiff = Scale(
+            layoutScale.x - 1f,
+            layoutScale.y - 1f
+        )
+        val newTarget = if (internalState.canApply) {
+            if (coercedScale.x >= (1f + layoutScaleDiff.x / 2) || coercedScale.y >= (1f + layoutScaleDiff.y / 2)) {
+                nextTarget
+            } else {
+                ScaleType.Fit
+            }
+        } else {
+            internalState.target
+        }
+        _state.update {
+            it.copy(isLiveScale = true, target = newTarget)
+        }
+        mediaAspectRatio.scaleX = coercedScale.x
+        mediaAspectRatio.scaleY = coercedScale.y
     }
 
-    fun toggleFill() {
-        _state.update { it.copy(targetFill = !it.targetFill) }
+    fun toggleTarget() {
+        _state.update {
+            it.copy(target = it.nextTarget())
+        }
     }
 
     fun updatePip(active: Boolean) {
         _state.update { it.copy(pip = active) }
     }
 
-    private fun getFillScale(): Float {
+    private fun getFillScale(): Scale {
         val videoWidth = mediaAspectRatio.width.toFloat()
         val videoHeight = mediaAspectRatio.height.toFloat()
 
@@ -112,17 +127,48 @@ internal class OutputController(
         val widthPercent = scaleWidth / videoWidth
         val heightPercet = scaleHeight / videoHeight
 
-        return maxOf(widthPercent, heightPercet).coerceAtLeast(1f)
+        return Scale(widthPercent, heightPercet)
     }
 
     data class ScaleState(
-        val fillScale: Float = 1f,
+        val fillScale: Scale = fitScale,
         val pip: Boolean = false,
-        val targetFill: Boolean = false,
+        val target: ScaleType = ScaleType.Fit,
         val isLiveScale: Boolean = false,
     ) {
-        private val canFill = fillScale <= 1.5
-        val applyibleScale = if (canFill) fillScale else 1f
+        private val canFill = fillScale.maxCorced <= 1.5
         val canApply = canFill && !pip
+
+        fun getScaleFor(type: ScaleType): Scale {
+            if (!canApply) {
+                return fitScale
+            }
+            return when (type) {
+                ScaleType.Fit -> fitScale
+                ScaleType.Crop -> Scale(fillScale.maxCorced, fillScale.maxCorced)
+                ScaleType.Fill -> fillScale
+            }
+        }
+
+        fun nextTarget(): ScaleType {
+            return when (target) {
+                ScaleType.Fit -> ScaleType.Crop
+                ScaleType.Crop -> ScaleType.Fill
+                ScaleType.Fill -> ScaleType.Fit
+            }
+        }
+    }
+
+    data class Scale(
+        val x: Float,
+        val y: Float,
+    ) {
+        val maxCorced: Float = maxOf(x, y).coerceAtLeast(1f)
+    }
+
+    enum class ScaleType {
+        Fit,
+        Crop,
+        Fill
     }
 }

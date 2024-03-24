@@ -1,7 +1,11 @@
 package ru.radiationx.anilibria.ui.activities.player
 
+import android.content.Context
 import android.net.Uri
+import android.util.Log
+import androidx.media3.common.C
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.util.NetworkTypeObserver
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.LoadEventInfo
@@ -10,7 +14,9 @@ import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
+import ru.radiationx.data.analytics.features.mapper.toAnalyticsTransport
 import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.entity.common.PlayerTransport
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import timber.log.Timber
 import java.io.IOException
@@ -19,6 +25,7 @@ import javax.inject.Inject
 
 
 class PlayerAnalyticsListener @Inject constructor(
+    private val context: Context,
     private val playerAnalytics: PlayerAnalytics,
     private val buildConfig: SharedBuildConfig,
     private val sharedPlayerData: SharedPlayerData,
@@ -33,6 +40,8 @@ class PlayerAnalyticsListener @Inject constructor(
 
     private var latestLoadData: LoadData? = null
 
+    var transport: PlayerTransport? = null
+
     @UnstableApi
     override fun onLoadError(
         eventTime: AnalyticsListener.EventTime,
@@ -43,6 +52,16 @@ class PlayerAnalyticsListener @Inject constructor(
     ) {
         latestLoadData = loadEventInfo.toLoadData()
         Timber.e(error, "onLoadError")
+    }
+
+    @UnstableApi
+    override fun onLoadStarted(
+        eventTime: AnalyticsListener.EventTime,
+        loadEventInfo: LoadEventInfo,
+        mediaLoadData: MediaLoadData,
+    ) {
+        latestLoadData = loadEventInfo.toLoadData()
+        super.onLoadStarted(eventTime, loadEventInfo, mediaLoadData)
     }
 
     @UnstableApi
@@ -84,6 +103,7 @@ class PlayerAnalyticsListener @Inject constructor(
         loadEventInfo: LoadEventInfo,
         mediaLoadData: MediaLoadData,
     ) {
+        latestLoadData = loadEventInfo.toLoadData()
         if (!buildConfig.debug) {
             return
         }
@@ -115,25 +135,72 @@ class PlayerAnalyticsListener @Inject constructor(
         position = eventTime.currentPlaybackPositionMs,
         quality = preferences.playerQuality.value.toAnalyticsQuality(),
         info = info,
+        transport = transport?.toAnalyticsTransport(),
+        duration = latestLoadData?.duration,
+        bytes = latestLoadData?.bytes,
+        networkType = getNetworkType(),
         latestLoadUri = latestLoadData?.uri,
         headerProtocol = latestLoadData?.protocol,
-        headerHost = latestLoadData?.hostName
+        headerHost = latestLoadData?.hostName,
+        headerRange = latestLoadData?.range,
+        headerLength = latestLoadData?.length,
+        headerCacheZone = latestLoadData?.cacheZone,
+        headerCacheStatus = latestLoadData?.cacheStatus
     )
 
     @UnstableApi
     private fun LoadEventInfo.toLoadData() = LoadData(
         uri = uri,
-        protocol = responseHeaders.let {
-            (it["x-server-proto"] ?: it["X-Server-Proto"])?.firstOrNull()
-        },
-        hostName = responseHeaders.let {
-            (it["front-hostname"] ?: it["Front-Hostname"])?.firstOrNull()
-        }
+        protocol = getHeader("X-Server-Proto"),
+        hostName = getHeader("Front-Hostname"),
+        range = getHeader("Content-Range"),
+        length = getHeader("Content-Length"),
+        cacheZone = getHeader("X-Disk-Cache-Zone"),
+        cacheStatus = getHeader("X-Cache-Status"),
+        duration = loadDurationMs,
+        bytes = bytesLoaded
     )
+
+    @UnstableApi
+    private fun LoadEventInfo.getHeader(name: String): String? = responseHeaders.let {
+        (it[name.lowercase()] ?: it[name])?.firstOrNull()
+    }
+
+    @UnstableApi
+    fun Int.toNetworkType(): PlayerAnalytics.NetworkType? = when (this) {
+        C.NETWORK_TYPE_UNKNOWN -> PlayerAnalytics.NetworkType.Unknown
+        C.NETWORK_TYPE_OFFLINE -> PlayerAnalytics.NetworkType.Offline
+        C.NETWORK_TYPE_WIFI -> PlayerAnalytics.NetworkType.WiFi
+        C.NETWORK_TYPE_2G -> PlayerAnalytics.NetworkType.Cell2g
+        C.NETWORK_TYPE_3G -> PlayerAnalytics.NetworkType.Cell3g
+        C.NETWORK_TYPE_4G -> PlayerAnalytics.NetworkType.Cell4g
+        C.NETWORK_TYPE_5G_SA -> PlayerAnalytics.NetworkType.Cell5gSA
+        C.NETWORK_TYPE_5G_NSA -> PlayerAnalytics.NetworkType.Cell5gNSA
+        C.NETWORK_TYPE_CELLULAR_UNKNOWN -> PlayerAnalytics.NetworkType.CellUnknown
+        C.NETWORK_TYPE_ETHERNET -> PlayerAnalytics.NetworkType.Ethernet
+        C.NETWORK_TYPE_OTHER -> PlayerAnalytics.NetworkType.Other
+        else -> null
+    }
+
+    @UnstableApi
+    private fun getNetworkType(): PlayerAnalytics.NetworkType? {
+        return try {
+            NetworkTypeObserver.getInstance(context).networkType.toNetworkType()
+        } catch (ex: Exception) {
+            Timber.e(ex)
+            null
+        }
+    }
 
     private data class LoadData(
         val uri: Uri,
         val protocol: String?,
         val hostName: String?,
+        val range: String?,
+        val length: String?,
+        val cacheZone: String?,
+        val cacheStatus: String?,
+        val duration: Long,
+        val bytes: Long,
     )
 }

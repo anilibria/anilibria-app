@@ -24,7 +24,7 @@ class BottomTabDelegate(private val clickListener: Listener) :
 
     class ViewHolder(
         itemView: View,
-        private val clickListener: Listener
+        private val clickListener: Listener,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemBottomTabBinding>()
@@ -34,10 +34,15 @@ class BottomTabDelegate(private val clickListener: Listener) :
             binding.tabIcon.setCompatDrawable(item.icon)
             binding.tabIcon.setTintColorAttr(colorRes)
             binding.root.setOnClickListener { clickListener.onTabClick(item) }
+            binding.root.setOnLongClickListener {
+                clickListener.onTabLongClick(item)
+                true
+            }
         }
     }
 
     interface Listener {
         fun onTabClick(tab: MainActivity.Tab)
+        fun onTabLongClick(tab: MainActivity.Tab)
     }
 }

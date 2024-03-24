@@ -1,9 +1,11 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.holders.AppPreference
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.entity.common.PlayerTransport
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -12,6 +14,7 @@ import javax.inject.Inject
  */
 class PreferencesStorage @Inject constructor(
     private val sharedPreferences: SharedPreferences,
+    private val sharedBuildConfig: SharedBuildConfig,
 ) : PreferencesHolder {
 
     companion object {
@@ -20,10 +23,12 @@ class PreferencesStorage @Inject constructor(
         private const val SEARCH_REMIND_KEY = "search_remind"
         private const val EPISODES_IS_REVERSE_KEY = "episodes_is_reverse"
         private const val PLAYER_QUALITY_KEY = "player_quality"
+        private const val PLAYER_TRANSPORT_KEY = "player_transport"
         private const val PLAY_SPEED_KEY = "play_speed"
         private const val PLAYER_SKIPS_KEY = "player_skips"
         private const val PLAYER_SKIPS_TIMER_KEY = "player_skips_timer"
         private const val PLAYER_INACTIVE_TIMER_KEY = "player_inactive_timer"
+        private const val PLAYER_AUTO_PLAY_KEY = "player_auto_play"
         private const val NOTIFICATIONS_ALL_KEY = "notifications.all"
         private const val NOTIFICATIONS_SERVICE_KEY = "notifications.service"
 
@@ -74,6 +79,23 @@ class PreferencesStorage @Inject constructor(
         },
         set = { key, value ->
             putBoolean(key, value)
+        }
+    )
+
+    override val playerTransport: AppPreference<PlayerTransport> = AppPreference(
+        key = PLAYER_TRANSPORT_KEY,
+        sharedPreferences = sharedPreferences,
+        get = { key ->
+            if (sharedBuildConfig.debug) {
+                PlayerTransport.OKHTTP
+            } else {
+                getString(key, null)?.asPlayerTransport() ?: PlayerTransport.OKHTTP
+            }
+        },
+        set = { key, value ->
+            if (!sharedBuildConfig.debug) {
+                putString(key, value.asPrefString())
+            }
         }
     )
 
@@ -132,6 +154,17 @@ class PreferencesStorage @Inject constructor(
         }
     )
 
+    override val playerAutoplay: AppPreference<Boolean> = AppPreference(
+        key = PLAYER_AUTO_PLAY_KEY,
+        sharedPreferences = sharedPreferences,
+        get = { key ->
+            getBoolean(key, true)
+        },
+        set = { key, value ->
+            putBoolean(key, value)
+        }
+    )
+
     override val notificationsAll: AppPreference<Boolean> = AppPreference(
         key = NOTIFICATIONS_ALL_KEY,
         sharedPreferences = sharedPreferences,
@@ -168,6 +201,23 @@ class PreferencesStorage @Inject constructor(
             PlayerQuality.SD -> "sd"
             PlayerQuality.HD -> "hd"
             PlayerQuality.FULLHD -> "fullhd"
+        }
+    }
+
+    private fun String.asPlayerTransport(): PlayerTransport? {
+        return when (this) {
+            "system" -> PlayerTransport.SYSTEM
+            "okhttp" -> PlayerTransport.OKHTTP
+            "cronet" -> PlayerTransport.CRONET
+            else -> null
+        }
+    }
+
+    private fun PlayerTransport.asPrefString(): String {
+        return when (this) {
+            PlayerTransport.SYSTEM -> "system"
+            PlayerTransport.OKHTTP -> "okhttp"
+            PlayerTransport.CRONET -> "cronet"
         }
     }
 }

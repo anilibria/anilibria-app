@@ -173,10 +173,14 @@ class PictureInPictureController(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun Action.toRemoteAction(): RemoteAction {
+        val actionEnabled = isEnabled
         val icon = Icon.createWithResource(activity, icRes)
         val intent = Intent(ACTION_REMOTE_CONTROL).putExtra(EXTRA_REMOTE_CONTROL, code)
         val pendingIntent = PendingIntent.getBroadcast(activity, code, intent, immutableFlag())
-        return RemoteAction(icon, title, title, pendingIntent)
+        val remoteAction = RemoteAction(icon, title, title, pendingIntent).apply {
+            isEnabled = actionEnabled
+        }
+        return remoteAction
     }
 
     private fun isInPictureInPictureMode(): Boolean =
@@ -241,5 +245,6 @@ class PictureInPictureController(
         val code: Int,
         val title: String,
         @DrawableRes val icRes: Int,
+        val isEnabled: Boolean = true,
     )
 }

@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.sample
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityVideoplayerBinding
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.anilibria.ui.activities.player.controllers.FullScreenController
+import ru.radiationx.anilibria.ui.activities.player.controllers.OrientationController
 import ru.radiationx.anilibria.ui.activities.player.controllers.KeepScreenOnController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PictureInPictureController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerDialogController
@@ -103,7 +103,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     private val pipController by lazy { PictureInPictureController(this) }
 
-    private val fullScreenController by lazy { FullScreenController(this) }
+    private val orientationController by lazy { OrientationController(this) }
 
     private val keepScreenOnController by lazy { KeepScreenOnController(this) }
 
@@ -408,16 +408,26 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             }
         }
-        fullScreenController.init()
-        fullScreenController.setFullscreen(true)
-        fullScreenController.state.onEach {
+        orientationController.init()
+        orientationController.setOrientation(OrientationController.Orientation.LANDSCAPE)
+        orientationController.state.onEach {
             binding.playerView.setFullscreenVisible(it.available)
-            binding.playerView.setFullscreenActive(it.actualFullScreen)
+            binding.playerView.setFullscreenActive(it.actualOrientation == OrientationController.Orientation.LANDSCAPE)
         }.launchIn(lifecycleScope)
 
         binding.playerView.onFullscreenClick = {
-            fullScreenController.toggleFullscreen()
+            orientationController.updateOrientation {
+                if (it == OrientationController.Orientation.LANDSCAPE) {
+                    null
+                } else {
+                    OrientationController.Orientation.LANDSCAPE
+                }
+            }
         }
+
+        binding.playerView.uiLockState.onEach {
+            orientationController.setUiLock(it)
+        }.launchIn(lifecycleScope)
     }
 
     private fun initPipController() {

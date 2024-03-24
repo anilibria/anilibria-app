@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -25,13 +26,14 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
+import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.terrakok.cicerone.Navigator
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
 import ru.terrakok.cicerone.android.support.SupportAppNavigator
 import ru.terrakok.cicerone.commands.Command
 
-class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller {
+class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, TabResetter {
 
     companion object {
         private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
@@ -124,6 +126,22 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller {
         if (fragment is TopScroller) {
             fragment.scrollToTop()
         }
+    }
+
+    override fun resetTab() {
+        val count = childFragmentManager.backStackEntryCount
+        if (count == 0) {
+            return
+        }
+        AlertDialog.Builder(requireContext())
+            .setMessage("Закрыть все экраны во вкладке?")
+            .setPositiveButton("Да") { _, _ ->
+                router.backTo(localScreen)
+            }
+            .setNegativeButton("Нет") { _, _ ->
+                // do nothing
+            }
+            .showWithLifecycle(viewLifecycleOwner)
     }
 
     private fun needsToInitialScreen(): Boolean {

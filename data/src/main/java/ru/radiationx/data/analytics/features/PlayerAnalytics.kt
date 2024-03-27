@@ -15,8 +15,13 @@ import ru.radiationx.shared.ktx.asTimeSecString
 import timber.log.Timber
 import toothpick.InjectConstructor
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.Date
 import javax.net.ssl.SSLException
+import javax.net.ssl.SSLHandshakeException
+import javax.net.ssl.SSLKeyException
+import javax.net.ssl.SSLPeerUnverifiedException
+import javax.net.ssl.SSLProtocolException
 
 @InjectConstructor
 class PlayerAnalytics(
@@ -39,6 +44,32 @@ class PlayerAnalytics(
         )
     }
 
+    fun handleEpisode(
+        isNewIntent: Boolean,
+        hasBundle: Boolean,
+        episodeId: EpisodeId,
+    ) {
+        sender.send(
+            AnalyticsConstants.player_handle_episode,
+            isNewIntent.toParam("new"),
+            hasBundle.toParam("bundle"),
+            episodeId.id.toParam("eid"),
+            episodeId.releaseId.id.toParam("rid")
+        )
+    }
+
+    fun screenStart() {
+        sender.send(AnalyticsConstants.player_screen_start)
+    }
+
+    fun screenStop() {
+        sender.send(AnalyticsConstants.player_screen_stop)
+    }
+
+    fun pip() {
+        sender.send(AnalyticsConstants.player_pip)
+    }
+
     fun playerError(
         error: Throwable,
         data: ErrorData,
@@ -51,12 +82,7 @@ class PlayerAnalytics(
     }
 
     fun playerAudioSinkError(error: Throwable, data: ErrorData) {
-        val params = listOf(
-            data.episodeId.toEpisodeParam(),
-            data.position.toPositionParam(),
-        )
-        val customMessage = params.toParamsString()
-        sendError("playerAudioSinkError", data.message(), error, customMessage)
+        sendError("playerAudioSinkError", data.message(), error)
     }
 
     fun playerVideoCodecError(error: Throwable, data: ErrorData) {
@@ -67,17 +93,35 @@ class PlayerAnalytics(
         groupId: String,
         message: String,
         throwable: Throwable,
-        customCauseMessage: String? = null,
     ) {
         try {
             val rootCause = throwable.findRootCause()
             val causeMessage = when (rootCause) {
-                is SocketTimeoutException -> "Grouped timeout"
-                is SSLException -> "Grouped ssl"
-                else -> rootCause.message
+                is SocketTimeoutException -> {
+                    if (rootCause.message?.contains("SSL") == true) {
+                        "Grouped ssl timeout"
+                    } else {
+                        "Grouped timeout"
+                    }
+                }
+
+                is UnknownHostException -> "Grouped unknown host"
+
+                is SSLProtocolException -> "Grouped ssl protocol"
+                is SSLHandshakeException -> "Grouped ssl handshake"
+                is SSLKeyException -> "Grouped ssl key"
+                is SSLPeerUnverifiedException -> "Grouped ssl peer unverified"
+                is SSLException -> "Grouped other ssl"
+                else -> {
+                    if (rootCause.message?.startsWith("Unexpected audio track timestamp discontinuity") == true) {
+                        "Grouped Unexpected audio track timestamp discontinuity"
+                    } else {
+                        rootCause.message
+                    }
+                }
             }
             val groupName =
-                "$groupId ${rootCause::class.simpleName} ${customCauseMessage ?: causeMessage}"
+                "$groupId ${rootCause::class.simpleName} $causeMessage"
             sender.error(groupName, message, throwable)
         } catch (e: Throwable) {
             Timber.e(e, "Error while sending error to appmetrica")

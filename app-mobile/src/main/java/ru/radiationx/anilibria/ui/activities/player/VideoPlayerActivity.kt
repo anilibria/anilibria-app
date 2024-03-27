@@ -35,8 +35,8 @@ import kotlinx.coroutines.flow.sample
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityVideoplayerBinding
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.anilibria.ui.activities.player.controllers.OrientationController
 import ru.radiationx.anilibria.ui.activities.player.controllers.KeepScreenOnController
+import ru.radiationx.anilibria.ui.activities.player.controllers.OrientationController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PictureInPictureController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerDialogController
 import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
@@ -45,6 +45,7 @@ import ru.radiationx.anilibria.ui.activities.player.mappers.toPlaylistItem
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerAction
 import ru.radiationx.anilibria.ui.activities.player.playlist.PlaylistDialogFragment
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
+import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.media.mobile.models.PlayButtonState
 import ru.radiationx.quill.get
@@ -118,6 +119,8 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
     private val binding by viewBinding<ActivityVideoplayerBinding>()
 
     private val analyticsListener by inject<PlayerAnalyticsListener>()
+
+    private val analytics by inject<PlayerAnalytics>()
 
     private val player by inject<PlayerHolder>()
 
@@ -237,12 +240,12 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             }
             .launchIn(lifecycleScope)
 
-        handleEpisode(intent, savedInstanceState)
+        handleEpisode(intent, savedInstanceState, false)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleEpisode(intent, null)
+        handleEpisode(intent, null, true)
     }
 
     override fun onBackPressed() {
@@ -253,11 +256,13 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     override fun onStart() {
         super.onStart()
+        analytics.screenStart()
         player.startMediaSession(this)
     }
 
     override fun onStop() {
         super.onStop()
+        analytics.screenStop()
         player.stopMediaSession()
         binding.playerView.pause()
 
@@ -288,10 +293,16 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         binding.playerView.onInteraction()
     }
 
-    private fun handleEpisode(intent: Intent, bundle: Bundle?) {
+    private fun handleEpisode(intent: Intent, bundle: Bundle?, isNew: Boolean) {
         val intentEpisodeId = intent.getExtraNotNull<EpisodeId>(ARG_EPISODE_ID)
         val savedEpisodeId = bundle?.getExtra<EpisodeId>(KEY_EPISODE_ID)
-        viewModel.initialPlayEpisode(savedEpisodeId ?: intentEpisodeId)
+        val episodeId = savedEpisodeId ?: intentEpisodeId
+        analytics.handleEpisode(
+            isNewIntent = isNew,
+            hasBundle = bundle != null,
+            episodeId = episodeId
+        )
+        viewModel.initialPlayEpisode(episodeId)
     }
 
     private fun initDialogController() {
@@ -469,6 +480,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         }.launchIn(lifecycleScope)
 
         binding.playerView.onPipClick = {
+            analytics.pip()
             pipController.enter()
         }
 

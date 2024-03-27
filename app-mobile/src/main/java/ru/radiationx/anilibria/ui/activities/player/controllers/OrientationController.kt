@@ -22,12 +22,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 
 
-class FullScreenController(
+class OrientationController(
     private val activity: ComponentActivity,
 ) {
 
     private val configurationListener = Consumer<Configuration> { config ->
-        _state.update { it.copy(actualFullScreen = config.orientation == Configuration.ORIENTATION_LANDSCAPE) }
+        _state.update { it.copy(actualOrientation = config.toOrientation()) }
     }
 
     private val accelerometerObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
@@ -66,29 +66,33 @@ class FullScreenController(
             }
         })
         _state
-            .map { it.requestedFullscreen && !it.accelerometerEnabled }
+            .map { it.resultOrientation }
             .distinctUntilChanged()
             .onEach {
-                activity.requestedOrientation = if (it) {
-                    ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                } else {
-                    ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                }
+                activity.requestedOrientation = it.toActivityOrientation()
             }
             .launchIn(activity.lifecycleScope)
     }
 
-    fun setFullscreen(state: Boolean) {
-        _state.update { it.copy(requestedFullscreen = state) }
+    fun setOrientation(orientation: Orientation) {
+        _state.update { it.copy(requestedOrientation = orientation) }
     }
 
-    fun toggleFullscreen() {
-        _state.update { it.copy(requestedFullscreen = !it.requestedFullscreen) }
+    fun updateOrientation(block: (Orientation?) -> Orientation?) {
+        _state.update { it.copy(requestedOrientation = block.invoke(it.requestedOrientation)) }
+    }
+
+    fun setUiLock(state: Boolean) {
+        val lockOrientation = if (state) {
+            activity.resources.configuration.toOrientation()
+        } else {
+            null
+        }
+        _state.update { it.copy(lockOrientation = lockOrientation) }
     }
 
     private fun updateState() {
-        val isFullScreen =
-            activity.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        val actualOrientation = activity.resources.configuration.toOrientation()
         val isMultiWindow = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             activity.isInMultiWindowMode
         } else {
@@ -101,18 +105,46 @@ class FullScreenController(
         _state.update {
             it.copy(
                 isMultiWindow = isMultiWindow,
-                actualFullScreen = isFullScreen,
+                actualOrientation = actualOrientation,
                 accelerometerEnabled = accelerometerEnabled
             )
         }
     }
 
+    private fun Configuration.toOrientation(): Orientation? {
+        return when (orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> Orientation.LANDSCAPE
+            Configuration.ORIENTATION_PORTRAIT -> Orientation.PORTRAIT
+            else -> null
+        }
+    }
+
+    private fun Orientation?.toActivityOrientation(): Int {
+        return when (this) {
+            Orientation.LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            Orientation.PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            null -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
+    }
+
     data class State(
+        val actualOrientation: Orientation? = null,
+        val requestedOrientation: Orientation? = null,
+        val lockOrientation: Orientation? = null,
         val isMultiWindow: Boolean = false,
-        val actualFullScreen: Boolean = false,
-        val requestedFullscreen: Boolean = false,
         val accelerometerEnabled: Boolean = false,
     ) {
         val available = !isMultiWindow && !accelerometerEnabled
+
+        val resultOrientation: Orientation? = when {
+            lockOrientation != null -> lockOrientation
+            available -> requestedOrientation
+            else -> null
+        }
+    }
+
+    enum class Orientation {
+        LANDSCAPE,
+        PORTRAIT
     }
 }

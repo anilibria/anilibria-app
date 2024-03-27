@@ -25,6 +25,7 @@ class PlayerDialogController(
     var onSkipsSelected: ((Boolean) -> Unit)? = null
     var onSkipsTimerSelected: ((Boolean) -> Unit)? = null
     var onInactiveTimerSelected: ((Boolean) -> Unit)? = null
+    var onAutoplaytSelected: ((Boolean) -> Unit)? = null
 
     fun showSettingsDialog(state: PlayerSettingsState) {
         val valuesList = SettingItem.entries
@@ -37,6 +38,7 @@ class PlayerDialogController(
                     SettingItem.Skips -> "Кнопки пропуска опенинга (<b>${state.skipsEnabled.toTitle()}</b>)"
                     SettingItem.SkipsTimer -> "Автоматически пропускать опенинг (<b>${state.skipsTimerEnabled.toTitle()}</b>)"
                     SettingItem.InactiveTimer -> "Таймер на бездействие (<b>${state.inactiveTimerEnabled.toTitle()}</b>)"
+                    SettingItem.Autoplay -> "Автовоспроизведение (<b>${state.autoplayEnabled.toTitle()}</b>)"
                 }
             }
             .map { it.parseAsHtml() }
@@ -50,6 +52,7 @@ class PlayerDialogController(
                     SettingItem.Skips -> R.drawable.ic_skip_forward
                     SettingItem.SkipsTimer -> R.drawable.ic_av_timer
                     SettingItem.InactiveTimer -> R.drawable.ic_timer_outline
+                    SettingItem.Autoplay -> R.drawable.ic_play_circle_outline
                 }.let {
                     ContextCompat.getDrawable(context, it)
                 }
@@ -80,6 +83,10 @@ class PlayerDialogController(
 
                     SettingItem.InactiveTimer -> {
                         onInactiveTimerSelected?.invoke(!state.inactiveTimerEnabled)
+                    }
+
+                    SettingItem.Autoplay -> {
+                        onAutoplaytSelected?.invoke(!state.autoplayEnabled)
                     }
                 }
             }
@@ -184,7 +191,8 @@ class PlayerDialogController(
         PlaySpeed,
         Skips,
         SkipsTimer,
-        InactiveTimer
+        InactiveTimer,
+        Autoplay
     }
 }
 
@@ -195,4 +203,5 @@ data class PlayerSettingsState(
     val skipsEnabled: Boolean,
     val skipsTimerEnabled: Boolean,
     val inactiveTimerEnabled: Boolean,
+    val autoplayEnabled: Boolean,
 )

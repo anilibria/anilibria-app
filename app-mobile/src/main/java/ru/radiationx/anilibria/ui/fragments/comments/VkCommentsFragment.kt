@@ -46,7 +46,6 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
     }
 
     private var webViewScrollPos = 0
-    private var currentVkCommentsState: VkCommentsState? = null
 
     private val binding by viewBinding<FragmentVkCommentsBinding>()
 
@@ -168,11 +167,6 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
     }
 
     private fun showBody(comments: VkCommentsState) {
-        if (currentVkCommentsState == comments) {
-            return
-        }
-        currentVkCommentsState = comments
-
         val template = get<Templates>().vkCommentsTemplate
         binding.webView.easyLoadData(
             comments.url,

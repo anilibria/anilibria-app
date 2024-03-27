@@ -15,7 +15,7 @@ class DataLoadingController<T>(
 
     private val stateRelay = MutableStateFlow(DataLoadingState<T>())
 
-    private var currentPage = firstPage
+    private val _currentPage = MutableStateFlow(firstPage)
 
     private var dataJob: Job? = null
 
@@ -25,6 +25,10 @@ class DataLoadingController<T>(
             stateRelay.value = value
         }
 
+    fun observePage(): Flow<Int> {
+        return _currentPage
+    }
+
     fun observeState(): Flow<DataLoadingState<T>> {
         return stateRelay
     }
@@ -33,10 +37,9 @@ class DataLoadingController<T>(
         loadPage(firstPage)
     }
 
-
     fun loadMore() {
         if (currentState.hasMorePages) {
-            loadPage(currentPage + 1)
+            loadPage(_currentPage.value + 1)
         }
     }
 
@@ -72,7 +75,7 @@ class DataLoadingController<T>(
                 dataSource.invoke(params)
             }.onSuccess {
                 updateStateByAction(it)
-                currentPage = page
+                _currentPage.value = page
             }.onFailure {
                 updateStateByAction(ScreenStateAction.Error(it))
             }

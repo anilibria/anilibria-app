@@ -1,11 +1,13 @@
 package ru.radiationx.anilibria.ui.fragments.history
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -42,9 +44,12 @@ class HistoryViewModel(
     private val systemUtils: SystemUtils,
 ) : ViewModel() {
 
+    private fun pageToCount(page: Int) = page * 50
+
     private val loadingController = DataLoadingController(viewModelScope) {
-        val items = historyRepository.getReleases()
-        ScreenStateAction.Data(items, false)
+        val count = pageToCount(it.page)
+        val items = historyRepository.getReleases(count)
+        ScreenStateAction.Data(items, items.size >= count)
     }
 
     private val _state = MutableStateFlow(HistoryScreenState())
@@ -69,8 +74,11 @@ class HistoryViewModel(
             }
             .launchIn(viewModelScope)
 
-        historyRepository
-            .observeReleases()
+        loadingController
+            .observePage()
+            .flatMapLatest { page ->
+                historyRepository.observeReleases(pageToCount(page))
+            }
             .onEach { releases ->
                 loadingController.modifyData(releases)
             }

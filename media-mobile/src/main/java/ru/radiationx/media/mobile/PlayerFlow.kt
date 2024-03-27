@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.media.mobile.holder.PlayerAttachListener
 import ru.radiationx.media.mobile.models.MediaItemTransition
+import ru.radiationx.media.mobile.models.PlayerErrorState
 import ru.radiationx.media.mobile.models.PlayerState
 import ru.radiationx.media.mobile.models.PlaylistItem
 import ru.radiationx.media.mobile.models.PlaylistState
@@ -45,10 +46,13 @@ class PlayerFlow(
 
         override fun onPlayerErrorChanged(error: PlaybackException?) {
             super.onPlayerErrorChanged(error)
-            val errorMessage = error?.let {
-                "${it.errorCode}, ${it.errorCodeName}"
+            val errorState = error?.let {
+                val title = error.let { "${it.errorCode}, ${it.errorCodeName}" }
+                val rootCause = error.findRootCause()
+                val message = "${rootCause::class.simpleName}: ${rootCause.message}"
+                PlayerErrorState(title, message)
             }
-            _playerState.update { it.copy(errorMessage = errorMessage) }
+            _playerState.update { it.copy(error = errorState) }
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -82,6 +86,14 @@ class PlayerFlow(
         override fun onEvents(player: Player, events: Player.Events) {
             super.onEvents(player, events)
             updateTimeline(player)
+        }
+
+        private fun Throwable.findRootCause(): Throwable {
+            var rootCause: Throwable? = this
+            while (rootCause?.cause != null && rootCause.cause !== rootCause) {
+                rootCause = rootCause.cause
+            }
+            return rootCause ?: this
         }
 
     }

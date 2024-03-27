@@ -14,7 +14,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
@@ -33,8 +35,8 @@ import kotlinx.coroutines.flow.sample
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityVideoplayerBinding
 import ru.radiationx.anilibria.ui.activities.BaseActivity
-import ru.radiationx.anilibria.ui.activities.player.controllers.FullScreenController
 import ru.radiationx.anilibria.ui.activities.player.controllers.KeepScreenOnController
+import ru.radiationx.anilibria.ui.activities.player.controllers.OrientationController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PictureInPictureController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerDialogController
 import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
@@ -43,6 +45,7 @@ import ru.radiationx.anilibria.ui.activities.player.mappers.toPlaylistItem
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerAction
 import ru.radiationx.anilibria.ui.activities.player.playlist.PlaylistDialogFragment
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
+import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.media.mobile.models.PlayButtonState
 import ru.radiationx.quill.get
@@ -87,9 +90,21 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         icRes = R.drawable.ic_media_replay_24
     )
 
+    private val prevAction = PictureInPictureController.Action(
+        code = 4,
+        title = "Предыдущая",
+        icRes = R.drawable.ic_media_skip_previous_24
+    )
+
+    private val nextAction = PictureInPictureController.Action(
+        code = 5,
+        title = "Слудующая",
+        icRes = R.drawable.ic_media_skip_next_24
+    )
+
     private val pipController by lazy { PictureInPictureController(this) }
 
-    private val fullScreenController by lazy { FullScreenController(this) }
+    private val orientationController by lazy { OrientationController(this) }
 
     private val keepScreenOnController by lazy { KeepScreenOnController(this) }
 
@@ -105,6 +120,8 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     private val analyticsListener by inject<PlayerAnalyticsListener>()
 
+    private val analytics by inject<PlayerAnalytics>()
+
     private val player by inject<PlayerHolder>()
 
     private val viewModel by viewModel<PlayerViewModel>()
@@ -114,6 +131,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         super.attachBaseContext(newBase)
     }
 
+    @UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
@@ -132,6 +150,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         initPipController()
         initDialogController()
         player.init(this)
+        analyticsListener.transport = player.selectedTransport
         player.getPlayer().addAnalyticsListener(analyticsListener)
         binding.playerView.setPlayer(player.getPlayer())
 
@@ -152,7 +171,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
                     if (action.seek != null && action.seek != 0L && action.seek != binding.playerView.timelineState.value.position) {
                         binding.playerView.seekTo(action.seek)
                     }
-                    binding.playerView.play()
+                    // fix case when app hidden before "play" called
+                    if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                        binding.playerView.play()
+                    }
                 }
 
                 is PlayerAction.ShowSettings -> {
@@ -189,6 +211,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             binding.playerView.setSkipsTimerEnabled(it)
         }.launchIn(lifecycleScope)
 
+        viewModel.autoplayEnabled.onEach {
+            player.getPlayer().pauseAtEndOfMediaItems = !it
+        }.launchIn(lifecycleScope)
+
         binding.playerView.timelineState
             .sample(10000)
             .filter { it.duration > 0 }
@@ -214,16 +240,30 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             }
             .launchIn(lifecycleScope)
 
-        handleEpisode(intent, savedInstanceState)
+        handleEpisode(intent, savedInstanceState, false)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleEpisode(intent, null)
+        handleEpisode(intent, null, true)
+    }
+
+    override fun onBackPressed() {
+        if (!binding.playerView.uiLockState.value) {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        analytics.screenStart()
+        player.startMediaSession(this)
     }
 
     override fun onStop() {
         super.onStop()
+        analytics.screenStop()
+        player.stopMediaSession()
         binding.playerView.pause()
 
         val timeline = binding.playerView.timelineState.value.takeIf { it.duration > 0 }
@@ -250,12 +290,19 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
     override fun onUserInteraction() {
         super.onUserInteraction()
         keepScreenOnController.onUserInteraction()
+        binding.playerView.onInteraction()
     }
 
-    private fun handleEpisode(intent: Intent, bundle: Bundle?) {
+    private fun handleEpisode(intent: Intent, bundle: Bundle?, isNew: Boolean) {
         val intentEpisodeId = intent.getExtraNotNull<EpisodeId>(ARG_EPISODE_ID)
         val savedEpisodeId = bundle?.getExtra<EpisodeId>(KEY_EPISODE_ID)
-        viewModel.initialPlayEpisode(savedEpisodeId ?: intentEpisodeId)
+        val episodeId = savedEpisodeId ?: intentEpisodeId
+        analytics.handleEpisode(
+            isNewIntent = isNew,
+            hasBundle = bundle != null,
+            episodeId = episodeId
+        )
+        viewModel.initialPlayEpisode(episodeId)
     }
 
     private fun initDialogController() {
@@ -277,6 +324,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
         dialogController.onInactiveTimerSelected = {
             viewModel.onInactiveTimerEnabledChange(it)
+        }
+
+        dialogController.onAutoplaytSelected = {
+            viewModel.onAutoplayEnabledChange(it)
         }
     }
 
@@ -368,16 +419,26 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             }
         }
-        fullScreenController.init()
-        fullScreenController.setFullscreen(true)
-        fullScreenController.state.onEach {
+        orientationController.init()
+        orientationController.setOrientation(OrientationController.Orientation.LANDSCAPE)
+        orientationController.state.onEach {
             binding.playerView.setFullscreenVisible(it.available)
-            binding.playerView.setFullscreenActive(it.actualFullScreen)
+            binding.playerView.setFullscreenActive(it.actualOrientation == OrientationController.Orientation.LANDSCAPE)
         }.launchIn(lifecycleScope)
 
         binding.playerView.onFullscreenClick = {
-            fullScreenController.toggleFullscreen()
+            orientationController.updateOrientation {
+                if (it == OrientationController.Orientation.LANDSCAPE) {
+                    null
+                } else {
+                    OrientationController.Orientation.LANDSCAPE
+                }
+            }
         }
+
+        binding.playerView.uiLockState.onEach {
+            orientationController.setUiLock(it)
+        }.launchIn(lifecycleScope)
     }
 
     private fun initPipController() {
@@ -394,14 +455,20 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             }
         }.launchIn(lifecycleScope)
 
-        binding.playerView.playButtonState.onEach { playButtonState ->
-            val actions = buildList {
+        combine(
+            binding.playerView.playerState.map { it.commands }.distinctUntilChanged(),
+            binding.playerView.playButtonState
+        ) { commands, playButtonState ->
+            buildList {
+                add(prevAction.copy(isEnabled = commands.seekToPreviousMediaItem))
                 when (playButtonState) {
                     PlayButtonState.PLAY -> add(playAction)
                     PlayButtonState.PAUSE -> add(pauseAction)
                     PlayButtonState.REPLAY -> add(replayAction)
                 }
+                add(nextAction.copy(isEnabled = commands.seekToNextMediaItem))
             }
+        }.onEach { actions ->
             pipController.updateParams {
                 it.copy(actions = actions)
             }
@@ -413,12 +480,23 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         }.launchIn(lifecycleScope)
 
         binding.playerView.onPipClick = {
+            analytics.pip()
             pipController.enter()
         }
 
         pipController.actionsListener = {
-            when (it) {
-                playAction, pauseAction, replayAction -> binding.playerView.handlePlayClick()
+            when (it.code) {
+                prevAction.code -> {
+                    binding.playerView.prev()
+                }
+
+                nextAction.code -> {
+                    binding.playerView.next()
+                }
+
+                playAction.code, pauseAction.code, replayAction.code -> {
+                    binding.playerView.handlePlayClick()
+                }
             }
         }
     }

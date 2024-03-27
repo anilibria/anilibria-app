@@ -81,6 +81,19 @@
             android:title="Таймер на бездействие"
             app:icon="@drawable/ic_timer_outline" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="player_auto_play"
+            android:layout="@layout/preference_custom"
+            android:summary="Автоматически воспроизводить следующий эпизод"
+            android:title="Автовоспроизведение"
+            app:icon="@drawable/ic_play_circle_outline" />
+
+        <Preference
+            android:key="player_transport"
+            android:layout="@layout/preference_custom"
+            android:title="Сетевой движок" />
+
     </PreferenceCategory>
 
     <Preference android:layout="@layout/preference_shadow_double" />

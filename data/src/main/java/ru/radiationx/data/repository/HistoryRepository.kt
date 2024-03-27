@@ -24,17 +24,19 @@ class HistoryRepository @Inject constructor(
     private val historyRuntimeCache: HistoryRuntimeCache,
 ) {
 
-    suspend fun getReleases(): List<Release> = withContext(Dispatchers.IO) {
-        historyStorage
-            .getEpisodes()
-            .asReversed()
-            .let { historyRuntimeCache.getCached(it) }
-    }
+    suspend fun getReleases(count: Int = Int.MAX_VALUE): List<Release> =
+        withContext(Dispatchers.IO) {
+            historyStorage
+                .getEpisodes()
+                .takeLast(count)
+                .asReversed()
+                .let { historyRuntimeCache.getCached(it) }
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun observeReleases(): Flow<List<Release>> = historyStorage
+    fun observeReleases(count: Int = Int.MAX_VALUE): Flow<List<Release>> = historyStorage
         .observeEpisodes()
-        .map { it.asReversed() }
+        .map { it.takeLast(count).asReversed() }
         .flatMapLatest {
             historyRuntimeCache.observeCached(it)
         }

@@ -3,9 +3,14 @@ package ru.radiationx.media.mobile.controllers.gesture
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ViewConfiguration
+import kotlin.math.abs
 
-internal class GestureListener : GestureDetector.SimpleOnGestureListener() {
+internal class GestureListener(
+    private val viewConfiguration: ViewConfiguration,
+) : GestureDetector.SimpleOnGestureListener() {
 
+    private val touchSlop = viewConfiguration.scaledTouchSlop
+    private var scrollAxis = ScrollAxis.None
     private var lastDoubleTapTime = 0L
     private val doubleTapDelay = ViewConfiguration.getDoubleTapTimeout() * 2
     private val tapDelay = ViewConfiguration.getTapTimeout()
@@ -16,6 +21,10 @@ internal class GestureListener : GestureDetector.SimpleOnGestureListener() {
     var doubleTapListener: ((event: MotionEvent) -> Unit)? = null
     var scrollListener: ((deltaX: Float, eventId: Long) -> Unit)? = null
     var onLongPress: (() -> Unit)? = null
+
+    fun onTouchEnd() {
+        scrollAxis = ScrollAxis.None
+    }
 
     override fun onSingleTapUp(e: MotionEvent): Boolean {
         val delta = e.downTime - lastDoubleTapTime
@@ -64,7 +73,23 @@ internal class GestureListener : GestureDetector.SimpleOnGestureListener() {
             return false
         }
         val deltaX = e2.x - e1.x
-        scrollListener?.invoke(deltaX, e1.downTime)
+        val deltaY = e2.y - e1.y
+
+        if (scrollAxis == ScrollAxis.None) {
+            when {
+                abs(deltaX) >= touchSlop -> scrollAxis = ScrollAxis.X
+                abs(deltaY) >= touchSlop -> scrollAxis = ScrollAxis.Y
+            }
+        }
+        if (scrollAxis == ScrollAxis.X) {
+            scrollListener?.invoke(deltaX, e1.downTime)
+        }
         return super.onScroll(e1, e2, distanceX, distanceY)
+    }
+
+    enum class ScrollAxis {
+        X,
+        Y,
+        None
     }
 }

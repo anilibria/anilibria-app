@@ -18,19 +18,14 @@ class DetailOtherViewModel(
 
     fun onClearClick() {
         viewModelScope.launch {
-            releaseInteractor.resetEpisodesHistory(argExtra.id)
+            releaseInteractor.resetAccessHistory(argExtra.id)
             guidedRouter.close()
         }
     }
 
     fun onMarkClick() {
         viewModelScope.launch {
-            releaseInteractor.getFull(argExtra.id)?.also { release ->
-                val accesses = release.episodes.map {
-                    it.access.copy(isViewed = true)
-                }
-                releaseInteractor.putEpisodes(accesses)
-            }
+            releaseInteractor.markAllViewed(argExtra.id)
             guidedRouter.close()
         }
     }

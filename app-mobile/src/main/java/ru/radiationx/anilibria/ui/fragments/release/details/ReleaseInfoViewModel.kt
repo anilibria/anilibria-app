@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -40,6 +42,7 @@ import ru.radiationx.data.downloader.toLocalFile
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
@@ -96,8 +99,6 @@ class ReleaseInfoViewModel(
     private val _currentLoadings =
         MutableStateFlow<Map<TorrentId, MutableStateFlow<Int>>>(emptyMap())
 
-    val playEpisodesAction = EventFlow<Release>()
-    val playContinueAction = EventFlow<ActionContinue>()
     val playWebAction = EventFlow<ActionPlayWeb>()
     val playEpisodeAction = EventFlow<ActionPlayEpisode>()
     val showUnauthAction = EventFlow<Unit>()
@@ -152,10 +153,10 @@ class ReleaseInfoViewModel(
             .launchIn(viewModelScope)
 
         argExtra.release?.also {
-            updateLocalRelease(it, _currentLoadings.value)
+            updateLocalRelease(it, _currentLoadings.value, emptyMap())
         }
         releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
-            updateLocalRelease(it, _currentLoadings.value)
+            updateLocalRelease(it, _currentLoadings.value, emptyMap())
         }
         observeRelease()
 
@@ -191,8 +192,15 @@ class ReleaseInfoViewModel(
                     it.copy(detailLoading = false)
                 }
             }
-            .combine(_currentLoadings) { release, loadings ->
-                updateLocalRelease(release, loadings)
+            .flatMapLatest { release ->
+                combine(
+                    _currentLoadings,
+                    releaseInteractor.observeAccesses(release.id).map { accesses ->
+                        accesses.associateBy { it.id }
+                    }
+                ) { loadings, accesses ->
+                    updateLocalRelease(release, loadings, accesses)
+                }
             }
             .launchIn(viewModelScope)
     }
@@ -200,33 +208,18 @@ class ReleaseInfoViewModel(
     private fun updateLocalRelease(
         release: Release,
         loadings: Map<TorrentId, MutableStateFlow<Int>>,
+        accesses: Map<EpisodeId, EpisodeAccess>,
     ) {
         currentData = release
         _state.update {
-            it.copy(data = release.toState(loadings))
-        }
-    }
-
-    fun markEpisodeViewed(episode: Episode) {
-        viewModelScope.launch {
-            releaseInteractor.putEpisode(
-                episode.access.copy(
-                    isViewed = true,
-                    lastAccess = System.currentTimeMillis()
-                )
-            )
+            it.copy(data = release.toState(loadings, accesses))
         }
     }
 
     fun markEpisodeUnviewed(episode: Episode) {
         viewModelScope.launch {
             releaseAnalytics.historyResetEpisode()
-            releaseInteractor.putEpisode(
-                episode.access.copy(
-                    isViewed = false,
-                    lastAccess = 0
-                )
-            )
+            releaseInteractor.markUnviewed(episode.id)
         }
     }
 
@@ -307,25 +300,27 @@ class ReleaseInfoViewModel(
     }
 
     fun onPlayAllClick(place: EpisodeControlPlace) {
-        currentData?.also {
-            place.handle({
-                releaseAnalytics.episodesTopStartClick(it.id.id)
-            }, {
-                releaseAnalytics.episodesStartClick(it.id.id)
-            })
-            playEpisodesAction.set(it)
+        val release = currentData ?: return
+        place.handle({
+            releaseAnalytics.episodesTopStartClick(release.id.id)
+        }, {
+            releaseAnalytics.episodesStartClick(release.id.id)
+        })
+        release.episodes.lastOrNull()?.also {
+            playEpisodeAction.set(ActionPlayEpisode(it.id))
         }
     }
 
     fun onClickContinue(place: EpisodeControlPlace) {
-        currentData?.also { release ->
-            place.handle({
-                releaseAnalytics.episodesTopContinueClick(release.id.id)
-            }, {
-                releaseAnalytics.episodesContinueClick(release.id.id)
-            })
-            release.episodes.asReversed().maxByOrNull { it.access.lastAccess }?.let { episode ->
-                playContinueAction.set(ActionContinue(release, episode))
+        val release = currentData ?: return
+        place.handle({
+            releaseAnalytics.episodesTopContinueClick(release.id.id)
+        }, {
+            releaseAnalytics.episodesContinueClick(release.id.id)
+        })
+        viewModelScope.launch {
+            releaseInteractor.getAccesses(release.id).maxByOrNull { it.lastAccess }?.also {
+                playEpisodeAction.set(ActionPlayEpisode(it.id))
             }
         }
     }
@@ -383,7 +378,7 @@ class ReleaseInfoViewModel(
         val savedQuality = appPreferences.playerQuality.value
         val analyticsQuality = savedQuality.toAnalyticsQuality()
         releaseAnalytics.episodePlayClick(analyticsQuality, release.id.id)
-        playEpisodeAction.set(ActionPlayEpisode(release, episode))
+        playEpisodeAction.set(ActionPlayEpisode(episode.id))
     }
 
     fun onEpisodeClick(
@@ -569,20 +564,16 @@ class ReleaseInfoViewModel(
         viewModelScope.launch {
             releaseAnalytics.historyReset()
             currentData?.also {
-                releaseInteractor.resetEpisodesHistory(it.id)
+                releaseInteractor.resetAccessHistory(it.id)
             }
         }
     }
 
     fun onCheckAllEpisodesHistoryClick() {
+        val release = currentData ?: return
         viewModelScope.launch {
             releaseAnalytics.historyViewAll()
-            currentData?.also { release ->
-                val accesses = release.episodes.map {
-                    it.access.copy(isViewed = true)
-                }
-                releaseInteractor.putEpisodes(accesses)
-            }
+            releaseInteractor.markAllViewed(release.id)
         }
     }
 
@@ -608,18 +599,11 @@ enum class TorrentAction {
     ShareUrl
 }
 
-
-data class ActionContinue(
-    val release: Release,
-    val startWith: Episode,
-)
-
 data class ActionPlayWeb(
     val link: String,
     val code: String,
 )
 
 data class ActionPlayEpisode(
-    val release: Release,
-    val episode: Episode,
+    val id: EpisodeId,
 )

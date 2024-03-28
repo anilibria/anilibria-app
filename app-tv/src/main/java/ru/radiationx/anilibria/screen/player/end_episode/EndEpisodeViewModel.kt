@@ -17,7 +17,7 @@ class EndEpisodeViewModel(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
-    private val playerController: PlayerController
+    private val playerController: PlayerController,
 ) : LifecycleViewModel() {
 
     private val currentEpisodes = mutableListOf<Episode>()
@@ -36,13 +36,8 @@ class EndEpisodeViewModel(
 
     fun onReplayClick() {
         val episode = currentEpisode ?: return
-        val newAccess = episode.access.copy(
-            seek = 0,
-            lastAccess = System.currentTimeMillis(),
-            isViewed = true
-        )
         viewModelScope.launch {
-            releaseInteractor.putEpisode(newAccess)
+            releaseInteractor.setAccessSeek(episode.id, 0)
             playerController.selectEpisodeRelay.emit(episode.id)
             guidedRouter.close()
         }

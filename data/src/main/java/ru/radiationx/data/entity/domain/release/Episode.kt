@@ -12,5 +12,4 @@ data class Episode(
     val qualityInfo: QualityInfo,
     val updatedAt: Date?,
     val skips: PlayerSkips?,
-    val access: EpisodeAccess,
 ) : Parcelable

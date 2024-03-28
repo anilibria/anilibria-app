@@ -140,19 +140,22 @@ class PlayerViewModel(
     fun onPrepare(duration: Long) {
         val release = currentRelease ?: return
         val episode = currentEpisode ?: return
-        val complete = episode.access.seek >= duration
-        if (currentComplete == complete) return
-        currentComplete = complete
-        if (complete) {
-            playAction.emit(false)
-            val nextEpisode = getNextEpisode()
-            if (nextEpisode == null) {
-                guidedRouter.open(PlayerEndSeasonGuidedScreen(release.id, episode.id))
+        viewModelScope.launch {
+            val access = releaseInteractor.getAccess(episode.id)
+            val complete = access != null && access.seek >= duration
+            if (currentComplete == complete) return@launch
+            currentComplete = complete
+            if (complete) {
+                playAction.emit(false)
+                val nextEpisode = getNextEpisode()
+                if (nextEpisode == null) {
+                    guidedRouter.open(PlayerEndSeasonGuidedScreen(release.id, episode.id))
+                } else {
+                    guidedRouter.open(PlayerEndEpisodeGuidedScreen(release.id, episode.id))
+                }
             } else {
-                guidedRouter.open(PlayerEndEpisodeGuidedScreen(release.id, episode.id))
+                playAction.emit(true)
             }
-        } else {
-            playAction.emit(true)
         }
     }
 
@@ -170,13 +173,8 @@ class PlayerViewModel(
         if (position < 0) {
             return
         }
-        val newAccess = episode.access.copy(
-            seek = position,
-            lastAccess = System.currentTimeMillis(),
-            isViewed = true
-        )
         viewModelScope.launch {
-            releaseInteractor.putEpisode(newAccess)
+            releaseInteractor.setAccessSeek(episode.id, position)
         }
     }
 
@@ -196,16 +194,19 @@ class PlayerViewModel(
         val release = currentRelease ?: return
         val episode = currentEpisode ?: return
         val quality = currentQuality ?: return
-        val newUrl = episode.qualityInfo.getSafeUrlFor(quality)
-        val newVideo = Video(
-            url = newUrl,
-            seek = episode.access.seek,
-            title = release.title.orEmpty(),
-            subtitle = episode.title.orEmpty(),
-            episode.skips
-        )
-        if (force || videoData.value?.url != newVideo.url) {
-            videoData.value = newVideo
+        viewModelScope.launch {
+            val newUrl = episode.qualityInfo.getSafeUrlFor(quality)
+            val access = releaseInteractor.getAccess(episode.id)
+            val newVideo = Video(
+                url = newUrl,
+                seek = access?.seek ?: 0,
+                title = release.title.orEmpty(),
+                subtitle = episode.title.orEmpty(),
+                episode.skips
+            )
+            if (force || videoData.value?.url != newVideo.url) {
+                videoData.value = newVideo
+            }
         }
     }
 }

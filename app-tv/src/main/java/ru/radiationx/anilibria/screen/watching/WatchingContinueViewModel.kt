@@ -41,7 +41,7 @@ class WatchingContinueViewModel(
         .let { releases ->
             releases.map { release ->
                 val lastEpisode =
-                    releaseInteractor.getEpisodes(release.id).maxByOrNull { it.lastAccess }
+                    releaseInteractor.getAccesses(release.id).maxByOrNull { it.lastAccess }
                 Pair(release, lastEpisode)
             }
         }

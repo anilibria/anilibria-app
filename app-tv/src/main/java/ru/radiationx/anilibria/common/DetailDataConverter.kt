@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.common
 
 import androidx.core.text.parseAsHtml
+import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.shared.ktx.capitalizeDefault
@@ -11,7 +13,11 @@ import java.util.Calendar
 @InjectConstructor
 class DetailDataConverter {
 
-    fun toDetail(releaseItem: Release, isFull: Boolean): LibriaDetails = releaseItem.run {
+    fun toDetail(
+        releaseItem: Release,
+        isFull: Boolean,
+        accesses: List<EpisodeAccess>,
+    ): LibriaDetails = releaseItem.run {
         LibriaDetails(
             id = id,
             titleRu = title.orEmpty(),
@@ -27,10 +33,10 @@ class DetailDataConverter {
             announce = getAnnounce(isFull),
             image = poster.orEmpty(),
             favoriteCount = NumberFormat.getNumberInstance().format(favoriteInfo.rating),
-            hasFullHd = episodes.any { it.urlFullHd != null },
+            hasFullHd = episodes.any { PlayerQuality.FULLHD in it.qualityInfo },
             isFavorite = favoriteInfo.isAdded,
             hasEpisodes = episodes.isNotEmpty(),
-            hasViewed = episodes.any { it.access.isViewed },
+            hasViewed = accesses.any { it.isViewed },
             hasWebPlayer = moonwalkLink != null
         )
     }

@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
@@ -18,7 +19,7 @@ import java.util.Date
 @InjectConstructor
 class PlayerEpisodesViewModel(
     private val argExtra: PlayerExtra,
-    releaseInteractor: ReleaseInteractor,
+    private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController,
 ) : LifecycleViewModel() {
@@ -43,16 +44,21 @@ class PlayerEpisodesViewModel(
     }
 
     private fun updateEpisodes(release: Release) {
-        currentEpisodes.clear()
-        currentEpisodes.addAll(release.episodes.reversed())
-        episodesData.value = currentEpisodes.map {
-            val description = if (it.access.isViewed && it.access.seek > 0) {
-                "Остановлена на ${Date(it.access.seek).asTimeSecString()}"
-            } else {
-                null
+        viewModelScope.launch {
+            currentEpisodes.clear()
+            currentEpisodes.addAll(release.episodes.reversed())
+            val accesses = releaseInteractor.getAccesses(release.id).associateBy { it.id }
+            episodesData.value = currentEpisodes.map {
+                val access = accesses[it.id]
+                val description = if (access != null && access.isViewed && access.seek > 0) {
+                    "Остановлена на ${Date(access.seek).asTimeSecString()}"
+                } else {
+                    null
+                }
+                Pair(it.title.orEmpty(), description)
             }
-            Pair(it.title.orEmpty(), description)
+            selectedIndex.value = currentEpisodes.indexOfLast { it.id == argExtra.episodeId }
         }
-        selectedIndex.value = currentEpisodes.indexOfLast { it.id == argExtra.episodeId }
+
     }
 }

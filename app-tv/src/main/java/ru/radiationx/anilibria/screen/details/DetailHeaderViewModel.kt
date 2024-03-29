@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.screen.details
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -17,6 +18,7 @@ import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerScreen
 import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
@@ -52,15 +54,15 @@ class DetailHeaderViewModel(
     init {
         updateProgress()
         releaseInteractor.getItem(releaseId)?.also {
-            updateRelease(it)
+            updateRelease(it, emptyList())
         }
-        releaseInteractor
-            .observeFull(releaseId)
-            .onEach {
-                isFullLoaded = true
-                updateRelease(it)
-            }
-            .launchIn(viewModelScope)
+        combine(
+            releaseInteractor.observeFull(releaseId),
+            releaseInteractor.observeAccesses(releaseId)
+        ) { release, accesses ->
+            isFullLoaded = true
+            updateRelease(release, accesses)
+        }.launchIn(viewModelScope)
     }
 
     override fun onResume() {
@@ -82,7 +84,7 @@ class DetailHeaderViewModel(
 
     fun onContinueClick() {
         viewModelScope.launch {
-            releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.also {
+            releaseInteractor.getAccesses(releaseId).maxByOrNull { it.lastAccess }?.also {
                 router.navigateTo(PlayerScreen(releaseId, it.id))
             }
         }
@@ -96,7 +98,7 @@ class DetailHeaderViewModel(
         } else {
             viewModelScope.launch {
                 val episodeId =
-                    releaseInteractor.getEpisodes(releaseId).maxByOrNull { it.lastAccess }?.id
+                    releaseInteractor.getAccesses(releaseId).maxByOrNull { it.lastAccess }?.id
                 guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
             }
         }
@@ -142,9 +144,9 @@ class DetailHeaderViewModel(
         guidedRouter.open(DetailOtherGuidedScreen(releaseId))
     }
 
-    private fun updateRelease(release: Release) {
+    private fun updateRelease(release: Release, accesses: List<EpisodeAccess>) {
         currentRelease = release
-        releaseData.value = converter.toDetail(release, isFullLoaded)
+        releaseData.value = converter.toDetail(release, isFullLoaded, accesses)
         updateProgress()
     }
 

@@ -23,6 +23,7 @@ import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
@@ -68,22 +69,12 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
             showState(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.playEpisodesAction.observe().onEach {
-            it.episodes.lastOrNull()?.also { episode ->
-                playEpisode(episode)
-            }
-        }.launchInResumed(viewLifecycleOwner)
-
-        viewModel.playContinueAction.observe().onEach {
-            playEpisode(it.startWith)
-        }.launchInResumed(viewLifecycleOwner)
-
         viewModel.playWebAction.observe().onEach {
             playWeb(it.link, it.code)
         }.launchInResumed(viewLifecycleOwner)
 
         viewModel.playEpisodeAction.observe().onEach {
-            playEpisode(it.episode)
+            playEpisode(it.id)
         }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showUnauthAction.observe().onEach {
@@ -206,9 +197,9 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
             .showWithLifecycle(viewLifecycleOwner)
     }
 
-    private fun playEpisode(episode: Episode) {
-        viewModel.submitPlayerOpenAnalytics(episode.id)
-        val intent = Screens.Player(episode.id).getActivityIntent(requireContext())
+    private fun playEpisode(id: EpisodeId) {
+        viewModel.submitPlayerOpenAnalytics(id)
+        val intent = Screens.Player(id).getActivityIntent(requireContext())
         startActivity(intent)
     }
 

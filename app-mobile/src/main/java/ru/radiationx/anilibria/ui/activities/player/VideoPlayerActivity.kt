@@ -168,7 +168,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
                 }
 
                 is PlayerAction.Play -> {
-                    if (action.seek != null && action.seek != 0L && action.seek != binding.playerView.timelineState.value.position) {
+                    if (action.seek != null && action.seek != binding.playerView.timelineState.value.position) {
                         binding.playerView.seekTo(action.seek)
                     }
                     // fix case when app hidden before "play" called

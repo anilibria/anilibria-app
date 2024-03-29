@@ -26,7 +26,7 @@ class PlayerViewModel(
     private val releaseInteractor: ReleaseInteractor,
     private val preferencesHolder: PreferencesHolder,
     private val guidedRouter: GuidedRouter,
-    playerController: PlayerController,
+    private val playerController: PlayerController,
 ) : LifecycleViewModel() {
 
     val videoData = MutableStateFlow<Video?>(null)
@@ -41,6 +41,7 @@ class PlayerViewModel(
     private var currentComplete: Boolean? = null
 
     init {
+        playerController.reset()
         qualityState.value = preferencesHolder.playerQuality.value
         speedState.value = preferencesHolder.playSpeed.value
 
@@ -81,6 +82,11 @@ class PlayerViewModel(
                 episode?.also { playEpisode(it) }
             }
             .launchIn(viewModelScope)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        playerController.reset()
     }
 
     fun onPauseClick(position: Long) {

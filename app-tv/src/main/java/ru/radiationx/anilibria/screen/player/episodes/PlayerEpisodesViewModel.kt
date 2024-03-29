@@ -9,8 +9,9 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.anilibria.screen.player.PlayerExtra
-import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.asTimeSecString
 import toothpick.InjectConstructor
@@ -24,41 +25,88 @@ class PlayerEpisodesViewModel(
     private val playerController: PlayerController,
 ) : LifecycleViewModel() {
 
-    val episodesData = MutableStateFlow<List<Pair<String, String?>>>(emptyList())
-    val selectedIndex = MutableStateFlow<Int?>(null)
-
-    private val currentEpisodes = mutableListOf<Episode>()
+    val episodesData = MutableStateFlow<List<Group>>(emptyList())
+    val selectedAction = MutableStateFlow<Action?>(null)
 
     init {
-        releaseInteractor
-            .observeFull(argExtra.releaseId)
-            .onEach {
-                updateEpisodes(it)
-            }
-            .launchIn(viewModelScope)
+        val playerData = playerController.data.value
+        if (playerData != null) {
+            updateEpisodes(playerData)
+        } else {
+            releaseInteractor
+                .observeFull(argExtra.releaseId)
+                .onEach {
+                    updateEpisodes(listOf(it))
+                }
+                .launchIn(viewModelScope)
+        }
     }
 
-    fun applyEpisode(index: Int) {
+    fun applyEpisode(actionId: Long) {
         guidedRouter.close()
-        playerController.selectEpisodeRelay.emit(currentEpisodes[index].id)
+        val action = episodesData.value.findAction { it.id == actionId }
+        if (action != null) {
+            playerController.selectEpisodeRelay.emit(action.episodeId)
+        }
     }
 
-    private fun updateEpisodes(release: Release) {
+    private fun updateEpisodes(releases: List<Release>) {
         viewModelScope.launch {
-            currentEpisodes.clear()
-            currentEpisodes.addAll(release.episodes.reversed())
-            val accesses = releaseInteractor.getAccesses(release.id).associateBy { it.id }
-            episodesData.value = currentEpisodes.map {
-                val access = accesses[it.id]
+            val accesses = releases
+                .flatMap { releaseInteractor.getAccesses(it.id) }
+                .associateBy { it.id }
+            val groups = releases.toGroups(accesses)
+            episodesData.value = groups
+            selectedAction.value = groups.findAction { it.episodeId == argExtra.episodeId }
+        }
+    }
+
+    private fun List<Group>.findAction(block: (Action) -> Boolean): Action? {
+        forEach {
+            val action = it.actions.find(block)
+            if (action != null) {
+                return action
+            }
+        }
+        return null
+    }
+
+    private fun List<Release>.toGroups(accesses: Map<EpisodeId, EpisodeAccess>): List<Group> {
+        var id = 0L
+        return map { release ->
+            val groupId = id++
+            val actions = release.episodes.map { episode ->
+                val access = accesses[episode.id]
                 val description = if (access != null && access.isViewed && access.seek > 0) {
                     "Остановлена на ${Date(access.seek).asTimeSecString()}"
                 } else {
                     null
                 }
-                Pair(it.title.orEmpty(), description)
+                Action(
+                    id = id++,
+                    episodeId = episode.id,
+                    title = episode.title.orEmpty(),
+                    description = description
+                )
             }
-            selectedIndex.value = currentEpisodes.indexOfLast { it.id == argExtra.episodeId }
+            Group(
+                id = groupId,
+                title = release.title.orEmpty(),
+                actions = actions
+            )
         }
-
     }
+
+    data class Group(
+        val id: Long,
+        val title: String,
+        val actions: List<Action>,
+    )
+
+    data class Action(
+        val id: Long,
+        val episodeId: EpisodeId,
+        val title: String,
+        val description: String?,
+    )
 }

@@ -4,7 +4,8 @@ package ru.radiationx.anilibria.screen.player
 
 import android.os.Bundle
 import android.view.View
-import com.google.android.exoplayer2.PlaybackParameters
+import androidx.media3.common.PlaybackParameters
+import androidx.media3.common.util.UnstableApi
 import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -14,6 +15,7 @@ import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
+@UnstableApi
 class PlayerFragment : BasePlayerFragment() {
 
     companion object {

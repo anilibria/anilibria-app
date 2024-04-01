@@ -27,7 +27,8 @@ import androidx.leanback.widget.PlaybackControlsRow.MultiAction
 import androidx.leanback.widget.PlaybackControlsRow.RewindAction
 import androidx.leanback.widget.PlaybackControlsRow.SkipNextAction
 import androidx.leanback.widget.PlaybackControlsRow.SkipPreviousAction
-import com.google.android.exoplayer2.ext.leanback.LeanbackPlayerAdapter
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.leanback.LeanbackPlayerAdapter
 import ru.radiationx.data.entity.common.PlayerQuality
 import java.util.concurrent.TimeUnit
 
@@ -48,6 +49,7 @@ import java.util.concurrent.TimeUnit
  * Note that the superclass, [PlaybackTransportControlGlue], manages the playback controls
  * row.
  */
+@UnstableApi
 class VideoPlayerGlue(
     context: Context,
     playerAdapter: LeanbackPlayerAdapter,

@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.ads.NativeAdsRepository
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
-import ru.radiationx.anilibria.ui.activities.player.PlayerDataSourceProvider
+import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.ui.common.Templates
@@ -118,9 +118,6 @@ class AppModule(application: Application) : QuillModule() {
             singleImpl<AnalyticsProfile, AppMetricaAnalyticsProfile>()
             singleImpl<AnalyticsErrorReporter, AppMetricaErrorReporter>()
         }
-
-        /* Player */
-        single<PlayerDataSourceProvider>()
     }
 
 }

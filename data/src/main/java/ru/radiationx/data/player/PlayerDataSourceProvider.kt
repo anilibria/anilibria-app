@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.activities.player
+package ru.radiationx.data.player
 
 import android.content.Context
 import android.os.Build
@@ -9,7 +9,6 @@ import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import okhttp3.OkHttp
 import org.chromium.net.CronetEngine
-import ru.radiationx.anilibria.R
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.di.providers.PlayerOkHttpProvider
@@ -71,7 +70,7 @@ class PlayerDataSourceProvider @Inject constructor(
     }
 
     private fun createUserAgent(transport: String): String {
-        val appInfo = "${context.getString(R.string.app_name)}/${buildConfig.versionName}"
+        val appInfo = "${buildConfig.applicationName}/${buildConfig.versionName}"
         val appIdInfo = "${buildConfig.applicationId}/${buildConfig.versionCode}"
         val androidInfo = "Android ${Build.VERSION.RELEASE}/${Build.VERSION.SDK_INT}"
         val deviceInfo = "${Build.MANUFACTURER}/${Build.MODEL}"

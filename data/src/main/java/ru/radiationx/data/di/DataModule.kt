@@ -113,6 +113,7 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.migration.MigrationDataSourceImpl
+import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.data.repository.ConfigurationRepository
@@ -283,6 +284,9 @@ class DataModule(context: Context) : QuillModule() {
         single<AdsConfigApi>()
         single<AdsConfigStorage>()
         single<AdsConfigRepository>()
+
+        /* Player */
+        single<PlayerDataSourceProvider>()
     }
 
 

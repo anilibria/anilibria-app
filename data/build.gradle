@@ -39,6 +39,8 @@ dependencies {
 
     api "com.jakewharton.timber:timber:$timber_version"
 
+    api 'org.conscrypt:conscrypt-android:2.5.2'
+
     api "com.squareup.moshi:moshi:$moshi_version"
     api "com.squareup.moshi:moshi-adapters:$moshi_version"
     ksp "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"

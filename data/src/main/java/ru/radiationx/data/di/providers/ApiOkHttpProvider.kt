@@ -8,9 +8,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
+import ru.radiationx.data.sslcompat.SslCompat
+import ru.radiationx.data.sslcompat.appendSslCompat
 import ru.radiationx.data.system.AppCookieJar
 import ru.radiationx.data.system.Client
-import ru.radiationx.data.system.appendConnectionSpecs
 import ru.radiationx.data.system.appendTimeouts
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -23,10 +24,11 @@ class ApiOkHttpProvider @Inject constructor(
     private val apiConfig: ApiConfig,
     private val sharedBuildConfig: SharedBuildConfig,
     private val unauthorizedInterceptor: UnauthorizedInterceptor,
+    private val sslCompat: SslCompat,
 ) : Provider<OkHttpClient> {
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
-        .appendConnectionSpecs()
+        .appendSslCompat(sslCompat)
         .appendTimeouts()
         .apply {
             val availableAddress =

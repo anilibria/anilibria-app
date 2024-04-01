@@ -9,9 +9,11 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import okhttp3.ConnectionSpec
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
+import ru.radiationx.data.R
 import ru.radiationx.data.SimpleClient
 import ru.radiationx.data.ads.AdsConfigApi
 import ru.radiationx.data.ads.AdsConfigRepository
@@ -125,15 +127,35 @@ import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.data.repository.TeamsRepository
 import ru.radiationx.data.repository.YoutubeRepository
+import ru.radiationx.data.sslcompat.SslCompat
 import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.data.system.AppCookieJar
 import ru.radiationx.quill.QuillModule
 import toothpick.InjectConstructor
 import javax.inject.Provider
 
-class DataModule : QuillModule() {
+class DataModule(context: Context) : QuillModule() {
 
     init {
+
+
+        instance<SslCompat> {
+            val rawCertResources = listOf(
+                R.raw.gsr4,
+                R.raw.gtsr1,
+                R.raw.gtsr2,
+                R.raw.gtsr3,
+                R.raw.gtsr4,
+                R.raw.isrg_root_x1,
+                R.raw.isrg_root_x2,
+            )
+            val connectionSpecs = listOf(
+                ConnectionSpec.COMPATIBLE_TLS,
+                ConnectionSpec.CLEARTEXT
+            )
+            SslCompat(context, rawCertResources, connectionSpecs)
+        }
+
         instance<Moshi> {
             Moshi.Builder().build()
         }

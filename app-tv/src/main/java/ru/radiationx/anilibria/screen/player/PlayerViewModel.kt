@@ -18,6 +18,7 @@ import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.EventFlow
+import ru.radiationx.shared.ktx.coRunCatching
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -35,7 +36,7 @@ class PlayerViewModel(
     val playAction = EventFlow<Boolean>()
 
     private var currentEpisodes = mutableListOf<Episode>()
-    private var currentRelease: Release? = null
+    private var currentReleases: List<Release>? = null
     private var currentEpisode: Episode? = null
     private var currentQuality: PlayerQuality? = null
     private var currentComplete: Boolean? = null
@@ -70,23 +71,33 @@ class PlayerViewModel(
             }
             .launchIn(viewModelScope)
 
-        releaseInteractor
-            .observeFull(argExtra.releaseId)
-            .onEach { release ->
-                currentRelease = release
+        viewModelScope.launch {
+            coRunCatching {
+                releaseInteractor.loadWithFranchises(argExtra.releaseId)
+            }.onSuccess { releases ->
+                playerController.data.value = releases
+                currentReleases = releases
                 currentEpisodes.clear()
-                currentEpisodes.addAll(release.episodes.reversed())
+                currentEpisodes.addAll(releases.flatMap { it.episodes.reversed() })
                 val episodeId = currentEpisode?.id ?: argExtra.episodeId
-                val episode = currentEpisodes.firstOrNull { it.id == episodeId }
+                val episode = currentEpisodes
+                    .firstOrNull { it.id == episodeId }
                     ?: currentEpisodes.firstOrNull()
                 episode?.also { playEpisode(it) }
+            }.onFailure {
+
             }
-            .launchIn(viewModelScope)
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
         playerController.reset()
+    }
+
+    private fun getCurrentRelease(): Release? {
+        val episodeId = currentEpisode?.id ?: return null
+        return currentReleases?.find { it.id == episodeId.releaseId }
     }
 
     fun onPauseClick(position: Long) {
@@ -108,7 +119,7 @@ class PlayerViewModel(
     }
 
     fun onEpisodesClick(position: Long) {
-        val release = currentRelease ?: return
+        val release = getCurrentRelease() ?: return
         val episode = currentEpisode ?: return
         saveEpisode(position)
         guidedRouter.open(PlayerEpisodesGuidedScreen(release.id, episode.id))
@@ -116,20 +127,20 @@ class PlayerViewModel(
 
 
     fun onQualityClick(position: Long) {
-        val release = currentRelease ?: return
+        val release = getCurrentRelease() ?: return
         val episode = currentEpisode ?: return
         saveEpisode(position)
         guidedRouter.open(PlayerQualityGuidedScreen(release.id, episode.id))
     }
 
     fun onSpeedClick() {
-        val release = currentRelease ?: return
+        val release = getCurrentRelease() ?: return
         val episode = currentEpisode ?: return
         guidedRouter.open(PlayerSpeedGuidedScreen(release.id, episode.id))
     }
 
     fun onComplete(position: Long) {
-        val release = currentRelease ?: return
+        val release = getCurrentRelease() ?: return
         val episode = currentEpisode ?: return
         if (currentComplete == true) return
         currentComplete = true
@@ -144,7 +155,7 @@ class PlayerViewModel(
     }
 
     fun onPrepare(duration: Long) {
-        val release = currentRelease ?: return
+        val release = getCurrentRelease() ?: return
         val episode = currentEpisode ?: return
         viewModelScope.launch {
             val access = releaseInteractor.getAccess(episode.id)
@@ -197,7 +208,7 @@ class PlayerViewModel(
     }
 
     private fun updateEpisode(force: Boolean = false) {
-        val release = currentRelease ?: return
+        val release = getCurrentRelease() ?: return
         val episode = currentEpisode ?: return
         val quality = currentQuality ?: return
         viewModelScope.launch {

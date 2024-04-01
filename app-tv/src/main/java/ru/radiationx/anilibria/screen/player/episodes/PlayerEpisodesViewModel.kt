@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.screen.player.episodes
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -75,7 +76,7 @@ class PlayerEpisodesViewModel(
         var id = 0L
         return map { release ->
             val groupId = id++
-            val actions = release.episodes.map { episode ->
+            val actions = release.episodes.asReversed().map { episode ->
                 val access = accesses[episode.id]
                 val description = if (access != null && access.isViewed && access.seek > 0) {
                     "Остановлена на ${Date(access.seek).asTimeSecString()}"

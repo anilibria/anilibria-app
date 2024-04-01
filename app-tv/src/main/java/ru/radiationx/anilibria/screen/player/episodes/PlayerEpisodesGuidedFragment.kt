@@ -33,12 +33,21 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
     }
 
     private fun createGroupedActions(groups: List<PlayerEpisodesViewModel.Group>): List<GuidedAction> {
-        return groups.map { group ->
-            GuidedAction.Builder(requireContext())
-                .id(group.id)
-                .title(group.title)
-                .subActions(createEpisodesActions(group.actions))
-                .build()
+        if (groups.size <= 1) {
+            return groups.getOrNull(0)?.let { createEpisodesActions(it.actions) }.orEmpty()
+        }
+        return buildList {
+            groups.forEach { group ->
+                val groupAction = GuidedAction.Builder(requireContext())
+                    .id(group.id)
+                    .title(group.title)
+                    .infoOnly(true)
+                    .enabled(false)
+                    .focusable(false)
+                    .build()
+                add(groupAction)
+                addAll(createEpisodesActions(group.actions))
+            }
         }
     }
 

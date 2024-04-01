@@ -30,7 +30,6 @@ import ru.radiationx.anilibria.ui.activities.player.models.PlayerRelease
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -162,13 +161,7 @@ class PlayerViewModel(
     @OptIn(DelicateCoroutinesApi::class)
     fun saveEpisodeSeek(episodeId: EpisodeId, seek: Long) {
         GlobalScope.launch {
-            val access = EpisodeAccess(
-                id = episodeId,
-                seek = seek,
-                isViewed = true,
-                lastAccess = System.currentTimeMillis()
-            )
-            episodesCheckerHolder.putEpisode(access)
+            releaseInteractor.setAccessSeek(episodeId, seek)
         }
     }
 

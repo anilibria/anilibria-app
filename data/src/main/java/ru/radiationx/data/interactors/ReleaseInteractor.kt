@@ -161,7 +161,7 @@ class ReleaseInteractor @Inject constructor(
     }
 
     private suspend fun updateEpisode(id: EpisodeId, block: (EpisodeAccess) -> EpisodeAccess) {
-        val access = episodesCheckerStorage.getEpisode(id) ?: return
+        val access = episodesCheckerStorage.getEpisode(id) ?: EpisodeAccess.createDefault(id)
         val newAccess = block.invoke(access)
         episodesCheckerStorage.putEpisode(newAccess)
     }

@@ -52,8 +52,11 @@ class PlayerFragment : BasePlayerFragment() {
             override fun onSpeedClick() = viewModel.onSpeedClick()
             override fun onEpisodesClick() = viewModel.onEpisodesClick(getPosition())
         }
+        progressBarManager.initialDelay = 0
+        progressBarManager.show()
 
         subscribeTo(viewModel.videoData.filterNotNull()) {
+            progressBarManager.hide()
             playerGlue?.apply {
                 title = it.title
                 subtitle = it.subtitle

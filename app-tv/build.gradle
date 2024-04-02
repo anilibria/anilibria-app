@@ -70,9 +70,9 @@ dependencies {
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
 
-
-    implementation "com.google.android.exoplayer:exoplayer:$exoplayer_leanback_version"
-    implementation "com.google.android.exoplayer:extension-leanback:$exoplayer_leanback_version"
+    implementation "androidx.media3:media3-ui-leanback:$androidx_media3_version"
+    implementation "androidx.media3:media3-exoplayer:$androidx_media3_version"
+    implementation "androidx.media3:media3-exoplayer-hls:$androidx_media3_version"
 
     implementation "com.github.mintrocket.MintPermissions:mintpermissions:$mintpermissions_version"
     implementation "com.github.mintrocket.MintPermissions:mintpermissions-flows:$mintpermissions_version"

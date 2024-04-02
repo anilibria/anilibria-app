@@ -1,7 +1,6 @@
 package ru.radiationx.data.sslcompat
 
 import android.annotation.SuppressLint
-import android.util.Log
 import java.security.KeyStore
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
@@ -42,15 +41,16 @@ class CompatTrustManager(
      */
     @Throws(CertificateException::class)
     override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-        for (tm in managers) {
+        var latestException: CertificateException? = null
+        for (manager in managers) {
             try {
-                tm.checkServerTrusted(chain, authType)
+                manager.checkServerTrusted(chain, authType)
                 return
             } catch (e: CertificateException) {
-                // ignore
+                latestException = e
             }
         }
-        throw CertificateException()
+        throw latestException ?: CertificateException("Not found any trusted server in managers")
     }
 
     override fun getAcceptedIssuers(): Array<X509Certificate> {

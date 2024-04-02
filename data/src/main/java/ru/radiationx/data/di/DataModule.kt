@@ -40,6 +40,7 @@ import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.analytics.features.ScheduleAnalytics
 import ru.radiationx.data.analytics.features.SettingsAnalytics
+import ru.radiationx.data.analytics.features.SslCompatAnalytics
 import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
@@ -252,6 +253,7 @@ class DataModule(context: Context) : QuillModule() {
 
         /* Analytics */
         single<ActivityLaunchAnalytics>()
+        single<SslCompatAnalytics>()
         single<AnalyticsProfileDataSource>()
         single<AuthDeviceAnalytics>()
         single<AuthMainAnalytics>()

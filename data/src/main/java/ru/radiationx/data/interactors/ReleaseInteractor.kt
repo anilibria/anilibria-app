@@ -143,10 +143,7 @@ class ReleaseInteractor @Inject constructor(
 
     suspend fun markUnviewed(id: EpisodeId) {
         updateEpisode(id) {
-            it.copy(
-                isViewed = false,
-                lastAccess = 0
-            )
+            EpisodeAccess.createDefault(id)
         }
     }
 

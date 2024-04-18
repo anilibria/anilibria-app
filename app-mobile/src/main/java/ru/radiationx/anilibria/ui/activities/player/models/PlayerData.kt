@@ -9,16 +9,12 @@ data class PlayerData(
 ) {
     val episodes: List<Episode> = releases.flatMap { it.episodes }
 
-    fun getRelease(releaseId: ReleaseId): PlayerRelease {
-        return requireNotNull(releases.find { it.id == releaseId }) {
-            "No loaded release for id ${releaseId.id} in ${releases.map { it.id.id }}"
-        }
+    fun getRelease(releaseId: ReleaseId): PlayerRelease? {
+        return releases.find { it.id == releaseId }
     }
 
-    fun getEpisode(episodeId: EpisodeId): Episode {
-        return requireNotNull(episodes.find { it.id == episodeId }) {
-            "No loaded episode for id $episodeId"
-        }
+    fun getEpisode(episodeId: EpisodeId): Episode? {
+        return episodes.find { it.id == episodeId }
     }
 
 }

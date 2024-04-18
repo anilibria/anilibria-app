@@ -10,4 +10,10 @@ data class EpisodeAccess(
     val seek: Long,
     val isViewed: Boolean,
     val lastAccess: Long,
-) : Parcelable
+) : Parcelable {
+    companion object {
+        fun createDefault(id: EpisodeId): EpisodeAccess {
+            return EpisodeAccess(id, 0L, false, 0L)
+        }
+    }
+}

@@ -12,10 +12,6 @@ import ru.radiationx.shared.ktx.android.subscribeTo
 class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
 
     companion object {
-        private const val CHUNK_SIZE = 20
-        private const val CHUNK_THRESHOLD = 32
-        private const val CHUNK_ID_OFFSET = 100000
-        private const val CHUNK_ENABLED = false
     }
 
     private val viewModel by viewModel<PlayerEpisodesViewModel> { argExtra }
@@ -28,59 +24,54 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         subscribeTo(viewModel.episodesData) {
-            actions = if (CHUNK_ENABLED && it.size > CHUNK_THRESHOLD) {
-                createChunkedActions(it)
-            } else {
-                createEpisodesActions(0, it)
-            }
+            actions = createGroupedActions(it)
         }
 
-        subscribeTo(viewModel.selectedIndex.filterNotNull()) { selectedIndex ->
-            selectedActionPosition = if (actions.any { it.hasSubActions() }) {
-                val chunkActionId = ((selectedIndex / CHUNK_SIZE) + CHUNK_ID_OFFSET).toLong()
-                val chunkPosition = findActionPositionById(chunkActionId)
-                findActionById(chunkActionId)?.also {
-                    expandAction(it, false)
-                }
-                chunkPosition
-            } else {
-                selectedIndex
+        subscribeTo(viewModel.selectedAction.filterNotNull()) { action ->
+            selectedActionPosition = findActionPositionById(action.id)
+        }
+    }
+
+    private fun createGroupedActions(groups: List<PlayerEpisodesViewModel.Group>): List<GuidedAction> {
+        if (groups.size <= 1) {
+            return groups.getOrNull(0)?.let { createEpisodesActions(it.actions) }.orEmpty()
+        }
+        return buildList {
+            groups.forEach { group ->
+                val groupAction = GuidedAction.Builder(requireContext())
+                    .id(group.id)
+                    .title(group.title)
+                    .multilineDescription(true)
+                    .infoOnly(true)
+                    .enabled(false)
+                    .focusable(false)
+                    .build()
+                add(groupAction)
+                addAll(createEpisodesActions(group.actions))
             }
         }
     }
 
-    private fun createChunkedActions(episodes: List<Pair<String, String?>>): List<GuidedAction> =
-        episodes.chunked(CHUNK_SIZE).mapIndexed { index: Int, chunk: List<Pair<String, String?>> ->
-            val first = chunk.first().first
-            val last = chunk.last().first
-            val offset = index * CHUNK_SIZE
-            GuidedAction.Builder(requireContext())
-                .id((CHUNK_ID_OFFSET + index).toLong())
-                .title("$first – $last")
-                .subActions(createEpisodesActions(offset, chunk))
-                .build()
-        }
-
     private fun createEpisodesActions(
-        offset: Int,
-        episodes: List<Pair<String, String?>>,
-    ): List<GuidedAction> =
-        episodes.mapIndexed { index: Int, data: Pair<String, String?> ->
+        episodes: List<PlayerEpisodesViewModel.Action>,
+    ): List<GuidedAction> {
+        return episodes.map { action ->
             GuidedAction.Builder(requireContext())
-                .id((offset + index).toLong())
-                .title(data.first)
-                .description(data.second)
+                .id(action.id)
+                .title(action.title)
+                .description(action.description)
                 .build()
         }
+    }
 
     override fun onGuidedActionClicked(action: GuidedAction) {
         if (!action.hasSubActions()) {
-            viewModel.applyEpisode(action.id.toInt())
+            viewModel.applyEpisode(action.id)
         }
     }
 
     override fun onSubGuidedActionClicked(action: GuidedAction): Boolean {
-        viewModel.applyEpisode(action.id.toInt())
+        viewModel.applyEpisode(action.id)
         return super.onSubGuidedActionClicked(action)
     }
 }

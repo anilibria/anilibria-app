@@ -97,6 +97,25 @@ class ReleaseInteractor @Inject constructor(
         }
     }
 
+    suspend fun loadWithFranchises(releaseId: ReleaseId): List<Release> {
+        val rootRelease = requireNotNull(getFull(releaseId)) {
+            "Loaded release is null for $releaseId"
+        }
+        val rootReleaseIds = rootRelease.getFranchisesIds()
+        if (rootReleaseIds.isEmpty()) {
+            return listOf(rootRelease)
+        }
+        val idsToLoad = rootReleaseIds.filter { it != rootRelease.id }
+        val franchiseReleases = releaseRepository.getFullReleasesById(idsToLoad)
+
+        val allReleasesMap = mutableMapOf<ReleaseId, Release>()
+        allReleasesMap[rootRelease.id] = rootRelease
+        franchiseReleases.forEach {
+            allReleasesMap[it.id] = it
+        }
+        return rootReleaseIds.mapNotNull { allReleasesMap[it] }
+    }
+
     /* Common */
     fun observeAccesses(releaseId: ReleaseId): Flow<List<EpisodeAccess>> {
         return episodesCheckerStorage.observeEpisodes().map { accesses ->
@@ -124,10 +143,7 @@ class ReleaseInteractor @Inject constructor(
 
     suspend fun markUnviewed(id: EpisodeId) {
         updateEpisode(id) {
-            it.copy(
-                isViewed = false,
-                lastAccess = 0
-            )
+            EpisodeAccess.createDefault(id)
         }
     }
 
@@ -142,7 +158,7 @@ class ReleaseInteractor @Inject constructor(
     }
 
     private suspend fun updateEpisode(id: EpisodeId, block: (EpisodeAccess) -> EpisodeAccess) {
-        val access = episodesCheckerStorage.getEpisode(id) ?: return
+        val access = episodesCheckerStorage.getEpisode(id) ?: EpisodeAccess.createDefault(id)
         val newAccess = block.invoke(access)
         episodesCheckerStorage.putEpisode(newAccess)
     }

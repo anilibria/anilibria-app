@@ -1,6 +1,7 @@
 package ru.radiationx.data
 
 interface SharedBuildConfig {
+    val applicationName:String
     val applicationId: String
     val versionName: String
     val versionCode: Int

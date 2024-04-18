@@ -20,8 +20,8 @@ android {
         applicationId "ru.radiationx.anilibria.app"
         minSdkVersion app_min_sdk_version
         targetSdkVersion app_target_sdk_version
-        versionCode 69
-        versionName "2.12.0"
+        versionCode 70
+        versionName "2.13.0"
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations += ['ru']
@@ -102,10 +102,7 @@ dependencies {
 
     implementation "androidx.media3:media3-exoplayer:$androidx_media3_version"
     implementation "androidx.media3:media3-exoplayer-hls:$androidx_media3_version"
-    implementation "androidx.media3:media3-datasource-okhttp:$androidx_media3_version"
     implementation "androidx.media3:media3-session:$androidx_media3_version"
-    implementation "androidx.media3:media3-datasource-cronet:$androidx_media3_version"
-
 
     implementation "org.bsc.util:minitemplator-repackaged:$minitemplator_version"
 

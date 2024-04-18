@@ -3,10 +3,10 @@ package ru.radiationx.data.interactors
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
@@ -14,6 +14,7 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.RandomRelease
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.ReleaseRepository
@@ -27,19 +28,6 @@ class ReleaseInteractor @Inject constructor(
     private val episodesCheckerStorage: EpisodesCheckerHolder,
     private val preferencesHolder: PreferencesHolder,
 ) {
-
-    private val checkerCombiner: (suspend (Release, List<EpisodeAccess>) -> Release) =
-        { release, episodeAccesses ->
-            val newEpisodes = release.episodes.map { episode ->
-                val episodeAccess = episodeAccesses.firstOrNull { it.id == episode.id }
-                if (episodeAccess != null) {
-                    episode.copy(access = episodeAccess)
-                } else {
-                    episode
-                }
-            }
-            release.copy(episodes = newEpisodes)
-        }
 
     private val releaseItems = MutableStateFlow<List<Release>>(emptyList())
     private val releases = MutableStateFlow<List<Release>>(emptyList())
@@ -87,11 +75,7 @@ class ReleaseInteractor @Inject constructor(
         return flow {
             emit(updateIfNotExists(releaseId, releaseCode))
         }.flatMapLatest {
-            combine(
-                releases.mapNotNull { it.findRelease(releaseId, releaseCode) },
-                episodesCheckerStorage.observeEpisodes(),
-                checkerCombiner
-            )
+            releases.mapNotNull { it.findRelease(releaseId, releaseCode) }
         }
     }
 
@@ -113,18 +97,80 @@ class ReleaseInteractor @Inject constructor(
         }
     }
 
+    suspend fun loadWithFranchises(releaseId: ReleaseId): List<Release> {
+        val rootRelease = requireNotNull(getFull(releaseId)) {
+            "Loaded release is null for $releaseId"
+        }
+        val rootReleaseIds = rootRelease.getFranchisesIds()
+        if (rootReleaseIds.isEmpty()) {
+            return listOf(rootRelease)
+        }
+        val idsToLoad = rootReleaseIds.filter { it != rootRelease.id }
+        val franchiseReleases = releaseRepository.getFullReleasesById(idsToLoad)
+
+        val allReleasesMap = mutableMapOf<ReleaseId, Release>()
+        allReleasesMap[rootRelease.id] = rootRelease
+        franchiseReleases.forEach {
+            allReleasesMap[it.id] = it
+        }
+        return rootReleaseIds.mapNotNull { allReleasesMap[it] }
+    }
+
     /* Common */
-    suspend fun putEpisode(episode: EpisodeAccess) = episodesCheckerStorage.putEpisode(episode)
+    fun observeAccesses(releaseId: ReleaseId): Flow<List<EpisodeAccess>> {
+        return episodesCheckerStorage.observeEpisodes().map { accesses ->
+            accesses.filter { it.id.releaseId == releaseId }
+        }
+    }
 
-    suspend fun putEpisodes(episodes: List<EpisodeAccess>) =
-        episodesCheckerStorage.putAllEpisode(episodes)
+    suspend fun getAccesses(releaseId: ReleaseId): List<EpisodeAccess> {
+        return episodesCheckerStorage.getEpisodes(releaseId)
+    }
 
-    suspend fun getEpisodes(releaseId: ReleaseId) = episodesCheckerStorage.getEpisodes(releaseId)
+    suspend fun getAccess(id: EpisodeId): EpisodeAccess? {
+        return episodesCheckerStorage.getEpisode(id)
+    }
 
-    suspend fun resetEpisodesHistory(releaseId: ReleaseId) {
+    suspend fun resetAccessHistory(releaseId: ReleaseId) {
         episodesCheckerStorage.remove(releaseId)
     }
 
+    suspend fun markAllViewed(id: ReleaseId) {
+        updateEpisodes(id) { accesses ->
+            accesses.map { it.copy(isViewed = true) }
+        }
+    }
+
+    suspend fun markUnviewed(id: EpisodeId) {
+        updateEpisode(id) {
+            EpisodeAccess.createDefault(id)
+        }
+    }
+
+    suspend fun setAccessSeek(id: EpisodeId, seek: Long) {
+        updateEpisode(id) {
+            it.copy(
+                seek = seek,
+                lastAccess = System.currentTimeMillis(),
+                isViewed = true
+            )
+        }
+    }
+
+    private suspend fun updateEpisode(id: EpisodeId, block: (EpisodeAccess) -> EpisodeAccess) {
+        val access = episodesCheckerStorage.getEpisode(id) ?: EpisodeAccess.createDefault(id)
+        val newAccess = block.invoke(access)
+        episodesCheckerStorage.putEpisode(newAccess)
+    }
+
+    private suspend fun updateEpisodes(
+        id: ReleaseId,
+        block: (List<EpisodeAccess>) -> List<EpisodeAccess>,
+    ) {
+        val access = episodesCheckerStorage.getEpisodes(id)
+        val newAccess = block.invoke(access)
+        episodesCheckerStorage.putAllEpisode(newAccess)
+    }
 
     private suspend fun updateIfNotExists(
         releaseId: ReleaseId? = null,

@@ -6,7 +6,10 @@ import android.content.Intent
 import android.net.http.SslError
 import android.os.Bundle
 import android.view.WindowManager
-import android.webkit.*
+import android.webkit.SslErrorHandler
+import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
+import android.webkit.WebView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.apptheme.AppTheme
@@ -81,7 +84,6 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
 
         binding.webView.settings.apply {
             cacheMode = WebSettings.LOAD_NO_CACHE
-            javaScriptEnabled = true
         }
 
         val webViewClient = object : WebViewClientCompat() {

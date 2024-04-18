@@ -1,9 +1,14 @@
 package ru.radiationx.anilibria
 
+import android.content.Context
 import ru.radiationx.data.SharedBuildConfig
 import javax.inject.Inject
 
-class AppBuildConfig @Inject constructor() : SharedBuildConfig {
+class AppBuildConfig @Inject constructor(
+    private val context: Context,
+) : SharedBuildConfig {
+
+    override val applicationName: String = context.getString(R.string.app_name)
 
     override val applicationId: String = BuildConfig.APPLICATION_ID
 

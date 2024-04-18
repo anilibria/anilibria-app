@@ -8,6 +8,7 @@ import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.BlockedInfo
 import ru.radiationx.data.entity.domain.release.Episode
+import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.ExternalPlaylist
 import ru.radiationx.data.entity.domain.release.FavoriteInfo
@@ -17,6 +18,7 @@ import ru.radiationx.data.entity.domain.release.RutubeEpisode
 import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
+import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.shared.ktx.asTimeSecString
 import ru.radiationx.shared.ktx.capitalizeDefault
@@ -27,11 +29,12 @@ import java.util.Date
 
 fun Release.toState(
     loadings: Map<TorrentId, MutableStateFlow<Int>>,
+    accesses: Map<EpisodeId, EpisodeAccess>,
 ): ReleaseDetailState = ReleaseDetailState(
     id = id,
     info = toInfoState(),
-    episodesControl = toEpisodeControlState(),
-    episodesTabs = toTabsState(),
+    episodesControl = toEpisodeControlState(accesses),
+    episodesTabs = toTabsState(accesses),
     torrents = torrents.map { it.toState(loadings) },
     blockedInfo = blockedInfo.takeIf { it.isBlocked }?.toState()
 )
@@ -101,12 +104,18 @@ fun BlockedInfo.toState(): ReleaseBlockedInfoState {
     )
 }
 
-fun Release.toEpisodeControlState(): ReleaseEpisodesControlState? {
+fun Release.toEpisodeControlState(
+    accesses: Map<EpisodeId, EpisodeAccess>,
+): ReleaseEpisodesControlState? {
     val hasEpisodes = episodes.isNotEmpty()
-    val hasViewed = episodes.any { it.access.isViewed }
+    val hasViewed = episodes.any {
+        accesses[it.id]?.isViewed == true
+    }
     val hasWeb = !moonwalkLink.isNullOrEmpty()
     val continueTitle = if (hasViewed) {
-        val lastViewed = episodes.maxByOrNull { it.access.lastAccess }
+        val lastViewed = episodes.maxByOrNull {
+            accesses[it.id]?.lastAccess ?: 0
+        }
         "Продолжить c ${lastViewed?.id?.id} серии"
     } else {
         "Начать просмотр"
@@ -145,12 +154,14 @@ fun TorrentItem.toState(
     )
 }
 
-fun Release.toTabsState(): List<EpisodesTabState> {
+fun Release.toTabsState(
+    accesses: Map<EpisodeId, EpisodeAccess>,
+): List<EpisodesTabState> {
     val onlineTab = EpisodesTabState(
         tag = "online",
         title = "Онлайн",
         textColor = null,
-        episodes = episodes.map { it.toState() }
+        episodes = episodes.map { it.toState(accesses) }
     )
     val rutubeTab = EpisodesTabState(
         "rutube",
@@ -219,21 +230,24 @@ fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     actionColorRes = null
 )
 
-fun Episode.toState(): ReleaseEpisodeItemState {
-    val subtitle = if (access.isViewed && access.seek > 0) {
+fun Episode.toState(
+    accesses: Map<EpisodeId, EpisodeAccess>,
+): ReleaseEpisodeItemState {
+    val access = accesses[id]
+    val subtitle = if (access != null && access.isViewed && access.seek > 0) {
         "Остановлена на ${Date(access.seek).asTimeSecString()}"
     } else {
         null
     }
     val hasUpdate = updatedAt?.time?.let { updatedTime ->
-        updatedTime > access.lastAccess
+        access != null && updatedTime > access.lastAccess
     } ?: false
     return ReleaseEpisodeItemState(
         id = id,
         title = title.orEmpty(),
         subtitle = subtitle,
         updatedAt = updatedAt,
-        isViewed = access.isViewed,
+        isViewed = access?.isViewed == true,
         hasUpdate = hasUpdate,
         hasSd = false,
         hasHd = false,

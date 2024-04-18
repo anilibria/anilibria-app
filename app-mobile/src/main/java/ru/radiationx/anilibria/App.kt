@@ -101,7 +101,7 @@ class App : Application() {
 
     private fun initDependencies() {
         Toothpick.setConfiguration(Configuration.forProduction())
-        Quill.getRootScope().installModules(AppModule(this), DataModule())
+        Quill.getRootScope().installModules(AppModule(this), DataModule(this))
     }
 
     private fun appVersionCheck() {

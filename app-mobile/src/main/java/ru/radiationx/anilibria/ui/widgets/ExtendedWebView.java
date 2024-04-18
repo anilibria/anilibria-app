@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.widgets;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
@@ -92,6 +91,8 @@ public class ExtendedWebView extends NestedWebView implements IBase {
         settings.setDefaultFontSize(16);
         settings.setTextZoom(100);
         settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
         settings.setAllowFileAccessFromFileURLs(true);

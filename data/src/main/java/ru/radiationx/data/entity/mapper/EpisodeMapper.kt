@@ -1,7 +1,6 @@
 package ru.radiationx.data.entity.mapper
 
 import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.ExternalPlaylist
 import ru.radiationx.data.entity.domain.release.PlayerSkips
@@ -39,13 +38,7 @@ fun EpisodeResponse.toOnlineDomain(releaseId: ReleaseId): Episode? {
             urlFullHd = urlFullHd,
         ),
         updatedAt = updatedAt?.secToDate(),
-        skips = skips?.toDomain(),
-        access = EpisodeAccess(
-            id = episodeId,
-            seek = 0,
-            isViewed = false,
-            lastAccess = 0
-        )
+        skips = skips?.toDomain()
     )
 }
 

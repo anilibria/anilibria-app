@@ -168,7 +168,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
                 }
 
                 is PlayerAction.Play -> {
-                    if (action.seek != null && action.seek != 0L && action.seek != binding.playerView.timelineState.value.position) {
+                    if (action.seek != null && action.seek != binding.playerView.timelineState.value.position) {
                         binding.playerView.seekTo(action.seek)
                     }
                     // fix case when app hidden before "play" called
@@ -293,12 +293,16 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         binding.playerView.onInteraction()
     }
 
-    private fun handleEpisode(intent: Intent, bundle: Bundle?, isNew: Boolean) {
+    private fun handleEpisode(intent: Intent, bundle: Bundle?, isNewIntent: Boolean) {
         val intentEpisodeId = intent.getExtraNotNull<EpisodeId>(ARG_EPISODE_ID)
         val savedEpisodeId = bundle?.getExtra<EpisodeId>(KEY_EPISODE_ID)
-        val episodeId = savedEpisodeId ?: intentEpisodeId
+        val episodeId = if (isNewIntent) {
+            intentEpisodeId
+        } else {
+            savedEpisodeId ?: intentEpisodeId
+        }
         analytics.handleEpisode(
-            isNewIntent = isNew,
+            isNewIntent = isNewIntent,
             hasBundle = bundle != null,
             episodeId = episodeId
         )

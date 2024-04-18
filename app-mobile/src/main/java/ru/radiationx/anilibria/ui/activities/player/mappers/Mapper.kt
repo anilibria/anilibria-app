@@ -20,8 +20,8 @@ fun Release.toPlayerRelease() = PlayerRelease(
     episodes = episodes.asReversed()
 )
 
-fun PlayerData.toDataState(episodeId: EpisodeId): PlayerDataState {
-    return getRelease(episodeId.releaseId).toDataState(episodeId)
+fun PlayerData.toDataState(episodeId: EpisodeId): PlayerDataState? {
+    return getRelease(episodeId.releaseId)?.toDataState(episodeId)
 }
 
 fun PlayerRelease.toDataState(episodeId: EpisodeId) = PlayerDataState(

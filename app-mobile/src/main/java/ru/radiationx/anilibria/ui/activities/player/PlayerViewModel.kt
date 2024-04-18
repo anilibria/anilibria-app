@@ -113,7 +113,7 @@ class PlayerViewModel(
 
     fun onSettingsClick() {
         launchWithData { data ->
-            val episode = data.episodes.find { it.id == _episodeId.value } ?: return@launchWithData
+            val episode = data.getEpisode(_episodeId.value) ?: return@launchWithData
             val quality = preferencesHolder.playerQuality.value
             val settingsState = PlayerSettingsState(
                 currentSpeed = preferencesHolder.playSpeed.value,

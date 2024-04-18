@@ -26,13 +26,10 @@ import ru.radiationx.anilibria.ui.activities.player.models.LoadingState
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerAction
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerData
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerDataState
-import ru.radiationx.anilibria.ui.activities.player.models.PlayerRelease
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ReleaseRepository
 import ru.radiationx.shared.ktx.coRunCatching
@@ -196,7 +193,9 @@ class PlayerViewModel(
         _dataJob = viewModelScope.launch {
             _dataState.update { LoadingState(loading = true) }
             coRunCatching {
-                loadAllData(episodeId)
+                releaseInteractor
+                    .loadWithFranchises(episodeId.releaseId)
+                    .map { it.toPlayerRelease() }
             }.onSuccess { releases ->
                 _dataState.update { it.copy(data = PlayerData(releases)) }
                 playEpisode(episodeId)
@@ -216,27 +215,6 @@ class PlayerViewModel(
         val data = _dataState.value.data ?: return
         viewModelScope.launch {
             block.invoke(this, data)
-        }
-    }
-
-    private suspend fun loadAllData(episodeId: EpisodeId): List<PlayerRelease> {
-        val rootRelease = requireNotNull(releaseInteractor.getFull(episodeId.releaseId)) {
-            "Loaded release is null for $episodeId"
-        }
-        val rootReleaseIds = rootRelease.getFranchisesIds()
-        if (rootReleaseIds.isEmpty()) {
-            return listOf(rootRelease.toPlayerRelease())
-        }
-        val idsToLoad = rootReleaseIds.filter { it != rootRelease.id }
-        val franchiseReleases = releaseRepository.getFullReleasesById(idsToLoad)
-
-        val allReleasesMap = mutableMapOf<ReleaseId, Release>()
-        allReleasesMap[rootRelease.id] = rootRelease
-        franchiseReleases.forEach {
-            allReleasesMap[it.id] = it
-        }
-        return rootReleaseIds.mapNotNull {
-            allReleasesMap[it]?.toPlayerRelease()
         }
     }
 

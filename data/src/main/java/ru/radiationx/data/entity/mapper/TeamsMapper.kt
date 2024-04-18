@@ -9,6 +9,7 @@ import ru.radiationx.data.entity.domain.team.Team
 import ru.radiationx.data.entity.domain.team.TeamRole
 import ru.radiationx.data.entity.domain.team.TeamUser
 import ru.radiationx.data.entity.domain.team.Teams
+import ru.radiationx.shared.ktx.android.parseColorOrNull
 
 fun TeamsResponse.toDomain() = Teams(
     headerRoles = headerRoles.map { it.toDomain() },
@@ -30,7 +31,7 @@ fun TeamUserResponse.toDomain() = TeamUser(
 
 fun TeamRoleResponse.toDomain() = TeamRole(
     title = title,
-    color = color?.mapColorToMd()?.let { Color.parseColor(it) }
+    color = color?.mapColorToMd()?.parseColorOrNull()
 )
 
 private fun String.mapColorToMd(): String = when (this) {

@@ -41,6 +41,7 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
                 val groupAction = GuidedAction.Builder(requireContext())
                     .id(group.id)
                     .title(group.title)
+                    .multilineDescription(true)
                     .infoOnly(true)
                     .enabled(false)
                     .focusable(false)

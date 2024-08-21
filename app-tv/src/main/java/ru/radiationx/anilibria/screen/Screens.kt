@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.common.fragment.GuidedAppScreen
 import ru.radiationx.anilibria.screen.auth.credentials.AuthCredentialsGuidedFragment
@@ -32,113 +33,113 @@ import ru.radiationx.anilibria.screen.update.source.UpdateSourceGuidedFragment
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import com.github.terrakok.cicerone.android.support.SupportAppScreen
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 
-class ConfigScreen : SupportAppScreen() {
-    override fun getFragment(): Fragment {
+class ConfigScreen : FragmentScreen {
+    override fun createFragment(factory: FragmentFactory): Fragment {
         return ConfigFragment()
     }
 }
 
-class MainPagesScreen : SupportAppScreen() {
-    override fun getFragment(): Fragment {
+class MainPagesScreen : FragmentScreen {
+    override fun createFragment(factory: FragmentFactory): Fragment {
         return MainPagesFragment()
     }
 }
 
-class DetailsScreen(private val releaseId: ReleaseId) : SupportAppScreen() {
-    override fun getFragment(): Fragment {
+class DetailsScreen(private val releaseId: ReleaseId) : FragmentScreen {
+    override fun createFragment(factory: FragmentFactory): Fragment {
         return DetailFragment.newInstance(releaseId)
     }
 }
 
 class DetailOtherGuidedScreen(private val releaseId: ReleaseId) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return DetailOtherGuidedFragment.newInstance(releaseId)
     }
 }
 
-class ScheduleScreen : SupportAppScreen() {
-    override fun getFragment(): Fragment {
+class ScheduleScreen : FragmentScreen {
+    override fun createFragment(factory: FragmentFactory): Fragment {
         return ScheduleFragment()
     }
 }
 
 class UpdateScreen
-    : SupportAppScreen() {
-    override fun getFragment(): Fragment {
+    : FragmentScreen {
+    override fun createFragment(factory: FragmentFactory): Fragment {
         return UpdateFragment()
     }
 }
 
 class UpdateSourceScreen : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return UpdateSourceGuidedFragment()
     }
 }
 
-class SuggestionsScreen : SupportAppScreen() {
-    override fun getFragment(): Fragment {
+class SuggestionsScreen : FragmentScreen {
+    override fun createFragment(factory: FragmentFactory): Fragment {
         return SuggestionsFragment()
     }
 }
 
-class SearchScreen : SupportAppScreen() {
-    override fun getFragment(): Fragment {
+class SearchScreen : FragmentScreen {
+    override fun createFragment(factory: FragmentFactory): Fragment {
         return SearchFragment()
     }
 }
 
 class SearchYearGuidedScreen(private val values: List<String>) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return SearchYearGuidedFragment().putValues(values)
     }
 }
 
 class SearchSeasonGuidedScreen(private val values: List<String>) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return SearchSeasonGuidedFragment().putValues(values)
     }
 }
 
 class SearchGenreGuidedScreen(private val values: List<String>) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return SearchGenreGuidedFragment().putValues(values)
     }
 }
 
 class SearchSortGuidedScreen(private val sort: SearchForm.Sort) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return SearchSortGuidedFragment.newInstance(sort)
     }
 }
 
 class SearchCompletedGuidedScreen(private val onlyCompleted: Boolean) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return SearchCompletedGuidedFragment.newInstance(onlyCompleted)
     }
 }
 
-class TestScreen : SupportAppScreen() {
-    override fun getFragment(): Fragment {
+class TestScreen : FragmentScreen {
+    override fun createFragment(factory: FragmentFactory): Fragment {
         return TestFragment()
     }
 }
 
 class AuthGuidedScreen : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return AuthGuidedFragment()
     }
 }
 
 class AuthCredentialsGuidedScreen : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return AuthCredentialsGuidedFragment()
     }
 }
 
 class AuthOtpGuidedScreen : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return AuthOtpGuidedFragment()
     }
 }
@@ -146,8 +147,8 @@ class AuthOtpGuidedScreen : GuidedAppScreen() {
 class PlayerScreen(
     private val releaseId: ReleaseId,
     private val episodeId: EpisodeId?,
-) : SupportAppScreen() {
-    override fun getFragment(): Fragment {
+) : FragmentScreen {
+    override fun createFragment(factory: FragmentFactory): Fragment {
         return PlayerFragment.newInstance(releaseId, episodeId)
     }
 }
@@ -156,7 +157,7 @@ class PlayerQualityGuidedScreen(
     private val releaseId: ReleaseId,
     private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return PlayerQualityGuidedFragment().putIds(releaseId, episodeId)
     }
 }
@@ -165,7 +166,7 @@ class PlayerSpeedGuidedScreen(
     private val releaseId: ReleaseId,
     private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return PlayerSpeedGuidedFragment().putIds(releaseId, episodeId)
     }
 }
@@ -174,7 +175,7 @@ class PlayerEpisodesGuidedScreen(
     private val releaseId: ReleaseId,
     private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return PlayerEpisodesGuidedFragment().putIds(releaseId, episodeId)
     }
 }
@@ -183,7 +184,7 @@ class PlayerEndEpisodeGuidedScreen(
     private val releaseId: ReleaseId,
     private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return EndEpisodeGuidedFragment().putIds(releaseId, episodeId)
     }
 }
@@ -192,13 +193,13 @@ class PlayerEndSeasonGuidedScreen(
     private val releaseId: ReleaseId,
     private val episodeId: EpisodeId?,
 ) : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return EndSeasonGuidedFragment().putIds(releaseId, episodeId)
     }
 }
 
 class TestGuidedStepScreen : GuidedAppScreen() {
-    override fun getFragment(): FakeGuidedStepFragment {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return DialogExampleFragment()
     }
 }

@@ -22,9 +22,9 @@ import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
 import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.quill.get
 
-@UnstableApi
 open class BasePlayerFragment : VideoSupportFragment() {
 
+    @UnstableApi
     protected var playerGlue: VideoPlayerGlue? = null
         private set
 
@@ -35,6 +35,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
         private set
 
     @SuppressLint("RestrictedApi")
+    @UnstableApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -56,6 +57,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
         )
 
         playerGlue?.playbackListener = object : VideoPlayerGlue.PlaybackListener {
+            @UnstableApi
             override fun onUpdateProgress() {
                 skipsPart?.update(player?.currentPosition ?: 0)
             }
@@ -95,6 +97,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
     protected open fun onCompletePlaying() {}
     protected open fun onPreparePlaying() {}
 
+    @UnstableApi
     private fun initializeRows() {
         val playerGlue = this.playerGlue ?: return
         val controlsRow = playerGlue.controlsRow ?: return
@@ -110,6 +113,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
         adapter = rowsAdapter
     }
 
+    @UnstableApi
     private fun initializePlayer() {
         if (player != null) {
             throw RuntimeException("Player already initialized")

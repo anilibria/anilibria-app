@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package ru.radiationx.anilibria.screen.player
 
 import android.os.Bundle
@@ -15,7 +13,6 @@ import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.subscribeTo
 
-@UnstableApi
 class PlayerFragment : BasePlayerFragment() {
 
     companion object {

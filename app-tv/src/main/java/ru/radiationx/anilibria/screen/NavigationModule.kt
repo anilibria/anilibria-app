@@ -9,6 +9,6 @@ class NavigationModule : Module() {
     init {
         val cicerone = Cicerone.create()
         bind(Router::class.java).toInstance(cicerone.router)
-        bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
+        bind(NavigatorHolder::class.java).toInstance(cicerone.getNavigatorHolder())
     }
 }

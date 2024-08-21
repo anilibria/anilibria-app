@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.common.fragment
 
+import com.github.terrakok.cicerone.BackTo
 import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.commands.BackTo
 
 class GuidedRouter : Router() {
 

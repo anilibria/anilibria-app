@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.common.fragment
 
-import com.github.terrakok.cicerone.android.support.SupportAppScreen
+import androidx.fragment.app.FragmentFactory
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 
-open class GuidedAppScreen : SupportAppScreen() {
-
-    override fun getFragment(): FakeGuidedStepFragment? = null
+abstract class GuidedAppScreen : FragmentScreen {
+    abstract override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment
 }

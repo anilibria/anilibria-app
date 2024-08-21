@@ -5,20 +5,21 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.leanback.app.GuidedStepSupportFragment
-import com.github.terrakok.cicerone.android.support.SupportAppNavigator
-import com.github.terrakok.cicerone.commands.Back
-import com.github.terrakok.cicerone.commands.BackTo
-import com.github.terrakok.cicerone.commands.Command
-import com.github.terrakok.cicerone.commands.Forward
-import com.github.terrakok.cicerone.commands.Replace
+import com.github.terrakok.cicerone.Back
+import com.github.terrakok.cicerone.BackTo
+import com.github.terrakok.cicerone.Command
+import com.github.terrakok.cicerone.Forward
+import com.github.terrakok.cicerone.Replace
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import java.util.LinkedList
 import kotlin.math.max
 
 class GuidedStepNavigator(
-    private val activity: FragmentActivity,
+    activity: FragmentActivity,
     containerId: Int,
     fragmentManager: FragmentManager = activity.supportFragmentManager,
-) : SupportAppNavigator(activity, fragmentManager, containerId) {
+) : AppNavigator(activity, containerId, fragmentManager) {
 
     private val guidedStack = LinkedList<String>()
 
@@ -32,12 +33,12 @@ class GuidedStepNavigator(
     fun backStackById(id: Int): FragmentManager.BackStackEntry? = backStack.find { it.id == id }
 
     override fun setupFragmentTransaction(
-        command: Command,
-        currentFragment: Fragment?,
-        nextFragment: Fragment?,
+        screen: FragmentScreen,
         fragmentTransaction: FragmentTransaction,
+        currentFragment: Fragment?,
+        nextFragment: Fragment
     ) {
-        super.setupFragmentTransaction(command, currentFragment, nextFragment, fragmentTransaction)
+        super.setupFragmentTransaction(screen, fragmentTransaction, currentFragment, nextFragment)
         fragmentTransaction.setReorderingAllowed(true)
     }
 
@@ -64,8 +65,7 @@ class GuidedStepNavigator(
     private fun guidedForward(command: Forward) {
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
-            val fragment =
-                screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
+            val fragment = screen.createFragment(fragmentManager.fragmentFactory)
 
             fragmentManager
                 .beginTransaction()
@@ -82,15 +82,14 @@ class GuidedStepNavigator(
 
             guidedStack.add(screen.screenKey)
         } else {
-            activityForward(command)
+            forward(command)
         }
     }
 
     private fun guidedReplace(command: Replace) {
         if (command.screen is GuidedAppScreen) {
             val screen = command.screen as GuidedAppScreen
-            val fragment =
-                screen.fragment ?: throw RuntimeException("Can't create fragment for $screen")
+            val fragment = screen.createFragment(fragmentManager.fragmentFactory)
 
             val currentFragment =
                 GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
@@ -114,7 +113,7 @@ class GuidedStepNavigator(
 
             guidedStack.add(screen.screenKey)
         } else {
-            activityReplace(command)
+            replace(command)
         }
     }
 
@@ -137,7 +136,7 @@ class GuidedStepNavigator(
             fragmentManager.popBackStack()
             guidedStack.removeLast()
         } else {
-            fragmentBack()
+            back()
         }
     }
 

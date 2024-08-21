@@ -12,7 +12,7 @@ class NavigationModule : QuillModule() {
         val cicerone by lazy { Cicerone.create(GuidedRouter()) }
         instance<Router> { cicerone.router }
         instance { cicerone.router }
-        instance { cicerone.navigatorHolder }
+        instance { cicerone.getNavigatorHolder() }
         single<LibriaCardRouter>()
     }
 }

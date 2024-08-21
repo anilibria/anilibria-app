@@ -39,6 +39,7 @@ buildscript {
         androidx_media3_version = '1.4.0'
 
         material_version = '1.12.0'
+        flexbox_version = '3.0.0'
 
         firebase_core_version = '21.1.1'
         firebase_messaging_version = '24.0.0'
@@ -63,7 +64,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.android.tools.build:gradle:8.5.2'
         classpath 'com.google.gms:google-services:4.4.2'
 
         // NOTE: Do not place your application dependencies here; they belong

@@ -97,6 +97,8 @@ dependencies {
     //implementation "com.lapism:search:1.0.0"
     implementation project(":lapism-search")
 
+    implementation "com.google.android.flexbox:flexbox:$flexbox_version"
+
     implementation "androidx.media3:media3-exoplayer:$androidx_media3_version"
     implementation "androidx.media3:media3-exoplayer-hls:$androidx_media3_version"
     implementation "androidx.media3:media3-session:$androidx_media3_version"

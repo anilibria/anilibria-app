@@ -20,7 +20,7 @@ buildscript {
         kotlin_version = '2.0.0'
         coroutines_version = '1.8.1'
         timber_version = '5.0.1'
-        cicerone_version = '5.1.0'
+        cicerone_version = '7.1'
         toothpick_version = '3.1.0'
         coil_version = '2.7.0'
         viewbindingdelegate_version = '1.5.9'
@@ -39,7 +39,6 @@ buildscript {
         androidx_media3_version = '1.4.0'
 
         material_version = '1.12.0'
-        flexbox_version = '2.0.1'
 
         firebase_core_version = '21.1.1'
         firebase_messaging_version = '24.0.0'
@@ -62,7 +61,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.5.1'
@@ -84,7 +82,6 @@ allprojects {
         mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url "https://maven.google.com" }
-        jcenter()
     }
 }
 

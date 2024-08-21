@@ -3,7 +3,6 @@ apply plugin: "kotlin-android"
 
 buildscript {
     repositories {
-        jcenter()
     }
 }
 

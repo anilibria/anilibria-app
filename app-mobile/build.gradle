@@ -91,14 +91,11 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
-    implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
+    implementation "com.github.terrakok:cicerone:$cicerone_version"
 
     //implementation "com.lapism:searchview:4.0"
     //implementation "com.lapism:search:1.0.0"
     implementation project(":lapism-search")
-
-    implementation "com.google.android:flexbox:$flexbox_version"
-
 
     implementation "androidx.media3:media3-exoplayer:$androidx_media3_version"
     implementation "androidx.media3:media3-exoplayer-hls:$androidx_media3_version"

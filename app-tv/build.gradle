@@ -65,7 +65,7 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_version"
 
-    implementation "ru.terrakok.cicerone:cicerone:$cicerone_version"
+    implementation "com.github.terrakok:cicerone:$cicerone_version"
 
     implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
     kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"

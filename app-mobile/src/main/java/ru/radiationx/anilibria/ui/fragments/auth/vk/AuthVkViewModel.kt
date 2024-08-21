@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.ui.fragments.auth.social.WebAuthSoFastDetector
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 data class AuthVkExtra(

@@ -33,7 +33,7 @@ class IntentActivity : BaseActivity() {
         intent?.data?.also { intentUri ->
             val screen = linkHandler.findScreen(intentUri.toString())
             if (screen != null) {
-                val intent = Screens.Main(intentUri.toString()).getActivityIntent(this)
+                val intent = Screens.Main(intentUri.toString()).createIntent(this)
                 startActivity(intent)
             } else {
                 if (intentUri.scheme?.let { it.startsWith("https") || it.startsWith("http") } == true) {

@@ -37,7 +37,7 @@ import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 data class CatalogExtra(

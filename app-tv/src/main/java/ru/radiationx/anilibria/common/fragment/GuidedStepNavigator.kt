@@ -5,12 +5,12 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.leanback.app.GuidedStepSupportFragment
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.commands.Back
-import ru.terrakok.cicerone.commands.BackTo
-import ru.terrakok.cicerone.commands.Command
-import ru.terrakok.cicerone.commands.Forward
-import ru.terrakok.cicerone.commands.Replace
+import com.github.terrakok.cicerone.android.support.SupportAppNavigator
+import com.github.terrakok.cicerone.commands.Back
+import com.github.terrakok.cicerone.commands.BackTo
+import com.github.terrakok.cicerone.commands.Command
+import com.github.terrakok.cicerone.commands.Forward
+import com.github.terrakok.cicerone.commands.Replace
 import java.util.LinkedList
 import kotlin.math.max
 

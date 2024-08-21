@@ -14,7 +14,7 @@ import ru.radiationx.shared.ktx.asMsk
 import ru.radiationx.shared.ktx.getDayOfWeek
 import ru.radiationx.shared.ktx.isSameDay
 import ru.radiationx.shared.ktx.lowercaseDefault
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 import java.util.Date
 

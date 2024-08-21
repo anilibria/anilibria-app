@@ -8,7 +8,7 @@ import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor

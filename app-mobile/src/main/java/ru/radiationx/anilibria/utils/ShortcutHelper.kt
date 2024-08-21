@@ -62,7 +62,7 @@ class ShortcutHelper(
         url: String,
         bitmap: Bitmap,
     ) {
-        val intent = Screens.IntentHandler(url).getActivityIntent(context)
+        val intent = Screens.IntentHandler(url).createIntent(context)
         val shortcut = ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(shortLabel)
             .setLongLabel(longLabel)

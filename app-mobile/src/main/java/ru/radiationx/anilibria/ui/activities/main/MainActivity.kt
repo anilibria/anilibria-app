@@ -22,6 +22,8 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.Back
+import com.github.terrakok.cicerone.Command
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -33,7 +35,7 @@ import ru.radiationx.anilibria.ads.BannerAdController
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerExtra
@@ -57,12 +59,10 @@ import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.launchInResumed
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.commands.Back
-import ru.terrakok.cicerone.commands.Command
-import ru.terrakok.cicerone.commands.Replace
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Replace
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 
 class MainActivity : BaseActivity(R.layout.activity_main) {
 
@@ -214,7 +214,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
             val notifyIntent =
                 Screens.AppUpdateScreen(false, AnalyticsConstants.notification_local_update)
-                    .getActivityIntent(this)
+                    .createIntent(this)
             val notifyPendingIntent =
                 PendingIntent.getActivity(this, 0, notifyIntent, immutableFlag())
             mBuilder.setContentIntent(notifyPendingIntent)
@@ -322,7 +322,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         allTabs.forEach { tab ->
             var fragment: Fragment? = fm.findFragmentByTag(tab.screen.screenKey)
             if (fragment == null) {
-                fragment = Screens.TabScreen(tab.screen).fragment
+                fragment = Screens.TabScreen(tab.screen).createFragment(fm.fragmentFactory)
                 ta.add(R.id.root_container, fragment, tab.screen.screenKey)
                 if (tabsStack.contains(tab.screen.screenKey)) {
                     ta.attach(fragment)
@@ -387,7 +387,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         }
     }
 
-    private val navigatorNew = object : SupportAppNavigator(this, R.id.root_container) {
+    private val navigatorNew = object : AppNavigator(this, R.id.root_container) {
 
         override fun applyCommand(command: Command) {
             if (command is Back) {
@@ -450,6 +450,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     data class Tab(
         val title: Int,
         val icon: Int,
-        val screen: BaseAppScreen,
+        val screen: BaseFragmentScreen,
     )
 }

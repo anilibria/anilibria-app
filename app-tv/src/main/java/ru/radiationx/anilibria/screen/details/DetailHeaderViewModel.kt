@@ -24,7 +24,7 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
 

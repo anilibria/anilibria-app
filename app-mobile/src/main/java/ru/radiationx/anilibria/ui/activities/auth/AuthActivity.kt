@@ -7,7 +7,7 @@ import androidx.core.view.WindowCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityAuthBinding
-import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
@@ -15,9 +15,9 @@ import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getExtra
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 
 
 /**
@@ -28,7 +28,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
     companion object {
         private const val ARG_INIT_SCREEN = "arg_screen"
 
-        fun newIntent(context: Context, rootScreen: BaseAppScreen? = null): Intent =
+        fun newIntent(context: Context, rootScreen: BaseFragmentScreen? = null): Intent =
             Intent(context, AuthActivity::class.java).apply {
                 putExtra(ARG_INIT_SCREEN, rootScreen)
             }
@@ -50,7 +50,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
         binding.initInsets(dimensionsProvider)
 
         if (savedInstanceState == null) {
-            val initScreen = getExtra<BaseAppScreen>(ARG_INIT_SCREEN) ?: Screens.AuthMain()
+            val initScreen = getExtra<BaseFragmentScreen>(ARG_INIT_SCREEN) ?: Screens.AuthMain()
             router.newRootScreen(initScreen)
         }
     }
@@ -85,7 +85,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private val navigatorNew by lazy {
-        object : SupportAppNavigator(this, R.id.root_container) {
+        object : AppNavigator(this, R.id.root_container) {
 
         }
     }

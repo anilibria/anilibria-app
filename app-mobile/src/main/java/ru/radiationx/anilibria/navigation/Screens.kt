@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
@@ -37,81 +39,105 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
  */
 object Screens {
 
+    fun kek() = FragmentScreen{
+        Fragment()
+    }
+
     class AppUpdateScreen(
         private val force: Boolean,
         private val analyticsFrom: String,
-    ) : BaseAppScreen() {
-        override fun getActivityIntent(context: Context): Intent {
+    ) : BaseActivityScreen() {
+        override fun createIntent(context: Context): Intent {
             return UpdateCheckerActivity.newIntent(context, force, analyticsFrom)
         }
     }
 
-    class IntentHandler(private val uri: String? = null) : BaseAppScreen() {
-        override fun getActivityIntent(context: Context) = IntentActivity.newIntent(context, uri)
+    class IntentHandler(
+        private val uri: String? = null
+    ) : BaseActivityScreen() {
+        override fun createIntent(context: Context) = IntentActivity.newIntent(context, uri)
     }
 
-    class Main(private val url: String? = null) : BaseAppScreen() {
-        override fun getActivityIntent(context: Context) = MainActivity.newIntent(context, url)
+    class Main(
+        private val url: String? = null
+    ) : BaseActivityScreen() {
+        override fun createIntent(context: Context) = MainActivity.newIntent(context, url)
     }
 
-    class Settings : BaseAppScreen() {
-        override fun getActivityIntent(context: Context) = SettingsActivity.newIntent(context)
+    class Settings : BaseActivityScreen() {
+        override fun createIntent(context: Context) = SettingsActivity.newIntent(context)
     }
 
-    class Auth(private val rootScreen: BaseAppScreen? = null) : BaseAppScreen() {
-        override fun getActivityIntent(context: Context) =
+    class Auth(
+        private val rootScreen: BaseFragmentScreen? = null
+    ) : BaseActivityScreen() {
+        override fun createIntent(context: Context) =
             AuthActivity.newIntent(context, rootScreen)
     }
 
     class Player(
         private val episodeId: EpisodeId,
-    ) : BaseAppScreen() {
-        override fun getActivityIntent(context: Context) =
+    ) : BaseActivityScreen() {
+        override fun createIntent(context: Context) =
             VideoPlayerActivity.newIntent(context, episodeId)
     }
 
     class WebPlayer(
         private val link: String,
         private val code: String,
-    ) : BaseAppScreen() {
-        override fun getActivityIntent(context: Context) =
+    ) : BaseActivityScreen() {
+        override fun createIntent(context: Context) =
             WebPlayerActivity.newIntent(context, link, code)
     }
 
-    class TabScreen(private val rootScreen: BaseAppScreen) : BaseAppScreen() {
-        override fun getFragment() = TabFragment.newInstance(rootScreen)
+    class TabScreen(
+        private val rootScreen: BaseFragmentScreen
+    ) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = TabFragment.newInstance(rootScreen)
     }
 
-    class AuthMain : BaseAppScreen() {
-        override fun getFragment() = AuthFragment()
+    class AuthMain : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = AuthFragment()
     }
 
-    class Auth2FaCode(private val login: String, private val password: String) : BaseAppScreen() {
-        override fun getFragment() = Auth2FaCodeFragment.newInstance(login, password)
+    class Auth2FaCode(
+        private val login: String,
+        private val password: String
+    ) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) =
+            Auth2FaCodeFragment.newInstance(login, password)
     }
 
-    class AuthVk(val url: String) : BaseAppScreen() {
-        override fun getFragment() = AuthVkFragment.newInstance(url)
+    class AuthVk(val url: String) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = AuthVkFragment.newInstance(url)
     }
 
-    class AuthSocial(val key: String) : BaseAppScreen() {
-        override fun getFragment() = AuthSocialFragment.newInstance(key)
+    class AuthSocial(val key: String) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = AuthSocialFragment.newInstance(key)
     }
 
-    class Favorites : BaseAppScreen() {
-        override fun getFragment() = FavoritesFragment()
+    class Favorites : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = FavoritesFragment()
     }
 
-    class StaticPage(private val pagePath: String, val title: String? = null) : BaseAppScreen() {
-        override fun getFragment() = PageFragment.newInstance(pagePath)
+    class StaticPage(
+        private val pagePath: String,
+        val title: String? = null
+    ) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = PageFragment.newInstance(pagePath)
     }
 
-    class History(private val importUri: Uri? = null) : BaseAppScreen() {
-        override fun getFragment() = HistoryFragment.newInstance(importUri)
+    class History(
+        private val importUri: Uri? = null
+    ) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) =
+            HistoryFragment.newInstance(importUri)
     }
 
-    class Schedule(val day: Int? = null) : BaseAppScreen() {
-        override fun getFragment(): Fragment =
+    class Schedule(
+        val day: Int? = null
+    ) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory): Fragment =
             ScheduleFragment.newInstance(day)
     }
 
@@ -119,37 +145,41 @@ object Screens {
         val id: ReleaseId? = null,
         val code: ReleaseCode? = null,
         val item: Release? = null,
-    ) : BaseAppScreen() {
-        override fun getFragment() = ReleaseFragment.newInstance(id, code, item)
+    ) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) =
+            ReleaseFragment.newInstance(id, code, item)
     }
 
     class Catalog(
         private val genres: String? = null,
-    ) : BaseAppScreen() {
-        override fun getFragment() = SearchCatalogFragment.newInstance(genres)
+    ) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) =
+            SearchCatalogFragment.newInstance(genres)
     }
 
-    class MainFeed : BaseAppScreen() {
-        override fun getFragment() = FeedFragment()
+    class MainFeed : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = FeedFragment()
     }
 
 
-    class MainYouTube : BaseAppScreen() {
-        override fun getFragment() = YoutubeFragment()
+    class MainYouTube : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = YoutubeFragment()
     }
 
-    class MainOther : BaseAppScreen() {
-        override fun getFragment() = OtherFragment()
+    class MainOther : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = OtherFragment()
     }
 
-    class DonationDetail : BaseAppScreen() {
-        override fun getFragment(): Fragment {
+    class DonationDetail : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory): Fragment {
             return DonationDetailFragment()
         }
     }
 
-    class Teams(private val query: String? = null) : BaseAppScreen() {
-        override fun getFragment(): Fragment {
+    class Teams(
+        private val query: String? = null
+    ) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory): Fragment {
             return TeamsFragment.newInstance(query)
         }
     }

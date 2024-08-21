@@ -1,6 +1,9 @@
 package ru.radiationx.anilibria.navigation
 
-import ru.terrakok.cicerone.android.support.SupportAppScreen
+import com.github.terrakok.cicerone.androidx.ActivityScreen
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import java.io.Serializable
 
-open class BaseAppScreen : SupportAppScreen(), Serializable
+abstract class BaseFragmentScreen : FragmentScreen, Serializable
+
+abstract class BaseActivityScreen : ActivityScreen, Serializable

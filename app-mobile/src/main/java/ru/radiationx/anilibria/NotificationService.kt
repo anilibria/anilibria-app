@@ -123,15 +123,15 @@ class NotificationService : FirebaseMessagingService() {
             CUSTOM_TYPE_APP_UPDATE -> {
                 Screens
                     .AppUpdateScreen(true, AnalyticsConstants.notification_push_update)
-                    .getActivityIntent(this)
+                    .createIntent(this)
             }
 
             CUSTOM_TYPE_CONFIG -> {
-                Screens.Main().getActivityIntent(this)
+                Screens.Main().createIntent(this)
             }
 
             else -> {
-                Screens.IntentHandler(remote.url).getActivityIntent(this)
+                Screens.IntentHandler(remote.url).createIntent(this)
             }
         }
     }

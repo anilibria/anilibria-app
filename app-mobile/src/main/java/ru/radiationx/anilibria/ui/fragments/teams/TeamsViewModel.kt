@@ -11,7 +11,7 @@ import ru.radiationx.data.entity.domain.team.Teams
 import ru.radiationx.data.repository.TeamsRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
 

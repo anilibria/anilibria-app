@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.common.fragment
 
-import ru.terrakok.cicerone.android.support.SupportAppScreen
+import com.github.terrakok.cicerone.android.support.SupportAppScreen
 
 open class GuidedAppScreen : SupportAppScreen() {
 

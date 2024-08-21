@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.screen.SuggestionsScreen
 import ru.radiationx.anilibria.screen.UpdateScreen
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
 

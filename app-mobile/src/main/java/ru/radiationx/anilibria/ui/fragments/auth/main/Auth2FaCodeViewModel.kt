@@ -12,7 +12,7 @@ import ru.radiationx.data.entity.domain.auth.WrongPasswordException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 data class Auth2FaCodeExtra(

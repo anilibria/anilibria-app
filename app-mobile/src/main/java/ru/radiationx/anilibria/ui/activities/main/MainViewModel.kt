@@ -28,8 +28,8 @@ import ru.radiationx.data.repository.ConfigurationRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.Screen
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Screen
 import timber.log.Timber
 import toothpick.InjectConstructor
 

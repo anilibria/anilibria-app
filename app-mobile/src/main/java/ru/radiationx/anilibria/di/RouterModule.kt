@@ -14,7 +14,7 @@ class RouterModule(ciceroneTag: String) : QuillModule() {
             cicerone.router
         }
         instance {
-            cicerone.navigatorHolder
+            cicerone.getNavigatorHolder()
         }
     }
 }

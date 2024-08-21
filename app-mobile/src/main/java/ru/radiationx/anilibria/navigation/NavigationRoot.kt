@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.navigation
 
-import ru.terrakok.cicerone.Cicerone
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Cicerone
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /* Cicerone навигация
@@ -13,5 +13,5 @@ class NavigationRoot @Inject constructor() {
     private val cicerone: Cicerone<Router> = Cicerone.create(Router())
 
     val router: Router = cicerone.router
-    val holder: NavigatorHolder = cicerone.navigatorHolder
+    val holder: NavigatorHolder = cicerone.getNavigatorHolder()
 }

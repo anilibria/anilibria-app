@@ -1,14 +1,13 @@
 package ru.radiationx.anilibria.ui.common
 
 import android.net.Uri
-import android.util.Log
-import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.domain.types.ReleaseCode
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -38,7 +37,7 @@ class LinkRouter @Inject constructor(
         return false
     }
 
-    override fun findScreen(url: String): BaseAppScreen? {
+    override fun findScreen(url: String): BaseFragmentScreen? {
         if (checkUnsupported(url)) {
             return null
         }
@@ -56,7 +55,7 @@ class LinkRouter @Inject constructor(
         return null
     }
 
-    private fun sendNavigateAnalytics(screen: BaseAppScreen) {
+    private fun sendNavigateAnalytics(screen: BaseFragmentScreen) {
         when (screen) {
             is Screens.ReleaseDetails -> {
                 releaseAnalytics.open(AnalyticsConstants.link_router, null, screen.code?.code)

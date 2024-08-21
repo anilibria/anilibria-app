@@ -199,13 +199,13 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
 
     private fun playEpisode(id: EpisodeId) {
         viewModel.submitPlayerOpenAnalytics(id)
-        val intent = Screens.Player(id).getActivityIntent(requireContext())
+        val intent = Screens.Player(id).createIntent(requireContext())
         startActivity(intent)
     }
 
     private fun playWeb(link: String, code: String) {
         viewModel.onWebPlayerClick()
-        val intent = Screens.WebPlayer(link, code).getActivityIntent(requireContext())
+        val intent = Screens.WebPlayer(link, code).createIntent(requireContext())
         startActivity(intent)
     }
 

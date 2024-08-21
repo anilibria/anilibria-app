@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.screen.TestScreen
 import ru.radiationx.quill.getScope
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.attachBackPressed
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 
 class TestFragment : Fragment(R.layout.test_fragment),
     BrowseSupportFragment.MainFragmentAdapterProvider {

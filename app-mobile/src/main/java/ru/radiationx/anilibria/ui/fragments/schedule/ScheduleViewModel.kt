@@ -17,7 +17,7 @@ import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.asDayName
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 import java.util.*
 

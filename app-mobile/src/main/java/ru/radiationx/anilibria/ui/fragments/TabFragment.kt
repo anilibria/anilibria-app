@@ -16,7 +16,7 @@ import com.google.android.material.transition.MaterialSharedAxis
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.RouterModule
-import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
@@ -27,18 +27,18 @@ import ru.radiationx.quill.installModules
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.showWithLifecycle
-import ru.terrakok.cicerone.Navigator
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.commands.Command
+import com.github.terrakok.cicerone.Navigator
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 
 class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, TabResetter {
 
     companion object {
         private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
-        fun newInstance(rootScreen: BaseAppScreen) = TabFragment().putExtra {
+        fun newInstance(rootScreen: BaseFragmentScreen) = TabFragment().putExtra {
             putSerializable(ARG_ROOT_SCREEN, rootScreen)
         }
     }
@@ -51,7 +51,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
 
     private val navigatorHolder by inject<NavigatorHolder>()
 
-    private val localScreen: BaseAppScreen by lazy {
+    private val localScreen: BaseFragmentScreen by lazy {
         getExtraNotNull(ARG_ROOT_SCREEN)
     }
 
@@ -157,13 +157,13 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
 
     private val navigatorLocal: Navigator by lazy {
         object :
-            SupportAppNavigator(requireActivity(), childFragmentManager, R.id.fragments_container) {
+            AppNavigator(requireActivity(), R.id.fragments_container, childFragmentManager) {
 
             override fun setupFragmentTransaction(
-                command: Command,
-                currentFragment: Fragment?,
-                nextFragment: Fragment?,
+                screen: FragmentScreen,
                 fragmentTransaction: FragmentTransaction,
+                currentFragment: Fragment?,
+                nextFragment: Fragment
             ) {
                 if (currentFragment !is SharedProvider || nextFragment !is SharedReceiver) {
                     return

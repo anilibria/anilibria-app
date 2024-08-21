@@ -119,7 +119,7 @@ class SettingsFragment : BaseSettingFragment() {
             setOnPreferenceClickListener {
                 settingsAnalytics.checkUpdatesClick()
                 val intent = Screens.AppUpdateScreen(true, AnalyticsConstants.screen_settings)
-                    .getActivityIntent(requireContext())
+                    .createIntent(requireContext())
                 startActivity(intent)
                 false
             }

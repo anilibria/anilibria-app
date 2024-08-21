@@ -32,7 +32,7 @@ import ru.radiationx.anilibria.screen.update.source.UpdateSourceGuidedFragment
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.terrakok.cicerone.android.support.SupportAppScreen
+import com.github.terrakok.cicerone.android.support.SupportAppScreen
 
 class ConfigScreen : SupportAppScreen() {
     override fun getFragment(): Fragment {

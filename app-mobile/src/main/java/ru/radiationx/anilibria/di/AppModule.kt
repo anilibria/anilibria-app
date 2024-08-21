@@ -85,7 +85,7 @@ class AppModule(application: Application) : QuillModule() {
             cicerone.router
         }
         instance {
-            cicerone.navigatorHolder
+            cicerone.getNavigatorHolder()
         }
 
 

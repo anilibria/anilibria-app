@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.navigation
 
-import ru.terrakok.cicerone.Cicerone
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Cicerone
+import com.github.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class CiceroneHolder @Inject constructor() {

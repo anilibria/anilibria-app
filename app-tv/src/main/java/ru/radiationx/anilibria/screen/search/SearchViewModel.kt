@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.SuggestionsScreen
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.repository.SearchRepository
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor

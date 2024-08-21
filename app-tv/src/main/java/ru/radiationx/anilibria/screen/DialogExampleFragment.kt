@@ -6,7 +6,7 @@ import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.quill.inject
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import java.util.*
 
 class DialogExampleFragment : FakeGuidedStepFragment() {

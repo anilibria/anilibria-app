@@ -14,7 +14,7 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 data class AuthSocialExtra(

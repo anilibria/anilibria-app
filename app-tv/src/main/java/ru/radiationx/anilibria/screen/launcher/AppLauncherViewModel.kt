@@ -14,7 +14,7 @@ import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
 

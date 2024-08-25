@@ -1,12 +1,12 @@
 package ru.radiationx.media.mobile.controllers.gesture
 
 import android.annotation.SuppressLint
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.TextView
-import androidx.core.view.GestureDetectorCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,18 +26,18 @@ internal class GestureController(
 ) : PlayerAttachListener {
 
     private val gestureListener = GestureListener(ViewConfiguration.get(gestureView.context))
-    private val gestureDetector = GestureDetectorCompat(gestureView.context, gestureListener)
+    private val gestureDetector = GestureDetector(gestureView.context, gestureListener)
 
     // todo use for youtube scale gestures
-    private val scaledetector = ScaleGestureDetector(
+    private val scaleDetector = ScaleGestureDetector(
         gestureView.context,
         object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
             private var scaleDiff = 0f
 
             override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-                val currnetViewScale = maxOf(mediaAspectRatio.scaleX, mediaAspectRatio.scaleY)
-                scaleDiff = currnetViewScale - 1f
+                val currentViewScale = maxOf(mediaAspectRatio.scaleX, mediaAspectRatio.scaleY)
+                scaleDiff = currentViewScale - 1f
                 _liveScale.value = detector.scaleFactor + scaleDiff
                 return super.onScaleBegin(detector)
             }
@@ -69,7 +69,7 @@ internal class GestureController(
     val longTapSeekerState = longTapSeeker.state
 
     init {
-        gestureListener.scrollAllowProvider = { scaledetector.isInProgress }
+        gestureListener.scrollAllowProvider = { scaleDetector.isInProgress }
 
         gestureListener.singleTapListener = {
             singleTapListener?.invoke()
@@ -90,8 +90,8 @@ internal class GestureController(
                     scrollSeeker.setIgnore(null)
                 }
             }
-            var result = scaledetector.onTouchEvent(event)
-            if (scaledetector.isInProgress) {
+            var result = scaleDetector.onTouchEvent(event)
+            if (scaleDetector.isInProgress) {
                 scrollSeeker.setIgnore(event.downTime)
             } else {
                 result = gestureDetector.onTouchEvent(event) || result

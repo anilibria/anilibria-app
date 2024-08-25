@@ -164,7 +164,7 @@ data class ReleaseResponse(
         @Json(name = "ending")
         val ending: Ending,
         @Json(name = "preview")
-        val preview: Preview,
+        val preview: ImageResponse,
         @Json(name = "hls_480")
         val hls480: String,
         @Json(name = "hls_720")
@@ -200,22 +200,6 @@ data class ReleaseResponse(
             val stop: Int
         )
 
-        @JsonClass(generateAdapter = true)
-        data class Preview(
-            @Json(name = "src")
-            val src: String,
-            @Json(name = "thumbnail")
-            val thumbnail: String,
-            @Json(name = "optmized")
-            val optmized: Optmized
-        ) {
-            @JsonClass(generateAdapter = true)
-            data class Optmized(
-                @Json(name = "src")
-                val src: String,
-                @Json(name = "thumbnail")
-                val thumbnail: String
-            )
-        }
+
     }
 }

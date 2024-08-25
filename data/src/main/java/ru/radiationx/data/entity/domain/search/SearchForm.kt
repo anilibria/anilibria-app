@@ -4,6 +4,7 @@ import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.entity.domain.release.YearItem
 
+@Deprecated("")
 data class SearchForm(
     val years: Set<YearItem> = emptySet(),
     val seasons: Set<SeasonItem> = emptySet(),
@@ -11,6 +12,7 @@ data class SearchForm(
     val sort: Sort = Sort.RATING,
     val onlyCompleted: Boolean = false
 ) {
+    @Deprecated("")
     enum class Sort {
         RATING, DATE
     }

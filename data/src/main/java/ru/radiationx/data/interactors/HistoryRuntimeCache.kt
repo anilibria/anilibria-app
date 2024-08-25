@@ -6,19 +6,14 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.api.ReleaseApi
+import ru.radiationx.data.apinext.datasources.ReleasesApiDataSource
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.data.entity.mapper.toDomain
-import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.shared.ktx.coRunCatching
 import javax.inject.Inject
 
 class HistoryRuntimeCache @Inject constructor(
-    private val releaseApi: ReleaseApi,
-    private val apiUtils: ApiUtils,
-    private val apiConfig: ApiConfig,
+    private val releaseApi: ReleasesApiDataSource,
 ) {
 
     private val cachedData = MutableStateFlow<Map<ReleaseId, Release>>(emptyMap())
@@ -56,9 +51,7 @@ class HistoryRuntimeCache @Inject constructor(
         if (idsToLoad.isEmpty()) return
 
         val result = sharedRequests.request(idsToLoad) {
-            releaseApi.getReleasesByIds(idsToLoad.map { it.id }).map {
-                it.toDomain(apiUtils, apiConfig)
-            }
+            releaseApi.getReleasesByIds(idsToLoad.toList())
         }
 
         cachedData.update { cacheMap ->

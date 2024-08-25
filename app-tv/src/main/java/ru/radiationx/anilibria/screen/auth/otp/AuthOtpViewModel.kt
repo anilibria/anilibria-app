@@ -8,8 +8,9 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.domain.auth.OtpInfo
-import ru.radiationx.data.entity.domain.auth.OtpNotAcceptedException
+import ru.radiationx.data.entity.domain.auth.OtpNotCreatedException
 import ru.radiationx.data.entity.domain.auth.OtpNotFoundException
+import ru.radiationx.data.entity.domain.auth.OtpWrongUserException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
@@ -77,8 +78,9 @@ class AuthOtpViewModel @Inject constructor(
     private fun handleError(error: Throwable) {
         Timber.e(error)
         val buttonState = when (error) {
-            is OtpNotFoundException -> ButtonState.EXPIRED
-            is OtpNotAcceptedException -> ButtonState.COMPLETE
+            is OtpNotFoundException -> ButtonState.REPEAT
+            is OtpNotCreatedException -> ButtonState.REPEAT
+            is OtpWrongUserException -> ButtonState.REPEAT
             else -> ButtonState.REPEAT
         }
         updateState(buttonState, false, error.message.orEmpty())

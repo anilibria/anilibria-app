@@ -13,7 +13,6 @@ import ru.radiationx.anilibria.ui.activities.main.MainActivity
 import ru.radiationx.anilibria.ui.activities.player.VideoPlayerActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateCheckerActivity
 import ru.radiationx.anilibria.ui.fragments.TabFragment
-import ru.radiationx.anilibria.ui.fragments.auth.main.Auth2FaCodeFragment
 import ru.radiationx.anilibria.ui.fragments.auth.main.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.social.AuthSocialFragment
 import ru.radiationx.anilibria.ui.fragments.auth.vk.AuthVkFragment
@@ -28,10 +27,13 @@ import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
 import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
+import ru.radiationx.data.apinext.models.Genre
+import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.interactors.FilterType
 
 /**
  * Created by radiationx on 17.11.17.
@@ -95,24 +97,16 @@ object Screens {
         override fun createFragment(factory: FragmentFactory) = AuthFragment()
     }
 
-    class Auth2FaCode(
-        private val login: String,
-        private val password: String
-    ) : BaseFragmentScreen() {
-        override fun createFragment(factory: FragmentFactory) =
-            Auth2FaCodeFragment.newInstance(login, password)
-    }
-
     class AuthVk(val url: String) : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) = AuthVkFragment.newInstance(url)
     }
 
-    class AuthSocial(val key: String) : BaseFragmentScreen() {
-        override fun createFragment(factory: FragmentFactory) = AuthSocialFragment.newInstance(key)
+    class AuthSocial(val type: SocialType) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) = AuthSocialFragment.newInstance(type)
     }
 
     class Favorites : BaseFragmentScreen() {
-        override fun createFragment(factory: FragmentFactory) = FavoritesFragment()
+        override fun createFragment(factory: FragmentFactory) = SearchCatalogFragment.newInstance(FilterType.Favorites)
     }
 
     class StaticPage(
@@ -145,11 +139,16 @@ object Screens {
             ReleaseFragment.newInstance(id, code, item)
     }
 
+    class Collections : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) =
+            SearchCatalogFragment.newInstance(FilterType.Collections)
+    }
+
     class Catalog(
-        private val genres: String? = null,
+        private val genre: Genre? = null,
     ) : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) =
-            SearchCatalogFragment.newInstance(genres)
+            SearchCatalogFragment.newInstance(FilterType.Catalog, genre)
     }
 
     class MainFeed : BaseFragmentScreen() {

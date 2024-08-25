@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.release.list
 
 import android.view.View
-import androidx.core.text.parseAsHtml
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -48,7 +47,7 @@ class ReleaseItemDelegate(
             val releaseItem = item.item
             binding.itemTitle.text = releaseItem.title
 
-            binding.itemDesc.text = releaseItem.description.parseAsHtml()
+            binding.itemDesc.text = releaseItem.description
             ViewCompat.setTransitionName(
                 binding.itemImage,
                 "${item.javaClass.simpleName}_${releaseItem.id}"

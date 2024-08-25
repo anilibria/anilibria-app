@@ -18,9 +18,10 @@ import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
+import ru.radiationx.data.apinext.models.Credentials
+import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.entity.domain.auth.EmptyFieldException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
@@ -40,7 +41,11 @@ class AuthViewModel @Inject constructor(
 
     private val inputDataState = MutableStateFlow(AuthInputData())
 
-    private val _state = MutableStateFlow(AuthScreenState())
+    private val socialState = SocialType.entries
+        .filter { it.enabled }
+        .map { it.toState() }
+
+    private val _state = MutableStateFlow(AuthScreenState(socialItems = socialState))
     val state = _state.asStateFlow()
 
     private val _registrationEvent = EventFlow<Unit>()
@@ -53,28 +58,12 @@ class AuthViewModel @Inject constructor(
                 _state.update { it.copy(actionEnabled = enabled) }
             }
             .launchIn(viewModelScope)
-
-        authRepository
-            .observeSocialAuth()
-            .onEach { socialAuth ->
-                val items = socialAuth.map { it.toState() }
-                _state.update { it.copy(socialItems = items) }
-            }
-            .launchIn(viewModelScope)
-
-        viewModelScope.launch {
-            coRunCatching {
-                authRepository.loadSocialAuth()
-            }.onFailure {
-                errorHandler.handle(it)
-            }
-        }
     }
 
     fun onSocialClick(item: SocialAuthItemState) {
-        authMainAnalytics.socialClick(item.key)
-        authSocialAnalytics.open(AnalyticsConstants.screen_auth_main, item.key)
-        router.navigateTo(Screens.AuthSocial(item.key))
+        authMainAnalytics.socialClick(item.type.key)
+        authSocialAnalytics.open(AnalyticsConstants.screen_auth_main, item.type.key)
+        router.navigateTo(Screens.AuthSocial(item.type))
     }
 
     fun setLogin(login: String) {
@@ -91,26 +80,16 @@ class AuthViewModel @Inject constructor(
             _state.update { it.copy(sending = true) }
             val inputData = inputDataState.value
             coRunCatching {
-                authRepository.signIn(inputData.login, inputData.password, "")
+                authRepository.signIn(Credentials(inputData.login, inputData.password))
                 authRepository.getAuthState()
             }.onSuccess {
                 decideWhatToDo(it)
             }.onFailure {
-                if (isEmpty2FaCode(inputData, it)) {
-                    router.navigateTo(Screens.Auth2FaCode(inputData.login, inputData.password))
-                } else {
-                    authMainAnalytics.error()
-                    errorHandler.handle(it)
-                }
+                authMainAnalytics.error()
+                errorHandler.handle(it)
             }
             _state.update { it.copy(sending = false) }
         }
-    }
-
-    private fun isEmpty2FaCode(inputData: AuthInputData, error: Throwable): Boolean {
-        return inputData.login.isNotEmpty()
-                && inputData.password.isNotEmpty()
-                && error is EmptyFieldException
     }
 
     private fun decideWhatToDo(state: AuthState) {

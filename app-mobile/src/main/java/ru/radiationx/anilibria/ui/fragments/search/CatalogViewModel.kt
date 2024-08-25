@@ -92,7 +92,7 @@ class CatalogViewModel @Inject constructor(
         initSeasons()
         observeSearchRemind()
         observeLoadingState()
-        pageLoader.refresh()
+        refreshReleases()
     }
 
     private fun initGenres() {
@@ -140,7 +140,7 @@ class CatalogViewModel @Inject constructor(
     }
 
     private fun observeSearchRemind() {
-        appPreferences
+        /*appPreferences
             .searchRemind
             .onEach { remindEnabled ->
                 val newRemindText = remindText.takeIf { remindEnabled }
@@ -148,7 +148,7 @@ class CatalogViewModel @Inject constructor(
                     it.copy(remindText = newRemindText)
                 }
             }
-            .launchIn(viewModelScope)
+            .launchIn(viewModelScope)*/
     }
 
     private fun observeLoadingState() {
@@ -227,7 +227,6 @@ class CatalogViewModel @Inject constructor(
     }
 
     fun onRemindClose() {
-        appPreferences.searchRemind.value = false
     }
 
     fun onItemClick(item: ReleaseItemState) {

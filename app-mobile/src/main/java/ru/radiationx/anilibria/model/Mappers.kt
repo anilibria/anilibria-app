@@ -2,30 +2,24 @@ package ru.radiationx.anilibria.model
 
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
-import ru.radiationx.data.entity.domain.auth.SocialAuth
+import ru.radiationx.data.apinext.models.SocialType
+import ru.radiationx.data.apinext.models.User
 import ru.radiationx.data.entity.domain.feed.FeedItem
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
 import ru.radiationx.data.entity.domain.other.OtherMenuItem
-import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.ReleaseUpdate
-import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 
 fun Release.toState(updates: Map<ReleaseId, ReleaseUpdate>): ReleaseItemState {
-    val title = if (series == null) {
-        title.toString()
-    } else {
-        "$title ($series)"
-    }
     val update = updates[id]
     val isNew = update
-        ?.let { it.lastOpenTimestamp < torrentUpdate || it.timestamp < torrentUpdate }
+        ?.let { it.lastOpenTimestamp < freshAt || it.timestamp < freshAt }
         ?: false
     return ReleaseItemState(
         id = id,
-        title = title,
+        title = names.main,
         description = description.orEmpty(),
         posterUrl = poster.orEmpty(),
         isNew = isNew
@@ -51,14 +45,16 @@ fun ScheduleItem.toState() = ScheduleItemState(
     isCompleted = completed
 )
 
-fun ProfileItem?.toState(): ProfileItemState {
-    val title = this?.nick ?: "Гость"
+fun User?.toState(): ProfileItemState {
+    val title = this?.let {
+        nickname ?: "Ник не указан"
+    } ?: "Гость"
     val subtitle = if (this != null) {
         null
     } else {
         "Авторизоваться"
     }
-    val avatar = this?.avatarUrl
+    val avatar = this?.avatar
         ?.takeIf { it.isNotEmpty() }
         ?: "file:///android_asset/res/alib_new_or_b.png"
     return ProfileItemState(
@@ -75,15 +71,23 @@ fun OtherMenuItem.toState() = OtherMenuItemState(
     iconRes = icon
 )
 
-fun SocialAuth.toState(): SocialAuthItemState = SocialAuthItemState(
-    key = key,
-    title = title,
-    iconRes = key.asDataIconRes(),
-    colorRes = key.asDataColorRes()
-)
+fun SocialType.toState(): SocialAuthItemState {
+    val title = when (this) {
+        SocialType.VK -> "ВКонтакте"
+        SocialType.GOOGLE -> "Google"
+        SocialType.PATREON -> "Patreon"
+        SocialType.DISCORD -> "Discord"
+    }
+    return SocialAuthItemState(
+        type = this,
+        title = title,
+        iconRes = key.asDataIconRes(),
+        colorRes = key.asDataColorRes()
+    )
+}
 
-fun SuggestionItem.toState(query: String): SuggestionItemState {
-    val itemTitle = names.firstOrNull().orEmpty()
+fun Release.toSuggestionState(query: String): SuggestionItemState {
+    val itemTitle = names.main
     val matchRanges = try {
         Regex(query, RegexOption.IGNORE_CASE).findAll(itemTitle).map { it.range }.toList()
     } catch (ignore: Throwable) {

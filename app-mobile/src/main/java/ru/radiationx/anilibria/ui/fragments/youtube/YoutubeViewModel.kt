@@ -55,7 +55,7 @@ class YoutubeViewModel @Inject constructor(
                 }
             }
             .launchIn(viewModelScope)
-        pageLoader.refresh()
+        refresh()
     }
 
     fun refresh() {

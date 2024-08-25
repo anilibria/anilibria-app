@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:background="?colorSurface"
+    android:padding="16dp">
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemSponsorTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="?colorAccent"
+        tools:text="VK Play Live" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="?textSecond"
+        android:text="Спонсор озвучки" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemSponsorDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:lineSpacingMultiplier="1.25"
+        android:textSize="14sp"
+        android:textColor="?textDefault"
+        tools:text="Смотри стримы нашего проекта на современной платформе для стримов - VK Play Live. Вас ждут игры, общение и подкасты от голосов из аниме." />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/itemSponsorAction"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textAllCaps="false"
+        tools:text="Присоединяйся к стримам!" />
+</LinearLayout>

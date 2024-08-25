@@ -11,6 +11,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import ru.radiationx.data.SimpleClient
 import ru.radiationx.data.datasource.remote.IClient
+import timber.log.Timber
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -41,8 +42,12 @@ class RemoteFileRepository @Inject constructor(
             val responseBody = requireNotNull(response.body) {
                 "Response doesn't contain a body"
             }
-            require(responseBody.contentLength() >= 0) {
-                "Response content length < 0 bytes"
+            // todo API2 await result
+            /*require(responseBody.contentLength() > 0) {
+                "Response content length <= 0 bytes"
+            }*/
+            if (responseBody.contentLength() < 0) {
+                Timber.w("Response content length <= 0 bytes")
             }
             loadingFile.createNewFile()
             responseBody.copyToWithProgress(loadingFile).collect(progress)

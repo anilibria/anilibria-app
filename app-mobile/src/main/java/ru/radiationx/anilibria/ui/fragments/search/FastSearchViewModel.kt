@@ -14,12 +14,14 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.model.SuggestionLocalItemState
 import ru.radiationx.anilibria.model.toState
+import ru.radiationx.anilibria.model.toSuggestionState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.domain.search.Suggestions
+import ru.radiationx.data.repository.ReleaseRepository
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loadersearch.SearchLoader
@@ -30,7 +32,7 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class FastSearchViewModel @Inject constructor(
-    private val searchRepository: SearchRepository,
+    private val releaseRepository: ReleaseRepository,
     private val router: Router,
     private val systemUtils: SystemUtils,
     private val catalogAnalytics: CatalogAnalytics,
@@ -44,7 +46,7 @@ class FastSearchViewModel @Inject constructor(
     }
 
     private val searchLoader = SearchLoader<Query, Suggestions>(viewModelScope) {
-        searchRepository.fastSearch(it.query)
+        releaseRepository.search(it.query)
     }
 
     private val _state = MutableStateFlow(FastSearchScreenState())
@@ -61,7 +63,7 @@ class FastSearchViewModel @Inject constructor(
                 }
                 FastSearchDataState(
                     localItems,
-                    data.items.map { it.toState(data.query) }
+                    data.items.map { it.toSuggestionState(data.query) }
                 )
             }
             .onEach { state ->
@@ -111,7 +113,7 @@ class FastSearchViewModel @Inject constructor(
         ),
         SuggestionLocalItemState(
             id = ITEM_ID_GOOGLE,
-            icRes = R.drawable.ic_google,
+            icRes = R.drawable.ic_logo_google,
             title = "Найти в гугле \"$query\""
         )
     )

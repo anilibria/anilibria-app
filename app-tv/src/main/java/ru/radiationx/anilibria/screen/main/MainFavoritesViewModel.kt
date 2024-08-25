@@ -46,10 +46,10 @@ class MainFavoritesViewModel @Inject constructor(
     }
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = favoriteRepository
-        .getFavorites(requestPage)
+        .getReleases(requestPage, null)
         .also { releaseInteractor.updateItemsCache(it.data) }
         .let { favoriteItems ->
-            favoriteItems.data.sortedByDescending { it.torrentUpdate }.map { converter.toCard(it) }
+            favoriteItems.data.sortedByDescending { it.freshAt }.map { converter.toCard(it) }
         }
 
     override fun onLibriaCardClick(card: LibriaCard) {

@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.screen.player
 import android.os.Bundle
 import android.view.View
 import androidx.media3.common.PlaybackParameters
-import androidx.media3.common.util.UnstableApi
 import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId

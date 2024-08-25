@@ -5,13 +5,13 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemSocialAuthBinding
-import ru.radiationx.shared.ktx.android.getColorFromAttr
-import ru.radiationx.shared.ktx.android.getCompatColor
-import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SocialAuthListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.android.getCompatDrawable
 
 class SocialAuthDelegate(
     private val clickListener: (SocialAuthItemState) -> Unit
@@ -38,8 +38,8 @@ class SocialAuthDelegate(
                 ?: binding.itemSocialBtn.context.getColorFromAttr(R.attr.textDefault)
 
             binding.itemSocialBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                icon,
                 null,
+                icon,
                 null,
                 null
             )

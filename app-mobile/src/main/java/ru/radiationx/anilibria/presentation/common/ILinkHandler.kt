@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.presentation.common
 
-import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import com.github.terrakok.cicerone.Router
+import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 
 /**
  * Created by radiationx on 03.02.18.

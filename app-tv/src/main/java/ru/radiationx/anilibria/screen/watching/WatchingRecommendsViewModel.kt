@@ -4,6 +4,7 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
+import ru.radiationx.data.apinext.models.Genre
 import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
@@ -30,7 +31,7 @@ class WatchingRecommendsViewModel @Inject constructor(
         .getReleases()
         .items
         .let { releases ->
-            val genresMap = mutableMapOf<String, Int>()
+            val genresMap = mutableMapOf<Genre, Int>()
             releases.forEach { release ->
                 release.genres.forEach {
                     val currentCount = genresMap[it] ?: 0
@@ -40,7 +41,7 @@ class WatchingRecommendsViewModel @Inject constructor(
             genresMap.toList()
                 .sortedByDescending { it.second }
                 .take(3)
-                .map { GenreItem(it.first, it.first) }
+                .map { GenreItem(it.first.name, it.first.name) }
                 .toSet()
         }
         .let { genres ->

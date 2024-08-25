@@ -88,8 +88,8 @@ class HistoryViewModel @Inject constructor(
                 return@combine emptyList()
             }
             releases.filter {
-                it.title.orEmpty().contains(query, true)
-                        || it.titleEng.orEmpty().contains(query, true)
+                it.names.main.contains(query, true)
+                        || it.names.english.contains(query, true)
             }
         }
             .distinctUntilChanged()
@@ -100,7 +100,7 @@ class HistoryViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
 
-        pageLoader.refresh()
+        refresh()
     }
 
     fun onBackPressed() {

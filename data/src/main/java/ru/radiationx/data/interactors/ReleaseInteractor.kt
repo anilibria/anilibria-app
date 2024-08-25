@@ -12,11 +12,12 @@ import kotlinx.coroutines.flow.update
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
-import ru.radiationx.data.entity.domain.release.RandomRelease
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.getAllReleases
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.repository.FranchisesRepository
 import ru.radiationx.data.repository.ReleaseRepository
 import javax.inject.Inject
 
@@ -25,6 +26,7 @@ import javax.inject.Inject
  */
 class ReleaseInteractor @Inject constructor(
     private val releaseRepository: ReleaseRepository,
+    private val franchisesRepository: FranchisesRepository,
     private val episodesCheckerStorage: EpisodesCheckerHolder,
     private val preferencesHolder: PreferencesHolder,
 ) {
@@ -34,7 +36,7 @@ class ReleaseInteractor @Inject constructor(
 
     private val sharedRequests = SharedRequests<RequestKey, Release>()
 
-    suspend fun getRandomRelease(): RandomRelease = releaseRepository.getRandomRelease()
+    suspend fun getRandomRelease(): Release = releaseRepository.getRandomRelease()
 
     private suspend fun loadRelease(releaseId: ReleaseId): Release {
         return releaseRepository.getRelease(releaseId).also(::updateFullCache)
@@ -101,7 +103,8 @@ class ReleaseInteractor @Inject constructor(
         val rootRelease = requireNotNull(getFull(releaseId)) {
             "Loaded release is null for $releaseId"
         }
-        val rootReleaseIds = rootRelease.getFranchisesIds()
+        val franchises = franchisesRepository.getReleaseFranchises(releaseId)
+        val rootReleaseIds = franchises.getAllReleases().map { it.id }
         if (rootReleaseIds.isEmpty()) {
             return listOf(rootRelease)
         }

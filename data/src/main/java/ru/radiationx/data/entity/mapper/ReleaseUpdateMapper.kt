@@ -6,12 +6,12 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 
 fun ReleaseUpdateDb.toDomain() = ReleaseUpdate(
     id = ReleaseId(id),
-    timestamp = timestamp,
-    lastOpenTimestamp = lastOpenTimestamp
+    timestamp = timestamp.secToDate(),
+    lastOpenTimestamp = lastOpenTimestamp.secToDate()
 )
 
 fun ReleaseUpdate.toDb() = ReleaseUpdateDb(
     id = id.id,
-    timestamp = timestamp,
-    lastOpenTimestamp = lastOpenTimestamp
+    timestamp = timestamp.dateToSec(),
+    lastOpenTimestamp = lastOpenTimestamp.dateToSec()
 )

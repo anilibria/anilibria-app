@@ -77,27 +77,30 @@ class ReleaseHeadDelegate(
             dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.fullTitle.text = state.titleRus
             binding.fullTitleEn.text = state.titleEng
-            binding.fullUpdated.isVisible = state.updatedAt != null
-            state.updatedAt?.also { updatedAt ->
+            binding.fullUpdated.isVisible = state.freshAt != null
+            state.freshAt?.also { updatedAt ->
                 binding.fullUpdated.text = updatedAt
                     .relativeDate(binding.fullUpdated.context)
                     .let { "Обновлён $it" }
             }
 
-            binding.fullDescription.text = state.description.parseAsHtml()
+            binding.fullDescription.text = state.description
             binding.fullDescription.doOnLayout {
                 updateDescription(modifiers.descriptionExpanded)
             }
             binding.fullInfo.text = state.info.parseAsHtml()
 
-            binding.fullDaysBar.selectDays(state.days)
-            binding.fullDaysBar.isVisible = state.isOngoing
-            binding.fullDaysDivider.isVisible = state.isOngoing || state.announce != null
+            binding.fullDaysBar.selectDay(state.publishDay)
+            binding.fullDaysBar.isVisible = state.needShowDay
+            binding.fullDaysDivider.isVisible = state.needShowDay || state.announce != null
 
             binding.fullAnnounce.isVisible = state.announce != null
-            binding.fullAnnounce.text = state.announce?.parseAsHtml()
+            binding.fullAnnounce.text = state.announce
 
-            bindFavorite(state.favorite, modifiers.favoriteRefreshing || modifiers.detailLoading)
+            bindFavorite(
+                state.favorite,
+                modifiers.favoriteRefreshing || modifiers.favoriteLoading || modifiers.detailLoading
+            )
         }
 
         private fun bindFavorite(state: ReleaseFavoriteState, favoritesRefresh: Boolean) {

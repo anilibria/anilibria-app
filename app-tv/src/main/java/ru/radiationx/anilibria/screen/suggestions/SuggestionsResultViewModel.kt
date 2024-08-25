@@ -6,9 +6,15 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.repository.ReleaseRepository
+import ru.radiationx.shared.ktx.coRunCatching
+import toothpick.InjectConstructor
 import ru.radiationx.data.entity.domain.search.Suggestions
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared_app.controllers.loadersearch.SearchLoader
@@ -18,13 +24,14 @@ import javax.inject.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class SuggestionsResultViewModel @Inject constructor(
-    private val searchRepository: SearchRepository,
+    private val releaseRepository: ReleaseRepository,
     private val cardRouter: LibriaCardRouter,
     private val suggestionsController: SuggestionsController,
+    private val cardsDataConverter: CardsDataConverter
 ) : LifecycleViewModel() {
 
     private val searchLoader = SearchLoader<Query, Suggestions>(viewModelScope) {
-        searchRepository.fastSearch(it.query)
+        releaseRepository.search(it.query)
     }
 
     val progressState = MutableStateFlow(false)
@@ -56,12 +63,7 @@ class SuggestionsResultViewModel @Inject constructor(
     private fun showItems(result: SuggestionsController.SearchResult) {
         suggestionsController.resultEvent.emit(result)
         resultData.value = result.items.map {
-            LibriaCard(
-                it.names.getOrNull(0).orEmpty(),
-                it.names.getOrNull(1).orEmpty(),
-                it.poster.orEmpty(),
-                LibriaCard.Type.Release(it.id)
-            )
+            cardsDataConverter.toCard(it)
         }
     }
 

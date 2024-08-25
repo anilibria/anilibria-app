@@ -112,7 +112,7 @@ class FavoritesViewModel @Inject constructor(
                 it.copy(deletingItemIds = it.deletingItemIds + id)
             }
             coRunCatching {
-                favoriteRepository.deleteFavorite(id)
+                favoriteRepository.deleteRelease(id)
             }.onSuccess {
                 pageLoader.modifyData { data ->
                     val newItems = data.toMutableList()
@@ -180,7 +180,7 @@ class FavoritesViewModel @Inject constructor(
 
     private suspend fun getDataSource(params: PageLoaderParams<List<Release>>): PageLoaderAction.Data<List<Release>> {
         return coRunCatching {
-            val result = favoriteRepository.getFavorites(params.page)
+            val result = favoriteRepository.getReleases(params.page, null)
             params.toDataAction { it.orEmpty() + result.data }
         }.onFailure {
             if (params.isFirstPage) {
@@ -194,8 +194,8 @@ class FavoritesViewModel @Inject constructor(
             return emptyList()
         }
         return filter {
-            it.title.orEmpty().contains(query, true)
-                    || it.titleEng.orEmpty().contains(query, true)
+            it.names.main.contains(query, true)
+                    || it.names.english.contains(query, true)
         }
     }
 

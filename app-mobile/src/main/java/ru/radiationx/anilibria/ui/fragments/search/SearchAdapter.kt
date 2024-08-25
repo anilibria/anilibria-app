@@ -11,7 +11,6 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
-import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
@@ -25,14 +24,12 @@ class SearchAdapter(
     private val loadRetryListener: () -> Unit,
     private val clickListener: (ReleaseItemState, View) -> Unit,
     private val longClickListener: (ReleaseItemState) -> Unit,
-    private val remindCloseListener: () -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem
 ) : ListItemAdapter() {
 
     init {
         delegatesManager.run {
-            addDelegate(ReleaseRemindDelegate(remindCloseListener))
             addDelegate(ReleaseItemDelegate(clickListener, longClickListener))
             addDelegate(LoadMoreDelegate(loadMoreListener))
             addDelegate(LoadErrorDelegate(loadRetryListener))
@@ -44,12 +41,6 @@ class SearchAdapter(
         val newItems = mutableListOf<ListItem>()
 
         val loadingState = state.data
-
-        if (loadingState.data?.isEmpty() == true && !loadingState.emptyLoading) {
-            state.remindText?.also {
-                newItems.add(ReleaseRemindListItem(it))
-            }
-        }
 
         getPlaceholder(state)?.also {
             newItems.add(it)

@@ -79,7 +79,7 @@ class PlayerViewModel @Inject constructor(
                 playerController.data.value = releases
                 currentReleases = releases
                 currentEpisodes.clear()
-                currentEpisodes.addAll(releases.flatMap { it.episodes.reversed() })
+                currentEpisodes.addAll(releases.flatMap { it.episodes })
                 val episodeId = currentEpisode?.id ?: argExtra.episodeId
                 val episode = currentEpisodes
                     .firstOrNull { it.id == episodeId }
@@ -221,7 +221,7 @@ class PlayerViewModel @Inject constructor(
             val newVideo = Video(
                 url = newUrl,
                 seek = access?.seek ?: 0,
-                title = release.title.orEmpty(),
+                title = release.names.main,
                 subtitle = episode.title.orEmpty(),
                 episode.skips
             )

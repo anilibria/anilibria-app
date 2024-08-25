@@ -56,9 +56,9 @@ class ShortcutHelper @Inject constructor(
     private fun addShortcut(data: Release, bitmap: Bitmap) = addShortcut(
         context,
         data.code.code,
-        (data.title ?: data.titleEng).toString(),
-        data.names.joinToString(" / ") { it },
-        data.link.orEmpty(),
+        data.names.main,
+        listOf(data.names.main, data.names.english).joinToString(" / "),
+        data.link,
         bitmap
     )
 

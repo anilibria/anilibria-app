@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import com.yandex.mobile.ads.nativeads.NativeAd
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.DonationCardItemState
+import ru.radiationx.data.apinext.models.ReleaseSponsor
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.types.TorrentId
@@ -26,6 +27,7 @@ data class EpisodesTabState(
 data class ReleaseDetailModifiersState(
     val selectedEpisodesTabTag: String? = null,
     val favoriteRefreshing: Boolean = false,
+    val favoriteLoading: Boolean = false,
     val episodesReversed: Boolean = false,
     val descriptionExpanded: Boolean = false,
     val detailLoading: Boolean = true,
@@ -38,16 +40,17 @@ data class ReleaseDetailState(
     val episodesTabs: List<EpisodesTabState>,
     val torrents: List<ReleaseTorrentItemState>,
     val blockedInfo: ReleaseBlockedInfoState?,
+    val sponsor: ReleaseSponsor?
 )
 
 data class ReleaseInfoState(
     val titleRus: String,
     val titleEng: String,
-    val updatedAt: Date?,
+    val freshAt: Date?,
     val description: String,
     val info: String,
-    val days: List<Int>,
-    val isOngoing: Boolean,
+    val publishDay: Int,
+    val needShowDay: Boolean,
     val announce: String?,
     val favorite: ReleaseFavoriteState,
 ) {
@@ -81,7 +84,7 @@ data class ReleaseEpisodeItemState(
 )
 
 enum class ReleaseEpisodeItemType {
-    ONLINE, SOURCE, EXTERNAL, RUTUBE
+    ONLINE, EXTERNAL, RUTUBE
 }
 
 data class ReleaseTorrentItemState(

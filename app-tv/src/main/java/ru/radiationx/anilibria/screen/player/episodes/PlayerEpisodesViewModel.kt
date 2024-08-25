@@ -74,7 +74,7 @@ class PlayerEpisodesViewModel @Inject constructor(
         var id = 0L
         return map { release ->
             val groupId = id++
-            val actions = release.episodes.asReversed().map { episode ->
+            val actions = release.episodes.map { episode ->
                 val access = accesses[episode.id]
                 val description = if (access != null && access.isViewed && access.seek > 0) {
                     "Остановлена на ${Date(access.seek).asTimeSecString()}"
@@ -90,7 +90,7 @@ class PlayerEpisodesViewModel @Inject constructor(
             }
             Group(
                 id = groupId,
-                title = release.title.orEmpty(),
+                title = release.names.main,
                 actions = actions
             )
         }

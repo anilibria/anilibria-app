@@ -16,6 +16,7 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseSponsorListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
 import ru.radiationx.anilibria.ui.adapters.ShadowDirection
 import ru.radiationx.anilibria.ui.adapters.ads.NativeAdDelegate
@@ -31,8 +32,10 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodesHeadDel
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseExpandDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseSponsorDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseTorrentDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.data.apinext.models.ReleaseSponsor
 import ru.radiationx.data.entity.domain.types.TorrentId
 
 class ReleaseInfoAdapter(
@@ -40,6 +43,7 @@ class ReleaseInfoAdapter(
     episodeListener: ReleaseEpisodeDelegate.Listener,
     episodeControlListener: ReleaseEpisodeControlDelegate.Listener,
     donationListener: (DonationCardItemState) -> Unit,
+    sponsorListener: (ReleaseSponsor) -> Unit,
     donationCloseListener: (DonationCardItemState) -> Unit,
     torrentClickListener: (TorrentId) -> Unit,
     torrentCancelClickListener: (TorrentId) -> Unit,
@@ -66,6 +70,7 @@ class ReleaseInfoAdapter(
         addDelegate(ReleaseEpisodeControlDelegate(episodeControlListener))
         addDelegate(ReleaseEpisodesHeadDelegate(episodesTabListener))
         addDelegate(ReleaseDonateDelegate(donationListener, donationCloseListener))
+        addDelegate(ReleaseSponsorDelegate(sponsorListener))
         addDelegate(ReleaseRemindDelegate(remindCloseListener))
         addDelegate(ReleaseBlockedDelegate())
         addDelegate(CommentRouteDelegate(commentsClickListener))
@@ -107,6 +112,11 @@ class ReleaseInfoAdapter(
         )
         newItems.add(DividerShadowListItem(ShadowDirection.Double, "head"))
 
+        if (releaseState.sponsor != null) {
+            newItems.add(ReleaseSponsorListItem(releaseState.sponsor))
+            newItems.add(DividerShadowListItem(ShadowDirection.Double, "sponsor"))
+        }
+
         if (releaseState.blockedInfo != null) {
             newItems.add(ReleaseBlockedListItem(releaseState.blockedInfo))
             newItems.add(DividerShadowListItem(ShadowDirection.Double, "blocked"))
@@ -144,7 +154,6 @@ class ReleaseInfoAdapter(
                 )
             )
         }
-
         if (releaseState.episodesTabs.isNotEmpty()) {
             val selectedEpisodesTabTag =
                 modifications.selectedEpisodesTabTag ?: releaseState.episodesTabs.firstOrNull()?.tag
@@ -166,10 +175,11 @@ class ReleaseInfoAdapter(
             val episodeListItems = episodes.mapIndexed { index, episode ->
                 ReleaseEpisodeListItem(episode, index % 2 == 0)
             }
+            // yes, this ok
             if (modifications.episodesReversed) {
-                newItems.addAll(episodeListItems.asReversed())
-            } else {
                 newItems.addAll(episodeListItems)
+            } else {
+                newItems.addAll(episodeListItems.asReversed())
             }
             newItems.add(DividerShadowListItem(ShadowDirection.Double, "episodes"))
         }

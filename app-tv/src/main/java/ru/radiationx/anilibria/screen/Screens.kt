@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.screen
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.common.fragment.GuidedAppScreen
 import ru.radiationx.anilibria.screen.auth.credentials.AuthCredentialsGuidedFragment
@@ -33,7 +34,6 @@ import ru.radiationx.anilibria.screen.update.source.UpdateSourceGuidedFragment
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import com.github.terrakok.cicerone.androidx.FragmentScreen
 
 class ConfigScreen : FragmentScreen {
     override fun createFragment(factory: FragmentFactory): Fragment {

@@ -2,6 +2,8 @@ package ru.radiationx.anilibria.ui.activities.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -12,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.ads.AdsConfigRepository
+import ru.radiationx.data.ads.domain.AdsConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.CatalogAnalytics
@@ -20,7 +23,6 @@ import ru.radiationx.data.analytics.features.FeedAnalytics
 import ru.radiationx.data.analytics.features.OtherAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
-import ru.radiationx.data.ads.domain.AdsConfig
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
@@ -28,8 +30,6 @@ import ru.radiationx.data.repository.ConfigurationRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.Screen
 import timber.log.Timber
 import javax.inject.Inject
 

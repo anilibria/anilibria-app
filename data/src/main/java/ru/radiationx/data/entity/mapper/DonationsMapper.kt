@@ -1,10 +1,22 @@
 package ru.radiationx.data.entity.mapper
 
-import ru.radiationx.data.entity.domain.donation.*
+import ru.radiationx.data.entity.domain.donation.DonationCard
+import ru.radiationx.data.entity.domain.donation.DonationContentButton
+import ru.radiationx.data.entity.domain.donation.DonationContentCaption
+import ru.radiationx.data.entity.domain.donation.DonationContentDivider
+import ru.radiationx.data.entity.domain.donation.DonationContentHeader
+import ru.radiationx.data.entity.domain.donation.DonationContentItem
+import ru.radiationx.data.entity.domain.donation.DonationContentSection
+import ru.radiationx.data.entity.domain.donation.DonationDialog
+import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.entity.response.donation.DonationCardResponse
 import ru.radiationx.data.entity.response.donation.DonationContentItemResponse
 import ru.radiationx.data.entity.response.donation.DonationInfoResponse
-import ru.radiationx.data.entity.response.donation.content.*
+import ru.radiationx.data.entity.response.donation.content.DonationContentButtonResponse
+import ru.radiationx.data.entity.response.donation.content.DonationContentCaptionResponse
+import ru.radiationx.data.entity.response.donation.content.DonationContentDividerResponse
+import ru.radiationx.data.entity.response.donation.content.DonationContentHeaderResponse
+import ru.radiationx.data.entity.response.donation.content.DonationContentSectionResponse
 import ru.radiationx.data.entity.response.donation.content_data.DonationDialogResponse
 
 fun DonationInfoResponse.toDomain() = DonationInfo(

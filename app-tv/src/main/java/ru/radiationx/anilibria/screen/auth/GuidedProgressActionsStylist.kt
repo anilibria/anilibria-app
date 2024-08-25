@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen.auth
 
-import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.core.view.isVisible
 import androidx.leanback.widget.GuidedAction

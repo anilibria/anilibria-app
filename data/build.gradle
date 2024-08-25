@@ -23,6 +23,7 @@ kotlin {
 dependencies {
     implementation project(":shared-android-ktx")
     implementation project(":quill-di")
+    implementation project(":anilibria-api")
 
     api(platform(libs.okhttp.bom))
     api(libs.okhttp)
@@ -40,6 +41,9 @@ dependencies {
     api libs.timber
 
     api libs.conscrypt.android
+
+    implementation libs.retrofit
+    implementation libs.retrofit.moshi
 
     api libs.moshi
     api libs.moshi.adapters

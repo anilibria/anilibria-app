@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.view.View
-import androidx.core.text.parseAsHtml
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -47,7 +46,7 @@ class FeedReleaseDelegate(
             val state = requireNotNull(item.item.release)
             dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemTitle.text = state.title
-            binding.itemDesc.text = state.description.parseAsHtml()
+            binding.itemDesc.text = state.description
             ViewCompat.setTransitionName(
                 binding.itemImage,
                 "${item.javaClass.simpleName}_${state.id}"

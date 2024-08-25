@@ -8,7 +8,6 @@ import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.databinding.DialogFileDownloadBinding
 import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.navigation.Screens
@@ -39,6 +38,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
             episodeControlListener = episodeControlListener,
             donationListener = { viewModel.onClickDonate() },
             donationCloseListener = {},
+            sponsorListener = viewModel::onSponsorClick,
             torrentClickListener = { showTorrentDialog(it) },
             torrentCancelClickListener = viewModel::onCancelTorrentClick,
             commentsClickListener = viewModel::onCommentsClick,
@@ -122,10 +122,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
             showFavoriteDialog()
         }.launchInResumed(viewLifecycleOwner)
 
-        viewModel.showFileDonateAction.observe().onEach {
-            showFileDonateDialog(it)
-        }.launchInResumed(viewLifecycleOwner)
-
         viewModel.showEpisodesMenuAction.observe().onEach {
             showEpisodesMenuDialog()
         }.launchInResumed(viewLifecycleOwner)
@@ -154,25 +150,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
 
     private fun showState(state: ReleaseDetailScreenState) {
         state.data?.let { releaseInfoAdapter.bindState(it, state) }
-    }
-
-    private fun showFileDonateDialog(url: String) {
-        val dialogBinding = fileDonateAlert.setContentBinding {
-            DialogFileDownloadBinding.inflate(it, null, false)
-        }
-        dialogBinding.dialogFilePatreonBtn.setOnClickListener {
-            viewModel.onDialogPatreonClick()
-            fileDonateAlert.close()
-        }
-        dialogBinding.dialogFileDonateBtn.setOnClickListener {
-            viewModel.onDialogDonateClick()
-            fileDonateAlert.close()
-        }
-        dialogBinding.dialogFileDownloadBtn.setOnClickListener {
-            viewModel.downloadFile(url)
-            fileDonateAlert.close()
-        }
-        fileDonateAlert.show()
     }
 
     private fun showEpisodesMenuDialog() {

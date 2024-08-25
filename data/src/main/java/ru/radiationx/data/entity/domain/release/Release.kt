@@ -2,8 +2,13 @@ package ru.radiationx.data.entity.domain.release
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.radiationx.data.apinext.models.Genre
+import ru.radiationx.data.apinext.models.ReleaseMember
+import ru.radiationx.data.apinext.models.ReleaseName
+import ru.radiationx.data.apinext.models.ReleaseSponsor
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import java.util.Date
 
 /* Created by radiationx on 31.10.17. */
 
@@ -12,58 +17,49 @@ data class Release(
     // base
     val id: ReleaseId,
     val code: ReleaseCode,
-    val names: List<String>,
-    val series: String?,
+    val names: ReleaseName,
+    // todo API2 await analog
+    //val series: String?,
     val poster: String?,
-    val torrentUpdate: Int,
-    val status: String?,
-    val statusCode: String?,
-    val types: List<String>,
-    val genres: List<String>,
-    val voices: List<String>,
-    val members: Members?,
-    val year: String?,
+    val createdAt: Date,
+    val freshAt: Date,
+    val updatedAt: Date,
+    val isOngoing: Boolean,
+    val isInProduction: Boolean,
+    val type: String?,
+    val year: Int,
     val season: String?,
-    val days: List<String>,
+    val publishDay: String,
     val description: String?,
     val announce: String?,
-    val favoriteInfo: FavoriteInfo,
-    val link: String?,
-    val franchises: List<Franchise>,
+    val favoritesCount: Int,
+    val ageRating: String,
+    val episodesTotal: Int?,
+    val averageEpisodeDuration: Int?,
+    val isBlockedByGeo: Boolean,
+    val isBlockedByCopyrights: Boolean,
+    val webPlayer: String?,
+
+    // semi full
+    val genres: List<Genre>,
 
     // full
-    val showDonateDialog: Boolean,
-    val blockedInfo: BlockedInfo,
-    val moonwalkLink: String?,
+    val members: List<ReleaseMember>,
+    val sponsor: ReleaseSponsor?,
     val episodes: List<Episode>,
-    val sourceEpisodes: List<SourceEpisode>,
     val externalPlaylists: List<ExternalPlaylist>,
     val rutubePlaylist: List<RutubeEpisode>,
     val torrents: List<TorrentItem>,
 ) : Parcelable {
 
-
-    companion object {
-        const val STATUS_CODE_NOTHING = "0"
-        const val STATUS_CODE_PROGRESS = "1"
-        const val STATUS_CODE_COMPLETE = "2"
-        const val STATUS_CODE_HIDDEN = "3"
-        const val STATUS_CODE_NOT_ONGOING = "4"
-    }
-
-    val title: String?
-        get() = names.firstOrNull()
-
-    val titleEng: String?
-        get() = names.lastOrNull()
-
-    fun getFranchisesIds(): List<ReleaseId> {
-        val ids = mutableListOf<ReleaseId>()
-        franchises.forEach { franchise ->
-            franchise.releases.forEach {
-                ids.add(it.id)
-            }
+    val blockingReason: String?
+        get() = when {
+            isBlockedByGeo -> "Контент заблокирован на территории вашей страны"
+            isBlockedByCopyrights -> "Контент заблокирован по запросу правообладателей"
+            else -> null
         }
-        return ids
-    }
+
+    //todo API2 use real url
+    val link: String
+        get() = "https://anilibria.top/anime/releases/release/${code.code}"
 }

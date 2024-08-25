@@ -3,11 +3,11 @@ package ru.radiationx.anilibria.screen
 import android.os.Bundle
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
+import com.github.terrakok.cicerone.Router
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.quill.inject
-import com.github.terrakok.cicerone.Router
-import java.util.*
+import java.util.Date
 
 class DialogExampleFragment : FakeGuidedStepFragment() {
 

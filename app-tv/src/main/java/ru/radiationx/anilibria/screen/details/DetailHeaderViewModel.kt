@@ -5,6 +5,8 @@ import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -21,6 +23,8 @@ import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.interactors.FavoritesInteractor
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
@@ -31,6 +35,7 @@ import javax.inject.Inject
 class DetailHeaderViewModel @Inject constructor(
     argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
+    private val favoritesInteractor: FavoritesInteractor,
     private val favoriteRepository: FavoriteRepository,
     private val authRepository: AuthRepository,
     private val converter: DetailDataConverter,
@@ -53,14 +58,24 @@ class DetailHeaderViewModel @Inject constructor(
     init {
         updateProgress()
         releaseInteractor.getItem(releaseId)?.also {
-            updateRelease(it, emptyList())
+            updateRelease(it, emptyList(), emptySet())
+        }
+
+        viewModelScope.launch {
+            authRepository.observeAuthState().filter { it == AuthState.AUTH }.first()
+            coRunCatching {
+                favoritesInteractor.loadReleaseIds()
+            }.onFailure {
+                Timber.e(it, "Error while favorites release ids")
+            }
         }
         combine(
             releaseInteractor.observeFull(releaseId),
-            releaseInteractor.observeAccesses(releaseId)
-        ) { release, accesses ->
+            releaseInteractor.observeAccesses(releaseId),
+            favoritesInteractor.observeIds()
+        ) { release, accesses, favoriteIds ->
             isFullLoaded = true
-            updateRelease(release, accesses)
+            updateRelease(release, accesses, favoriteIds)
         }.launchIn(viewModelScope)
     }
 
@@ -112,18 +127,12 @@ class DetailHeaderViewModel @Inject constructor(
                 guidedRouter.open(AuthGuidedScreen())
                 return@launch
             }
+            val isAdded = favoritesInteractor.observeIds().first().contains(release.id)
             coRunCatching {
-                if (release.favoriteInfo.isAdded) {
-                    favoriteRepository.deleteFavorite(releaseId)
+                if (isAdded) {
+                    favoritesInteractor.deleteRelease(releaseId)
                 } else {
-                    favoriteRepository.addFavorite(releaseId)
-                }
-            }.onSuccess { releaseItem ->
-                currentRelease?.also { data ->
-                    val newData = data.copy(
-                        favoriteInfo = releaseItem.favoriteInfo
-                    )
-                    releaseInteractor.updateFullCache(newData)
+                    favoritesInteractor.addRelease(releaseId)
                 }
             }.onFailure {
                 Timber.e(it)
@@ -143,9 +152,18 @@ class DetailHeaderViewModel @Inject constructor(
         guidedRouter.open(DetailOtherGuidedScreen(releaseId))
     }
 
-    private fun updateRelease(release: Release, accesses: List<EpisodeAccess>) {
+    private fun updateRelease(
+        release: Release,
+        accesses: List<EpisodeAccess>,
+        favoriteIds: Set<ReleaseId>
+    ) {
         currentRelease = release
-        releaseData.value = converter.toDetail(release, isFullLoaded, accesses)
+        releaseData.value = converter.toDetail(
+            release,
+            isFullLoaded,
+            accesses,
+            favoriteIds.contains(release.id)
+        )
         updateProgress()
     }
 

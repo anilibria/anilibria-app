@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.common
 
-import androidx.core.text.parseAsHtml
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
@@ -16,45 +15,44 @@ class DetailDataConverter @Inject constructor() {
         releaseItem: Release,
         isFull: Boolean,
         accesses: List<EpisodeAccess>,
+        isInFavorites: Boolean
     ): LibriaDetails = releaseItem.run {
+        val types = listOfNotNull(
+            type,
+            averageEpisodeDuration?.let { "~$it мин" },
+            ageRating
+        )
         LibriaDetails(
             id = id,
-            titleRu = title.orEmpty(),
-            titleEn = titleEng.orEmpty(),
-            extra = listOf(
-                genres.firstOrNull()?.capitalizeDefault()?.trim(),
-                "${year.orEmpty()} ${season.orEmpty()}",
-                types.firstOrNull()?.trim(),
-                "Серии: ${series?.trim() ?: "Не доступно"}"
+            titleRu = names.main,
+            titleEn = names.english,
+            extra = listOfNotNull(
+                genres.firstOrNull()?.name,
+                "$year ${season.orEmpty()}",
+                types.joinToString(),
+                "Серий: ${episodes.ifEmpty { null }?.size ?: "Не доступно"}"
             ).joinToString(" • "),
-            description = description.orEmpty().parseAsHtml().toString().trim()
-                .trim('"')/*.replace('\n', ' ')*/,
+            description = description.orEmpty(),
             announce = getAnnounce(isFull),
             image = poster.orEmpty(),
-            favoriteCount = NumberFormat.getNumberInstance().format(favoriteInfo.rating),
+            favoriteCount = NumberFormat.getNumberInstance().format(favoritesCount),
             hasFullHd = episodes.any { PlayerQuality.FULLHD in it.qualityInfo },
-            isFavorite = favoriteInfo.isAdded,
+            isFavorite = isInFavorites,
             hasEpisodes = episodes.isNotEmpty(),
             hasViewed = accesses.any { it.isViewed },
-            hasWebPlayer = moonwalkLink != null
+            hasWebPlayer = webPlayer != null
         )
     }
 
     private fun Release.getAnnounce(isFull: Boolean): String {
         if (!isFull) return ""
-        val announceText = if (statusCode == Release.STATUS_CODE_COMPLETE) {
-            "Релиз завершен"
-        } else {
-            val originalAnnounce = announce?.trim()?.trim('.')?.capitalizeDefault()
-            val scheduleAnnounce = days.firstOrNull()?.toAnnounce2().orEmpty()
-            originalAnnounce ?: scheduleAnnounce
-        }
+        val status = if (isInProduction) publishDay.toAnnounce2() else "Релиз завершен"
         val episodesWarning = if (episodes.isEmpty()) {
             "Нет доступных для просмотра серий"
         } else {
             null
         }
-        return listOfNotNull(announceText, episodesWarning).joinToString(" • ")
+        return listOfNotNull(status, announce, episodesWarning).joinToString(" • ")
     }
 
     private fun String.toAnnounce2(): String {

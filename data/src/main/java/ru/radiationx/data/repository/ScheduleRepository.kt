@@ -5,13 +5,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.withContext
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.api.ScheduleApi
+import ru.radiationx.data.apinext.datasources.ScheduleApiDataSource
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
-import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
-import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.shared.ktx.asMsk
 import ru.radiationx.shared.ktx.isSameDay
 import java.util.Calendar
@@ -20,10 +17,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ScheduleRepository @Inject constructor(
-    private val scheduleApi: ScheduleApi,
+    private val scheduleApi: ScheduleApiDataSource,
     private val updateMiddleware: ReleaseUpdateMiddleware,
-    private val apiUtils: ApiUtils,
-    private val apiConfig: ApiConfig,
 ) {
 
     private val dataRelay = MutableStateFlow<List<ScheduleDay>?>(null)
@@ -32,8 +27,7 @@ class ScheduleRepository @Inject constructor(
 
     suspend fun loadSchedule(): List<ScheduleDay> = withContext(Dispatchers.IO) {
         scheduleApi
-            .getSchedule()
-            .map { it.toDomain(apiUtils, apiConfig) }
+            .getWeek()
             .let { scheduleDays ->
                 scheduleDays.map { scheduleDay ->
                     val currentTime = System.currentTimeMillis().asMsk()
@@ -43,7 +37,7 @@ class ScheduleRepository @Inject constructor(
                     if (scheduleDay.day == calendarDay) {
 
                         val scheduleItems = scheduleDay.items.map {
-                            val millisTime = (it.releaseItem.torrentUpdate.toLong() * 1000L).asMsk()
+                            val millisTime = (it.releaseItem.updatedAt.time).asMsk()
 
                             val scheduleDates = listOf(
                                 millisTime
@@ -74,7 +68,7 @@ class ScheduleRepository @Inject constructor(
                             compareByDescending<ScheduleItem> {
                                 it.completed
                             }.then(compareByDescending {
-                                it.releaseItem.torrentUpdate
+                                it.releaseItem.freshAt
                             })
                         )
                     )

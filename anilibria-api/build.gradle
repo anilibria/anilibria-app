@@ -1,0 +1,33 @@
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-parcelize"
+apply plugin: "com.google.devtools.ksp"
+
+android {
+    namespace "anilibria.api"
+
+    compileSdk app_compile_sdk_version
+
+    defaultConfig {
+        minSdkVersion app_min_sdk_version
+        targetSdkVersion app_target_sdk_version
+    }
+}
+
+kotlin {
+    jvmToolchain(jvm_toolchain_version)
+}
+
+dependencies {
+    implementation fileTree(include: ["*.jar"], dir: "libs")
+    implementation project(":shared-android-ktx")
+    
+    implementation libs.kotlin.stdlib
+    implementation libs.kotlin.coroutines.core
+
+    implementation libs.retrofit
+
+    api libs.moshi
+    api libs.moshi.adapters
+    ksp libs.moshi.compiler
+}

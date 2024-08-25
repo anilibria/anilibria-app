@@ -210,7 +210,7 @@ class FeedViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
 
-        pageLoader.refresh()
+        refreshReleases()
     }
 
     fun refreshReleases() {

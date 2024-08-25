@@ -4,7 +4,7 @@ import anilibria.api.shared.filter.FilterAgeRatingResponse
 import anilibria.api.shared.filter.FilterCollectionTypeResponse
 import anilibria.api.shared.filter.FilterGenreResponse
 import anilibria.api.shared.PaginationResponse
-import anilibria.api.shared.ReleaseResponse
+import anilibria.api.shared.release.ReleaseResponse
 import anilibria.api.shared.ReleaseIdNetwork
 import anilibria.api.shared.filter.FilterSortingResponse
 import de.jensklingenberg.ktorfit.http.Body

@@ -2,7 +2,7 @@ package anilibria.api.genres
 
 import anilibria.api.genres.models.GenreResponse
 import anilibria.api.shared.PaginationResponse
-import anilibria.api.shared.ReleaseResponse
+import anilibria.api.shared.release.ReleaseResponse
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Query

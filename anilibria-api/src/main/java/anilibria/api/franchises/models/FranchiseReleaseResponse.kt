@@ -1,7 +1,7 @@
 package anilibria.api.franchises.models
 
 
-import anilibria.api.shared.ReleaseResponse
+import anilibria.api.shared.release.ReleaseResponse
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

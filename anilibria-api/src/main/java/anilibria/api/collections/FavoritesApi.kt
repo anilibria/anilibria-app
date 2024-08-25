@@ -1,13 +1,12 @@
 package anilibria.api.collections
 
-import anilibria.api.shared.AgeRatingResponse
-import anilibria.api.shared.CollectionReleaseIdNetwork
-import anilibria.api.shared.CollectionTypeResponse
-import anilibria.api.shared.GenreResponse
+import anilibria.api.shared.filter.FilterAgeRatingResponse
+import anilibria.api.shared.filter.FilterCollectionTypeResponse
+import anilibria.api.shared.filter.FilterGenreResponse
 import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.ReleaseResponse
 import anilibria.api.shared.ReleaseIdNetwork
-import anilibria.api.shared.SortingResponse
+import anilibria.api.shared.filter.FilterSortingResponse
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.GET
@@ -17,16 +16,16 @@ import de.jensklingenberg.ktorfit.http.Query
 interface FavoritesApi {
 
     @GET("/accounts/users/me/favorites/references/age-ratings")
-    suspend fun getAgeRatings(): List<AgeRatingResponse>
+    suspend fun getAgeRatings(): List<FilterAgeRatingResponse>
 
     @GET("/accounts/users/me/favorites/references/genres")
-    suspend fun getGenres(): List<GenreResponse>
+    suspend fun getGenres(): List<FilterGenreResponse>
 
     @GET("/accounts/users/me/favorites/references/sorting")
-    suspend fun getSorting(): List<SortingResponse>
+    suspend fun getSorting(): List<FilterSortingResponse>
 
     @GET("/accounts/users/me/favorites/references/types")
-    suspend fun getTypes(): List<CollectionTypeResponse>
+    suspend fun getTypes(): List<FilterCollectionTypeResponse>
 
     @GET("/accounts/users/me/favorites/references/years")
     suspend fun getYears(): List<Int>

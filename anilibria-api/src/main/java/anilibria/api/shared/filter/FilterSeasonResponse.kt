@@ -1,11 +1,11 @@
-package anilibria.api.shared
+package anilibria.api.shared.filter
 
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class CollectionTypeResponse(
+data class FilterSeasonResponse(
     @Json(name = "value")
     val value: String,
     @Json(name = "description")

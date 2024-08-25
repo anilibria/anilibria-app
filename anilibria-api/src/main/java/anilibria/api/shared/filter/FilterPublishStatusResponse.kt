@@ -1,15 +1,13 @@
-package anilibria.api.shared
+package anilibria.api.shared.filter
 
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class SortingResponse(
+data class FilterPublishStatusResponse(
     @Json(name = "value")
     val value: String,
-    @Json(name = "label")
-    val label: String,
     @Json(name = "description")
     val description: String
 )

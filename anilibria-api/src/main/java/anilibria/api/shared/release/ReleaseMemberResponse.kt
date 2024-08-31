@@ -1,6 +1,6 @@
 package anilibria.api.shared.release
 
-import anilibria.api.shared.ImageResponse
+import anilibria.api.shared.UserResponse
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -9,21 +9,12 @@ data class ReleaseMemberResponse(
     @Json(name = "id")
     val id: String,
     @Json(name = "user")
-    val user: User,
+    val user: UserResponse,
     @Json(name = "role")
     val role: Role,
     @Json(name = "nickname")
     val nickname: String
 ) {
-    @JsonClass(generateAdapter = true)
-    data class User(
-        @Json(name = "id")
-        val id: Int,
-        @Json(name = "nickname")
-        val nickname: String,
-        @Json(name = "avatar")
-        val avatar: ImageResponse
-    )
 
     @JsonClass(generateAdapter = true)
     data class Role(

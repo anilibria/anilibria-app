@@ -67,9 +67,9 @@ fun Release.toInfoState(): ReleaseInfoState {
         titleRus = title.orEmpty(),
         titleEng = titleEng.orEmpty(),
         description = description.orEmpty(),
-        updatedAt = torrentUpdate.takeIf { it != 0 }?.let { Date(it * 1000L) },
+        updatedAt = updatedAt.takeIf { it != 0 }?.let { Date(it * 1000L) },
         info = infoStr,
-        days = days.map { ScheduleDay.toCalendarDay(it) },
+        days = publishDay.map { ScheduleDay.toCalendarDay(it) },
         isOngoing = statusCode == Release.STATUS_CODE_PROGRESS,
         announce = announce,
         favorite = favoriteInfo.toState()
@@ -111,7 +111,7 @@ fun Release.toEpisodeControlState(
     val hasViewed = episodes.any {
         accesses[it.id]?.isViewed == true
     }
-    val hasWeb = !moonwalkLink.isNullOrEmpty()
+    val hasWeb = !webPlayer.isNullOrEmpty()
     val continueTitle = if (hasViewed) {
         val lastViewed = episodes.maxByOrNull {
             accesses[it.id]?.lastAccess ?: 0

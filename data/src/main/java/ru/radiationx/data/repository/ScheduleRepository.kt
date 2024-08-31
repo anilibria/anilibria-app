@@ -43,7 +43,7 @@ class ScheduleRepository @Inject constructor(
                     if (scheduleDay.day == calendarDay) {
 
                         val scheduleItems = scheduleDay.items.map {
-                            val millisTime = (it.releaseItem.torrentUpdate.toLong() * 1000L).asMsk()
+                            val millisTime = (it.releaseItem.updatedAt.toLong() * 1000L).asMsk()
 
                             val scheduleDates = listOf(
                                 millisTime
@@ -74,7 +74,7 @@ class ScheduleRepository @Inject constructor(
                             compareByDescending<ScheduleItem> {
                                 it.completed
                             }.then(compareByDescending {
-                                it.releaseItem.torrentUpdate
+                                it.releaseItem.updatedAt
                             })
                         )
                     )

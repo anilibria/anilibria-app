@@ -37,7 +37,7 @@ class DetailDataConverter {
             isFavorite = favoriteInfo.isAdded,
             hasEpisodes = episodes.isNotEmpty(),
             hasViewed = accesses.any { it.isViewed },
-            hasWebPlayer = moonwalkLink != null
+            hasWebPlayer = webPlayer != null
         )
     }
 
@@ -47,7 +47,7 @@ class DetailDataConverter {
             "Релиз завершен"
         } else {
             val originalAnnounce = announce?.trim()?.trim('.')?.capitalizeDefault()
-            val scheduleAnnounce = days.firstOrNull()?.toAnnounce2().orEmpty()
+            val scheduleAnnounce = publishDay.firstOrNull()?.toAnnounce2().orEmpty()
             originalAnnounce ?: scheduleAnnounce
         }
         val episodesWarning = if (episodes.isEmpty()) {

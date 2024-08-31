@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ReleaseSeasonResponse(
     @Json(name = "value")
-    val value: String,
+    val value: String?,
     @Json(name = "description")
-    val description: String
+    val description: String?
 )

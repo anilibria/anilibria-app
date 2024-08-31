@@ -50,7 +50,7 @@ class MainFavoritesViewModel(
         .getFavorites(requestPage)
         .also { releaseInteractor.updateItemsCache(it.data) }
         .let { favoriteItems ->
-            favoriteItems.data.sortedByDescending { it.torrentUpdate }.map { converter.toCard(it) }
+            favoriteItems.data.sortedByDescending { it.updatedAt }.map { converter.toCard(it) }
         }
 
     override fun onLibriaCardClick(card: LibriaCard) {

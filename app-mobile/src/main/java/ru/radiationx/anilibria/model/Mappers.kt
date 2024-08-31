@@ -21,7 +21,7 @@ fun Release.toState(updates: Map<ReleaseId, ReleaseUpdate>): ReleaseItemState {
     }
     val update = updates[id]
     val isNew = update
-        ?.let { it.lastOpenTimestamp < torrentUpdate || it.timestamp < torrentUpdate }
+        ?.let { it.lastOpenTimestamp < updatedAt || it.timestamp < updatedAt }
         ?: false
     return ReleaseItemState(
         id = id,

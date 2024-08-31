@@ -293,7 +293,7 @@ class ReleaseInfoViewModel(
     fun onClickWatchWeb() {
         currentData?.also { release ->
             releaseAnalytics.webPlayerClick(release.id.id)
-            release.moonwalkLink?.let {
+            release.webPlayer?.let {
                 playWebAction.set(ActionPlayWeb(it, release.code.code))
             }
         }

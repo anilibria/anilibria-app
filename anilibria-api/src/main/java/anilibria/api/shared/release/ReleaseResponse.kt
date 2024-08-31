@@ -56,14 +56,18 @@ data class ReleaseResponse(
     val averageDurationOfEpisode: Int,
     @Json(name = "genres")
     val genres: List<GenreResponse>,
+
+    // full
     @Json(name = "members")
-    val members: List<ReleaseMemberResponse>,
+    val members: List<ReleaseMemberResponse>?,
     @Json(name = "episodes")
-    val episodes: List<ReleaseEpisodeResponse>,
+    val episodes: List<ReleaseEpisodeResponse>?,
     @Json(name = "torrents")
-    val torrents: List<ReleaseTorrentResponse>,
+    val torrents: List<ReleaseTorrentResponse>?,
     @Json(name = "sponsor")
-    val sponsor: ReleaseSponsorResponse,
+    val sponsor: ReleaseSponsorResponse?,
+
+    // ignore
     @Json(name = "latest_episode")
     val latestEpisode: ReleaseEpisodeResponse?,
 )

@@ -23,6 +23,7 @@ dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
     implementation project(":shared-android-ktx")
     implementation project(":quill-di")
+    implementation project(":anilibria-api")
 
     api(platform("com.squareup.okhttp3:okhttp-bom:$okHttpVersion"))
     api("com.squareup.okhttp3:okhttp")

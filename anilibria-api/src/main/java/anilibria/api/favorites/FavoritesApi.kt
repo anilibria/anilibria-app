@@ -1,4 +1,4 @@
-package anilibria.api.collections
+package anilibria.api.favorites
 
 import anilibria.api.shared.filter.FilterAgeRatingResponse
 import anilibria.api.shared.filter.FilterCollectionTypeResponse

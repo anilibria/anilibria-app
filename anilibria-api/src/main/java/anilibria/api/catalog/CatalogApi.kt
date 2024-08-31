@@ -1,15 +1,14 @@
 package anilibria.api.catalog
 
+import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.filter.FilterAgeRatingResponse
-import anilibria.api.shared.CollectionReleaseIdNetwork
 import anilibria.api.shared.filter.FilterCollectionTypeResponse
 import anilibria.api.shared.filter.FilterGenreResponse
-import anilibria.api.shared.PaginationResponse
-import anilibria.api.shared.release.ReleaseResponse
 import anilibria.api.shared.filter.FilterProductionsStatusResponse
 import anilibria.api.shared.filter.FilterPublishStatusResponse
 import anilibria.api.shared.filter.FilterSeasonResponse
 import anilibria.api.shared.filter.FilterSortingResponse
+import anilibria.api.shared.release.ReleaseResponse
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Query
 
@@ -38,9 +37,6 @@ interface CatalogApi {
 
     @GET("/anime/catalog/references/years")
     suspend fun getYears(): List<Int>
-
-    @GET("/anime/catalog/ids")
-    suspend fun getIds(): List<CollectionReleaseIdNetwork>
 
     @GET("/anime/catalog/releases")
     suspend fun getReleases(

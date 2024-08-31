@@ -15,11 +15,25 @@ data class Franchise(
 data class FranchiseInfo(
     val id: String,
     val name: String,
+    val nameEnglish: String,
+    val rating: Double,
+    val lastYear: Int,
+    val firstYear: Int,
+    val totalReleases: Int,
+    val totalEpisodes: Int,
+    val totalDuration: String,
+    val totalDurationInSeconds: Int,
+    val image: String,
 ) : Parcelable
 
 @Parcelize
 data class FranchiseRelease(
-    val id: ReleaseId,
-    val names: List<String>,
-    val code: ReleaseCode,
+    val id: String,
+    val releaseId: ReleaseId,
+    val franchiseId:String,
+    // todo API2 update usage
+    //val names: List<String>,
+    // todo API2 update usage
+    //val code: ReleaseCode,
+    val release: Release
 ) : Parcelable

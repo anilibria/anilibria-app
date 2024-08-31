@@ -30,5 +30,5 @@ data class FranchiseResponse(
     @Json(name = "image")
     val image: ImageResponse,
     @Json(name = "franchise_releases")
-    val franchiseReleases: List<FranchiseReleaseResponse>
+    val franchiseReleases: List<FranchiseReleaseResponse>?
 )

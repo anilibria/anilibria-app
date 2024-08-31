@@ -23,4 +23,7 @@ interface ReleasesApi {
 
     @GET("/anime/releases/episodes/{releaseEpisodeId}")
     suspend fun getEpisode(@Path("releaseEpisodeId") releaseEpisodeId: String): ReleaseEpisodeResponse
+
+    @GET("/app/search/releases")
+    suspend fun search(@Query("query") query: String): List<ReleaseResponse>
 }

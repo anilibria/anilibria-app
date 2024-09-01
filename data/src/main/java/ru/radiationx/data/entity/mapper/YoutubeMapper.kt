@@ -16,5 +16,5 @@ fun YoutubeResponse.toDomain(
     vid = vid,
     views = views,
     comments = comments,
-    timestamp = timestamp
+    createdAt = timestamp
 )

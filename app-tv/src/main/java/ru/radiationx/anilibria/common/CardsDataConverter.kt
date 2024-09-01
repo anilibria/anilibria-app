@@ -33,7 +33,7 @@ class CardsDataConverter(
     fun toCard(youtubeItem: YoutubeItem) = youtubeItem.run {
         LibriaCard(
             title.orEmpty(),
-            "Вышел ${Date(timestamp * 1000L).relativeDate(context).decapitalizeDefault()}",
+            "Вышел ${Date(createdAt * 1000L).relativeDate(context).decapitalizeDefault()}",
             image.orEmpty(),
             LibriaCard.Type.Youtube(youtubeItem.link)
         )

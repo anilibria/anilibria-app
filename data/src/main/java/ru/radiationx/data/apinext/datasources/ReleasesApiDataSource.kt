@@ -8,7 +8,9 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.shared.ktx.coRunCatching
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class ReleasesApiDataSource(
     private val api: ReleasesApi
 ) {

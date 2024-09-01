@@ -2,10 +2,10 @@ package anilibria.api.timecodes
 
 import anilibria.api.timecodes.models.TimeCodeDeleteRequest
 import anilibria.api.timecodes.models.TimeCodeNetwork
-import de.jensklingenberg.ktorfit.http.Body
-import de.jensklingenberg.ktorfit.http.DELETE
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.POST
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
 
 interface TimeCodesApi {
 

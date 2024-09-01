@@ -3,9 +3,9 @@ package anilibria.api.releases
 import anilibria.api.shared.release.ReleaseEpisodeResponse
 import anilibria.api.shared.release.ReleaseMemberResponse
 import anilibria.api.shared.release.ReleaseResponse
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.Path
-import de.jensklingenberg.ktorfit.http.Query
+import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ReleasesApi {
 

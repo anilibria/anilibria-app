@@ -1,8 +1,8 @@
 package anilibria.api.videos
 
 import anilibria.api.videos.models.VideoResponse
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.Query
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface VideosApi {
 

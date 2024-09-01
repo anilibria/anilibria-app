@@ -1,7 +1,7 @@
 package anilibria.api.profile
 
 import anilibria.api.profile.models.ProfileResponse
-import de.jensklingenberg.ktorfit.http.GET
+import retrofit2.http.GET
 
 interface ProfileApi {
 

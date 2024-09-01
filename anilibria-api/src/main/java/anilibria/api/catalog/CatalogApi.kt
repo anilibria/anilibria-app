@@ -9,8 +9,8 @@ import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterSeasonResponse
 import anilibria.api.shared.filter.FilterSortingResponse
 import anilibria.api.shared.release.ReleaseResponse
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.Query
+import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface CatalogApi {
 

@@ -7,11 +7,11 @@ import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.release.ReleaseResponse
 import anilibria.api.shared.ReleaseIdNetwork
 import anilibria.api.shared.filter.FilterSortingResponse
-import de.jensklingenberg.ktorfit.http.Body
-import de.jensklingenberg.ktorfit.http.DELETE
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.POST
-import de.jensklingenberg.ktorfit.http.Query
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface FavoritesApi {
 

@@ -11,7 +11,9 @@ import ru.radiationx.data.apinext.toListQuery
 import ru.radiationx.data.apinext.toQuery
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.Release
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class CatalogApiDataSource(
     private val api: CatalogApi
 ) {

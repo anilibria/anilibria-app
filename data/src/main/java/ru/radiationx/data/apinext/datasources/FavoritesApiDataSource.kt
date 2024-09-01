@@ -12,7 +12,9 @@ import ru.radiationx.data.apinext.toListQuery
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class FavoritesApiDataSource(
     private val api: FavoritesApi
 ) {

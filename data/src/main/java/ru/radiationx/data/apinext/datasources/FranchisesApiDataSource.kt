@@ -7,7 +7,9 @@ import ru.radiationx.data.entity.domain.release.Franchise
 import ru.radiationx.data.entity.domain.release.FranchiseFull
 import ru.radiationx.data.entity.domain.types.FranchiseId
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class FranchisesApiDataSource(
     private val api: FranchisesApi
 ) {

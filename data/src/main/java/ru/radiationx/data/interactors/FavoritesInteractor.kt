@@ -5,7 +5,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.FavoriteRepository
+import toothpick.InjectConstructor
 
+@InjectConstructor
 class FavoritesInteractor(
     private val favoriteRepository: FavoriteRepository
 ) {

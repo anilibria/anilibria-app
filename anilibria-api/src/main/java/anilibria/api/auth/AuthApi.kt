@@ -10,11 +10,11 @@ import anilibria.api.auth.models.OtpLoginRequest
 import anilibria.api.auth.models.PasswordForgetRequest
 import anilibria.api.auth.models.PasswordResetRequest
 import anilibria.api.auth.models.TokenResponse
-import de.jensklingenberg.ktorfit.http.Body
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.POST
-import de.jensklingenberg.ktorfit.http.Path
-import de.jensklingenberg.ktorfit.http.Query
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface AuthApi {
 

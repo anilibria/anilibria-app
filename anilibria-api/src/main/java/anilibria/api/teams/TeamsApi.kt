@@ -3,7 +3,7 @@ package anilibria.api.teams
 import anilibria.api.teams.models.TeamsTeamResponse
 import anilibria.api.teams.models.TeamsRoleResponse
 import anilibria.api.teams.models.TeamsUserResponse
-import de.jensklingenberg.ktorfit.http.GET
+import retrofit2.http.GET
 
 interface TeamsApi {
 

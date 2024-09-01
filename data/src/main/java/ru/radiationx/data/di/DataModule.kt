@@ -5,15 +5,32 @@ package ru.radiationx.data.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import anilibria.api.catalog.CatalogApi
+import anilibria.api.collections.CollectionsApi
+import anilibria.api.favorites.FavoritesApi
+import anilibria.api.franchises.FranchisesApi
+import anilibria.api.genres.GenresApi
+import anilibria.api.profile.ProfileApi
+import anilibria.api.releases.ReleasesApi
+import anilibria.api.schedule.ScheduleApi
+import anilibria.api.timecodes.TimeCodesApi
+import anilibria.api.videos.VideosApi
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.ConnectionSpec
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.create
 import ru.radiationx.data.ApiClient
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.R
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.SimpleClient
 import ru.radiationx.data.ads.AdsConfigApi
 import ru.radiationx.data.ads.AdsConfigRepository
@@ -47,6 +64,13 @@ import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
+import ru.radiationx.data.apinext.datasources.CatalogApiDataSource
+import ru.radiationx.data.apinext.datasources.CollectionsApiDataSource
+import ru.radiationx.data.apinext.datasources.FavoritesApiDataSource
+import ru.radiationx.data.apinext.datasources.FranchisesApiDataSource
+import ru.radiationx.data.apinext.datasources.ReleasesApiDataSource
+import ru.radiationx.data.apinext.datasources.ScheduleApiDataSource
+import ru.radiationx.data.apinext.datasources.VideosApiDataSource
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.DonationHolder
@@ -102,6 +126,7 @@ import ru.radiationx.data.di.providers.SimpleOkHttpProvider
 import ru.radiationx.data.downloader.RemoteFileHolder
 import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.RemoteFileStorage
+import ru.radiationx.data.interactors.FavoritesInteractor
 import ru.radiationx.data.interactors.HistoryRuntimeCache
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
@@ -114,6 +139,7 @@ import ru.radiationx.data.repository.ConfigurationRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.data.repository.FeedRepository
+import ru.radiationx.data.repository.FranchisesRepository
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.data.repository.MenuRepository
 import ru.radiationx.data.repository.PageRepository
@@ -123,7 +149,10 @@ import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.data.repository.TeamsRepository
 import ru.radiationx.data.repository.YoutubeRepository
 import ru.radiationx.data.sslcompat.SslCompat
+import ru.radiationx.data.sslcompat.appendSslCompat
 import ru.radiationx.data.system.AppCookieJar
+import ru.radiationx.data.system.appendSslCompatAnalytics
+import ru.radiationx.data.system.appendTimeouts
 import ru.radiationx.quill.QuillModule
 import toothpick.InjectConstructor
 import javax.inject.Provider
@@ -153,7 +182,6 @@ class DataModule(context: Context) : QuillModule() {
         instance<Moshi> {
             Moshi.Builder().build()
         }
-
 
         singleProvider<SharedPreferences, PreferencesProvider>()
         singleProvider<SharedPreferences, DataPreferencesProvider>(DataPreferences::class)
@@ -273,6 +301,130 @@ class DataModule(context: Context) : QuillModule() {
 
         /* Player */
         single<PlayerDataSourceProvider>()
+
+        /* Api next */
+
+        singleProvider<OkHttpClient, RetrofitOkhttpProvider>()
+        singleProvider<Retrofit, RetrofitProvider>()
+
+        //singleProvider<AuthApi, AuthApiProvider>()
+        singleProvider<CatalogApi, CatalogApiProvider>()
+        singleProvider<CollectionsApi, CollectionsApiProvider>()
+        singleProvider<FavoritesApi, FavoritesApiProvider>()
+        singleProvider<FranchisesApi, FranchisesApiProvider>()
+        singleProvider<GenresApi, GenresApiProvider>()
+        singleProvider<ProfileApi, ProfileApiProvider>()
+        singleProvider<ReleasesApi, ReleasesApiProvider>()
+        singleProvider<ScheduleApi, ScheduleApiProvider>()
+        singleProvider<TeamsApi, TeamsApiProvider>()
+        singleProvider<TimeCodesApi, TimeCodesApiProvider>()
+        singleProvider<VideosApi, VideosApiProvider>()
+
+        single<CatalogApiDataSource>()
+        single<CollectionsApiDataSource>()
+        single<FavoritesApiDataSource>()
+        single<FranchisesApiDataSource>()
+        single<ReleasesApiDataSource>()
+        single<ScheduleApiDataSource>()
+        single<VideosApiDataSource>()
+
+        single<FranchisesRepository>()
+        single<FavoritesInteractor>()
+    }
+
+    @InjectConstructor
+    class RetrofitOkhttpProvider(
+        private val context: Context,
+        private val sharedBuildConfig: SharedBuildConfig,
+        private val sslCompat: SslCompat,
+        private val sslCompatAnalytics: SslCompatAnalytics
+    ) : Provider<OkHttpClient> {
+
+        override fun get(): OkHttpClient = OkHttpClient.Builder()
+            .appendSslCompatAnalytics(sslCompat, sslCompatAnalytics)
+            .appendSslCompat(sslCompat)
+            .appendTimeouts()
+            .apply {
+                if (sharedBuildConfig.debug) {
+                    addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                    addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())
+                }
+            }
+            .build()
+    }
+
+    @InjectConstructor
+    class RetrofitProvider(
+        private val okHttpClient: OkHttpClient
+    ) : Provider<Retrofit> {
+        override fun get(): Retrofit {
+            val retrofit = Retrofit.Builder()
+                .baseUrl("https://anilibria.top/api/v1/")
+                .client(okHttpClient)
+                .addConverterFactory(MoshiConverterFactory.create())
+                .build()
+            return retrofit
+        }
+    }
+
+    @InjectConstructor
+    class AuthApiProvider(private val retrofit: Retrofit) : Provider<AuthApi> {
+        override fun get(): AuthApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class CatalogApiProvider(private val retrofit: Retrofit) : Provider<CatalogApi> {
+        override fun get(): CatalogApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class CollectionsApiProvider(private val retrofit: Retrofit) : Provider<CollectionsApi> {
+        override fun get(): CollectionsApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class FavoritesApiProvider(private val retrofit: Retrofit) : Provider<FavoritesApi> {
+        override fun get(): FavoritesApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class FranchisesApiProvider(private val retrofit: Retrofit) : Provider<FranchisesApi> {
+        override fun get(): FranchisesApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class GenresApiProvider(private val retrofit: Retrofit) : Provider<GenresApi> {
+        override fun get(): GenresApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class ProfileApiProvider(private val retrofit: Retrofit) : Provider<ProfileApi> {
+        override fun get(): ProfileApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class ReleasesApiProvider(private val retrofit: Retrofit) : Provider<ReleasesApi> {
+        override fun get(): ReleasesApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class ScheduleApiProvider(private val retrofit: Retrofit) : Provider<ScheduleApi> {
+        override fun get(): ScheduleApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class TeamsApiProvider(private val retrofit: Retrofit) : Provider<TeamsApi> {
+        override fun get(): TeamsApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class TimeCodesApiProvider(private val retrofit: Retrofit) : Provider<TimeCodesApi> {
+        override fun get(): TimeCodesApi = retrofit.create()
+    }
+
+    @InjectConstructor
+    class VideosApiProvider(private val retrofit: Retrofit) : Provider<VideosApi> {
+        override fun get(): VideosApi = retrofit.create()
     }
 
 

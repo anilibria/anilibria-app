@@ -3,9 +3,9 @@ package anilibria.api.genres
 import anilibria.api.genres.models.GenreResponse
 import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.release.ReleaseResponse
-import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.Path
-import de.jensklingenberg.ktorfit.http.Query
+import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface GenresApi {
 

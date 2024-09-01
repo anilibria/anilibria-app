@@ -2,7 +2,7 @@ package ru.radiationx.data.entity.domain.release
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.entity.domain.types.FranchiseId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 
 @Parcelize
@@ -13,7 +13,7 @@ data class Franchise(
 
 @Parcelize
 data class FranchiseInfo(
-    val id: String,
+    val id: FranchiseId,
     val name: String,
     val nameEnglish: String,
     val rating: Double,
@@ -30,7 +30,7 @@ data class FranchiseInfo(
 data class FranchiseRelease(
     val id: String,
     val releaseId: ReleaseId,
-    val franchiseId:String,
+    val franchiseId: FranchiseId,
     // todo API2 update usage
     //val names: List<String>,
     // todo API2 update usage

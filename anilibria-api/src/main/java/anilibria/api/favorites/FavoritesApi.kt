@@ -22,7 +22,7 @@ interface FavoritesApi {
     suspend fun getGenres(): List<FilterGenreResponse>
 
     @GET("/accounts/users/me/favorites/references/sorting")
-    suspend fun getSorting(): List<FilterSortingResponse>
+    suspend fun getSortings(): List<FilterSortingResponse>
 
     @GET("/accounts/users/me/favorites/references/types")
     suspend fun getTypes(): List<FilterReleaseTypeResponse>

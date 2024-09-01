@@ -7,5 +7,5 @@ import de.jensklingenberg.ktorfit.http.Query
 interface VideosApi {
 
     @GET("/media/videos")
-    suspend fun getVideos(@Query("limit") limit: Int? = null): List<VideoResponse>
+    suspend fun getVideos(@Query("limit") limit: Int?): List<VideoResponse>
 }

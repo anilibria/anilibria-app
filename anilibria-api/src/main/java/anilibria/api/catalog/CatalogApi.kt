@@ -2,10 +2,10 @@ package anilibria.api.catalog
 
 import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.filter.FilterAgeRatingResponse
-import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterGenreResponse
 import anilibria.api.shared.filter.FilterProductionStatusResponse
 import anilibria.api.shared.filter.FilterPublishStatusResponse
+import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterSeasonResponse
 import anilibria.api.shared.filter.FilterSortingResponse
 import anilibria.api.shared.release.ReleaseResponse
@@ -43,15 +43,15 @@ interface CatalogApi {
         @Query("page") page: Int?,
         @Query("limit") limit: Int?,
         @Query("f[genres]") genres: String?,
-        @Query("f[types]") types: List<String>?,
-        @Query("f[seasons]") seasons: List<String>?,
+        @Query("f[types]") types: String?,
+        @Query("f[seasons]") seasons: String?,
         @Query("f[years][from_year]") fromYear: String?,
         @Query("f[years][to_year]") toYear: String?,
         @Query("f[search]") search: String?,
         @Query("f[sorting]") sorting: String?,
-        @Query("f[age_ratings]") ageRatings: List<String>?,
-        @Query("f[publish_statuses]") publishStatuses: List<String>?,
-        @Query("f[production_statuses]") productionStatuses: List<String>?,
+        @Query("f[age_ratings]") ageRatings: String?,
+        @Query("f[publish_statuses]") publishStatuses: String?,
+        @Query("f[production_statuses]") productionStatuses: String?,
     ): PaginationResponse<ReleaseResponse>
 
     // TODO implement from actual api

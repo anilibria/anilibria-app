@@ -24,3 +24,6 @@ data class FeedId(val releaseId: ReleaseId?, val youtubeId: YoutubeId?) : Parcel
 
 @Parcelize
 data class TorrentId(val id: Int, val releaseId: ReleaseId) : Parcelable
+
+@Parcelize
+data class FranchiseId(val id: String) : Parcelable

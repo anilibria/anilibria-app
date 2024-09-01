@@ -1,6 +1,6 @@
 package ru.radiationx.data.apinext.models.filters
 
-data class FilterData(
+data class CatalogFilterData(
     val ageRatings: List<FilterItem.Value>?,
     val genres: List<FilterItem.Genre>?,
     val productionStatuses: List<FilterItem.Value>?,

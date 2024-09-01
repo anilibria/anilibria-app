@@ -9,7 +9,7 @@ import ru.radiationx.data.apinext.models.filters.FavoritesFilterData
 import ru.radiationx.data.apinext.models.filters.FavoritesFilterForm
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.apinext.toDomainFilterYear
-import ru.radiationx.data.apinext.toQuery
+import ru.radiationx.data.apinext.toListQuery
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.Release
@@ -29,7 +29,7 @@ class FavoriteRepository @Inject constructor(
         val ageRatings = async { favoriteApi.getAgeRatings() }
         val genres = async { favoriteApi.getGenres() }
         val types = async { favoriteApi.getTypes() }
-        val sortings = async { favoriteApi.getSorting() }
+        val sortings = async { favoriteApi.getSortings() }
         val years = async { favoriteApi.getYears() }
 
         FavoritesFilterData(
@@ -49,12 +49,12 @@ class FavoriteRepository @Inject constructor(
             .getReleases(
                 page = page,
                 limit = null,
-                years = form.years?.toQuery(),
-                types = form.types?.toQuery(),
-                genres = form.genres?.toQuery(),
+                years = form.years?.toListQuery(),
+                types = form.types?.toListQuery(),
+                genres = form.genres?.toListQuery(),
                 search = form.query,
                 sorting = form.sorting?.value,
-                ageRatings = form.ageRatings?.toQuery()
+                ageRatings = form.ageRatings?.toListQuery()
 
             )
             .toDomain { it.toDomain() }

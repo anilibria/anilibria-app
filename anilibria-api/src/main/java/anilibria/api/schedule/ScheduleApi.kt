@@ -6,9 +6,9 @@ import retrofit2.http.GET
 
 interface ScheduleApi {
 
-    @GET("/anime/schedule/now")
+    @GET("anime/schedule/now")
     suspend fun getNow(): ScheduleNowResponse
 
-    @GET("/anime/schedule/week")
+    @GET("anime/schedule/week")
     suspend fun getWeek(): List<ScheduleResponse>
 }

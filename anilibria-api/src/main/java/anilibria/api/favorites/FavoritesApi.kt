@@ -15,25 +15,25 @@ import retrofit2.http.Query
 
 interface FavoritesApi {
 
-    @GET("/accounts/users/me/favorites/references/age-ratings")
+    @GET("accounts/users/me/favorites/references/age-ratings")
     suspend fun getAgeRatings(): List<FilterAgeRatingResponse>
 
-    @GET("/accounts/users/me/favorites/references/genres")
+    @GET("accounts/users/me/favorites/references/genres")
     suspend fun getGenres(): List<FilterGenreResponse>
 
-    @GET("/accounts/users/me/favorites/references/sorting")
+    @GET("accounts/users/me/favorites/references/sorting")
     suspend fun getSortings(): List<FilterSortingResponse>
 
-    @GET("/accounts/users/me/favorites/references/types")
+    @GET("accounts/users/me/favorites/references/types")
     suspend fun getTypes(): List<FilterReleaseTypeResponse>
 
-    @GET("/accounts/users/me/favorites/references/years")
+    @GET("accounts/users/me/favorites/references/years")
     suspend fun getYears(): List<Int>
 
-    @GET("/accounts/users/me/favorites/ids")
+    @GET("accounts/users/me/favorites/ids")
     suspend fun getIds(): List<Int>
 
-    @GET("/accounts/users/me/favorites/releases")
+    @GET("accounts/users/me/favorites/releases")
     suspend fun getReleases(
         @Query("page") page: Int?,
         @Query("limit") limit: Int?,
@@ -46,12 +46,12 @@ interface FavoritesApi {
     ): PaginationResponse<ReleaseResponse>
 
     // TODO implement from actual api
-    /*@POST("/accounts/users/me/favorites/releases")
+    /*@POST("accounts/users/me/favorites/releases")
     suspend fun getReleases(): Unit*/
 
-    @POST("/accounts/users/me/favorites")
+    @POST("accounts/users/me/favorites")
     suspend fun addReleases(@Body body: List<ReleaseIdNetwork>)
 
-    @DELETE("/accounts/users/me/favorites")
+    @DELETE("accounts/users/me/favorites")
     suspend fun deleteReleases(@Body body: List<ReleaseIdNetwork>)
 }

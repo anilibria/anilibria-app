@@ -14,31 +14,31 @@ import retrofit2.http.Query
 
 interface CatalogApi {
 
-    @GET("/anime/catalog/references/age-ratings")
+    @GET("anime/catalog/references/age-ratings")
     suspend fun getAgeRatings(): List<FilterAgeRatingResponse>
 
-    @GET("/anime/catalog/references/genres")
+    @GET("anime/catalog/references/genres")
     suspend fun getGenres(): List<FilterGenreResponse>
 
-    @GET("/anime/catalog/references/production-statuses")
+    @GET("anime/catalog/references/production-statuses")
     suspend fun getProductionStatuses(): List<FilterProductionStatusResponse>
 
-    @GET("/anime/catalog/references/publish-statuses")
+    @GET("anime/catalog/references/publish-statuses")
     suspend fun getPublishStatuses(): List<FilterPublishStatusResponse>
 
-    @GET("/anime/catalog/references/seasons")
+    @GET("anime/catalog/references/seasons")
     suspend fun getSeasons(): List<FilterSeasonResponse>
 
-    @GET("/anime/catalog/references/sorting")
+    @GET("anime/catalog/references/sorting")
     suspend fun getSortings(): List<FilterSortingResponse>
 
-    @GET("/anime/catalog/references/types")
+    @GET("anime/catalog/references/types")
     suspend fun getTypes(): List<FilterReleaseTypeResponse>
 
-    @GET("/anime/catalog/references/years")
+    @GET("anime/catalog/references/years")
     suspend fun getYears(): List<Int>
 
-    @GET("/anime/catalog/releases")
+    @GET("anime/catalog/releases")
     suspend fun getReleases(
         @Query("page") page: Int?,
         @Query("limit") limit: Int?,
@@ -55,6 +55,6 @@ interface CatalogApi {
     ): PaginationResponse<ReleaseResponse>
 
     // TODO implement from actual api
-    /*@POST("/anime/catalog/releases")
+    /*@POST("anime/catalog/releases")
     suspend fun getReleases(): Unit*/
 }

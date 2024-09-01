@@ -15,22 +15,22 @@ import retrofit2.http.Query
 
 interface CollectionsApi {
 
-    @GET("/accounts/users/me/collections/references/age-ratings")
+    @GET("accounts/users/me/collections/references/age-ratings")
     suspend fun getAgeRatings(): List<FilterAgeRatingResponse>
 
-    @GET("/accounts/users/me/collections/references/genres")
+    @GET("accounts/users/me/collections/references/genres")
     suspend fun getGenres(): List<FilterGenreResponse>
 
-    @GET("/accounts/users/me/collections/references/types")
+    @GET("accounts/users/me/collections/references/types")
     suspend fun getTypes(): List<FilterReleaseTypeResponse>
 
-    @GET("/accounts/users/me/collections/references/years")
+    @GET("accounts/users/me/collections/references/years")
     suspend fun getYears(): List<Int>
 
-    @GET("/accounts/users/me/collections/ids")
+    @GET("accounts/users/me/collections/ids")
     suspend fun getIds(): List<CollectionReleaseIdNetwork>
 
-    @GET("/accounts/users/me/collections/releases")
+    @GET("accounts/users/me/collections/releases")
     suspend fun getReleases(
         @Query("type_of_collection") collectionType: String,
         @Query("page") page: Int?,
@@ -43,12 +43,12 @@ interface CollectionsApi {
     ): PaginationResponse<ReleaseResponse>
 
     // TODO implement from actual api
-    /*@POST("/accounts/users/me/collections/releases")
+    /*@POST("accounts/users/me/collections/releases")
     suspend fun getReleases(): Unit*/
 
-    @POST("/accounts/users/me/collections")
+    @POST("accounts/users/me/collections")
     suspend fun addReleases(@Body body: List<CollectionReleaseIdNetwork>)
 
-    @DELETE("/accounts/users/me/collections")
+    @DELETE("accounts/users/me/collections")
     suspend fun deleteReleases(@Body body: List<ReleaseIdNetwork>)
 }

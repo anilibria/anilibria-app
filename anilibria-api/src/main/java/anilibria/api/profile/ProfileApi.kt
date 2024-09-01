@@ -5,6 +5,6 @@ import retrofit2.http.GET
 
 interface ProfileApi {
 
-    @GET("/accounts/users/me/profile")
+    @GET("accounts/users/me/profile")
     suspend fun getProfile(): ProfileResponse
 }

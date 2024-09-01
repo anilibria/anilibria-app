@@ -6,6 +6,6 @@ import retrofit2.http.Query
 
 interface VideosApi {
 
-    @GET("/media/videos")
+    @GET("media/videos")
     suspend fun getVideos(@Query("limit") limit: Int?): List<VideoResponse>
 }

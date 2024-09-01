@@ -7,12 +7,12 @@ import retrofit2.http.GET
 
 interface TeamsApi {
 
-    @GET("/teams/")
+    @GET("teams/")
     suspend fun getTeams(): List<TeamsTeamResponse>
 
-    @GET("/teams/roles")
+    @GET("teams/roles")
     suspend fun getRoles(): List<TeamsRoleResponse>
 
-    @GET("/teams/users")
+    @GET("teams/users")
     suspend fun getUsers(): List<TeamsUserResponse>
 }

@@ -9,12 +9,12 @@ import retrofit2.http.POST
 
 interface TimeCodesApi {
 
-    @GET("/accounts/users/me/views/timecodes")
+    @GET("accounts/users/me/views/timecodes")
     suspend fun get(): List<TimeCodeNetwork>
 
-    @POST("/accounts/users/me/views/timecodes")
+    @POST("accounts/users/me/views/timecodes")
     suspend fun update(@Body body: List<TimeCodeNetwork>)
 
-    @DELETE("/accounts/users/me/views/timecodes")
+    @DELETE("accounts/users/me/views/timecodes")
     suspend fun delete(@Body body: List<TimeCodeDeleteRequest>): Unit
 }

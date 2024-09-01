@@ -64,6 +64,7 @@ import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
+import ru.radiationx.data.apinext.AcceptInterceptor
 import ru.radiationx.data.apinext.datasources.CatalogApiDataSource
 import ru.radiationx.data.apinext.datasources.CollectionsApiDataSource
 import ru.radiationx.data.apinext.datasources.FavoritesApiDataSource
@@ -344,6 +345,7 @@ class DataModule(context: Context) : QuillModule() {
             .appendSslCompatAnalytics(sslCompat, sslCompatAnalytics)
             .appendSslCompat(sslCompat)
             .appendTimeouts()
+            .addInterceptor(AcceptInterceptor())
             .apply {
                 if (sharedBuildConfig.debug) {
                     addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))

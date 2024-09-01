@@ -9,15 +9,15 @@ import retrofit2.http.Query
 
 interface GenresApi {
 
-    @GET("/anime/genres")
+    @GET("anime/genres")
     suspend fun getGenres(): List<GenreResponse>
 
-    @GET("/anime/genres/{genreId}")
+    @GET("anime/genres/{genreId}")
     suspend fun getGenre(@Path("genreId") genreId: String): GenreResponse
 
-    @GET("/anime/genres/random")
+    @GET("anime/genres/random")
     suspend fun getRandomGenres(@Query("limit") limit: Int?): List<GenreResponse>
 
-    @GET("/anime/genres/{genreId}/releases")
+    @GET("anime/genres/{genreId}/releases")
     suspend fun getGenreReleases(@Path("genreId") genreId: String): PaginationResponse<ReleaseResponse>
 }

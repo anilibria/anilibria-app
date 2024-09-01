@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.BaseRowsViewModel
 import ru.radiationx.data.entity.domain.release.getAllReleases
-import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FranchisesRepository

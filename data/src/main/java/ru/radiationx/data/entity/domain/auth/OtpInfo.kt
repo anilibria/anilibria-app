@@ -1,6 +1,6 @@
 package ru.radiationx.data.entity.domain.auth
 
-import java.util.*
+import java.util.Date
 
 data class OtpInfo(
     val code: String,

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.donation.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -15,7 +16,6 @@ import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
 

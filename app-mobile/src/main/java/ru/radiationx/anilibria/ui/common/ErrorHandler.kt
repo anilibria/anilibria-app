@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.common
 
 import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.JsonEncodingException
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.datasource.remote.ApiError

@@ -1,7 +1,13 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import ru.radiationx.anilibria.model.loading.needShowPlaceholder
-import ru.radiationx.anilibria.ui.adapters.*
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
+import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
+import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate

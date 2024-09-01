@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.view.View
+import ru.radiationx.anilibria.ads.NativeAdItem
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
-import ru.radiationx.anilibria.ads.NativeAdItem
 import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.AppInfoCardListItem
 import ru.radiationx.anilibria.ui.adapters.AppWarningCardListItem

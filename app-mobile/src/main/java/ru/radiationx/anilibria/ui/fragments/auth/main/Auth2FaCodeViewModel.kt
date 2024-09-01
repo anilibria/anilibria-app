@@ -2,7 +2,13 @@ package ru.radiationx.anilibria.ui.fragments.auth.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import com.github.terrakok.cicerone.Router
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
@@ -12,7 +18,6 @@ import ru.radiationx.data.entity.domain.auth.WrongPasswordException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.coRunCatching
-import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 data class Auth2FaCodeExtra(

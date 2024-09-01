@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -69,7 +70,6 @@ import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared.ktx.getDayOfWeek
 import ru.radiationx.shared.ktx.isSameDay
 import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
 import java.util.Date

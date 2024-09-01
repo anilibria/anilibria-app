@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import android.content.Context
-import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View

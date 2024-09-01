@@ -1,9 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,7 +27,6 @@ import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.imageloader.showImageUrl
 
 class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopScroller {
 

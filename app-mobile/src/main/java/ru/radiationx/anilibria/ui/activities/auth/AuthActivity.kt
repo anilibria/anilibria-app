@@ -5,6 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.WindowCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityAuthBinding
 import ru.radiationx.anilibria.navigation.BaseFragmentScreen
@@ -15,9 +18,6 @@ import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getExtra
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.AppNavigator
 
 
 /**

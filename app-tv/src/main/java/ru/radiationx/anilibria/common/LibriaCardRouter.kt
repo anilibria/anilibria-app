@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.common
 
+import com.github.terrakok.cicerone.Router
 import ru.radiationx.anilibria.screen.DetailsScreen
 import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor

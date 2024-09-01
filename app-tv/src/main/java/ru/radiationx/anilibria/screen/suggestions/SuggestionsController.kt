@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.screen.suggestions
 
 import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.shared.ktx.EventFlow
 import toothpick.InjectConstructor
 

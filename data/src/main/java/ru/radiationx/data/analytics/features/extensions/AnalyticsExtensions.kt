@@ -1,7 +1,10 @@
 package ru.radiationx.data.analytics.features.extensions
 
-import ru.radiationx.data.analytics.features.model.*
-import java.util.*
+import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
+import ru.radiationx.data.analytics.features.model.AnalyticsConfigState
+import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
+import ru.radiationx.data.analytics.features.model.AnalyticsQuality
+import java.util.Locale
 
 
 fun String?.toNavFromParam() = Pair("from", this.toString())

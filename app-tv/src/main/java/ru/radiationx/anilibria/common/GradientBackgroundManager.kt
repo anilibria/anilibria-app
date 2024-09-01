@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
-import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.fragment.app.FragmentActivity
 import androidx.leanback.app.BackgroundManager

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.common
 
-import androidx.core.text.parseAsHtml
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release

@@ -5,7 +5,11 @@ import android.view.View
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.OnItemViewSelectedListener
 import androidx.leanback.widget.VerticalGridPresenter
-import ru.radiationx.anilibria.common.*
+import ru.radiationx.anilibria.common.CardDiffCallback
+import ru.radiationx.anilibria.common.GradientBackgroundManager
+import ru.radiationx.anilibria.common.LibriaCard
+import ru.radiationx.anilibria.common.LinkCard
+import ru.radiationx.anilibria.common.LoadingCard
 import ru.radiationx.anilibria.common.fragment.GridFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector

@@ -1,7 +1,7 @@
 package ru.radiationx.data.entity.mapper
 
-import ru.radiationx.data.entity.response.donation.content_data.YooMoneyDialogResponse
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
+import ru.radiationx.data.entity.response.donation.content_data.YooMoneyDialogResponse
 
 fun YooMoneyDialogResponse.toDomain() = YooMoneyDialog(
     title,

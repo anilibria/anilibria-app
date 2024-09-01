@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.search
 
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -11,7 +12,6 @@ import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.SuggestionsScreen
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.repository.SearchRepository
-import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 @InjectConstructor

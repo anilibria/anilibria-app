@@ -2,7 +2,11 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.features.extensions.*
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toParam
+import ru.radiationx.data.analytics.features.extensions.toPlayerParam
+import ru.radiationx.data.analytics.features.extensions.toQualityParam
+import ru.radiationx.data.analytics.features.extensions.toThemeParam
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality

@@ -2,9 +2,19 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.SuggestionItemState
@@ -15,11 +25,10 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.shared.ktx.coRunCatching
-import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.repository.ReleaseRepository
+import ru.radiationx.shared.ktx.coRunCatching
+import ru.radiationx.shared_app.common.SystemUtils
 import toothpick.InjectConstructor
 import java.net.URLEncoder
 

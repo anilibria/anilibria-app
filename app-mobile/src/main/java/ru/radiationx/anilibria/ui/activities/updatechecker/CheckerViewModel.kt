@@ -9,10 +9,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
-import ru.radiationx.data.downloader.DownloadedFile
 import ru.radiationx.data.downloader.LocalFile
-import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.RemoteFile
+import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.toLocalFile
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository

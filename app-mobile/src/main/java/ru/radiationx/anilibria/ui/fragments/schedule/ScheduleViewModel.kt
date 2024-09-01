@@ -2,7 +2,12 @@ package ru.radiationx.anilibria.ui.fragments.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import com.github.terrakok.cicerone.Router
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.toState
@@ -17,9 +22,8 @@ import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.asDayName
 import ru.radiationx.shared.ktx.coRunCatching
-import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
-import java.util.*
+import java.util.Calendar
 
 data class ScheduleExtra(
     val day: Int?

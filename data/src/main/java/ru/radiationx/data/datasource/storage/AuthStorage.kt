@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.AuthHolder
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 /**

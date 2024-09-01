@@ -24,6 +24,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.Back
 import com.github.terrakok.cicerone.Command
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Replace
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -59,10 +63,6 @@ import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.launchInResumed
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Replace
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.AppNavigator
 
 class MainActivity : BaseActivity(R.layout.activity_main) {
 

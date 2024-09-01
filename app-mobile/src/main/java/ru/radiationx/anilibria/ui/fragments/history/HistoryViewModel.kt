@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -27,7 +28,6 @@ import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 /**

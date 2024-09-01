@@ -20,7 +20,11 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
 import androidx.leanback.transition.TransitionHelper
-import androidx.leanback.widget.*
+import androidx.leanback.widget.ObjectAdapter
+import androidx.leanback.widget.OnChildLaidOutListener
+import androidx.leanback.widget.OnItemViewClickedListener
+import androidx.leanback.widget.OnItemViewSelectedListener
+import androidx.leanback.widget.VerticalGridPresenter
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentGridBinding

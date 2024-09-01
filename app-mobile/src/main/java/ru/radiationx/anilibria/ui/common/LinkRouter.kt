@@ -1,13 +1,13 @@
 package ru.radiationx.anilibria.ui.common
 
 import android.net.Uri
+import com.github.terrakok.cicerone.Router
 import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.domain.types.ReleaseCode
-import com.github.terrakok.cicerone.Router
 import java.util.regex.Pattern
 import javax.inject.Inject
 

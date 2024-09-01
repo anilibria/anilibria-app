@@ -1,14 +1,13 @@
 package ru.radiationx.data.entity.mapper
 
-import android.graphics.Color
-import ru.radiationx.data.entity.response.team.TeamResponse
-import ru.radiationx.data.entity.response.team.TeamRoleResponse
-import ru.radiationx.data.entity.response.team.TeamUserResponse
-import ru.radiationx.data.entity.response.team.TeamsResponse
 import ru.radiationx.data.entity.domain.team.Team
 import ru.radiationx.data.entity.domain.team.TeamRole
 import ru.radiationx.data.entity.domain.team.TeamUser
 import ru.radiationx.data.entity.domain.team.Teams
+import ru.radiationx.data.entity.response.team.TeamResponse
+import ru.radiationx.data.entity.response.team.TeamRoleResponse
+import ru.radiationx.data.entity.response.team.TeamUserResponse
+import ru.radiationx.data.entity.response.team.TeamsResponse
 import ru.radiationx.shared.ktx.android.parseColorOrNull
 
 fun TeamsResponse.toDomain() = Teams(

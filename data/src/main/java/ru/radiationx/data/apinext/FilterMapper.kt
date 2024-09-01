@@ -1,49 +1,42 @@
 package ru.radiationx.data.apinext
 
 import anilibria.api.shared.filter.FilterAgeRatingResponse
-import anilibria.api.shared.filter.FilterCollectionTypeResponse
 import anilibria.api.shared.filter.FilterGenreResponse
-import anilibria.api.shared.filter.FilterProductionsStatusResponse
+import anilibria.api.shared.filter.FilterProductionStatusResponse
 import anilibria.api.shared.filter.FilterPublishStatusResponse
+import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterSeasonResponse
 import anilibria.api.shared.filter.FilterSortingResponse
-import ru.radiationx.data.apinext.models.filter.FilterAgeRating
-import ru.radiationx.data.apinext.models.filter.FilterCollectionType
-import ru.radiationx.data.apinext.models.filter.FilterGenre
-import ru.radiationx.data.apinext.models.filter.FilterProductionsStatus
-import ru.radiationx.data.apinext.models.filter.FilterPublishStatus
-import ru.radiationx.data.apinext.models.filter.FilterSeason
-import ru.radiationx.data.apinext.models.filter.FilterSorting
-import ru.radiationx.data.apinext.models.filter.FilterYear
+import ru.radiationx.data.apinext.models.filters.FilterItem
 
-fun FilterAgeRatingResponse.toDomain(): FilterAgeRating {
-    return FilterAgeRating(value, label, description)
+fun FilterAgeRatingResponse.toDomain(): FilterItem.Value {
+    return FilterItem.Value(value, label, description)
 }
 
-fun FilterCollectionTypeResponse.toDomain(): FilterCollectionType {
-    return FilterCollectionType(value, description)
+fun FilterReleaseTypeResponse.toDomain(): FilterItem.Value {
+    return FilterItem.Value(value, description, null)
 }
 
-fun FilterGenreResponse.toDomain(): FilterGenre {
-    return FilterGenre(id, name)
+fun FilterGenreResponse.toDomain(): FilterItem.Genre {
+    return FilterItem.Genre(id, name)
 }
 
-fun FilterProductionsStatusResponse.toDomain(): FilterProductionsStatus {
-    return FilterProductionsStatus(value, description)
+fun FilterProductionStatusResponse.toDomain(): FilterItem.Value {
+    return FilterItem.Value(value, description, null)
 }
 
-fun FilterPublishStatusResponse.toDomain(): FilterPublishStatus {
-    return FilterPublishStatus(value, description)
+fun FilterPublishStatusResponse.toDomain(): FilterItem.Value {
+    return FilterItem.Value(value, description, null)
 }
 
-fun FilterSeasonResponse.toDomain(): FilterSeason {
-    return FilterSeason(value, description)
+fun FilterSeasonResponse.toDomain(): FilterItem.Value {
+    return FilterItem.Value(value, description, value)
 }
 
-fun FilterSortingResponse.toDomain(): FilterSorting {
-    return FilterSorting(value, label, description)
+fun FilterSortingResponse.toDomain(): FilterItem.Value {
+    return FilterItem.Value(value, label, description)
 }
 
-fun Int.toDomainFilterYear(): FilterYear {
-    return FilterYear(this, this.toString())
+fun Int.toDomainFilterYear(): FilterItem.Year {
+    return FilterItem.Year(this, this.toString())
 }

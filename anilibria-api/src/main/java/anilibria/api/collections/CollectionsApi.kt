@@ -2,7 +2,7 @@ package anilibria.api.collections
 
 import anilibria.api.shared.filter.FilterAgeRatingResponse
 import anilibria.api.shared.CollectionReleaseIdNetwork
-import anilibria.api.shared.filter.FilterCollectionTypeResponse
+import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterGenreResponse
 import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.release.ReleaseResponse
@@ -22,7 +22,7 @@ interface CollectionsApi {
     suspend fun getGenres(): List<FilterGenreResponse>
 
     @GET("/accounts/users/me/collections/references/types")
-    suspend fun getTypes(): List<FilterCollectionTypeResponse>
+    suspend fun getTypes(): List<FilterReleaseTypeResponse>
 
     @GET("/accounts/users/me/collections/references/years")
     suspend fun getYears(): List<Int>

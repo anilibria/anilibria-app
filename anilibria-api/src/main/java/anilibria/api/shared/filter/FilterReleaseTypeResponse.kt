@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class FilterCollectionTypeResponse(
+data class FilterReleaseTypeResponse(
     @Json(name = "value")
     val value: String,
     @Json(name = "description")

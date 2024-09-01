@@ -1,7 +1,7 @@
 package anilibria.api.favorites
 
 import anilibria.api.shared.filter.FilterAgeRatingResponse
-import anilibria.api.shared.filter.FilterCollectionTypeResponse
+import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterGenreResponse
 import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.release.ReleaseResponse
@@ -25,7 +25,7 @@ interface FavoritesApi {
     suspend fun getSorting(): List<FilterSortingResponse>
 
     @GET("/accounts/users/me/favorites/references/types")
-    suspend fun getTypes(): List<FilterCollectionTypeResponse>
+    suspend fun getTypes(): List<FilterReleaseTypeResponse>
 
     @GET("/accounts/users/me/favorites/references/years")
     suspend fun getYears(): List<Int>

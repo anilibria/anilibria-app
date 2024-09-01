@@ -2,9 +2,9 @@ package anilibria.api.catalog
 
 import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.filter.FilterAgeRatingResponse
-import anilibria.api.shared.filter.FilterCollectionTypeResponse
+import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterGenreResponse
-import anilibria.api.shared.filter.FilterProductionsStatusResponse
+import anilibria.api.shared.filter.FilterProductionStatusResponse
 import anilibria.api.shared.filter.FilterPublishStatusResponse
 import anilibria.api.shared.filter.FilterSeasonResponse
 import anilibria.api.shared.filter.FilterSortingResponse
@@ -21,7 +21,7 @@ interface CatalogApi {
     suspend fun getGenres(): List<FilterGenreResponse>
 
     @GET("/anime/catalog/references/production-statuses")
-    suspend fun getProductionStatuses(): List<FilterProductionsStatusResponse>
+    suspend fun getProductionStatuses(): List<FilterProductionStatusResponse>
 
     @GET("/anime/catalog/references/publish-statuses")
     suspend fun getPublishStatuses(): List<FilterPublishStatusResponse>
@@ -33,7 +33,7 @@ interface CatalogApi {
     suspend fun getSortings(): List<FilterSortingResponse>
 
     @GET("/anime/catalog/references/types")
-    suspend fun getTypes(): List<FilterCollectionTypeResponse>
+    suspend fun getTypes(): List<FilterReleaseTypeResponse>
 
     @GET("/anime/catalog/references/years")
     suspend fun getYears(): List<Int>

@@ -68,10 +68,8 @@ import ru.radiationx.data.datasource.remote.api.AuthApi
 import ru.radiationx.data.datasource.remote.api.CheckerApi
 import ru.radiationx.data.datasource.remote.api.ConfigurationApi
 import ru.radiationx.data.datasource.remote.api.DonationApi
-import ru.radiationx.data.datasource.remote.api.FeedApi
 import ru.radiationx.data.datasource.remote.api.MenuApi
 import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.data.datasource.remote.api.ScheduleApi
 import ru.radiationx.data.datasource.remote.api.TeamsApi
 import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.datasource.remote.parsers.AuthParser
@@ -210,8 +208,6 @@ class DataModule(context: Context) : QuillModule() {
         single<CheckerApi>()
         single<ConfigurationApi>()
         single<PageApi>()
-        single<ScheduleApi>()
-        single<FeedApi>()
         single<MenuApi>()
         single<DonationApi>()
         single<TeamsApi>()

@@ -9,9 +9,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.BaseRowsViewModel
+import ru.radiationx.data.entity.domain.release.getAllReleases
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.repository.FranchisesRepository
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
@@ -22,6 +24,7 @@ class DetailsViewModel(
     argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
+    private val franchisesRepository: FranchisesRepository,
     authRepository: AuthRepository,
 ) : BaseRowsViewModel() {
 
@@ -56,7 +59,9 @@ class DetailsViewModel(
                 }
             }
             .map { release ->
-                release.getFranchisesIds().filter { it != release.id }
+                franchisesRepository
+                    .getReleaseFranchises(releaseId)
+                    .getAllReleases()
             }
             .distinctUntilChanged()
             .onEach {

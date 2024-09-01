@@ -17,24 +17,25 @@ class DetailDataConverter {
         releaseItem: Release,
         isFull: Boolean,
         accesses: List<EpisodeAccess>,
+        isInFavorites: Boolean
     ): LibriaDetails = releaseItem.run {
         LibriaDetails(
             id = id,
-            titleRu = title.orEmpty(),
-            titleEn = titleEng.orEmpty(),
+            titleRu = names.main,
+            titleEn = names.english,
             extra = listOf(
                 genres.firstOrNull()?.capitalizeDefault()?.trim(),
-                "${year.orEmpty()} ${season.orEmpty()}",
-                types.firstOrNull()?.trim(),
-                "Серии: ${series?.trim() ?: "Не доступно"}"
+                "$year ${season.orEmpty()}",
+                type,
+                "Серий: ${episodes.ifEmpty { null }?.size ?: "Не доступно"}"
             ).joinToString(" • "),
             description = description.orEmpty().parseAsHtml().toString().trim()
                 .trim('"')/*.replace('\n', ' ')*/,
             announce = getAnnounce(isFull),
             image = poster.orEmpty(),
-            favoriteCount = NumberFormat.getNumberInstance().format(favoriteInfo.rating),
+            favoriteCount = NumberFormat.getNumberInstance().format(favoritesCount),
             hasFullHd = episodes.any { PlayerQuality.FULLHD in it.qualityInfo },
-            isFavorite = favoriteInfo.isAdded,
+            isFavorite = isInFavorites,
             hasEpisodes = episodes.isNotEmpty(),
             hasViewed = accesses.any { it.isViewed },
             hasWebPlayer = webPlayer != null
@@ -43,12 +44,12 @@ class DetailDataConverter {
 
     private fun Release.getAnnounce(isFull: Boolean): String {
         if (!isFull) return ""
-        val announceText = if (statusCode == Release.STATUS_CODE_COMPLETE) {
-            "Релиз завершен"
-        } else {
+        val announceText = if (!isInProduction) {
             val originalAnnounce = announce?.trim()?.trim('.')?.capitalizeDefault()
-            val scheduleAnnounce = publishDay.firstOrNull()?.toAnnounce2().orEmpty()
+            val scheduleAnnounce = publishDay.toAnnounce2()
             originalAnnounce ?: scheduleAnnounce
+        } else {
+            "Релиз завершен"
         }
         val episodesWarning = if (episodes.isEmpty()) {
             "Нет доступных для просмотра серий"

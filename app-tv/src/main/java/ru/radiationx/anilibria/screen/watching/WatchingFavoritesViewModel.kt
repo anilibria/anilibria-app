@@ -47,7 +47,7 @@ class WatchingFavoritesViewModel(
     }
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = favoriteRepository
-        .getReleases(requestPage)
+        .getReleases(requestPage, null)
         .also {
             releaseInteractor.updateItemsCache(it.data)
         }

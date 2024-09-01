@@ -217,7 +217,7 @@ class PlayerViewModel(
             val newVideo = Video(
                 url = newUrl,
                 seek = access?.seek ?: 0,
-                title = release.title.orEmpty(),
+                title = release.names.main,
                 subtitle = episode.title.orEmpty(),
                 episode.skips
             )

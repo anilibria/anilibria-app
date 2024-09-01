@@ -1,9 +1,11 @@
 package ru.radiationx.anilibria.screen.details
 
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -20,11 +22,12 @@ import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.interactors.FavoritesInteractor
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.shared.ktx.coRunCatching
-import com.github.terrakok.cicerone.Router
 import timber.log.Timber
 import toothpick.InjectConstructor
 
@@ -32,6 +35,7 @@ import toothpick.InjectConstructor
 class DetailHeaderViewModel(
     argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
+    private val favoritesInteractor: FavoritesInteractor,
     private val favoriteRepository: FavoriteRepository,
     private val authRepository: AuthRepository,
     private val converter: DetailDataConverter,
@@ -54,14 +58,15 @@ class DetailHeaderViewModel(
     init {
         updateProgress()
         releaseInteractor.getItem(releaseId)?.also {
-            updateRelease(it, emptyList())
+            updateRelease(it, emptyList(), emptySet())
         }
         combine(
             releaseInteractor.observeFull(releaseId),
-            releaseInteractor.observeAccesses(releaseId)
-        ) { release, accesses ->
+            releaseInteractor.observeAccesses(releaseId),
+            favoritesInteractor.observeIds()
+        ) { release, accesses, favoriteIds ->
             isFullLoaded = true
-            updateRelease(release, accesses)
+            updateRelease(release, accesses, favoriteIds)
         }.launchIn(viewModelScope)
     }
 
@@ -113,18 +118,12 @@ class DetailHeaderViewModel(
                 guidedRouter.open(AuthGuidedScreen())
                 return@launch
             }
+            val isAdded = favoritesInteractor.observeIds().first().contains(release.id)
             coRunCatching {
-                if (release.favoriteInfo.isAdded) {
+                if (isAdded) {
                     favoriteRepository.deleteRelease(releaseId)
                 } else {
                     favoriteRepository.addRelease(releaseId)
-                }
-            }.onSuccess { releaseItem ->
-                currentRelease?.also { data ->
-                    val newData = data.copy(
-                        favoriteInfo = releaseItem.favoriteInfo
-                    )
-                    releaseInteractor.updateFullCache(newData)
                 }
             }.onFailure {
                 Timber.e(it)
@@ -144,9 +143,18 @@ class DetailHeaderViewModel(
         guidedRouter.open(DetailOtherGuidedScreen(releaseId))
     }
 
-    private fun updateRelease(release: Release, accesses: List<EpisodeAccess>) {
+    private fun updateRelease(
+        release: Release,
+        accesses: List<EpisodeAccess>,
+        favoriteIds: Set<ReleaseId>
+    ) {
         currentRelease = release
-        releaseData.value = converter.toDetail(release, isFullLoaded, accesses)
+        releaseData.value = converter.toDetail(
+            release,
+            isFullLoaded,
+            accesses,
+            favoriteIds.contains(release.id)
+        )
         updateProgress()
     }
 

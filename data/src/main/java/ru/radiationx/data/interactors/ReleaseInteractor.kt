@@ -13,6 +13,7 @@ import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.getAllReleases
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -103,10 +104,7 @@ class ReleaseInteractor @Inject constructor(
             "Loaded release is null for $releaseId"
         }
         val franchises = franchisesRepository.getReleaseFranchises(releaseId)
-        val rootReleaseIds = franchises.fold(mutableListOf<ReleaseId>()) { acc, franchiseFull ->
-            acc.addAll(franchiseFull.releases.map { it.id })
-            acc
-        }
+        val rootReleaseIds = franchises.getAllReleases().map { it.id }
         if (rootReleaseIds.isEmpty()) {
             return listOf(rootRelease)
         }

@@ -12,20 +12,22 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.domain.search.SuggestionItem
-import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.repository.ReleaseRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import toothpick.InjectConstructor
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @InjectConstructor
 class SuggestionsResultViewModel(
-    private val searchRepository: SearchRepository,
+    private val releaseRepository: ReleaseRepository,
     private val cardRouter: LibriaCardRouter,
     private val suggestionsController: SuggestionsController,
+    private val cardsDataConverter: CardsDataConverter
 ) : LifecycleViewModel() {
 
     private var currentQuery = ""
@@ -47,7 +49,7 @@ class SuggestionsResultViewModel(
             .onEach { progressState.value = true }
             .mapLatest { query ->
                 coRunCatching {
-                    searchRepository.fastSearch(query)
+                    releaseRepository.search(query)
                 }.getOrNull() ?: emptyList()
             }
             .onEach {
@@ -67,17 +69,12 @@ class SuggestionsResultViewModel(
         cardRouter.navigate(item)
     }
 
-    private fun showItems(items: List<SuggestionItem>, query: String, validQuery: Boolean) {
+    private fun showItems(items: List<Release>, query: String, validQuery: Boolean) {
         val result = SuggestionsController.SearchResult(items, query, validQuery)
         suggestionsController.resultEvent.emit(result)
         progressState.value = false
         resultData.value = items.map {
-            LibriaCard(
-                it.names.getOrNull(0).orEmpty(),
-                it.names.getOrNull(1).orEmpty(),
-                it.poster.orEmpty(),
-                LibriaCard.Type.Release(it.id)
-            )
+            cardsDataConverter.toCard(it)
         }
     }
 }

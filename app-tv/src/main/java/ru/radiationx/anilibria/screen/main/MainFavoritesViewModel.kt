@@ -47,7 +47,7 @@ class MainFavoritesViewModel(
     }
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = favoriteRepository
-        .getReleases(requestPage)
+        .getReleases(requestPage, null)
         .also { releaseInteractor.updateItemsCache(it.data) }
         .let { favoriteItems ->
             favoriteItems.data.sortedByDescending { it.updatedAt }.map { converter.toCard(it) }

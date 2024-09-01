@@ -93,14 +93,6 @@ data class Release(
     val link: String
         get() = "https://anilibria.top/anime/releases/release/${code.code}"
 
-    companion object {
-        const val STATUS_CODE_NOTHING = "0"
-        const val STATUS_CODE_PROGRESS = "1"
-        const val STATUS_CODE_COMPLETE = "2"
-        const val STATUS_CODE_HIDDEN = "3"
-        const val STATUS_CODE_NOT_ONGOING = "4"
-    }
-
     // todo API2 update usage
     /*val title: String?
         get() = names.firstOrNull()*/

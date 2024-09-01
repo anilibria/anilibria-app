@@ -92,7 +92,7 @@ class PlayerEpisodesViewModel(
             }
             Group(
                 id = groupId,
-                title = release.title.orEmpty(),
+                title = release.names.main,
                 actions = actions
             )
         }

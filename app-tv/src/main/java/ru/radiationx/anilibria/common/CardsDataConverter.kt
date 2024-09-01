@@ -14,16 +14,12 @@ class CardsDataConverter(
 ) {
 
     fun toCard(releaseItem: Release) = releaseItem.run {
-        val torrentDate = updatedAt.takeIf { it != 0 }?.let { Date(it * 1000L) }
-        val seasonText = "${year.orEmpty()} ${season.orEmpty()}"
+        val seasonText = "$year ${season.orEmpty()}"
         val genreText = genres.firstOrNull()?.capitalizeDefault()
-        val seriesText = "Серии: ${series?.trim() ?: "Не доступно"}"
-        val updateText = torrentDate?.let {
-            "Обновлен ${it.relativeDate(context).decapitalizeDefault()}"
-        }
-        val descItems = listOfNotNull(seasonText, genreText, seriesText, updateText)
+        val updateText = "Обновлен ${updatedAt.relativeDate(context).decapitalizeDefault()}"
+        val descItems = listOfNotNull(seasonText, genreText, updateText)
         LibriaCard(
-            title.orEmpty(),
+            names.main,
             descItems.joinToString(" • "),
             poster.orEmpty(),
             LibriaCard.Type.Release(releaseItem.id)
@@ -33,7 +29,7 @@ class CardsDataConverter(
     fun toCard(youtubeItem: YoutubeItem) = youtubeItem.run {
         LibriaCard(
             title.orEmpty(),
-            "Вышел ${Date(createdAt * 1000L).relativeDate(context).decapitalizeDefault()}",
+            "Вышел ${createdAt.relativeDate(context).decapitalizeDefault()}",
             image.orEmpty(),
             LibriaCard.Type.Youtube(youtubeItem.link)
         )

@@ -91,13 +91,16 @@ data class Release(
         const val STATUS_CODE_NOT_ONGOING = "4"
     }
 
-    val title: String?
-        get() = names.firstOrNull()
+    // todo API2 update usage
+    /*val title: String?
+        get() = names.firstOrNull()*/
 
-    val titleEng: String?
-        get() = names.lastOrNull()
+    // todo API2 update usage
+    /*val titleEng: String?
+        get() = names.lastOrNull()*/
 
-    fun getFranchisesIds(): List<ReleaseId> {
+    // todo API2 update usage
+    /*fun getFranchisesIds(): List<ReleaseId> {
         val ids = mutableListOf<ReleaseId>()
         franchises.forEach { franchise ->
             franchise.releases.forEach {
@@ -105,5 +108,5 @@ data class Release(
             }
         }
         return ids
-    }
+    }*/
 }

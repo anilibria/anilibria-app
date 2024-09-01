@@ -50,7 +50,7 @@ class ReleaseUpdateStorage @Inject constructor(
     override suspend fun viewRelease(release: Release) {
         getRelease(release.id)?.also { updItem ->
             val newUpdItem = updItem.copy(
-                timestamp = release.updatedAt,
+                timestamp = (release.updatedAt.time / 1000).toInt(),
                 lastOpenTimestamp = updItem.timestamp
             )
             putAllRelease(listOf(newUpdItem))
@@ -64,7 +64,7 @@ class ReleaseUpdateStorage @Inject constructor(
             if (updItem == null) {
                 val update = ReleaseUpdate(
                     id = release.id,
-                    timestamp = release.updatedAt,
+                    timestamp = (release.updatedAt.time / 1000).toInt(),
                     lastOpenTimestamp = Int.MAX_VALUE
                 )
                 putReleases.add(update)

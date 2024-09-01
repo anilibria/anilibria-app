@@ -79,6 +79,7 @@ class SearchRepository @Inject constructor(
         )
     }
 
+    // todo API2 delete
     private suspend fun searchReleases(
         genre: String,
         year: String,
@@ -87,10 +88,7 @@ class SearchRepository @Inject constructor(
         onlyCompleted: String,
         page: Int,
     ): Paginated<Release> = withContext(Dispatchers.IO) {
-        searchApi
-            .searchReleases(genre, year, season, sort, onlyCompleted, page)
-            .toDomain { it.toDomain(apiUtils, apiConfig) }
-            .also { updateMiddleware.handle(it.data) }
+        TODO("delete")
     }
 
     suspend fun getGenres(): List<GenreItem> = withContext(Dispatchers.IO) {

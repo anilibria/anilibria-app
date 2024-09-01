@@ -1,18 +1,14 @@
 package ru.radiationx.data.repository
 
-import anilibria.api.schedule.ScheduleApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.apinext.datasources.ScheduleApiDataSource
-import ru.radiationx.data.apinext.toDomain
-import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
-import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.shared.ktx.asMsk
 import ru.radiationx.shared.ktx.isSameDay
 import java.util.Calendar
@@ -23,8 +19,6 @@ import javax.inject.Inject
 class ScheduleRepository @Inject constructor(
     private val scheduleApi: ScheduleApiDataSource,
     private val updateMiddleware: ReleaseUpdateMiddleware,
-    private val apiUtils: ApiUtils,
-    private val apiConfig: ApiConfig,
 ) {
 
     private val dataRelay = MutableStateFlow<List<ScheduleDay>?>(null)

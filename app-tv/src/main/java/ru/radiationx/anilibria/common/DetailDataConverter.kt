@@ -29,8 +29,7 @@ class DetailDataConverter {
                 type,
                 "Серий: ${episodes.ifEmpty { null }?.size ?: "Не доступно"}"
             ).joinToString(" • "),
-            description = description.orEmpty().parseAsHtml().toString().trim()
-                .trim('"')/*.replace('\n', ' ')*/,
+            description = description.orEmpty(),
             announce = getAnnounce(isFull),
             image = poster.orEmpty(),
             favoriteCount = NumberFormat.getNumberInstance().format(favoritesCount),

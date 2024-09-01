@@ -5,19 +5,15 @@ import kotlinx.coroutines.withContext
 import ru.radiationx.data.apinext.datasources.FavoritesApiDataSource
 import ru.radiationx.data.apinext.models.filters.FavoritesFilterData
 import ru.radiationx.data.apinext.models.filters.FavoritesFilterForm
-import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
-import ru.radiationx.data.system.ApiUtils
 import javax.inject.Inject
 
 class FavoriteRepository @Inject constructor(
     private val favoriteApi: FavoritesApiDataSource,
-    private val updateMiddleware: ReleaseUpdateMiddleware,
-    private val apiUtils: ApiUtils,
-    private val apiConfig: ApiConfig
+    private val updateMiddleware: ReleaseUpdateMiddleware
 ) {
 
     suspend fun getFilterData(): FavoritesFilterData = withContext(Dispatchers.IO) {

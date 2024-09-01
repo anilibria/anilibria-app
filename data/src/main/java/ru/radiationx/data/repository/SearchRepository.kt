@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.GenresHolder
 import ru.radiationx.data.datasource.holders.YearsHolder
-import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.ReleaseApi
 import ru.radiationx.data.datasource.remote.api.SearchApi
 import ru.radiationx.data.entity.domain.Paginated
@@ -15,13 +14,9 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.data.entity.domain.search.SuggestionItem
-import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.mapper.toGenreItem
-import ru.radiationx.data.entity.mapper.toSuggestionDomain
 import ru.radiationx.data.entity.mapper.toYearItem
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
-import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.shared.ktx.capitalizeDefault
 import javax.inject.Inject
 
@@ -31,8 +26,6 @@ class SearchRepository @Inject constructor(
     private val genresHolder: GenresHolder,
     private val yearsHolder: YearsHolder,
     private val updateMiddleware: ReleaseUpdateMiddleware,
-    private val apiUtils: ApiUtils,
-    private val apiConfig: ApiConfig,
 ) {
 
 

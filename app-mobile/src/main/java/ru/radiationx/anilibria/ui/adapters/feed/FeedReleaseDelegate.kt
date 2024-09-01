@@ -44,7 +44,7 @@ class FeedReleaseDelegate(
             val state = requireNotNull(item.item.release)
 
             binding.itemTitle.text = state.title
-            binding.itemDesc.text = state.description.parseAsHtml()
+            binding.itemDesc.text = state.description
             ViewCompat.setTransitionName(
                 binding.itemImage,
                 "${item.javaClass.simpleName}_${state.id}"

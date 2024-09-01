@@ -3,13 +3,10 @@ package ru.radiationx.data.repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.apinext.datasources.ReleasesApiDataSource
-import ru.radiationx.data.apinext.toDomain
-import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
-import ru.radiationx.data.system.ApiUtils
 import javax.inject.Inject
 
 /**
@@ -17,9 +14,7 @@ import javax.inject.Inject
  */
 class ReleaseRepository @Inject constructor(
     private val releaseApi: ReleasesApiDataSource,
-    private val updateMiddleware: ReleaseUpdateMiddleware,
-    private val apiUtils: ApiUtils,
-    private val apiConfig: ApiConfig
+    private val updateMiddleware: ReleaseUpdateMiddleware
 ) {
 
     private val searchIdRegex = Regex("^id(\\d{3,})\$")

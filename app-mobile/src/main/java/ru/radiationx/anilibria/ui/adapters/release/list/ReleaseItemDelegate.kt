@@ -42,7 +42,7 @@ class ReleaseItemDelegate(
             val releaseItem = item.item
             binding.itemTitle.text = releaseItem.title
 
-            binding.itemDesc.text = releaseItem.description.parseAsHtml()
+            binding.itemDesc.text = releaseItem.description
             ViewCompat.setTransitionName(
                 binding.itemImage,
                 "${item.javaClass.simpleName}_${releaseItem.id}"

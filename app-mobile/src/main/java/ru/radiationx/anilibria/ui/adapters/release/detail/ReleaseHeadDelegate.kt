@@ -79,7 +79,7 @@ class ReleaseHeadDelegate(
                     .let { "Обновлён $it" }
             }
 
-            binding.fullDescription.text = state.description.parseAsHtml()
+            binding.fullDescription.text = state.description
             binding.fullDescription.doOnLayout {
                 updateDescription(modifiers.descriptionExpanded)
             }
@@ -90,7 +90,7 @@ class ReleaseHeadDelegate(
             binding.fullDaysDivider.isVisible = state.needShowDay || state.announce != null
 
             binding.fullAnnounce.isVisible = state.announce != null
-            binding.fullAnnounce.text = state.announce?.parseAsHtml()
+            binding.fullAnnounce.text = state.announce
 
             bindFavorite(
                 state.favorite,

@@ -6,6 +6,9 @@ import anilibria.api.shared.release.ReleaseResponse
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Query
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import ru.radiationx.shared.ktx.coRunCatching
 
 interface ReleasesApi {
 
@@ -26,4 +29,15 @@ interface ReleasesApi {
 
     @GET("/app/search/releases")
     suspend fun search(@Query("query") query: String): List<ReleaseResponse>
+
+    suspend fun getReleasesByIds(ids: List<Int>): List<ReleaseResponse> {
+        return coroutineScope {
+            val requests = async {
+                ids.map { id ->
+                    coRunCatching { getRelease(id.toString()) }
+                }
+            }
+            requests.await().mapNotNull { it.getOrNull() }
+        }
+    }
 }

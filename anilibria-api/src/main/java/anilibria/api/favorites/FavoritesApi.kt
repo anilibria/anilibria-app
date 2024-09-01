@@ -38,11 +38,11 @@ interface FavoritesApi {
         @Query("page") page: Int?,
         @Query("limit") limit: Int?,
         @Query("f[years]") years: String?,
-        @Query("f[types]") types: List<String>?,
+        @Query("f[types]") types: String?,
         @Query("f[genres]") genres: String?,
         @Query("f[search]") search: String?,
         @Query("f[sorting]") sorting: String?,
-        @Query("f[age_ratings]") ageRatings: List<String>?
+        @Query("f[age_ratings]") ageRatings: String?
     ): PaginationResponse<ReleaseResponse>
 
     // TODO implement from actual api

@@ -1,15 +1,13 @@
 package ru.radiationx.data.repository
 
+import anilibria.api.releases.ReleasesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.api.ReleaseApi
-import ru.radiationx.data.entity.domain.Paginated
-import ru.radiationx.data.entity.domain.release.RandomRelease
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.system.ApiUtils
 import javax.inject.Inject
@@ -18,50 +16,60 @@ import javax.inject.Inject
  * Created by radiationx on 17.12.17.
  */
 class ReleaseRepository @Inject constructor(
-    private val releaseApi: ReleaseApi,
+    private val releaseApi: ReleasesApi,
     private val updateMiddleware: ReleaseUpdateMiddleware,
     private val apiUtils: ApiUtils,
     private val apiConfig: ApiConfig
 ) {
 
-    suspend fun getRandomRelease(): RandomRelease = withContext(Dispatchers.IO) {
+    private val searchIdRegex = Regex("^id(\\d{3,})\$")
+
+    suspend fun getRandomRelease(): Release = withContext(Dispatchers.IO) {
         releaseApi
-            .getRandomRelease()
+            .getRandomReleases(1)
+            .first()
             .toDomain()
     }
 
     suspend fun getRelease(releaseId: ReleaseId): Release = withContext(Dispatchers.IO) {
         releaseApi
-            .getRelease(releaseId.id)
-            .toDomain(apiUtils, apiConfig)
+            .getRelease(releaseId.id.toString())
+            .toDomain()
             .also { updateMiddleware.handle(it) }
     }
 
     suspend fun getRelease(releaseIdName: ReleaseCode): Release = withContext(Dispatchers.IO) {
         releaseApi
             .getRelease(releaseIdName.code)
-            .toDomain(apiUtils, apiConfig)
+            .toDomain()
             .also { updateMiddleware.handle(it) }
     }
 
-    suspend fun getReleasesById(ids: List<ReleaseId>): List<Release> = withContext(Dispatchers.IO) {
-        releaseApi
-            .getReleasesByIds(ids.map { it.id })
-            .map { it.toDomain(apiUtils, apiConfig) }
-            .also { updateMiddleware.handle(it) }
+    suspend fun getFullReleasesById(ids: List<ReleaseId>): List<Release> =
+        withContext(Dispatchers.IO) {
+            releaseApi
+                .getReleasesByIds(ids.map { it.id })
+                .map { it.toDomain() }
+                .also { updateMiddleware.handle(it) }
+        }
+
+    suspend fun search(query: String): List<Release> = withContext(Dispatchers.IO) {
+        val releaseId = getQueryId(query)
+        if (releaseId != null) {
+            val release = releaseApi
+                .getRelease(releaseId.toString())
+                .toDomain()
+            listOf(release)
+        } else {
+            releaseApi
+                .search(query)
+                .map { it.toDomain() }
+        }
     }
 
-    suspend fun getFullReleasesById(ids: List<ReleaseId>): List<Release> = withContext(Dispatchers.IO) {
-        releaseApi
-            .getFullReleasesByIds(ids.map { it.id })
-            .map { it.toDomain(apiUtils, apiConfig) }
-            .also { updateMiddleware.handle(it) }
-    }
-
-    suspend fun getReleases(page: Int): Paginated<Release> = withContext(Dispatchers.IO) {
-        releaseApi
-            .getReleases(page)
-            .toDomain { it.toDomain(apiUtils, apiConfig) }
-            .also { updateMiddleware.handle(it.data) }
+    private fun getQueryId(query: String): Int? {
+        return searchIdRegex.find(query)?.let { matchResult ->
+            matchResult.groupValues.getOrNull(1)?.toIntOrNull()
+        }
     }
 }

@@ -35,7 +35,6 @@ class SearchRepository @Inject constructor(
     private val apiConfig: ApiConfig,
 ) {
 
-    private val searchIdRegex = Regex("^id(\\d{3,})\$")
 
     fun observeGenres(): Flow<List<GenreItem>> = genresHolder
         .observeGenres()
@@ -45,13 +44,9 @@ class SearchRepository @Inject constructor(
         .observeYears()
         .flowOn(Dispatchers.IO)
 
-    private fun getQueryId(query: String): Int? {
-        return searchIdRegex.find(query)?.let { matchResult ->
-            matchResult.groupValues.getOrNull(1)?.toIntOrNull()
-        }
-    }
 
-    suspend fun fastSearch(query: String): List<SuggestionItem> = withContext(Dispatchers.IO) {
+    //todo API2 update usage
+    /*suspend fun fastSearch(query: String): List<SuggestionItem> = withContext(Dispatchers.IO) {
         val releaseId = getQueryId(query)
         if (releaseId != null) {
             releaseApi
@@ -62,7 +57,7 @@ class SearchRepository @Inject constructor(
                 .fastSearch(query)
                 .map { it.toDomain(apiUtils, apiConfig) }
         }
-    }
+    }*/
 
     suspend fun searchReleases(form: SearchForm, page: Int): Paginated<Release> {
         val yearsQuery = form.years.joinToString(",") { it.value }

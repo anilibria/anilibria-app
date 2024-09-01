@@ -20,7 +20,8 @@ kotlin {
 
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
-
+    implementation project(":shared-android-ktx")
+    
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 

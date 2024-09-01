@@ -5,17 +5,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
-import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.domain.release.BlockedInfo
+import ru.radiationx.data.apinext.models.ReleaseMember
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.ExternalPlaylist
-import ru.radiationx.data.entity.domain.release.FavoriteInfo
-import ru.radiationx.data.entity.domain.release.Members
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
-import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.data.entity.domain.types.EpisodeId
@@ -30,25 +26,21 @@ import java.util.Date
 fun Release.toState(
     loadings: Map<TorrentId, MutableStateFlow<Int>>,
     accesses: Map<EpisodeId, EpisodeAccess>,
+    isInFavorites: Boolean
 ): ReleaseDetailState = ReleaseDetailState(
     id = id,
-    info = toInfoState(),
+    info = toInfoState(isInFavorites),
     episodesControl = toEpisodeControlState(accesses),
     episodesTabs = toTabsState(accesses),
     torrents = torrents.map { it.toState(loadings) },
-    blockedInfo = blockedInfo.takeIf { it.isBlocked }?.toState()
+    blockedInfo = toBlockedInfoState()
 )
 
-fun FavoriteInfo.toState() = ReleaseFavoriteState(
-    rating = rating.toString(),
-    isAdded = isAdded
-)
-
-fun Release.toInfoState(): ReleaseInfoState {
-    val seasonsHtml = "<b>Сезон:</b> ${year.orEmpty()} ${season.orEmpty()}"
-    val voicesHtml = members?.toInfo().orEmpty().toTypedArray()
-    val typesHtml = "<b>Тип:</b> " + types.joinToString(", ")
-    val releaseStatus = status?.takeIf { it.isNotEmpty() } ?: "Не указано"
+fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {
+    val seasonsHtml = "<b>Сезон:</b> $year ${season.orEmpty()}"
+    val voicesHtml = members.toInfo().toTypedArray()
+    val typesHtml = "<b>Тип:</b> $type"
+    val releaseStatus = toStatus()
     val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
     val genresHtml = "<b>Жанры:</b> " + genres.joinToString(", ") {
         val value = it.htmlEncode()
@@ -64,24 +56,29 @@ fun Release.toInfoState(): ReleaseInfoState {
     val infoStr = arrHtml.joinToString("<br>")
 
     return ReleaseInfoState(
-        titleRus = title.orEmpty(),
-        titleEng = titleEng.orEmpty(),
+        titleRus = names.main,
+        titleEng = names.english,
         description = description.orEmpty(),
-        updatedAt = updatedAt.takeIf { it != 0 }?.let { Date(it * 1000L) },
+        updatedAt = updatedAt,
         info = infoStr,
-        days = publishDay.map { ScheduleDay.toCalendarDay(it) },
-        isOngoing = statusCode == Release.STATUS_CODE_PROGRESS,
+        publishDay = ScheduleDay.toCalendarDay(publishDay),
+        needShowDay = isInProduction,
         announce = announce,
-        favorite = favoriteInfo.toState()
+        favorite = ReleaseFavoriteState(favoritesCount.toString(), isInFavorites)
     )
 }
 
-private fun Members.toInfo(): List<String> {
-    return listOfNotNull(
-        voicing.asMemberRole("Озвучка"),
-        timing.asMemberRole("Тайминг"),
-        (translating + editing + decorating).asMemberRole("Работа над субтитрами"),
-    )
+private fun Release.toStatus(): String {
+    val ongoing = if (isOngoing) "Онгоинг" else "Не онгоинг"
+    val production = if (isInProduction) "В работе" else "Не в работе"
+    return listOf(ongoing, production).joinToString()
+}
+
+private fun List<ReleaseMember>.toInfo(): List<String> {
+    return groupBy { it.role.description }
+        .mapNotNull { (role, members) ->
+            members.map { it.nickname }.asMemberRole(role)
+        }
 }
 
 private fun List<String>.asMemberRole(title: String): String? {
@@ -93,15 +90,9 @@ private fun List<String>.asMemberRole(title: String): String? {
     return "<b>$title:</b> $links"
 }
 
-fun BlockedInfo.toState(): ReleaseBlockedInfoState {
-    val defaultReason = """
-                    <h4>Контент недоступен на территории Российской Федерации*. Приносим извинения за неудобства.</h4>
-                    <br>
-                    <span>Подробности смотрите в новостях или социальных сетях</span>""".trimIndent()
-
-    return ReleaseBlockedInfoState(
-        title = reason ?: defaultReason
-    )
+fun Release.toBlockedInfoState(): ReleaseBlockedInfoState? {
+    val reason = blockingReason ?: return null
+    return ReleaseBlockedInfoState(title = reason)
 }
 
 fun Release.toEpisodeControlState(
@@ -169,15 +160,9 @@ fun Release.toTabsState(
         textColor = null,
         episodes = rutubePlaylist.map { it.toState() }
     )
-    val sourceTab = EpisodesTabState(
-        tag = "source",
-        title = "Скачать",
-        textColor = null,
-        episodes = sourceEpisodes.map { it.toState() }
-    )
     val externalTabs = externalPlaylists.map { it.toTabState() }
 
-    return listOf(onlineTab, rutubeTab, sourceTab)
+    return listOf(onlineTab, rutubeTab)
         .plus(externalTabs)
         .filter { tab ->
             tab.episodes.isNotEmpty()
@@ -210,24 +195,6 @@ fun ExternalEpisode.toState(
     hasActionUrl = url != null,
     actionIconRes = playlist.tag.asDataIconRes(),
     actionColorRes = playlist.tag.asDataColorRes()
-)
-
-fun SourceEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
-    id = id,
-    title = title.orEmpty(),
-    subtitle = null,
-    updatedAt = updatedAt,
-    isViewed = false,
-    hasUpdate = false,
-    hasSd = PlayerQuality.SD in qualityInfo,
-    hasHd = PlayerQuality.HD in qualityInfo,
-    hasFullHd = PlayerQuality.FULLHD in qualityInfo,
-    type = ReleaseEpisodeItemType.SOURCE,
-    tag = "source",
-    actionTitle = null,
-    hasActionUrl = false,
-    actionIconRes = null,
-    actionColorRes = null
 )
 
 fun Episode.toState(

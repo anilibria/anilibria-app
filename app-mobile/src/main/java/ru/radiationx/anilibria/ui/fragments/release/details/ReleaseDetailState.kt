@@ -26,6 +26,7 @@ data class EpisodesTabState(
 data class ReleaseDetailModifiersState(
     val selectedEpisodesTabTag: String? = null,
     val favoriteRefreshing: Boolean = false,
+    val favoriteLoading: Boolean = false,
     val episodesReversed: Boolean = false,
     val descriptionExpanded: Boolean = false,
     val detailLoading: Boolean = true,
@@ -46,8 +47,8 @@ data class ReleaseInfoState(
     val updatedAt: Date?,
     val description: String,
     val info: String,
-    val days: List<Int>,
-    val isOngoing: Boolean,
+    val publishDay: Int,
+    val needShowDay: Boolean,
     val announce: String?,
     val favorite: ReleaseFavoriteState,
 ) {
@@ -81,7 +82,7 @@ data class ReleaseEpisodeItemState(
 )
 
 enum class ReleaseEpisodeItemType {
-    ONLINE, SOURCE, EXTERNAL, RUTUBE
+    ONLINE, EXTERNAL, RUTUBE
 }
 
 data class ReleaseTorrentItemState(

@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.util.Log
 import android.view.View
 import androidx.core.text.parseAsHtml
 import androidx.core.view.doOnLayout
@@ -86,14 +85,17 @@ class ReleaseHeadDelegate(
             }
             binding.fullInfo.text = state.info.parseAsHtml()
 
-            binding.fullDaysBar.selectDays(state.days)
-            binding.fullDaysBar.isVisible = state.isOngoing
-            binding.fullDaysDivider.isVisible = state.isOngoing || state.announce != null
+            binding.fullDaysBar.selectDay(state.publishDay)
+            binding.fullDaysBar.isVisible = state.needShowDay
+            binding.fullDaysDivider.isVisible = state.needShowDay || state.announce != null
 
             binding.fullAnnounce.isVisible = state.announce != null
             binding.fullAnnounce.text = state.announce?.parseAsHtml()
 
-            bindFavorite(state.favorite, modifiers.favoriteRefreshing || modifiers.detailLoading)
+            bindFavorite(
+                state.favorite,
+                modifiers.favoriteRefreshing || modifiers.favoriteLoading || modifiers.detailLoading
+            )
         }
 
         private fun bindFavorite(state: ReleaseFavoriteState, favoritesRefresh: Boolean) {

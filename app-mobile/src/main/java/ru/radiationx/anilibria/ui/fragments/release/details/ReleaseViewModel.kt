@@ -109,7 +109,7 @@ class ReleaseViewModel(
             it.copy(
                 poster = currentData?.poster,
                 title = currentData?.let {
-                    String.format("%s / %s", release.title, release.titleEng)
+                    String.format("%s / %s", release.names.main, release.names.english)
                 }
             )
         }

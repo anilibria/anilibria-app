@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.history
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -92,8 +91,8 @@ class HistoryViewModel(
                 return@combine emptyList()
             }
             releases.filter {
-                it.title.orEmpty().contains(query, true)
-                        || it.titleEng.orEmpty().contains(query, true)
+                it.names.main.contains(query, true)
+                        || it.names.english.contains(query, true)
             }
         }
             .distinctUntilChanged()

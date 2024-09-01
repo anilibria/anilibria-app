@@ -22,4 +22,8 @@ data class TorrentItem(
     // todo API2 update usage
     //val url: String?,
     val date: Date?
-) : Parcelable
+) : Parcelable {
+
+    val url: String
+        get() = "https://anilibria.top/api/v1/anime/torrents/${id.id}/file"
+}

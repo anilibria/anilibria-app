@@ -116,21 +116,6 @@ class ReleaseAnalytics(
         )
     }
 
-    fun episodeDownloadClick(quality: AnalyticsQuality, releaseId: Int) {
-        sender.send(
-            AnalyticsConstants.release_episode_download,
-            quality.toQualityParam(),
-            releaseId.toIdParam()
-        )
-    }
-
-    fun episodeDownloadByUrl(releaseId: Int) {
-        sender.send(
-            AnalyticsConstants.release_episode_download_url,
-            releaseId.toIdParam()
-        )
-    }
-
     fun webPlayerClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_web_player,

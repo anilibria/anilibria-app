@@ -26,14 +26,14 @@ class FavoriteRepository @Inject constructor(
 
     suspend fun getReleases(
         page: Int,
-        form: FavoritesFilterForm
+        form: FavoritesFilterForm?
     ): Paginated<Release> = withContext(Dispatchers.IO) {
         favoriteApi
             .getReleases(page, form)
             .also { updateMiddleware.handle(it.data) }
     }
 
-    suspend fun getReleaseIds(): List<ReleaseId> = withContext(Dispatchers.IO) {
+    suspend fun getReleaseIds(): Set<ReleaseId> = withContext(Dispatchers.IO) {
         favoriteApi.getReleaseIds()
     }
 

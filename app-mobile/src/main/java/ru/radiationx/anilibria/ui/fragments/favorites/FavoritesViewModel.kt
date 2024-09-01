@@ -113,10 +113,10 @@ class FavoritesViewModel(
             }
             coRunCatching {
                 favoriteRepository.deleteRelease(id)
-            }.onSuccess { deletedItem ->
+            }.onSuccess {
                 loadingController.currentState.data?.also { dataState ->
                     val newItems = dataState.toMutableList()
-                    newItems.find { it.id == deletedItem.id }?.also {
+                    newItems.find { it.id == id }?.also {
                         newItems.remove(it)
                     }
                     loadingController.modifyData(newItems)
@@ -181,7 +181,7 @@ class FavoritesViewModel(
     private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
         return try {
             favoriteRepository
-                .getReleases(params.page)
+                .getReleases(params.page,null)
                 .let { paginated ->
                     val newItems = if (params.isFirstPage) {
                         paginated.data
@@ -203,8 +203,8 @@ class FavoritesViewModel(
             return emptyList()
         }
         return filter {
-            it.title.orEmpty().contains(query, true)
-                    || it.titleEng.orEmpty().contains(query, true)
+            it.names.main.contains(query, true)
+                    || it.names.english.contains(query, true)
         }
     }
 

@@ -41,11 +41,9 @@ class DaysBar @JvmOverloads constructor(
         }
     }
 
-    fun selectDays(days: List<Int>) {
+    fun selectDay(day: Int) {
         buttons.forEach { it.isSelected = false }
-        days.forEach { day ->
-            daysViews[day]?.isSelected = true
-        }
+        daysViews[day]?.isSelected = true
     }
 
 }

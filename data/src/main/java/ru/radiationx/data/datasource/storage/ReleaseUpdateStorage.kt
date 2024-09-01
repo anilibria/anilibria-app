@@ -15,6 +15,7 @@ import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.mapper.toDb
 import ru.radiationx.data.entity.mapper.toDomain
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -50,7 +51,7 @@ class ReleaseUpdateStorage @Inject constructor(
     override suspend fun viewRelease(release: Release) {
         getRelease(release.id)?.also { updItem ->
             val newUpdItem = updItem.copy(
-                timestamp = (release.updatedAt.time / 1000).toInt(),
+                timestamp = release.updatedAt,
                 lastOpenTimestamp = updItem.timestamp
             )
             putAllRelease(listOf(newUpdItem))
@@ -64,8 +65,8 @@ class ReleaseUpdateStorage @Inject constructor(
             if (updItem == null) {
                 val update = ReleaseUpdate(
                     id = release.id,
-                    timestamp = (release.updatedAt.time / 1000).toInt(),
-                    lastOpenTimestamp = Int.MAX_VALUE
+                    timestamp = release.updatedAt,
+                    lastOpenTimestamp = Date(Long.MAX_VALUE)
                 )
                 putReleases.add(update)
             }

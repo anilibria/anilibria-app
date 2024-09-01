@@ -47,10 +47,11 @@ import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
-import ru.radiationx.data.entity.domain.release.SourceEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.types.TorrentId
+import ru.radiationx.data.interactors.FavoritesInteractor
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.DonationRepository
@@ -65,6 +66,7 @@ import toothpick.InjectConstructor
 class ReleaseInfoViewModel(
     private val argExtra: ReleaseExtra,
     private val releaseInteractor: ReleaseInteractor,
+    private val favoritesInteractor: FavoritesInteractor,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
     donationRepository: DonationRepository,
@@ -102,7 +104,6 @@ class ReleaseInfoViewModel(
     val playWebAction = EventFlow<ActionPlayWeb>()
     val playEpisodeAction = EventFlow<ActionPlayEpisode>()
     val showUnauthAction = EventFlow<Unit>()
-    val showFileDonateAction = EventFlow<String>()
     val showEpisodesMenuAction = EventFlow<Unit>()
     val showContextEpisodeAction = EventFlow<Episode>()
     val openDownloadedFileAction = EventFlow<LocalFile>()
@@ -153,10 +154,10 @@ class ReleaseInfoViewModel(
             .launchIn(viewModelScope)
 
         argExtra.release?.also {
-            updateLocalRelease(it, _currentLoadings.value, emptyMap())
+            updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet())
         }
         releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
-            updateLocalRelease(it, _currentLoadings.value, emptyMap())
+            updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet())
         }
         observeRelease()
 
@@ -179,6 +180,15 @@ class ReleaseInfoViewModel(
                 Timber.e(it, "Error while load ads for release")
             }
         }
+        viewModelScope.launch {
+            updateModifiers { it.copy(favoriteLoading = true) }
+            coRunCatching {
+                favoritesInteractor.loadReleaseIds()
+            }.onFailure {
+                Timber.e(it, "Error while favorites release ids")
+            }
+            updateModifiers { it.copy(favoriteLoading = true) }
+        }
     }
 
     private fun observeRelease() {
@@ -197,9 +207,10 @@ class ReleaseInfoViewModel(
                     _currentLoadings,
                     releaseInteractor.observeAccesses(release.id).map { accesses ->
                         accesses.associateBy { it.id }
-                    }
-                ) { loadings, accesses ->
-                    updateLocalRelease(release, loadings, accesses)
+                    },
+                    favoritesInteractor.observeIds()
+                ) { loadings, accesses, isInFavorites ->
+                    updateLocalRelease(release, loadings, accesses, isInFavorites)
                 }
             }
             .launchIn(viewModelScope)
@@ -209,10 +220,11 @@ class ReleaseInfoViewModel(
         release: Release,
         loadings: Map<TorrentId, MutableStateFlow<Int>>,
         accesses: Map<EpisodeId, EpisodeAccess>,
+        favoriteIds: Set<ReleaseId>
     ) {
         currentData = release
         _state.update {
-            it.copy(data = release.toState(loadings, accesses))
+            it.copy(data = release.toState(loadings, accesses, favoriteIds.contains(release.id)))
         }
     }
 
@@ -242,8 +254,8 @@ class ReleaseInfoViewModel(
         releaseAnalytics.torrentClick(isHevc, torrentItem.id.id)
         when (action) {
             TorrentAction.Open, TorrentAction.Share -> loadTorrent(torrentItem, action)
-            TorrentAction.OpenUrl -> systemUtils.externalLink(torrentItem.url.orEmpty())
-            TorrentAction.ShareUrl -> systemUtils.shareText(torrentItem.url.orEmpty())
+            TorrentAction.OpenUrl -> systemUtils.externalLink(torrentItem.url)
+            TorrentAction.ShareUrl -> systemUtils.shareText(torrentItem.url)
         }
     }
 
@@ -254,7 +266,6 @@ class ReleaseInfoViewModel(
     }
 
     private fun loadTorrent(item: TorrentItem, action: TorrentAction) {
-        val url = item.url ?: return
         if (loadingJobs[item.id]?.isActive == true) {
             return
         }
@@ -265,7 +276,7 @@ class ReleaseInfoViewModel(
             }
             coRunCatching {
                 val bucket = RemoteFile.Bucket.Torrent(item.id.releaseId)
-                remoteFileRepository.loadFile(url, bucket, progress)
+                remoteFileRepository.loadFile(item.url, bucket, progress)
             }.onSuccess {
                 when (action) {
                     TorrentAction.Open -> openDownloadedFileAction.set(it.toLocalFile())
@@ -358,19 +369,6 @@ class ReleaseInfoViewModel(
         episode.url?.also { systemUtils.externalLink(it) }
     }
 
-    private fun onSourceEpisodeClick(
-        release: Release,
-        episode: SourceEpisode,
-        quality: PlayerQuality?,
-    ) {
-        val savedQuality = appPreferences.playerQuality.value
-        val finalQuality = quality ?: savedQuality
-        val analyticsQuality = savedQuality.toAnalyticsQuality()
-        releaseAnalytics.episodeDownloadClick(analyticsQuality, release.id.id)
-        val url = episode.qualityInfo.getUrlFor(finalQuality) ?: return
-        onDownloadLinkSelected(url)
-    }
-
     private fun onOnlineEpisodeClick(
         release: Release,
         episode: Episode,
@@ -390,11 +388,6 @@ class ReleaseInfoViewModel(
             ReleaseEpisodeItemType.ONLINE -> {
                 val episodeItem = getEpisodeItem(episodeState) ?: return
                 onOnlineEpisodeClick(release, episodeItem)
-            }
-
-            ReleaseEpisodeItemType.SOURCE -> {
-                val episodeItem = getSourceEpisode(episodeState) ?: return
-                onSourceEpisodeClick(release, episodeItem, quality)
             }
 
             ReleaseEpisodeItemType.EXTERNAL -> {
@@ -417,11 +410,6 @@ class ReleaseInfoViewModel(
     private fun getEpisodeItem(episode: ReleaseEpisodeItemState): Episode? {
         if (episode.type != ReleaseEpisodeItemType.ONLINE) return null
         return currentData?.episodes?.find { it.id == episode.id }
-    }
-
-    private fun getSourceEpisode(episode: ReleaseEpisodeItemState): SourceEpisode? {
-        if (episode.type != ReleaseEpisodeItemType.SOURCE) return null
-        return currentData?.sourceEpisodes?.find { it.id == episode.id }
     }
 
     private fun getExternalEpisode(episode: ReleaseEpisodeItemState): ExternalEpisode? {
@@ -458,14 +446,17 @@ class ReleaseInfoViewModel(
 
     fun onClickFav() {
         val releaseId = currentData?.id ?: return
-        val favInfo = currentData?.favoriteInfo ?: return
         viewModelScope.launch {
             if (authRepository.getAuthState() != AuthState.AUTH) {
                 showUnauthAction.set(Unit)
                 return@launch
             }
+            val isAdded = favoritesInteractor
+                .observeIds()
+                .first()
+                .contains(releaseId)
 
-            if (favInfo.isAdded) {
+            if (isAdded) {
                 releaseAnalytics.favoriteRemove(releaseId.id)
             } else {
                 releaseAnalytics.favoriteAdd(releaseId.id)
@@ -474,17 +465,10 @@ class ReleaseInfoViewModel(
                 it.copy(favoriteRefreshing = true)
             }
             coRunCatching {
-                if (favInfo.isAdded) {
+                if (isAdded) {
                     favoriteRepository.deleteRelease(releaseId)
                 } else {
                     favoriteRepository.addRelease(releaseId)
-                }
-            }.onSuccess { releaseItem ->
-                currentData?.also { data ->
-                    val newData = data.copy(
-                        favoriteInfo = releaseItem.favoriteInfo
-                    )
-                    releaseInteractor.updateFullCache(newData)
                 }
             }.onFailure {
                 errorHandler.handle(it)
@@ -534,30 +518,6 @@ class ReleaseInfoViewModel(
                 router.navigateTo(Screens.Teams(value))
             }
         }
-    }
-
-    fun onDownloadLinkSelected(url: String) {
-        currentData?.also {
-            if (it.showDonateDialog) {
-                showFileDonateAction.set(url)
-            } else {
-                downloadFile(url)
-            }
-        }
-    }
-
-    fun downloadFile(url: String) {
-        val data = currentData ?: return
-        releaseAnalytics.episodeDownloadByUrl(data.id.id)
-        systemUtils.externalLink(url)
-    }
-
-    fun onDialogPatreonClick() {
-        systemUtils.externalLink("https://www.patreon.com/anilibria")
-    }
-
-    fun onDialogDonateClick() {
-        router.navigateTo(Screens.DonationDetail())
     }
 
     fun onResetEpisodesHistoryClick() {

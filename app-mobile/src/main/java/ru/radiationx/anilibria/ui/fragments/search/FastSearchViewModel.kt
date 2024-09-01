@@ -9,24 +9,24 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.model.SuggestionLocalItemState
-import ru.radiationx.anilibria.model.toState
+import ru.radiationx.anilibria.model.toSuggestionState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.domain.search.SuggestionItem
-import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import com.github.terrakok.cicerone.Router
+import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.repository.ReleaseRepository
 import toothpick.InjectConstructor
 import java.net.URLEncoder
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @InjectConstructor
 class FastSearchViewModel(
-    private val searchRepository: SearchRepository,
+    private val releaseRepository: ReleaseRepository,
     private val router: Router,
     private val systemUtils: SystemUtils,
     private val catalogAnalytics: CatalogAnalytics,
@@ -44,7 +44,7 @@ class FastSearchViewModel(
 
     private var currentQuery = ""
     private var queryRelay = MutableSharedFlow<String>()
-    private var currentSuggestions = mutableListOf<SuggestionItem>()
+    private var currentSuggestions = mutableListOf<Release>()
 
     init {
         queryRelay
@@ -62,7 +62,7 @@ class FastSearchViewModel(
             .filter { it.length >= 3 }
             .mapLatest { query ->
                 coRunCatching {
-                    searchRepository.fastSearch(query)
+                    releaseRepository.search(query)
                 }.getOrNull() ?: emptyList()
             }
             .onEach {
@@ -76,12 +76,12 @@ class FastSearchViewModel(
         showItems(emptyList(), currentQuery)
     }
 
-    private fun showItems(items: List<SuggestionItem>, query: String, appendEmpty: Boolean = true) {
+    private fun showItems(items: List<Release>, query: String, appendEmpty: Boolean = true) {
         currentSuggestions.clear()
         currentSuggestions.addAll(items)
 
         val isNotFound = appendEmpty && currentSuggestions.isEmpty() && query.isNotEmpty()
-        val stateItems = currentSuggestions.map { it.toState(query) }
+        val stateItems = currentSuggestions.map { it.toSuggestionState(query) }
         val localItems = if (isNotFound) {
             listOf(
                 SuggestionLocalItemState(

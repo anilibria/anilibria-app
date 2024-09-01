@@ -53,8 +53,8 @@ class FavoritesApiDataSource(
             .toDomain { it.toDomain() }
     }
 
-    suspend fun getReleaseIds(): List<ReleaseId> {
-        return api.getIds().map { ReleaseId(it) }
+    suspend fun getReleaseIds(): Set<ReleaseId> {
+        return api.getIds().map { ReleaseId(it) }.toSet()
     }
 
     suspend fun deleteRelease(releaseId: ReleaseId) {

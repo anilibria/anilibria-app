@@ -11,7 +11,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.databinding.DialogFileDownloadBinding
 import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.navigation.Screens
@@ -81,10 +80,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
             showFavoriteDialog()
         }.launchInResumed(viewLifecycleOwner)
 
-        viewModel.showFileDonateAction.observe().onEach {
-            showFileDonateDialog(it)
-        }.launchInResumed(viewLifecycleOwner)
-
         viewModel.showEpisodesMenuAction.observe().onEach {
             showEpisodesMenuDialog()
         }.launchInResumed(viewLifecycleOwner)
@@ -113,40 +108,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
 
     private fun showState(state: ReleaseDetailScreenState) {
         state.data?.let { releaseInfoAdapter.bindState(it, state) }
-    }
-
-    private fun showFileDonateDialog(url: String) {
-        val dialogBinding = DialogFileDownloadBinding.inflate(
-            LayoutInflater.from(requireView().context),
-            null,
-            false
-        )
-
-        dialogBinding.root.apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        }
-
-        dialogBinding.dialogFileImage.showImageUrl("file:///android_asset/libria_tyan_type3.png")
-
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogBinding.root)
-            .showWithLifecycle(viewLifecycleOwner)
-
-        dialogBinding.dialogFilePatreonBtn.setOnClickListener {
-            viewModel.onDialogPatreonClick()
-            dialog.dismiss()
-        }
-        dialogBinding.dialogFileDonateBtn.setOnClickListener {
-            viewModel.onDialogDonateClick()
-            dialog.dismiss()
-        }
-        dialogBinding.dialogFileDownloadBtn.setOnClickListener {
-            viewModel.downloadFile(url)
-            dialog.dismiss()
-        }
     }
 
     private fun showEpisodesMenuDialog() {

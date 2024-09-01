@@ -82,6 +82,16 @@ data class Release(
     val torrents: List<TorrentItem>,
 ) : Parcelable {
 
+    val blockingReason: String?
+        get() = when {
+            isBlockedByGeo -> "Контент заблокирован на территории вашей страны"
+            isBlockedByCopyrights -> "Контент заблокирован по запросу правообладателей"
+            else -> null
+        }
+
+    //todo API2 use real url
+    val link: String
+        get() = "https://anilibria.top/anime/releases/release/${code.code}"
 
     companion object {
         const val STATUS_CODE_NOTHING = "0"

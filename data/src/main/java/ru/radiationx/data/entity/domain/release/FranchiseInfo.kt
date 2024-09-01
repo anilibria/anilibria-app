@@ -7,12 +7,6 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 
 @Parcelize
 data class Franchise(
-    val info: FranchiseInfo,
-    val releases: List<FranchiseRelease>,
-) : Parcelable
-
-@Parcelize
-data class FranchiseInfo(
     val id: FranchiseId,
     val name: String,
     val nameEnglish: String,
@@ -27,13 +21,7 @@ data class FranchiseInfo(
 ) : Parcelable
 
 @Parcelize
-data class FranchiseRelease(
-    val id: String,
-    val releaseId: ReleaseId,
-    val franchiseId: FranchiseId,
-    // todo API2 update usage
-    //val names: List<String>,
-    // todo API2 update usage
-    //val code: ReleaseCode,
-    val release: Release
+data class FranchiseFull(
+    val info: Franchise,
+    val releases: List<Release>,
 ) : Parcelable

@@ -37,19 +37,18 @@ class FavoritesApiDataSource(
 
     suspend fun getReleases(
         page: Int,
-        form: FavoritesFilterForm
+        form: FavoritesFilterForm?
     ): Paginated<Release> {
         return api
             .getReleases(
                 page = page,
                 limit = null,
-                years = form.years?.toListQuery(),
-                types = form.types?.toListQuery(),
-                genres = form.genres?.toListQuery(),
-                search = form.query,
-                sorting = form.sorting?.value,
-                ageRatings = form.ageRatings?.toListQuery()
-
+                years = form?.years?.toListQuery(),
+                types = form?.types?.toListQuery(),
+                genres = form?.genres?.toListQuery(),
+                search = form?.query,
+                sorting = form?.sorting?.value,
+                ageRatings = form?.ageRatings?.toListQuery()
             )
             .toDomain { it.toDomain() }
     }

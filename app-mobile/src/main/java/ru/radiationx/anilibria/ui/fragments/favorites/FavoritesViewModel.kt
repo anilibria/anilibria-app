@@ -112,7 +112,7 @@ class FavoritesViewModel(
                 it.copy(deletingItemIds = it.deletingItemIds + id)
             }
             coRunCatching {
-                favoriteRepository.deleteFavorite(id)
+                favoriteRepository.deleteRelease(id)
             }.onSuccess { deletedItem ->
                 loadingController.currentState.data?.also { dataState ->
                     val newItems = dataState.toMutableList()
@@ -181,7 +181,7 @@ class FavoritesViewModel(
     private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
         return try {
             favoriteRepository
-                .getFavorites(params.page)
+                .getReleases(params.page)
                 .let { paginated ->
                     val newItems = if (params.isFirstPage) {
                         paginated.data

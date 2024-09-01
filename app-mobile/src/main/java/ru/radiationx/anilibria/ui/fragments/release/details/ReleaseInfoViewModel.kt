@@ -475,9 +475,9 @@ class ReleaseInfoViewModel(
             }
             coRunCatching {
                 if (favInfo.isAdded) {
-                    favoriteRepository.deleteFavorite(releaseId)
+                    favoriteRepository.deleteRelease(releaseId)
                 } else {
-                    favoriteRepository.addFavorite(releaseId)
+                    favoriteRepository.addRelease(releaseId)
                 }
             }.onSuccess { releaseItem ->
                 currentData?.also { data ->

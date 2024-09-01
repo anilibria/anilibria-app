@@ -115,9 +115,9 @@ class DetailHeaderViewModel(
             }
             coRunCatching {
                 if (release.favoriteInfo.isAdded) {
-                    favoriteRepository.deleteFavorite(releaseId)
+                    favoriteRepository.deleteRelease(releaseId)
                 } else {
-                    favoriteRepository.addFavorite(releaseId)
+                    favoriteRepository.addRelease(releaseId)
                 }
             }.onSuccess { releaseItem ->
                 currentRelease?.also { data ->

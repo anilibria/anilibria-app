@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.withContext
+import ru.radiationx.data.apinext.datasources.ScheduleApiDataSource
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ScheduleRepository @Inject constructor(
-    private val scheduleApi: ScheduleApi,
+    private val scheduleApi: ScheduleApiDataSource,
     private val updateMiddleware: ReleaseUpdateMiddleware,
     private val apiUtils: ApiUtils,
     private val apiConfig: ApiConfig,
@@ -33,7 +34,6 @@ class ScheduleRepository @Inject constructor(
     suspend fun loadSchedule(): List<ScheduleDay> = withContext(Dispatchers.IO) {
         scheduleApi
             .getWeek()
-            .toDomain()
             .let { scheduleDays ->
                 scheduleDays.map { scheduleDay ->
                     val currentTime = System.currentTimeMillis().asMsk()

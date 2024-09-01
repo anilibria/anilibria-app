@@ -40,18 +40,18 @@ class CollectionsApiDataSource(
     suspend fun getReleases(
         type: CollectionType,
         page: Int,
-        form: CollectionsFilterForm
+        form: CollectionsFilterForm?
     ): Paginated<Release> {
         return api
             .getReleases(
                 collectionType = type.toListQuery(),
                 page = page,
                 limit = null,
-                years = form.years?.toListQuery(),
-                types = form.types?.toListQuery(),
-                genres = form.genres?.toListQuery(),
-                search = form.query,
-                ageRatings = form.ageRatings?.toListQuery()
+                years = form?.years?.toListQuery(),
+                types = form?.types?.toListQuery(),
+                genres = form?.genres?.toListQuery(),
+                search = form?.query,
+                ageRatings = form?.ageRatings?.toListQuery()
             )
             .toDomain { it.toDomain() }
     }

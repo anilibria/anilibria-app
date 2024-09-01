@@ -1,8 +1,8 @@
 package ru.radiationx.data.repository
 
-import anilibria.api.releases.ReleasesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import ru.radiationx.data.apinext.datasources.ReleasesApiDataSource
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.domain.release.Release
@@ -16,7 +16,7 @@ import javax.inject.Inject
  * Created by radiationx on 17.12.17.
  */
 class ReleaseRepository @Inject constructor(
-    private val releaseApi: ReleasesApi,
+    private val releaseApi: ReleasesApiDataSource,
     private val updateMiddleware: ReleaseUpdateMiddleware,
     private val apiUtils: ApiUtils,
     private val apiConfig: ApiConfig
@@ -28,42 +28,34 @@ class ReleaseRepository @Inject constructor(
         releaseApi
             .getRandomReleases(1)
             .first()
-            .toDomain()
     }
 
     suspend fun getRelease(releaseId: ReleaseId): Release = withContext(Dispatchers.IO) {
         releaseApi
-            .getRelease(releaseId.id.toString())
-            .toDomain()
+            .getRelease(releaseId)
             .also { updateMiddleware.handle(it) }
     }
 
-    suspend fun getRelease(releaseIdName: ReleaseCode): Release = withContext(Dispatchers.IO) {
+    suspend fun getRelease(code: ReleaseCode): Release = withContext(Dispatchers.IO) {
         releaseApi
-            .getRelease(releaseIdName.code)
-            .toDomain()
+            .getRelease(code)
             .also { updateMiddleware.handle(it) }
     }
 
     suspend fun getFullReleasesById(ids: List<ReleaseId>): List<Release> =
         withContext(Dispatchers.IO) {
             releaseApi
-                .getReleasesByIds(ids.map { it.id })
-                .map { it.toDomain() }
+                .getReleasesByIds(ids)
                 .also { updateMiddleware.handle(it) }
         }
 
     suspend fun search(query: String): List<Release> = withContext(Dispatchers.IO) {
         val releaseId = getQueryId(query)
         if (releaseId != null) {
-            val release = releaseApi
-                .getRelease(releaseId.toString())
-                .toDomain()
+            val release = releaseApi.getRelease(ReleaseId(releaseId))
             listOf(release)
         } else {
-            releaseApi
-                .search(query)
-                .map { it.toDomain() }
+            releaseApi.search(query)
         }
     }
 

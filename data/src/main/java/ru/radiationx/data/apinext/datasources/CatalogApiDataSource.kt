@@ -42,22 +42,22 @@ class CatalogApiDataSource(
 
     suspend fun getReleases(
         page: Int,
-        form: CatalogFilterForm
+        form: CatalogFilterForm?
     ): Paginated<Release> {
         return api
             .getReleases(
                 page = page,
                 limit = null,
-                genres = form.genres?.toListQuery(),
-                types = form.types?.toListQuery(),
-                seasons = form.seasons?.toListQuery(),
-                fromYear = form.yearsRange?.first?.toQuery(),
-                toYear = form.yearsRange?.second?.toQuery(),
-                search = form.query,
-                sorting = form.sorting?.toQuery(),
-                ageRatings = form.ageRatings?.toListQuery(),
-                publishStatuses = form.publishStatuses?.toListQuery(),
-                productionStatuses = form.productionStatuses?.toListQuery()
+                genres = form?.genres?.toListQuery(),
+                types = form?.types?.toListQuery(),
+                seasons = form?.seasons?.toListQuery(),
+                fromYear = form?.yearsRange?.first?.toQuery(),
+                toYear = form?.yearsRange?.second?.toQuery(),
+                search = form?.query,
+                sorting = form?.sorting?.toQuery(),
+                ageRatings = form?.ageRatings?.toListQuery(),
+                publishStatuses = form?.publishStatuses?.toListQuery(),
+                productionStatuses = form?.productionStatuses?.toListQuery()
             )
             .toDomain { it.toDomain() }
     }

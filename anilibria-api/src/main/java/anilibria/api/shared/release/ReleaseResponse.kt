@@ -23,11 +23,11 @@ data class ReleaseResponse(
     @Json(name = "poster")
     val poster: ImageResponse,
     @Json(name = "fresh_at")
-    val freshAt: String,
+    val freshAt: String?,
     @Json(name = "created_at")
-    val createdAt: String,
+    val createdAt: String?,
     @Json(name = "updated_at")
-    val updatedAt: String,
+    val updatedAt: String?,
     @Json(name = "is_ongoing")
     val isOngoing: Boolean,
     @Json(name = "age_rating")
@@ -35,13 +35,13 @@ data class ReleaseResponse(
     @Json(name = "publish_day")
     val publishDay: ReleasePublishDayResponse,
     @Json(name = "description")
-    val description: String,
+    val description: String?,
     @Json(name = "notification")
-    val notification: String,
+    val notification: String?,
     @Json(name = "episodes_total")
-    val episodesTotal: Int,
+    val episodesTotal: Int?,
     @Json(name = "external_player")
-    val externalPlayer: String,
+    val externalPlayer: String?,
     @Json(name = "is_in_production")
     val isInProduction: Boolean,
     @Json(name = "is_blocked_by_geo")
@@ -53,9 +53,11 @@ data class ReleaseResponse(
     @Json(name = "added_in_users_favorites")
     val addedInUsersFavorites: Int,
     @Json(name = "average_duration_of_episode")
-    val averageDurationOfEpisode: Int,
+    val averageDurationOfEpisode: Int?,
+
+    // semi-full
     @Json(name = "genres")
-    val genres: List<GenreResponse>,
+    val genres: List<GenreResponse>?,
 
     // full
     @Json(name = "members")

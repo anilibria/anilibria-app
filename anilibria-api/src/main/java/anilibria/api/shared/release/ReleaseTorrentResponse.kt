@@ -28,7 +28,7 @@ data class ReleaseTorrentResponse(
     @Json(name = "color")
     val color: Color,
     @Json(name = "bitrate")
-    val bitrate: Int,
+    val bitrate: Int?,
     @Json(name = "leechers")
     val leechers: Int,
     @Json(name = "sort_order")
@@ -67,8 +67,8 @@ data class ReleaseTorrentResponse(
     @JsonClass(generateAdapter = true)
     data class Color(
         @Json(name = "value")
-        val value: String,
+        val value: String?,
         @Json(name = "description")
-        val description: String
+        val description: String?
     )
 }

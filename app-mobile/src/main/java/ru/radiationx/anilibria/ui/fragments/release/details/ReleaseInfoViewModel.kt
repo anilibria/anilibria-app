@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -181,13 +182,14 @@ class ReleaseInfoViewModel(
             }
         }
         viewModelScope.launch {
+            authRepository.observeAuthState().filter { it == AuthState.AUTH }.first()
             updateModifiers { it.copy(favoriteLoading = true) }
             coRunCatching {
                 favoritesInteractor.loadReleaseIds()
             }.onFailure {
                 Timber.e(it, "Error while favorites release ids")
             }
-            updateModifiers { it.copy(favoriteLoading = true) }
+            updateModifiers { it.copy(favoriteLoading = false) }
         }
     }
 
@@ -250,7 +252,7 @@ class ReleaseInfoViewModel(
 
     fun onTorrentClick(id: TorrentId, action: TorrentAction) {
         val torrentItem = currentData?.torrents?.find { it.id == id } ?: return
-        val isHevc = torrentItem.quality?.contains("HEVC", true) == true
+        val isHevc = torrentItem.codec?.contains("HEVC", true) == true
         releaseAnalytics.torrentClick(isHevc, torrentItem.id.id)
         when (action) {
             TorrentAction.Open, TorrentAction.Share -> loadTorrent(torrentItem, action)
@@ -317,7 +319,7 @@ class ReleaseInfoViewModel(
         }, {
             releaseAnalytics.episodesStartClick(release.id.id)
         })
-        release.episodes.lastOrNull()?.also {
+        release.episodes.firstOrNull()?.also {
             playEpisodeAction.set(ActionPlayEpisode(it.id))
         }
     }

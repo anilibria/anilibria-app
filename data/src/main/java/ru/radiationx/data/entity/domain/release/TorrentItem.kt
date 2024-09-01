@@ -12,6 +12,8 @@ data class TorrentItem(
     val leechers: Int,
     val seeders: Int,
     val completed: Int,
+    // todo API2 use this
+    val type: String?,
     val quality: String?,
     // todo API2 use this
     val codec: String?,

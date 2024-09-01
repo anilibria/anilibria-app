@@ -9,7 +9,7 @@ data class ReleaseMemberResponse(
     @Json(name = "id")
     val id: String,
     @Json(name = "user")
-    val user: UserResponse,
+    val user: UserResponse?,
     @Json(name = "role")
     val role: Role,
     @Json(name = "nickname")

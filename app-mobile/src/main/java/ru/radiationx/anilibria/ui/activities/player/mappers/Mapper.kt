@@ -17,7 +17,7 @@ import ru.radiationx.media.mobile.models.TimelineSkip
 fun Release.toPlayerRelease() = PlayerRelease(
     id = id,
     name = names.main,
-    episodes = episodes.asReversed()
+    episodes = episodes
 )
 
 fun PlayerData.toDataState(episodeId: EpisodeId): PlayerDataState? {

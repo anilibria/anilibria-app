@@ -20,7 +20,7 @@ class ReleasesApiDataSource(
     }
 
     suspend fun getRandomReleases(limit: Int?): List<Release> {
-        return api.getLatestReleases(limit).map { it.toDomain() }
+        return api.getRandomReleases(limit).map { it.toDomain() }
     }
 
     suspend fun getRelease(id: ReleaseId): Release {

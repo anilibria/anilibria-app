@@ -24,6 +24,8 @@ import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.data.entity.mapper.secToMillis
+import java.math.BigDecimal
+import java.util.Date
 
 fun ReleaseNameResponse.toDomain(): ReleaseName {
     return ReleaseName(main = main, english = english, alternative = alternative)
@@ -32,7 +34,7 @@ fun ReleaseNameResponse.toDomain(): ReleaseName {
 fun ReleaseMemberResponse.toDomain(): ReleaseMember {
     return ReleaseMember(
         id = id,
-        user = user.toDomain(),
+        user = user?.toDomain(),
         role = role.toDomain(),
         nickname = nickname
     )
@@ -60,12 +62,10 @@ fun ReleaseEpisodeResponse.toEpisode(releaseId: ReleaseId): Episode? {
     if (hls480 == null && hls720 == null && hls1080 == null) {
         return null
     }
+    val episodeId = createId(releaseId)
     return Episode(
-        id = EpisodeId(
-            id = id,
-            releaseId = releaseId
-        ),
-        title = toEpisodeTitle(),
+        id = episodeId,
+        title = toEpisodeTitle(episodeId),
         qualityInfo = QualityInfo(
             urlSd = hls480,
             urlHd = hls720,
@@ -78,12 +78,10 @@ fun ReleaseEpisodeResponse.toEpisode(releaseId: ReleaseId): Episode? {
 
 fun ReleaseEpisodeResponse.toRutubeEpisode(releaseId: ReleaseId): RutubeEpisode? {
     val safeRutubeId = rutubeId ?: return null
+    val episodeId = createId(releaseId)
     return RutubeEpisode(
-        id = EpisodeId(
-            id = id,
-            releaseId = releaseId
-        ),
-        title = toEpisodeTitle(),
+        id = episodeId,
+        title = toEpisodeTitle(episodeId),
         updatedAt = updatedAt.apiDateToDate(),
         rutubeId = safeRutubeId,
         url = "https://rutube.ru/play/embed/$safeRutubeId"
@@ -105,18 +103,22 @@ fun ReleaseResponse.toYoutubePlaylist(releaseId: ReleaseId): ExternalPlaylist? {
 
 fun ReleaseEpisodeResponse.toYoutubeEpisode(releaseId: ReleaseId): ExternalEpisode? {
     val safeYoutubeId = youtubeId ?: return null
+    val episodeId = createId(releaseId)
     return ExternalEpisode(
-        id = EpisodeId(
-            id = id,
-            releaseId = releaseId
-        ),
-        title = toEpisodeTitle(),
+        id = episodeId,
+        title = toEpisodeTitle(episodeId),
         url = "https://www.youtube.com/watch?v=$safeYoutubeId"
     )
 }
 
-fun ReleaseEpisodeResponse.toEpisodeTitle(): String {
-    val title = "Серия $ordinal"
+// episode ids can be float/double/int e.g. 25, 25.5.
+private fun ReleaseEpisodeResponse.createId(releaseId: ReleaseId): EpisodeId {
+    val big = BigDecimal(ordinal)
+    return EpisodeId(big.toString(), releaseId)
+}
+
+fun ReleaseEpisodeResponse.toEpisodeTitle(episodeId: EpisodeId): String {
+    val title = "Серия ${episodeId.id}"
     val anyName = name ?: nameEnglish
     return listOfNotNull(title, anyName).joinToString(" • ")
 }
@@ -141,6 +143,7 @@ fun ReleaseTorrentResponse.toDomain(releaseId: ReleaseId): TorrentItem {
         leechers = leechers,
         seeders = seeders,
         completed = completedTimes,
+        type = type.description,
         quality = quality.description,
         codec = codec.description,
         color = color.description,
@@ -157,13 +160,13 @@ fun ReleaseResponse.toDomain(): Release {
         code = ReleaseCode(code = alias),
         names = name.toDomain(),
         poster = poster.src,
-        createdAt = createdAt.apiDateToDate(),
-        freshAt = createdAt.apiDateToDate(),
-        updatedAt = freshAt.apiDateToDate(),
+        createdAt = createdAt?.apiDateToDate() ?: Date(0),
+        freshAt = freshAt?.apiDateToDate() ?: Date(0),
+        updatedAt = updatedAt?.apiDateToDate() ?: Date(0),
         isOngoing = isOngoing,
         isInProduction = isInProduction,
         type = type.description,
-        genres = genres.map { it.name },
+        genres = genres?.map { it.name }.orEmpty(),
         year = year,
         season = season.description,
         publishDay = publishDay.value,
@@ -176,7 +179,7 @@ fun ReleaseResponse.toDomain(): Release {
         averageEpisodeDuration = averageDurationOfEpisode,
         isBlockedByGeo = isBlockedByGeo,
         isBlockedByCopyrights = isBlockedByCopyrights,
-        webPlayer = externalPlayer.ifEmpty { null },
+        webPlayer = externalPlayer?.ifEmpty { null },
 
         members = members?.map { it.toDomain() }.orEmpty(),
         sponsor = sponsor?.toDomain(),

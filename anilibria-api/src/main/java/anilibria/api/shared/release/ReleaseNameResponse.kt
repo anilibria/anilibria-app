@@ -10,5 +10,5 @@ data class ReleaseNameResponse(
     @Json(name = "english")
     val english: String,
     @Json(name = "alternative")
-    val alternative: String
+    val alternative: String?
 )

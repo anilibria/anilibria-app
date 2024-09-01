@@ -5,6 +5,7 @@ import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -59,6 +60,15 @@ class DetailHeaderViewModel(
         updateProgress()
         releaseInteractor.getItem(releaseId)?.also {
             updateRelease(it, emptyList(), emptySet())
+        }
+
+        viewModelScope.launch {
+            authRepository.observeAuthState().filter { it == AuthState.AUTH }.first()
+            coRunCatching {
+                favoritesInteractor.loadReleaseIds()
+            }.onFailure {
+                Timber.e(it, "Error while favorites release ids")
+            }
         }
         combine(
             releaseInteractor.observeFull(releaseId),

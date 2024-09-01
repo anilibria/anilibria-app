@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class ReleaseName(
     val main: String,
     val english: String,
-    val alternative: String
+    val alternative: String?
 ) : Parcelable

@@ -11,7 +11,7 @@ data class ScheduleResponse(
     @Json(name = "release")
     val release: ReleaseResponse,
     @Json(name = "new_release_episode")
-    val newReleaseEpisode: ReleaseEpisodeResponse,
+    val newReleaseEpisode: ReleaseEpisodeResponse?,
     @Json(name = "new_release_episode_ordinal")
-    val newReleaseEpisodeOrdinal: Int
+    val newReleaseEpisodeOrdinal: Int?
 )

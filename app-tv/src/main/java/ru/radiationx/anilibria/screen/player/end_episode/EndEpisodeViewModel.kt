@@ -29,7 +29,7 @@ class EndEpisodeViewModel(
             .observeFull(argExtra.releaseId)
             .onEach {
                 currentEpisodes.clear()
-                currentEpisodes.addAll(it.episodes.reversed())
+                currentEpisodes.addAll(it.episodes)
             }
             .launchIn(viewModelScope)
     }

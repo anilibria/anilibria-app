@@ -69,9 +69,7 @@ fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {
 }
 
 private fun Release.toStatus(): String {
-    val ongoing = if (isOngoing) "Онгоинг" else "Не онгоинг"
-    val production = if (isInProduction) "В работе" else "Не в работе"
-    return listOf(ongoing, production).joinToString()
+    return if (isInProduction) "В работе" else "Не в работе"
 }
 
 private fun List<ReleaseMember>.toInfo(): List<String> {
@@ -127,7 +125,7 @@ fun Release.toEpisodeControlState(
 fun TorrentItem.toState(
     loadings: Map<TorrentId, MutableStateFlow<Int>>,
 ): ReleaseTorrentItemState {
-    val isTorrentHevc = quality?.contains("hevc", ignoreCase = true) ?: false
+    val isTorrentHevc = codec?.contains("hevc", ignoreCase = true) ?: false
     val isSupportHevcHw = MediaCodecsFinder
         .find(CodecQuery("hevc", "hevc"))
         .find { it.processingType == CodecProcessingType.HARDWARE } != null
@@ -135,7 +133,7 @@ fun TorrentItem.toState(
     return ReleaseTorrentItemState(
         id = id,
         title = "Серия $series",
-        subtitle = quality.orEmpty(),
+        subtitle = listOfNotNull(type, quality, codec).joinToString(" "),
         size = Utils.readableFileSize(size),
         seeders = seeders.toString(),
         leechers = leechers.toString(),

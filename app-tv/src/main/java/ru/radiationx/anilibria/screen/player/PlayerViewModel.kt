@@ -78,7 +78,7 @@ class PlayerViewModel(
                 playerController.data.value = releases
                 currentReleases = releases
                 currentEpisodes.clear()
-                currentEpisodes.addAll(releases.flatMap { it.episodes.reversed() })
+                currentEpisodes.addAll(releases.flatMap { it.episodes })
                 val episodeId = currentEpisode?.id ?: argExtra.episodeId
                 val episode = currentEpisodes
                     .firstOrNull { it.id == episodeId }

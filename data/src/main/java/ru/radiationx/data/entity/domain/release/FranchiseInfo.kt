@@ -9,14 +9,14 @@ data class Franchise(
     val id: FranchiseId,
     val name: String,
     val nameEnglish: String,
-    val rating: Double,
+    val rating: Double?,
     val lastYear: Int,
     val firstYear: Int,
     val totalReleases: Int,
     val totalEpisodes: Int,
     val totalDuration: String,
     val totalDurationInSeconds: Int,
-    val image: String,
+    val image: String?,
 ) : Parcelable
 
 @Parcelize

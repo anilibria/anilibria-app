@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ReleaseMember(
     val id: String,
-    val user: User,
+    val user: User?,
     val role: Role,
     val nickname: String
 ) : Parcelable {

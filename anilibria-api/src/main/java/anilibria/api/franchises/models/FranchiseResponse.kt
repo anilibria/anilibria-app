@@ -14,7 +14,7 @@ data class FranchiseResponse(
     @Json(name = "name_english")
     val nameEnglish: String,
     @Json(name = "rating")
-    val rating: Double,
+    val rating: Double?,
     @Json(name = "last_year")
     val lastYear: Int,
     @Json(name = "first_year")

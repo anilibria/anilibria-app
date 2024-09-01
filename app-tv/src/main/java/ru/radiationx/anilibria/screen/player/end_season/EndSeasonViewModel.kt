@@ -28,7 +28,7 @@ class EndSeasonViewModel(
         viewModelScope.launch {
             releaseInteractor.getFull(argExtra.releaseId)?.also {
                 currentEpisodes.clear()
-                currentEpisodes.addAll(it.episodes.reversed())
+                currentEpisodes.addAll(it.episodes)
             }
         }
     }

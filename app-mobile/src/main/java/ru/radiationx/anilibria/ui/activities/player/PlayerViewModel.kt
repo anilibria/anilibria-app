@@ -33,6 +33,7 @@ import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ReleaseRepository
 import ru.radiationx.shared.ktx.coRunCatching
+import timber.log.Timber
 import toothpick.InjectConstructor
 import java.util.concurrent.TimeUnit
 
@@ -200,6 +201,7 @@ class PlayerViewModel(
                 _dataState.update { it.copy(data = PlayerData(releases)) }
                 playEpisode(episodeId)
             }.onFailure { error ->
+                Timber.e(error)
                 _dataState.update { it.copy(error = error) }
             }
             _dataState.update { it.copy(loading = false) }

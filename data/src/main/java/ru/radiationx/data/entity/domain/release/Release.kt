@@ -55,11 +55,11 @@ data class Release(
     // todo API2 use this
     val ageRating: String,
     // todo API2 use this
-    val episodesTotal: Int,
+    val episodesTotal: Int?,
     // todo API2 use this
     val isEpisodesCountUnknown: Boolean,
     // todo API2 use this
-    val averageEpisodeDuration: Int,
+    val averageEpisodeDuration: Int?,
     // todo API2 use this
     val isBlockedByGeo: Boolean,
     // todo API2 use this

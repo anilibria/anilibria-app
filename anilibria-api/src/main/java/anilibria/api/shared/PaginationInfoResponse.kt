@@ -22,8 +22,8 @@ data class PaginationInfoResponse(
     @JsonClass(generateAdapter = true)
     data class Links(
         @Json(name = "previous")
-        val previous: String,
+        val previous: String?,
         @Json(name = "next")
-        val next: String
+        val next: String?
     )
 }

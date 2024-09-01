@@ -165,10 +165,11 @@ class ReleaseInfoAdapter(
             val episodeListItems = episodes.mapIndexed { index, episode ->
                 ReleaseEpisodeListItem(episode, index % 2 == 0)
             }
+            // yes, this ok
             if (modifications.episodesReversed) {
-                newItems.addAll(episodeListItems.asReversed())
-            } else {
                 newItems.addAll(episodeListItems)
+            } else {
+                newItems.addAll(episodeListItems.asReversed())
             }
         }
 

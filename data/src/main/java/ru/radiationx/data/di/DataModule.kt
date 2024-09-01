@@ -348,7 +348,7 @@ class DataModule(context: Context) : QuillModule() {
             .addInterceptor(AcceptInterceptor())
             .apply {
                 if (sharedBuildConfig.debug) {
-                    addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                    addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                     addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())
                 }
             }

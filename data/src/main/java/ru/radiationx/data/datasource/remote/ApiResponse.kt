@@ -6,7 +6,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.radiationx.data.entity.response.PaginatedResponse
 import java.lang.reflect.Type
 
 @JsonClass(generateAdapter = true)
@@ -61,11 +60,6 @@ suspend inline fun <reified T> String.fetchApiResponse(moshi: Moshi): T {
 
 suspend inline fun <reified T> String.fetchListApiResponse(moshi: Moshi): List<T> {
     val dataType = Types.newParameterizedType(List::class.java, T::class.java)
-    return fetchApiResponse(moshi, dataType)
-}
-
-suspend inline fun <reified T> String.fetchPaginatedApiResponse(moshi: Moshi): PaginatedResponse<T> {
-    val dataType = Types.newParameterizedType(PaginatedResponse::class.java, T::class.java)
     return fetchApiResponse(moshi, dataType)
 }
 

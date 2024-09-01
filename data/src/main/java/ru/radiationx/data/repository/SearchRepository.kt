@@ -6,23 +6,16 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.GenresHolder
 import ru.radiationx.data.datasource.holders.YearsHolder
-import ru.radiationx.data.datasource.remote.api.ReleaseApi
-import ru.radiationx.data.datasource.remote.api.SearchApi
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.GenreItem
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.data.entity.mapper.toGenreItem
-import ru.radiationx.data.entity.mapper.toYearItem
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
-import ru.radiationx.shared.ktx.capitalizeDefault
 import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
-    private val searchApi: SearchApi,
-    private val releaseApi: ReleaseApi,
     private val genresHolder: GenresHolder,
     private val yearsHolder: YearsHolder,
     private val updateMiddleware: ReleaseUpdateMiddleware,
@@ -53,23 +46,7 @@ class SearchRepository @Inject constructor(
     }*/
 
     suspend fun searchReleases(form: SearchForm, page: Int): Paginated<Release> {
-        val yearsQuery = form.years.joinToString(",") { it.value }
-        val seasonsQuery = form.seasons.joinToString(",") { it.value }
-        val genresQuery = form.genres.joinToString(",") { it.value }
-        val sortStr = when (form.sort) {
-            SearchForm.Sort.RATING -> "2"
-            SearchForm.Sort.DATE -> "1"
-        }
-        val onlyCompletedStr = if (form.onlyCompleted) "2" else "1"
-
-        return searchReleases(
-            genresQuery,
-            yearsQuery,
-            seasonsQuery,
-            sortStr,
-            onlyCompletedStr,
-            page
-        )
+        TODO("delete")
     }
 
     // todo API2 delete
@@ -85,27 +62,15 @@ class SearchRepository @Inject constructor(
     }
 
     suspend fun getGenres(): List<GenreItem> = withContext(Dispatchers.IO) {
-        searchApi
-            .getGenres()
-            .map { it.toGenreItem() }
-            .also {
-                genresHolder.saveGenres(it)
-            }
+        TODO("delete")
     }
 
     suspend fun getYears(): List<YearItem> = withContext(Dispatchers.IO) {
-        searchApi
-            .getYears()
-            .map { it.toYearItem() }
-            .also {
-                yearsHolder.saveYears(it)
-            }
+        TODO("delete")
     }
 
     suspend fun getSeasons(): List<SeasonItem> {
-        return withContext(Dispatchers.IO) {
-            listOf("зима", "весна", "лето", "осень").map { SeasonItem(it.capitalizeDefault(), it) }
-        }
+        TODO("delete")
     }
 
 }

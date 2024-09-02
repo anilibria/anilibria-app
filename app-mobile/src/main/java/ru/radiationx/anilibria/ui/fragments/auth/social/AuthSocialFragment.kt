@@ -109,8 +109,7 @@ class AuthSocialFragment :
         }
 
         viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->
-            // todo API2 fix
-            authPatternWebViewClient.resultPattern = null /*data.resultPattern*/
+            authPatternWebViewClient.redirectUrl = data.redirectUrl
             binding.webView.loadUrl(data.url)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 

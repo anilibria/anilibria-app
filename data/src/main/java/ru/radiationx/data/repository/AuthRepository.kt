@@ -113,7 +113,11 @@ class AuthRepository @Inject constructor(
         authApi.loginSocial(type)
     }
 
-    suspend fun signInSocial(socialState: SocialState): User = withContext(Dispatchers.IO) {
+    suspend fun signInSocial(
+        resultUrl: String,
+        socialState: SocialState
+    ): User = withContext(Dispatchers.IO) {
+        authApi.callbackSocial(resultUrl)
         val token = authApi.authenticateSocial(socialState)
         handleNewToken(token)
     }

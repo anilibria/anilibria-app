@@ -1,5 +1,6 @@
 package ru.radiationx.data.apinext
 
+import android.net.Uri
 import anilibria.api.auth.models.LoginSocialResponse
 import anilibria.api.auth.models.OtpGetResponse
 import anilibria.api.auth.models.TokenResponse
@@ -23,5 +24,13 @@ fun TokenResponse.toDomain(): AuthToken {
 }
 
 fun LoginSocialResponse.toDomain(): LoginSocial {
-    return LoginSocial(url = url, state = SocialState(state))
+    val redirectUrl = Uri.parse(url).getQueryParameter("redirect_uri")
+    requireNotNull(redirectUrl) {
+        "Redirect not found"
+    }
+    return LoginSocial(
+        url = url,
+        state = SocialState(state),
+        redirectUrl = redirectUrl
+    )
 }

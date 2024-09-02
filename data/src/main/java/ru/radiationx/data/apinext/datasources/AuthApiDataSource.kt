@@ -7,6 +7,7 @@ import anilibria.api.auth.models.OtpGetRequest
 import anilibria.api.auth.models.OtpLoginRequest
 import anilibria.api.auth.models.PasswordForgetRequest
 import anilibria.api.auth.models.PasswordResetRequest
+import retrofit2.HttpException
 import ru.radiationx.data.apinext.models.AuthToken
 import ru.radiationx.data.apinext.models.Credentials
 import ru.radiationx.data.apinext.models.DeviceId
@@ -16,6 +17,7 @@ import ru.radiationx.data.apinext.models.SocialState
 import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.entity.domain.auth.OtpInfo
+import ru.radiationx.data.entity.domain.auth.SocialAuthException
 import toothpick.InjectConstructor
 
 @InjectConstructor
@@ -52,8 +54,19 @@ class AuthApiDataSource(
         return api.loginSocial(provider).toDomain()
     }
 
+    suspend fun callbackSocial(resultUrl: String) {
+        api.callbackSocial(resultUrl)
+    }
+
     suspend fun authenticateSocial(state: SocialState): AuthToken {
-        return api.authenticateSocial(state.state).toDomain()
+        return try {
+            api.authenticateSocial(state.state).toDomain()
+        } catch (ex: HttpException) {
+            if (ex.code() == 404) {
+                throw SocialAuthException()
+            }
+            throw ex
+        }
     }
 
     suspend fun passwordForget(email: String) {

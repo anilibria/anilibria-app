@@ -15,6 +15,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface AuthApi {
 
@@ -37,6 +38,9 @@ interface AuthApi {
 
     @GET("accounts/users/auth/social/{provider}/login")
     suspend fun loginSocial(@Path("provider") provider: String): LoginSocialResponse
+
+    @GET
+    suspend fun callbackSocial(@Url resultUrl: String)
 
     @GET("accounts/users/auth/social/authenticate")
     suspend fun authenticateSocial(@Query("state") state: String): TokenResponse

@@ -76,7 +76,7 @@ class AuthVkFragment :
         binding.webView.setWebViewClientCompat(compositeWebViewClient)
 
         viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->
-            authPatternWebViewClient.resultPattern = data.pattern
+            authPatternWebViewClient.redirectUrl = data.pattern
             binding.webView.loadUrl(data.url)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 

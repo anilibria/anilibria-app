@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.auth.social
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
@@ -52,6 +54,9 @@ class AuthSocialViewModel(
             coRunCatching {
                 authRepository.loadSocial(argExtra.type)
             }.onSuccess { data ->
+                Log.d("kekeke", "loaded social $data")
+                val redirectUrl = Uri.parse(data.url).getQueryParameter("redirect_uri")
+                Log.d("kekeke", "redirect url $redirectUrl")
                 detector.loadUrl(data.url)
                 _state.update { it.copy(data = data) }
             }.onFailure {
@@ -108,7 +113,7 @@ class AuthSocialViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isAuthProgress = true) }
             coRunCatching {
-                authRepository.signInSocial(data.state)
+                authRepository.signInSocial(resultUrl, data.state)
             }.onSuccess {
                 authSocialAnalytics.success()
                 router.finishChain()
@@ -118,7 +123,7 @@ class AuthSocialViewModel(
                     _errorEvent.set(Unit)
                 } else {
                     errorHandler.handle(it)
-                    router.exit()
+                    router.finishChain()
                 }
             }
             _state.update { it.copy(isAuthProgress = true) }

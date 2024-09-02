@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.screen.auth.credentials
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
-import androidx.core.text.isDigitsOnly
 import androidx.leanback.widget.GuidanceStylist.Guidance
 import androidx.leanback.widget.GuidedAction
 import androidx.leanback.widget.GuidedActionsStylist
@@ -18,7 +17,6 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
     companion object {
         private const val LOGIN_FIELD_ACTION_ID = 1L
         private const val PASSWORD_FIELD_ACTION_ID = 2L
-        private const val CODE_FIELD_ACTION_ID = 3L
         private const val LOGIN_ACTION_ID = 4L
     }
 
@@ -31,7 +29,6 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
         subscribeTo(viewModel.progressState) {
             updateEnabled(LOGIN_FIELD_ACTION_ID, !it)
             updateEnabled(PASSWORD_FIELD_ACTION_ID, !it)
-            updateEnabled(CODE_FIELD_ACTION_ID, !it)
             updateEnabled(LOGIN_ACTION_ID, !it)
             updateProgress(it)
         }
@@ -86,17 +83,6 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
                 .descriptionEditInputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
                 .build()
         )
-        actions.add(
-            GuidedAction.Builder(requireContext())
-                .id(CODE_FIELD_ACTION_ID)
-                .title("Код двухфакторной авторизации")
-                .description("Оставьте поле пустым, если у вас не настроена двухфакторная авторизация")
-                .multilineDescription(true)
-                .editDescription("")
-                .descriptionEditable(true)
-                .descriptionEditInputType(InputType.TYPE_CLASS_NUMBER)
-                .build()
-        )
     }
 
     override fun onCreateButtonActions(
@@ -119,8 +105,7 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
             LOGIN_ACTION_ID -> {
                 val login = getFieldValue(LOGIN_FIELD_ACTION_ID)
                 val password = getFieldValue(PASSWORD_FIELD_ACTION_ID)
-                val code = getFieldValue(CODE_FIELD_ACTION_ID)
-                viewModel.onLoginClicked(login, password, code)
+                viewModel.onLoginClicked(login, password)
             }
         }
     }
@@ -138,9 +123,8 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
 
         val loginValid = validateLogin()
         val passwordValid = validatePassword()
-        val codeValid = validateCode()
 
-        updateEnabled(LOGIN_ACTION_ID, loginValid && passwordValid && codeValid)
+        updateEnabled(LOGIN_ACTION_ID, loginValid && passwordValid)
 
         when (action.id) {
 
@@ -161,15 +145,6 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
                     return GuidedAction.ACTION_ID_CURRENT
                 }
             }
-
-            CODE_FIELD_ACTION_ID -> {
-                if (codeValid) {
-                    action.description = value
-                } else {
-                    action.description = "Поле заполнено неверно"
-                    return GuidedAction.ACTION_ID_CURRENT
-                }
-            }
         }
 
         return GuidedAction.ACTION_ID_NEXT
@@ -183,11 +158,6 @@ class AuthCredentialsGuidedFragment : FakeGuidedStepFragment() {
     private fun validatePassword(): Boolean {
         val value = getFieldValue(PASSWORD_FIELD_ACTION_ID)
         return value.isNotEmpty()
-    }
-
-    private fun validateCode(): Boolean {
-        val value = getFieldValue(CODE_FIELD_ACTION_ID)
-        return value.isEmpty() || value.isDigitsOnly()
     }
 
     private fun getFieldValue(actionId: Long): String {

@@ -20,7 +20,7 @@ class AuthTokenInterceptor(
             val builder = chain
                 .request()
                 .newBuilder()
-                .addHeader(HEADER_AUTH, token.token)
+                .addHeader(HEADER_AUTH, "Bearer ${token.token}")
             chain.proceed(builder.build())
         }
     }

@@ -5,13 +5,14 @@ import anilibria.api.auth.models.OtpGetResponse
 import anilibria.api.auth.models.TokenResponse
 import ru.radiationx.data.apinext.models.AuthToken
 import ru.radiationx.data.apinext.models.LoginSocial
+import ru.radiationx.data.apinext.models.OtpCode
 import ru.radiationx.data.apinext.models.SocialState
 import ru.radiationx.data.entity.domain.auth.OtpInfo
 import ru.radiationx.data.entity.mapper.secToMillis
 
 fun OtpGetResponse.toDomain(): OtpInfo {
     return OtpInfo(
-        code = otp.code,
+        code = OtpCode(otp.code),
         expiresAt = otp.expiredAt.apiDateToDate(),
         remainingTime = remainingTime.secToMillis()
     )

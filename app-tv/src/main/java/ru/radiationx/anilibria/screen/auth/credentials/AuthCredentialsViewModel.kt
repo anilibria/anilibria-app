@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.data.apinext.models.Credentials
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
@@ -19,12 +20,12 @@ class AuthCredentialsViewModel(
     val progressState = MutableStateFlow(false)
     val error = MutableStateFlow("")
 
-    fun onLoginClicked(login: String, password: String, code: String) {
+    fun onLoginClicked(login: String, password: String) {
         viewModelScope.launch {
             progressState.value = true
             error.value = ""
             coRunCatching {
-                authRepository.signIn(login, password, code)
+                authRepository.signIn(Credentials(login, password))
             }.onSuccess {
                 guidedRouter.finishGuidedChain()
                 error.value = "null"

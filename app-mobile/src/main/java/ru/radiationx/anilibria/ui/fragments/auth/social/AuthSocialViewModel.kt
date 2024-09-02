@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
+import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.entity.domain.auth.SocialAuthException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.QuillExtra
@@ -18,7 +19,7 @@ import ru.radiationx.shared.ktx.coRunCatching
 import toothpick.InjectConstructor
 
 data class AuthSocialExtra(
-    val key: String,
+    val type: SocialType,
 ) : QuillExtra
 
 @InjectConstructor
@@ -49,9 +50,9 @@ class AuthSocialViewModel(
     private fun loadData() {
         viewModelScope.launch {
             coRunCatching {
-                authRepository.getSocialAuth(argExtra.key)
+                authRepository.loadSocial(argExtra.type)
             }.onSuccess { data ->
-                detector.loadUrl(data.socialUrl)
+                detector.loadUrl(data.url)
                 _state.update { it.copy(data = data) }
             }.onFailure {
                 authSocialAnalytics.error(it)
@@ -65,7 +66,7 @@ class AuthSocialViewModel(
             currentSuccessUrl = null
             detector.reset()
             detector.clearCookies()
-            detector.loadUrl(state.value.data?.socialUrl)
+            detector.loadUrl(state.value.data?.url)
             _reloadEvent.set(Unit)
             _state.update { it.copy(showClearCookies = false) }
         }
@@ -80,12 +81,12 @@ class AuthSocialViewModel(
         authSocialAnalytics.useTime(time)
     }
 
-    fun onSuccessAuthResult(result: String) {
+    fun onSuccessAuthResult(resultUrl: String) {
         if (detector.isSoFast()) {
-            currentSuccessUrl = result
+            currentSuccessUrl = resultUrl
             _state.update { it.copy(showClearCookies = true) }
         } else {
-            signSocial(result)
+            signSocial(resultUrl)
         }
     }
 
@@ -107,7 +108,7 @@ class AuthSocialViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isAuthProgress = true) }
             coRunCatching {
-                authRepository.signInSocial(resultUrl, data)
+                authRepository.signInSocial(data.state)
             }.onSuccess {
                 authSocialAnalytics.success()
                 router.finishChain()

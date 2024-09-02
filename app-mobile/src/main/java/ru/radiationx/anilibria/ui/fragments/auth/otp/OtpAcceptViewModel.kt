@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
+import ru.radiationx.data.apinext.models.OtpCode
 import ru.radiationx.data.entity.domain.auth.OtpAcceptedException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.EventFlow
@@ -45,7 +46,7 @@ class OtpAcceptViewModel(
             _state.update { it.copy(progress = true) }
 
             coRunCatching {
-                authRepository.acceptOtp(code)
+                authRepository.acceptOtp(OtpCode(code))
             }.onSuccess {
                 onSuccess()
             }.onFailure { error ->

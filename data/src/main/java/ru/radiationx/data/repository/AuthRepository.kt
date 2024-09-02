@@ -15,6 +15,7 @@ import ru.radiationx.data.apinext.models.Credentials
 import ru.radiationx.data.apinext.models.LoginSocial
 import ru.radiationx.data.apinext.models.OtpCode
 import ru.radiationx.data.apinext.models.SocialState
+import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.apinext.models.User
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.UserHolder
@@ -108,8 +109,8 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    suspend fun loadSocial(provider: String): LoginSocial = withContext(Dispatchers.IO) {
-        authApi.loginSocial(provider)
+    suspend fun loadSocial(type: SocialType): LoginSocial = withContext(Dispatchers.IO) {
+        authApi.loginSocial(type)
     }
 
     suspend fun signInSocial(socialState: SocialState): User = withContext(Dispatchers.IO) {

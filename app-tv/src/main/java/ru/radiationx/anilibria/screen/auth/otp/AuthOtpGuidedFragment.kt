@@ -54,7 +54,11 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
         subscribeTo(viewModel.otpInfoData.filterNotNull()) {
             guidanceStylist.apply {
                 titleView?.text = "Код: ${it.code}"
-                descriptionView?.text = it.description
+                descriptionView?.text = buildString {
+                    appendLine("1. Откройте в мобильном приложении свой профиль.")
+                    appendLine("2. Нажмите 'привязать устройство'")
+                    appendLine("3. Введите код")
+                }
             }
         }
 

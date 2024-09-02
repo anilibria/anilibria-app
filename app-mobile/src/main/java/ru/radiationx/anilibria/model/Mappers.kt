@@ -2,8 +2,8 @@ package ru.radiationx.anilibria.model
 
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
+import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.apinext.models.User
-import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.data.entity.domain.feed.FeedItem
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
 import ru.radiationx.data.entity.domain.other.OtherMenuItem
@@ -70,12 +70,17 @@ fun OtherMenuItem.toState() = OtherMenuItemState(
     iconRes = icon
 )
 
-fun SocialAuth.toState(): SocialAuthItemState = SocialAuthItemState(
-    key = key,
-    title = title,
-    iconRes = key.asDataIconRes(),
-    colorRes = key.asDataColorRes()
-)
+fun SocialType.toState(): SocialAuthItemState {
+    val title = when (this) {
+        SocialType.VK -> "ВКонтакте"
+    }
+    return SocialAuthItemState(
+        type = this,
+        title = title,
+        iconRes = key.asDataIconRes(),
+        colorRes = key.asDataColorRes()
+    )
+}
 
 fun Release.toSuggestionState(query: String): SuggestionItemState {
     val itemTitle = names.main

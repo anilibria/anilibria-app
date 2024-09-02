@@ -23,6 +23,7 @@ import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.types.TorrentId
+import ru.radiationx.data.entity.domain.types.UserId
 import ru.radiationx.data.entity.mapper.secToMillis
 import java.math.BigDecimal
 import java.util.Date
@@ -45,7 +46,7 @@ fun ReleaseMemberResponse.Role.toDomain(): ReleaseMember.Role {
 }
 
 fun UserResponse.toDomain(): User {
-    return User(id = id, nickname = nickname, avatar = avatar.src)
+    return User(id = UserId(id), nickname = nickname, avatar = avatar.src)
 }
 
 fun ReleaseSponsorResponse.toDomain(): ReleaseSponsor {

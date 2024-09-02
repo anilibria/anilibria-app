@@ -19,6 +19,7 @@ import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AnalyticsWebViewClient
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
+import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
@@ -37,11 +38,11 @@ class AuthSocialFragment :
     BaseToolbarFragment<FragmentAuthSocialBinding>(R.layout.fragment_auth_social) {
 
     companion object {
-        private const val ARG_KEY = "key"
+        private const val ARG_TYPE = "type"
 
-        fun newInstance(key: String) = AuthSocialFragment().apply {
+        fun newInstance(type: SocialType) = AuthSocialFragment().apply {
             arguments = Bundle().apply {
-                putString(ARG_KEY, key)
+                putSerializable(ARG_TYPE, type)
             }
         }
     }
@@ -71,7 +72,7 @@ class AuthSocialFragment :
     }
 
     private val viewModel by viewModel<AuthSocialViewModel> {
-        AuthSocialExtra(key = getExtraNotNull(ARG_KEY))
+        AuthSocialExtra(type = getExtraNotNull(ARG_TYPE))
     }
 
     private val apiConfig by inject<ApiConfig>()
@@ -108,8 +109,9 @@ class AuthSocialFragment :
         }
 
         viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->
-            authPatternWebViewClient.resultPattern = data.resultPattern
-            binding.webView.loadUrl(data.socialUrl)
+            // todo API2 fix
+            authPatternWebViewClient.resultPattern = null /*data.resultPattern*/
+            binding.webView.loadUrl(data.url)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.state.onEach { state ->

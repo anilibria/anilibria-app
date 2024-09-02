@@ -7,12 +7,13 @@ import anilibria.api.auth.models.OtpGetRequest
 import anilibria.api.auth.models.OtpLoginRequest
 import anilibria.api.auth.models.PasswordForgetRequest
 import anilibria.api.auth.models.PasswordResetRequest
-import ru.radiationx.data.apinext.models.SocialState
 import ru.radiationx.data.apinext.models.AuthToken
 import ru.radiationx.data.apinext.models.Credentials
 import ru.radiationx.data.apinext.models.DeviceId
 import ru.radiationx.data.apinext.models.LoginSocial
 import ru.radiationx.data.apinext.models.OtpCode
+import ru.radiationx.data.apinext.models.SocialState
+import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.entity.domain.auth.OtpInfo
 import toothpick.InjectConstructor
@@ -44,7 +45,10 @@ class AuthApiDataSource(
     }
 
 
-    suspend fun loginSocial(provider: String): LoginSocial {
+    suspend fun loginSocial(type: SocialType): LoginSocial {
+        val provider = when (type) {
+            SocialType.VK -> "vk"
+        }
         return api.loginSocial(provider).toDomain()
     }
 

@@ -71,7 +71,7 @@ class UserStorage @Inject constructor(
     private suspend fun localSaveUser(user: User) {
         withContext(Dispatchers.IO) {
             val userJson = JSONObject()
-            userJson.put("id", user.id)
+            userJson.put("id", user.id.id)
             userJson.put("nick", user.nickname)
             userJson.put("avatar", user.avatar)
             sharedPreferences.edit().putString(KEY_SAVED_USER, userJson.toString()).apply()

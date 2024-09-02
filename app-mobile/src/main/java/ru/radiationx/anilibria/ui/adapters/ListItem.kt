@@ -114,7 +114,7 @@ data class SuggestionListItem(val state: SuggestionItemState) : ListItem(state.i
 
 data class YoutubeListItem(val state: YoutubeItemState) : ListItem(state.id)
 
-data class SocialAuthListItem(val state: SocialAuthItemState) : ListItem(state.key)
+data class SocialAuthListItem(val state: SocialAuthItemState) : ListItem(state.type.key)
 
 data class FeedScheduleListItem(val state: ScheduleItemState) : ListItem(state.releaseId)
 data class FeedSchedulesListItem(val id: Any, val items: List<ScheduleItemState>) : ListItem(id)

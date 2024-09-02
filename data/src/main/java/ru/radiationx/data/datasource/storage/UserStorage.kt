@@ -6,9 +6,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import ru.radiationx.data.apinext.models.User
 import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.UserHolder
-import ru.radiationx.data.entity.domain.other.ProfileItem
+import ru.radiationx.data.entity.domain.types.UserId
 import javax.inject.Inject
 
 /**
@@ -26,15 +27,15 @@ class UserStorage @Inject constructor(
         getSavedUser()
     }
 
-    override suspend fun getUser(): ProfileItem? {
+    override suspend fun getUser(): User? {
         return userRelay.getValue()
     }
 
-    override fun observeUser(): Flow<ProfileItem?> {
+    override fun observeUser(): Flow<User?> {
         return userRelay
     }
 
-    override suspend fun saveUser(user: ProfileItem) {
+    override suspend fun saveUser(user: User) {
         localSaveUser(user)
         updateState()
     }
@@ -52,27 +53,27 @@ class UserStorage @Inject constructor(
         userRelay.setValue(getSavedUser())
     }
 
-    private suspend fun getSavedUser(): ProfileItem? {
+    private suspend fun getSavedUser(): User? {
         return withContext(Dispatchers.IO) {
             sharedPreferences
                 .getString(KEY_SAVED_USER, null)
                 ?.let { JSONObject(it) }
                 ?.let { userJson ->
-                    ProfileItem(
-                        id = userJson.getInt("id"),
-                        nick = userJson.getString("nick"),
-                        avatarUrl = userJson.getString("avatar"),
+                    User(
+                        id = UserId(userJson.getInt("id")),
+                        nickname = userJson.getString("nick"),
+                        avatar = userJson.optString("avatar").ifEmpty { null },
                     )
                 }
         }
     }
 
-    private suspend fun localSaveUser(user: ProfileItem) {
+    private suspend fun localSaveUser(user: User) {
         withContext(Dispatchers.IO) {
             val userJson = JSONObject()
             userJson.put("id", user.id)
-            userJson.put("nick", user.nick)
-            userJson.put("avatar", user.avatarUrl)
+            userJson.put("nick", user.nickname)
+            userJson.put("avatar", user.avatar)
             sharedPreferences.edit().putString(KEY_SAVED_USER, userJson.toString()).apply()
         }
     }

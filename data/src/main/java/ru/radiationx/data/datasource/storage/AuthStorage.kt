@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.DataPreferences
+import ru.radiationx.data.apinext.models.DeviceId
 import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.AuthHolder
 import java.util.UUID
@@ -37,7 +38,7 @@ class AuthStorage @Inject constructor(
         vkAuthRelay.emit(value)
     }
 
-    override suspend fun getDeviceId(): String {
+    override suspend fun getDeviceId(): DeviceId {
         return withContext(Dispatchers.IO) {
             var uid = sharedPreferences.getString(KEY_DEVICE_UID, null)
 
@@ -45,7 +46,7 @@ class AuthStorage @Inject constructor(
                 uid = UUID.randomUUID()?.toString() ?: ""
                 sharedPreferences.edit().putString(KEY_DEVICE_UID, uid).apply()
             }
-            uid
+            DeviceId(uid)
         }
     }
 

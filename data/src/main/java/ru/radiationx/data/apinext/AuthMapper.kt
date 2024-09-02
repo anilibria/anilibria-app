@@ -5,6 +5,7 @@ import anilibria.api.auth.models.OtpGetResponse
 import anilibria.api.auth.models.TokenResponse
 import ru.radiationx.data.apinext.models.AuthToken
 import ru.radiationx.data.apinext.models.LoginSocial
+import ru.radiationx.data.apinext.models.SocialState
 import ru.radiationx.data.entity.domain.auth.OtpInfo
 import ru.radiationx.data.entity.mapper.secToMillis
 
@@ -21,5 +22,5 @@ fun TokenResponse.toDomain(): AuthToken {
 }
 
 fun LoginSocialResponse.toDomain(): LoginSocial {
-    return LoginSocial(url = url, state = state)
+    return LoginSocial(url = url, state = SocialState(state))
 }

@@ -16,7 +16,7 @@ data class ProfileResponse(
     @Json(name = "nickname")
     val nickname: String,
     @Json(name = "avatar")
-    val avatar: ImageResponse,
+    val avatar: ImageResponse?,
     @Json(name = "torrents")
     val torrents: Torrents,
     @Json(name = "is_banned")
@@ -32,7 +32,7 @@ data class ProfileResponse(
         @Json(name = "passkey")
         val passkey: String,
         @Json(name = "uploaded")
-        val uploaded: Int,
+        val uploaded: Long,
         @Json(name = "downloaded")
         val downloaded: Long
     )

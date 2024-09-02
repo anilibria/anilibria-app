@@ -22,7 +22,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
@@ -65,6 +64,7 @@ import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.apinext.AcceptInterceptor
+import ru.radiationx.data.apinext.ApiLoggingEventListener
 import ru.radiationx.data.apinext.datasources.CatalogApiDataSource
 import ru.radiationx.data.apinext.datasources.CollectionsApiDataSource
 import ru.radiationx.data.apinext.datasources.FavoritesApiDataSource
@@ -348,8 +348,9 @@ class DataModule(context: Context) : QuillModule() {
             .addInterceptor(AcceptInterceptor())
             .apply {
                 if (sharedBuildConfig.debug) {
-                    addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                    //addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                     addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())
+                    eventListenerFactory(ApiLoggingEventListener.Factory())
                 }
             }
             .build()

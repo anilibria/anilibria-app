@@ -41,11 +41,12 @@ class LinkRouter @Inject constructor(
         if (checkUnsupported(url)) {
             return null
         }
-        releaseDetail.matcher(url).let {
-            if (it.find()) {
-                val code = it.group(1) ?: it.group(2)
-                return Screens.ReleaseDetails(code = ReleaseCode(code))
-            }
+
+        releaseCodeLegacy(url)?.let { code ->
+            return Screens.ReleaseDetails(code = ReleaseCode(code))
+        }
+        releaseCode(url)?.let { code ->
+            return Screens.ReleaseDetails(code = ReleaseCode(code))
         }
         historyImport.matcher(url).let {
             if (it.find()) {
@@ -53,6 +54,24 @@ class LinkRouter @Inject constructor(
             }
         }
         return null
+    }
+
+    private fun releaseCodeLegacy(url: String): String? {
+        return releaseDetail.matcher(url).let {
+            if (it.find()) {
+                it.group(1) ?: it.group(2)
+            } else {
+                null
+            }
+        }
+    }
+
+    private fun releaseCode(url: String): String? {
+        val segments = Uri.parse(url).pathSegments
+        if (segments.getOrNull(0) != "anime") return null
+        if (segments.getOrNull(1) != "releases") return null
+        if (segments.getOrNull(2) != "release") return null
+        return segments.getOrNull(3)
     }
 
     private fun sendNavigateAnalytics(screen: BaseFragmentScreen) {

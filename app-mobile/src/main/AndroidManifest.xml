@@ -46,8 +46,10 @@
                 <data android:scheme="https" />
                 <data android:host="anilibria.tv" />
                 <data android:host="www.anilibria.tv" />
+                <data android:host="anilibria.top" />
                 <data android:host="iss.ink" />
                 <data android:pathPattern="/release/.*" />
+                <data android:pathPattern="/anime/releases/release/.*" />
             </intent-filter>
 
             <intent-filter>

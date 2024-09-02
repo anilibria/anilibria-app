@@ -4,7 +4,6 @@ import java.util.Date
 
 data class OtpInfo(
     val code: String,
-    val description: String,
     val expiresAt: Date,
     val remainingTime: Long
 )

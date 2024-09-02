@@ -5,6 +5,7 @@ package ru.radiationx.data.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import anilibria.api.auth.AuthApi
 import anilibria.api.catalog.CatalogApi
 import anilibria.api.collections.CollectionsApi
 import anilibria.api.favorites.FavoritesApi
@@ -65,6 +66,9 @@ import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.apinext.AcceptInterceptor
 import ru.radiationx.data.apinext.ApiLoggingEventListener
+import ru.radiationx.data.apinext.AuthTokenInterceptor
+import ru.radiationx.data.apinext.AuthTokenStorage
+import ru.radiationx.data.apinext.datasources.AuthApiDataSource
 import ru.radiationx.data.apinext.datasources.CatalogApiDataSource
 import ru.radiationx.data.apinext.datasources.CollectionsApiDataSource
 import ru.radiationx.data.apinext.datasources.FavoritesApiDataSource
@@ -89,7 +93,6 @@ import ru.radiationx.data.datasource.holders.YearsHolder
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.address.ApiConfigChanger
-import ru.radiationx.data.datasource.remote.api.AuthApi
 import ru.radiationx.data.datasource.remote.api.CheckerApi
 import ru.radiationx.data.datasource.remote.api.ConfigurationApi
 import ru.radiationx.data.datasource.remote.api.DonationApi
@@ -231,9 +234,7 @@ class DataModule(context: Context) : QuillModule() {
 
         single<AuthParser>()
         single<PagesParser>()
-        single<PagesParser>()
 
-        single<AuthApi>()
         single<CheckerApi>()
         single<ConfigurationApi>()
         single<PageApi>()
@@ -305,10 +306,13 @@ class DataModule(context: Context) : QuillModule() {
 
         /* Api next */
 
+        single<AuthTokenStorage>()
+        single<AuthTokenInterceptor>()
+
         singleProvider<OkHttpClient, RetrofitOkhttpProvider>()
         singleProvider<Retrofit, RetrofitProvider>()
 
-        //singleProvider<AuthApi, AuthApiProvider>()
+        singleProvider<AuthApi, AuthApiProvider>()
         singleProvider<CatalogApi, CatalogApiProvider>()
         singleProvider<CollectionsApi, CollectionsApiProvider>()
         singleProvider<FavoritesApi, FavoritesApiProvider>()
@@ -321,6 +325,7 @@ class DataModule(context: Context) : QuillModule() {
         singleProvider<TimeCodesApi, TimeCodesApiProvider>()
         singleProvider<VideosApi, VideosApiProvider>()
 
+        single<AuthApiDataSource>()
         single<CatalogApiDataSource>()
         single<CollectionsApiDataSource>()
         single<FavoritesApiDataSource>()
@@ -335,6 +340,8 @@ class DataModule(context: Context) : QuillModule() {
 
     @InjectConstructor
     class RetrofitOkhttpProvider(
+        private val unauthorizedInterceptor: UnauthorizedInterceptor,
+        private val authTokenInterceptor: AuthTokenInterceptor,
         private val context: Context,
         private val sharedBuildConfig: SharedBuildConfig,
         private val sslCompat: SslCompat,
@@ -346,6 +353,8 @@ class DataModule(context: Context) : QuillModule() {
             .appendSslCompat(sslCompat)
             .appendTimeouts()
             .addInterceptor(AcceptInterceptor())
+            .addInterceptor(unauthorizedInterceptor)
+            .addInterceptor(authTokenInterceptor)
             .apply {
                 if (sharedBuildConfig.debug) {
                     //addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
@@ -358,7 +367,7 @@ class DataModule(context: Context) : QuillModule() {
 
     @InjectConstructor
     class RetrofitProvider(
-        private val okHttpClient: OkHttpClient
+        private val okHttpClient: OkHttpClient,
     ) : Provider<Retrofit> {
         override fun get(): Retrofit {
             val retrofit = Retrofit.Builder()

@@ -42,7 +42,10 @@ class AuthViewModel(
 
     private val inputDataState = MutableStateFlow(AuthInputData())
 
-    private val socialState = SocialType.entries.map { it.toState() }
+    private val socialState = SocialType.entries
+        .filter { it.enabled }
+        .map { it.toState() }
+
     private val _state = MutableStateFlow(AuthScreenState(socialItems = socialState))
     val state = _state.asStateFlow()
 

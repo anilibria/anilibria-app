@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
 import ru.radiationx.data.apinext.models.OtpCode
-import ru.radiationx.data.entity.domain.auth.OtpAcceptedException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
@@ -51,17 +50,13 @@ class OtpAcceptViewModel(
                 onSuccess()
             }.onFailure { error ->
                 authDeviceAnalytics.error(error)
-                if (error is OtpAcceptedException) {
-                    onSuccess()
-                    return@onFailure
-                }
                 _state.update { it.copy(success = false) }
                 errorHandler.handle(error) { _, s ->
                     _state.update { it.copy(error = s.orEmpty()) }
                 }
             }
 
-            _state.update { it.copy(progress = true) }
+            _state.update { it.copy(progress = false) }
         }
     }
 

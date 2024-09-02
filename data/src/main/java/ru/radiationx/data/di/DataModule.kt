@@ -23,6 +23,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
@@ -359,7 +360,7 @@ class DataModule(context: Context) : QuillModule() {
             .addInterceptor(authTokenInterceptor)
             .apply {
                 if (sharedBuildConfig.debug) {
-                    //addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                    addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                     addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())
                     eventListenerFactory(ApiLoggingEventListener.Factory())
                 }

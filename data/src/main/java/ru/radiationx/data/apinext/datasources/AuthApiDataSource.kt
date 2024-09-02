@@ -17,6 +17,9 @@ import ru.radiationx.data.apinext.models.SocialState
 import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.entity.domain.auth.OtpInfo
+import ru.radiationx.data.entity.domain.auth.OtpNotCreatedException
+import ru.radiationx.data.entity.domain.auth.OtpNotFoundException
+import ru.radiationx.data.entity.domain.auth.OtpWrongUserException
 import ru.radiationx.data.entity.domain.auth.SocialAuthException
 import toothpick.InjectConstructor
 
@@ -25,16 +28,39 @@ class AuthApiDataSource(
     private val api: AuthApi
 ) {
 
+
     suspend fun getOtp(deviceId: DeviceId): OtpInfo {
-        return api.getOtp(OtpGetRequest(deviceId.id)).toDomain()
+        return try {
+            api.getOtp(OtpGetRequest(deviceId.id)).toDomain()
+        } catch (ex: HttpException) {
+            throw when (ex.code()) {
+                404 -> OtpNotCreatedException("Не удалось создать OTP")
+                else -> throw ex
+            }
+        }
     }
 
     suspend fun acceptOtp(code: OtpCode) {
-        return api.acceptOtp(OtpAcceptRequest(code.code))
+        return try {
+            api.acceptOtp(OtpAcceptRequest(code.code))
+        } catch (ex: HttpException) {
+            throw when (ex.code()) {
+                404 -> OtpNotFoundException("OTP не найден")
+                else -> throw ex
+            }
+        }
     }
 
     suspend fun loginOtp(code: OtpCode, deviceId: DeviceId): AuthToken {
-        return api.loginOtp(OtpLoginRequest(code.code, deviceId.id)).toDomain()
+        return try {
+            api.loginOtp(OtpLoginRequest(code.code, deviceId.id)).toDomain()
+        } catch (ex: HttpException) {
+            throw when (ex.code()) {
+                401 -> OtpWrongUserException("OTP не привязан к пользователю")
+                404 -> OtpNotFoundException("OTP не найден")
+                else -> throw ex
+            }
+        }
     }
 
 

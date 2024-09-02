@@ -4,9 +4,6 @@ import org.json.JSONObject
 import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.entity.domain.auth.EmptyFieldException
 import ru.radiationx.data.entity.domain.auth.InvalidUserException
-import ru.radiationx.data.entity.domain.auth.OtpAcceptedException
-import ru.radiationx.data.entity.domain.auth.OtpNotAcceptedException
-import ru.radiationx.data.entity.domain.auth.OtpNotFoundException
 import ru.radiationx.data.entity.domain.auth.Wrong2FaCodeException
 import ru.radiationx.data.entity.domain.auth.WrongPasswordException
 import ru.radiationx.data.entity.domain.auth.WrongUserAgentException
@@ -17,17 +14,6 @@ import javax.inject.Inject
  * Created by radiationx on 31.12.17.
  */
 class AuthParser @Inject constructor() {
-
-    fun checkOtpError(error: Throwable): Throwable = if (error is ApiError) {
-        when (error.description) {
-            "otpNotFound" -> OtpNotFoundException(error.message.orEmpty())
-            "otpAccepted" -> OtpAcceptedException(error.message.orEmpty())
-            "otpNotAccepted" -> OtpNotAcceptedException(error.message.orEmpty())
-            else -> error
-        }
-    } else {
-        error
-    }
 
     fun authResult(responseText: String): String {
         val responseJson = JSONObject(responseText)

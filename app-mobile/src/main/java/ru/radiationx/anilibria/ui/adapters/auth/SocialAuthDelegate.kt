@@ -38,8 +38,8 @@ class SocialAuthDelegate(
                 ?: binding.itemSocialBtn.context.getColorFromAttr(R.attr.textDefault)
 
             binding.itemSocialBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                icon,
                 null,
+                icon,
                 null,
                 null
             )

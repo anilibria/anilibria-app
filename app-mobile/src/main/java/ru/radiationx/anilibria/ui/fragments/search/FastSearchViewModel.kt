@@ -100,7 +100,7 @@ class FastSearchViewModel(
                 ),
                 SuggestionLocalItemState(
                     id = ITEM_ID_GOOGLE,
-                    icRes = R.drawable.ic_google,
+                    icRes = R.drawable.ic_logo_google,
                     title = "Найти в гугле \"$query\""
                 )
             )

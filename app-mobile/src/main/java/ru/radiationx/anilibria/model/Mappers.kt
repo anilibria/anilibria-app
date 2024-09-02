@@ -73,6 +73,9 @@ fun OtherMenuItem.toState() = OtherMenuItemState(
 fun SocialType.toState(): SocialAuthItemState {
     val title = when (this) {
         SocialType.VK -> "ВКонтакте"
+        SocialType.GOOGLE -> "Google"
+        SocialType.PATREON -> "Patreon"
+        SocialType.DISCORD -> "Discord"
     }
     return SocialAuthItemState(
         type = this,

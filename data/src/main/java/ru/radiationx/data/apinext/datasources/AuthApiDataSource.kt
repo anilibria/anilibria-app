@@ -50,6 +50,9 @@ class AuthApiDataSource(
     suspend fun loginSocial(type: SocialType): LoginSocial {
         val provider = when (type) {
             SocialType.VK -> "vk"
+            SocialType.GOOGLE -> "google"
+            SocialType.PATREON -> "patreon"
+            SocialType.DISCORD -> "discord"
         }
         return api.loginSocial(provider).toDomain()
     }

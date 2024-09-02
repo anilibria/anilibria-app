@@ -1,6 +1,7 @@
 package ru.radiationx.data.entity.domain.other
 
 object DataIcons {
+    const val GOOGLE = "google"
     const val VK = "vk"
     const val YOUTUBE = "youtube"
     const val YOUTUBE1 = "yotube"

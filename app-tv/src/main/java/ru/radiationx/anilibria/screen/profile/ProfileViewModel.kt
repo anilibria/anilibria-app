@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.domain.other.ProfileItem
+import ru.radiationx.data.apinext.models.User
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
@@ -22,7 +22,7 @@ class ProfileViewModel(
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {
 
-    val profileData = MutableStateFlow<ProfileItem?>(null)
+    val profileData = MutableStateFlow<User?>(null)
 
     init {
         authRepository

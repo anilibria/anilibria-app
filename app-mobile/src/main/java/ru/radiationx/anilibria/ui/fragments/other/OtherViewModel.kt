@@ -26,10 +26,10 @@ import ru.radiationx.data.analytics.features.OtherAnalytics
 import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.analytics.features.SettingsAnalytics
 import ru.radiationx.data.analytics.features.TeamsAnalytics
+import ru.radiationx.data.apinext.models.User
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.other.LinkMenuItem
 import ru.radiationx.data.entity.domain.other.OtherMenuItem
-import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.MenuRepository
 import ru.radiationx.shared.ktx.EventFlow
@@ -196,7 +196,7 @@ class OtherViewModel(
 
     private fun updateMenuItems(
         authState: AuthState,
-        user: ProfileItem?,
+        user: User?,
         menu: List<LinkMenuItem>,
     ) {
         val linkMenu = menu.map {

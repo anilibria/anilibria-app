@@ -2,11 +2,11 @@ package ru.radiationx.anilibria.model
 
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
+import ru.radiationx.data.apinext.models.User
 import ru.radiationx.data.entity.domain.auth.SocialAuth
 import ru.radiationx.data.entity.domain.feed.FeedItem
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
 import ru.radiationx.data.entity.domain.other.OtherMenuItem
-import ru.radiationx.data.entity.domain.other.ProfileItem
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -46,14 +46,14 @@ fun ScheduleItem.toState() = ScheduleItemState(
     isCompleted = completed
 )
 
-fun ProfileItem?.toState(): ProfileItemState {
-    val title = this?.nick ?: "Гость"
+fun User?.toState(): ProfileItemState {
+    val title = this?.nickname ?: "Гость"
     val subtitle = if (this != null) {
         null
     } else {
         "Авторизоваться"
     }
-    val avatar = this?.avatarUrl
+    val avatar = this?.avatar
         ?.takeIf { it.isNotEmpty() }
         ?: "file:///android_asset/res/alib_new_or_b.png"
     return ProfileItemState(

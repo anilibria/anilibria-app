@@ -25,7 +25,7 @@ data class Release(
     val updatedAt: Date,
     val isOngoing: Boolean,
     val isInProduction: Boolean,
-    val type: String,
+    val type: String?,
     val year: Int,
     val season: String?,
     val publishDay: String,

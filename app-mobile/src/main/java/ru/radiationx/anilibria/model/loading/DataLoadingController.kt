@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.radiationx.shared.ktx.coRunCatching
+import timber.log.Timber
 
 class DataLoadingController<T>(
     private val scope: CoroutineScope,
@@ -77,6 +78,7 @@ class DataLoadingController<T>(
                 updateStateByAction(it)
                 _currentPage.value = page
             }.onFailure {
+                Timber.tag("LoadController").e(it)
                 updateStateByAction(ScreenStateAction.Error(it))
             }
         }

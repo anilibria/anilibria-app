@@ -100,7 +100,7 @@ class ApiLoggingEventListener private constructor() : EventListener() {
         if (callSegment.exception != null) {
             Timber.e(callSegment.exception, message)
         } else {
-            Timber.e(message)
+            Timber.i(message)
         }
     }
 

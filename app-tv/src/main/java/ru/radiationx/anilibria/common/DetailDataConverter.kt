@@ -4,7 +4,6 @@ import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
-import ru.radiationx.shared.ktx.capitalizeDefault
 import toothpick.InjectConstructor
 import java.text.NumberFormat
 import java.util.Calendar
@@ -28,7 +27,7 @@ class DetailDataConverter {
             titleRu = names.main,
             titleEn = names.english,
             extra = listOf(
-                genres.firstOrNull()?.capitalizeDefault()?.trim(),
+                genres.firstOrNull(),
                 "$year ${season.orEmpty()}",
                 types.joinToString(),
                 "Серий: ${episodes.ifEmpty { null }?.size ?: "Не доступно"}"
@@ -47,19 +46,13 @@ class DetailDataConverter {
 
     private fun Release.getAnnounce(isFull: Boolean): String {
         if (!isFull) return ""
-        val announceText = if (!isInProduction) {
-            val originalAnnounce = announce?.trim()?.trim('.')?.capitalizeDefault()
-            val scheduleAnnounce = publishDay.toAnnounce2()
-            originalAnnounce ?: scheduleAnnounce
-        } else {
-            "Релиз завершен"
-        }
+        val status = if (isInProduction) publishDay.toAnnounce2() else "Релиз завершен"
         val episodesWarning = if (episodes.isEmpty()) {
             "Нет доступных для просмотра серий"
         } else {
             null
         }
-        return listOfNotNull(announceText, episodesWarning).joinToString(" • ")
+        return listOfNotNull(status, announce, episodesWarning).joinToString(" • ")
     }
 
     private fun String.toAnnounce2(): String {

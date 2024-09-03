@@ -102,7 +102,6 @@ import ru.radiationx.data.datasource.remote.api.MenuApi
 import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.datasource.remote.api.TeamsApi
 import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
-import ru.radiationx.data.datasource.remote.parsers.AuthParser
 import ru.radiationx.data.datasource.remote.parsers.PagesParser
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.datasource.storage.AuthStorage
@@ -234,7 +233,6 @@ class DataModule(context: Context) : QuillModule() {
         singleImpl<IClient, MainNetworkClient>(MainClient::class)
         singleImpl<IClient, ApiNetworkClient>(ApiClient::class)
 
-        single<AuthParser>()
         single<PagesParser>()
 
         single<CheckerApi>()

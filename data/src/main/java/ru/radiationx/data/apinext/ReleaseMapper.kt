@@ -46,7 +46,7 @@ fun ReleaseMemberResponse.Role.toDomain(): ReleaseMember.Role {
 }
 
 fun UserResponse.toDomain(): User {
-    return User(id = UserId(id), nickname = nickname, avatar = avatar.src)
+    return User(id = UserId(id), nickname = nickname, avatar = avatar?.src)
 }
 
 fun ReleaseSponsorResponse.toDomain(): ReleaseSponsor {

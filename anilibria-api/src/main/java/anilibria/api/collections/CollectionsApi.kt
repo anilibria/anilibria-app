@@ -1,15 +1,15 @@
 package anilibria.api.collections
 
-import anilibria.api.shared.filter.FilterAgeRatingResponse
 import anilibria.api.shared.CollectionReleaseIdNetwork
-import anilibria.api.shared.filter.FilterReleaseTypeResponse
-import anilibria.api.shared.filter.FilterGenreResponse
 import anilibria.api.shared.PaginationResponse
-import anilibria.api.shared.release.ReleaseResponse
 import anilibria.api.shared.ReleaseIdNetwork
+import anilibria.api.shared.filter.FilterAgeRatingResponse
+import anilibria.api.shared.filter.FilterGenreResponse
+import anilibria.api.shared.filter.FilterReleaseTypeResponse
+import anilibria.api.shared.release.ReleaseResponse
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -49,6 +49,6 @@ interface CollectionsApi {
     @POST("accounts/users/me/collections")
     suspend fun addReleases(@Body body: List<CollectionReleaseIdNetwork>)
 
-    @DELETE("accounts/users/me/collections")
+    @HTTP(method = "DELETE", path = "accounts/users/me/collections", hasBody = true)
     suspend fun deleteReleases(@Body body: List<ReleaseIdNetwork>)
 }

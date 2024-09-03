@@ -5,6 +5,7 @@ import anilibria.api.timecodes.models.TimeCodeNetwork
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 
 interface TimeCodesApi {
@@ -15,6 +16,6 @@ interface TimeCodesApi {
     @POST("accounts/users/me/views/timecodes")
     suspend fun update(@Body body: List<TimeCodeNetwork>)
 
-    @DELETE("accounts/users/me/views/timecodes")
-    suspend fun delete(@Body body: List<TimeCodeDeleteRequest>): Unit
+    @HTTP(method = "DELETE", path = "accounts/users/me/views/timecodes", hasBody = true)
+    suspend fun delete(@Body body: List<TimeCodeDeleteRequest>)
 }

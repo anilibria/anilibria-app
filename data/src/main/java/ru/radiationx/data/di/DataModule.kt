@@ -323,7 +323,7 @@ class DataModule(context: Context) : QuillModule() {
         singleProvider<ProfileApi, ProfileApiProvider>()
         singleProvider<ReleasesApi, ReleasesApiProvider>()
         singleProvider<ScheduleApi, ScheduleApiProvider>()
-        singleProvider<TeamsApi, TeamsApiProvider>()
+        //singleProvider<TeamsApi, TeamsApiProvider>()
         singleProvider<TimeCodesApi, TimeCodesApiProvider>()
         singleProvider<VideosApi, VideosApiProvider>()
 

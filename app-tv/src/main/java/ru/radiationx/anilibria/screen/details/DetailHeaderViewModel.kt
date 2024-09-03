@@ -131,9 +131,9 @@ class DetailHeaderViewModel(
             val isAdded = favoritesInteractor.observeIds().first().contains(release.id)
             coRunCatching {
                 if (isAdded) {
-                    favoriteRepository.deleteRelease(releaseId)
+                    favoritesInteractor.deleteRelease(releaseId)
                 } else {
-                    favoriteRepository.addRelease(releaseId)
+                    favoritesInteractor.addRelease(releaseId)
                 }
             }.onFailure {
                 Timber.e(it)

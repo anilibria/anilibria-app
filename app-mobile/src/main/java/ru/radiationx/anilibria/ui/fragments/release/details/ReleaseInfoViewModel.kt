@@ -211,8 +211,8 @@ class ReleaseInfoViewModel(
                         accesses.associateBy { it.id }
                     },
                     favoritesInteractor.observeIds()
-                ) { loadings, accesses, isInFavorites ->
-                    updateLocalRelease(release, loadings, accesses, isInFavorites)
+                ) { loadings, accesses, favoriteIds ->
+                    updateLocalRelease(release, loadings, accesses, favoriteIds)
                 }
             }
             .launchIn(viewModelScope)
@@ -468,9 +468,9 @@ class ReleaseInfoViewModel(
             }
             coRunCatching {
                 if (isAdded) {
-                    favoriteRepository.deleteRelease(releaseId)
+                    favoritesInteractor.deleteRelease(releaseId)
                 } else {
-                    favoriteRepository.addRelease(releaseId)
+                    favoritesInteractor.addRelease(releaseId)
                 }
             }.onFailure {
                 errorHandler.handle(it)

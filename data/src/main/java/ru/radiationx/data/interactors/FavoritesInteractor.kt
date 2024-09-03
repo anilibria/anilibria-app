@@ -20,7 +20,9 @@ class FavoritesInteractor(
 
     suspend fun loadReleaseIds(): Set<ReleaseId> {
         return sharedRequest.request(Unit) {
-            favoriteRepository.getReleaseIds()
+            val ids = favoriteRepository.getReleaseIds()
+            releaseIds.value = ids
+            ids
         }
     }
 

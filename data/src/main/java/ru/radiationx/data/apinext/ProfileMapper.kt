@@ -3,6 +3,7 @@ package ru.radiationx.data.apinext
 import anilibria.api.profile.models.ProfileResponse
 import ru.radiationx.data.apinext.models.Profile
 import ru.radiationx.data.apinext.models.User
+import ru.radiationx.data.entity.db.UserDb
 import ru.radiationx.data.entity.domain.types.UserId
 
 fun ProfileResponse.toDomain(): Profile {
@@ -15,6 +16,14 @@ fun ProfileResponse.toDomain(): Profile {
         createdAt = createdAt.apiDateToDate(),
         isWithAds = isWithAds
     )
+}
+
+fun User.toDb(): UserDb {
+    return UserDb(id = id.id, nickname = nickname, avatar = avatar)
+}
+
+fun UserDb.toDomain(): User {
+    return User(id = UserId(id), nickname = nickname, avatar = avatar)
 }
 
 private fun ProfileResponse.Torrents.toDomain(): Profile.Torrents {

@@ -47,7 +47,9 @@ fun ScheduleItem.toState() = ScheduleItemState(
 )
 
 fun User?.toState(): ProfileItemState {
-    val title = this?.nickname ?: "Гость"
+    val title = this?.let {
+        nickname ?: "Ник не указан"
+    } ?: "Гость"
     val subtitle = if (this != null) {
         null
     } else {

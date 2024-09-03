@@ -10,6 +10,7 @@ import anilibria.api.shared.filter.FilterSortingResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -52,6 +53,6 @@ interface FavoritesApi {
     @POST("accounts/users/me/favorites")
     suspend fun addReleases(@Body body: List<ReleaseIdNetwork>)
 
-    @DELETE("accounts/users/me/favorites")
+    @HTTP(method = "DELETE", path = "accounts/users/me/favorites", hasBody = true)
     suspend fun deleteReleases(@Body body: List<ReleaseIdNetwork>)
 }

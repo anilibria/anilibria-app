@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemSt
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodesControlState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseTorrentItemState
+import ru.radiationx.data.apinext.models.ReleaseSponsor
 import ru.radiationx.data.entity.domain.release.Episode
 
 open class ListItem(private val idData: Any?) {
@@ -97,6 +98,7 @@ data class ReleaseEpisodesHeadListItem(
 ) : ListItem(id)
 
 data class ReleaseDonateListItem(val state: DonationCardItemState) : ListItem(state.tag)
+data class ReleaseSponsorListItem(val sponsor: ReleaseSponsor) : ListItem(sponsor.id)
 data class ReleaseRemindListItem(val text: String) : ListItem(text)
 data class ReleaseBlockedListItem(val state: ReleaseBlockedInfoState) : ListItem(state.title)
 data class ReleaseHeadListItem(

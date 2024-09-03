@@ -131,6 +131,14 @@ class ReleaseAnalytics(
         )
     }
 
+    fun sponsorClick(releaseId: Int, sponsorTitle: String) {
+        sender.send(
+            AnalyticsConstants.release_sponsor,
+            releaseId.toIdParam(),
+            sponsorTitle.toParam("sponsor")
+        )
+    }
+
     fun donateClick(releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_donate,

@@ -33,7 +33,8 @@ fun Release.toState(
     episodesControl = toEpisodeControlState(accesses),
     episodesTabs = toTabsState(accesses),
     torrents = torrents.map { it.toState(loadings) },
-    blockedInfo = toBlockedInfoState()
+    blockedInfo = toBlockedInfoState(),
+    sponsor = sponsor
 )
 
 fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {

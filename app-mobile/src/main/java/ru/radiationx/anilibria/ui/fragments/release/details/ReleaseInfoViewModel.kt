@@ -36,6 +36,7 @@ import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
+import ru.radiationx.data.apinext.models.ReleaseSponsor
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.downloader.LocalFile
 import ru.radiationx.data.downloader.RemoteFile
@@ -436,6 +437,12 @@ class ReleaseInfoViewModel(
                 systemUtils.externalLink(url)
             }
         }
+    }
+
+    fun onSponsorClick(sponsor: ReleaseSponsor) {
+        val data = currentData ?: return
+        releaseAnalytics.sponsorClick(data.id.id, sponsor.title)
+        systemUtils.externalLink(sponsor.url)
     }
 
     fun onClickDonate() {

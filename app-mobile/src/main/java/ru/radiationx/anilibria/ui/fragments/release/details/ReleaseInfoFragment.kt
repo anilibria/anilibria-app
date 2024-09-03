@@ -37,6 +37,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
             episodeControlListener = episodeControlListener,
             donationListener = { viewModel.onClickDonate() },
             donationCloseListener = {},
+            sponsorListener = viewModel::onSponsorClick,
             torrentClickListener = { showTorrentDialog(it) },
             torrentCancelClickListener = viewModel::onCancelTorrentClick,
             commentsClickListener = viewModel::onCommentsClick,

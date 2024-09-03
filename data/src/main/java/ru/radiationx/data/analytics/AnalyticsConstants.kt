@@ -89,6 +89,7 @@ object AnalyticsConstants {
     const val release_web_player = "release_web_player"
     const val release_torrent = "release_torrent"
     const val release_donate = "release_donate"
+    const val release_sponsor = "release_sponsor"
     const val release_description_expand = "release_description_expand"
     const val release_description_link = "release_description_link"
     const val release_schedule_click = "release_schedule_click"

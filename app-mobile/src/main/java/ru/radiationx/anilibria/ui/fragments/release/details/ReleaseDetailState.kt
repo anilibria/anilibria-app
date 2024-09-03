@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import com.yandex.mobile.ads.nativeads.NativeAd
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.DonationCardItemState
+import ru.radiationx.data.apinext.models.ReleaseSponsor
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.types.TorrentId
@@ -39,6 +40,7 @@ data class ReleaseDetailState(
     val episodesTabs: List<EpisodesTabState>,
     val torrents: List<ReleaseTorrentItemState>,
     val blockedInfo: ReleaseBlockedInfoState?,
+    val sponsor: ReleaseSponsor?
 )
 
 data class ReleaseInfoState(

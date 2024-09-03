@@ -45,7 +45,6 @@ data class Release(
 
     // full
     val members: List<ReleaseMember>,
-    // todo API2 use this
     val sponsor: ReleaseSponsor?,
     val episodes: List<Episode>,
     val externalPlaylists: List<ExternalPlaylist>,

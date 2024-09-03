@@ -72,8 +72,8 @@ class ReleaseHeadDelegate(
         fun bind(state: ReleaseInfoState, modifiers: ReleaseDetailModifiersState) {
             binding.fullTitle.text = state.titleRus
             binding.fullTitleEn.text = state.titleEng
-            binding.fullUpdated.isVisible = state.updatedAt != null
-            state.updatedAt?.also { updatedAt ->
+            binding.fullUpdated.isVisible = state.freshAt != null
+            state.freshAt?.also { updatedAt ->
                 binding.fullUpdated.text = updatedAt
                     .relativeDate(binding.fullUpdated.context)
                     .let { "Обновлён $it" }

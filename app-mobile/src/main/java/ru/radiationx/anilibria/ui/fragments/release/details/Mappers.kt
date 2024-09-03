@@ -37,12 +37,17 @@ fun Release.toState(
 )
 
 fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {
+    val types = listOfNotNull(
+        type,
+        averageEpisodeDuration?.let { "~$it мин" },
+        ageRating
+    )
     val seasonsHtml = "<b>Сезон:</b> $year ${season.orEmpty()}"
     val voicesHtml = members.toInfo().toTypedArray()
-    val typesHtml = "<b>Тип:</b> $type"
+    val typesHtml = "<b>Тип:</b> ${types.joinToString()}"
     val releaseStatus = toStatus()
     val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
-    val genresHtml = "<b>Жанры:</b> " + genres.joinToString(", ") {
+    val genresHtml = "<b>Жанры:</b> " + genres.joinToString {
         val value = it.htmlEncode()
         "<a href=\"${ReleaseInfoState.TAG_GENRE}_$value\">${value.capitalizeDefault()}</a>"
     }
@@ -59,7 +64,7 @@ fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {
         titleRus = names.main,
         titleEng = names.english,
         description = description.orEmpty(),
-        updatedAt = updatedAt,
+        freshAt = freshAt,
         info = infoStr,
         publishDay = ScheduleDay.toCalendarDay(publishDay),
         needShowDay = isInProduction,
@@ -69,7 +74,7 @@ fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {
 }
 
 private fun Release.toStatus(): String {
-    return if (isInProduction) "В работе" else "Не в работе"
+    return if (isInProduction) "В работе" else "Завершен"
 }
 
 private fun List<ReleaseMember>.toInfo(): List<String> {
@@ -81,7 +86,7 @@ private fun List<ReleaseMember>.toInfo(): List<String> {
 
 private fun List<String>.asMemberRole(title: String): String? {
     if (isEmpty()) return null
-    val links = joinToString(", ") {
+    val links = joinToString {
         val value = it.htmlEncode()
         "<a href=\"${ReleaseInfoState.TAG_VOICE}_$value\">${value}</a>"
     }
@@ -132,7 +137,7 @@ fun TorrentItem.toState(
     val isPrefer = isSupportHevcHw == isTorrentHevc
     return ReleaseTorrentItemState(
         id = id,
-        title = "Серия $series",
+        title = "Серии $series",
         subtitle = listOfNotNull(type, quality, codec).joinToString(" "),
         size = Utils.readableFileSize(size),
         seeders = seeders.toString(),

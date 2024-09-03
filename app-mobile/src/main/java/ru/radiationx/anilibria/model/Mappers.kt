@@ -15,7 +15,7 @@ import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 fun Release.toState(updates: Map<ReleaseId, ReleaseUpdate>): ReleaseItemState {
     val update = updates[id]
     val isNew = update
-        ?.let { it.lastOpenTimestamp < updatedAt || it.timestamp < updatedAt }
+        ?.let { it.lastOpenTimestamp < freshAt || it.timestamp < freshAt }
         ?: false
     return ReleaseItemState(
         id = id,

@@ -150,7 +150,8 @@ fun ReleaseTorrentResponse.toDomain(releaseId: ReleaseId): TorrentItem {
         color = color.description,
         series = description,
         size = size,
-        date = updatedAt.apiDateToDate()
+        date = updatedAt.apiDateToDate(),
+        magnet = magnet
     )
 }
 
@@ -167,14 +168,13 @@ fun ReleaseResponse.toDomain(): Release {
         isOngoing = isOngoing,
         isInProduction = isInProduction,
         type = type.description,
-        genres = genres?.map { it.name }.orEmpty(),
         year = year,
         season = season.description,
         publishDay = publishDay.value,
         description = description,
         announce = notification,
         favoritesCount = addedInUsersFavorites,
-        ageRating = ageRating.description,
+        ageRating = ageRating.label,
         episodesTotal = episodesTotal,
         isEpisodesCountUnknown = episodesAreUnknown,
         averageEpisodeDuration = averageDurationOfEpisode,
@@ -182,6 +182,7 @@ fun ReleaseResponse.toDomain(): Release {
         isBlockedByCopyrights = isBlockedByCopyrights,
         webPlayer = externalPlayer?.ifEmpty { null },
 
+        genres = genres?.map { it.name }.orEmpty(),
         members = members?.map { it.toDomain() }.orEmpty(),
         sponsor = sponsor?.toDomain(),
         episodes = episodes?.mapNotNull { it.toEpisode(releaseId) }.orEmpty(),

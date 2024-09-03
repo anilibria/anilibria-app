@@ -15,7 +15,7 @@ class CardsDataConverter(
     fun toCard(releaseItem: Release) = releaseItem.run {
         val seasonText = "$year ${season.orEmpty()}"
         val genreText = genres.firstOrNull()?.capitalizeDefault()
-        val updateText = "Обновлен ${updatedAt.relativeDate(context).decapitalizeDefault()}"
+        val updateText = "Обновлен ${freshAt.relativeDate(context).decapitalizeDefault()}"
         val descItems = listOfNotNull(seasonText, genreText, updateText)
         LibriaCard(
             names.main,

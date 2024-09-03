@@ -11,6 +11,5 @@ data class YoutubeItem(
     val link: String,
     val views: Int,
     val comments: Int,
-    // todo API2 update usage
     val createdAt: Date
 )

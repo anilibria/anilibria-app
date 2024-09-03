@@ -18,6 +18,11 @@ class DetailDataConverter {
         accesses: List<EpisodeAccess>,
         isInFavorites: Boolean
     ): LibriaDetails = releaseItem.run {
+        val types = listOfNotNull(
+            type,
+            averageEpisodeDuration?.let { "~$it мин" },
+            ageRating
+        )
         LibriaDetails(
             id = id,
             titleRu = names.main,
@@ -25,7 +30,7 @@ class DetailDataConverter {
             extra = listOf(
                 genres.firstOrNull()?.capitalizeDefault()?.trim(),
                 "$year ${season.orEmpty()}",
-                type,
+                types.joinToString(),
                 "Серий: ${episodes.ifEmpty { null }?.size ?: "Не доступно"}"
             ).joinToString(" • "),
             description = description.orEmpty(),

@@ -12,20 +12,17 @@ data class TorrentItem(
     val leechers: Int,
     val seeders: Int,
     val completed: Int,
-    // todo API2 use this
     val type: String?,
     val quality: String?,
-    // todo API2 use this
     val codec: String?,
-    // todo API2 use this
     val color: String?,
     val series: String?,
     val size: Long,
-    // todo API2 update usage
-    //val url: String?,
-    val date: Date?
+    val date: Date?,
+    val magnet: String
 ) : Parcelable {
 
+    // todo API2 use real url
     val url: String
         get() = "https://anilibria.top/api/v1/anime/torrents/${id.id}/file"
 }

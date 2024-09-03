@@ -68,7 +68,7 @@ class ScheduleRepository @Inject constructor(
                             compareByDescending<ScheduleItem> {
                                 it.completed
                             }.then(compareByDescending {
-                                it.releaseItem.updatedAt
+                                it.releaseItem.freshAt
                             })
                         )
                     )

@@ -17,7 +17,7 @@ fun Iterable<FormItem>.toListQuery(): String {
 
 fun FormItem.toQuery(): String {
     return when (this) {
-        is FormItem.Genre -> id.toString()
+        is FormItem.Genre -> id.id.toString()
         is FormItem.Value -> value
         is FormItem.Year -> year.toString()
     }

@@ -519,7 +519,7 @@ class ReleaseInfoViewModel(
                 releaseAnalytics.genreClick(data.id.id)
                 catalogAnalytics.open(AnalyticsConstants.screen_release)
                 val genre = data.genres.find { it.name == value }
-                router.navigateTo(Screens.Catalog(value))
+                router.navigateTo(Screens.Catalog(genre))
             }
 
             ReleaseInfoState.TAG_VOICE -> {

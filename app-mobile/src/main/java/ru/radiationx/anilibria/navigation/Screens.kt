@@ -28,11 +28,13 @@ import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
 import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
+import ru.radiationx.data.apinext.models.Genre
 import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.interactors.FilterType
 
 /**
  * Created by radiationx on 17.11.17.
@@ -109,7 +111,7 @@ object Screens {
     }
 
     class Favorites : BaseFragmentScreen() {
-        override fun createFragment(factory: FragmentFactory) = FavoritesFragment()
+        override fun createFragment(factory: FragmentFactory) = SearchCatalogFragment.newInstance(FilterType.Favorites)
     }
 
     class StaticPage(
@@ -142,11 +144,16 @@ object Screens {
             ReleaseFragment.newInstance(id, code, item)
     }
 
+    class Collections : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) =
+            SearchCatalogFragment.newInstance(FilterType.Collections)
+    }
+
     class Catalog(
-        private val genres: String? = null,
+        private val genre: Genre? = null,
     ) : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) =
-            SearchCatalogFragment.newInstance(genres)
+            SearchCatalogFragment.newInstance(FilterType.Catalog, genre)
     }
 
     class MainFeed : BaseFragmentScreen() {

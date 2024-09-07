@@ -141,7 +141,7 @@ class CatalogViewModel(
     }
 
     private fun observeSearchRemind() {
-        appPreferences
+        /*appPreferences
             .searchRemind
             .onEach { remindEnabled ->
                 val newRemindText = remindText.takeIf { remindEnabled }
@@ -149,7 +149,7 @@ class CatalogViewModel(
                     it.copy(remindText = newRemindText)
                 }
             }
-            .launchIn(viewModelScope)
+            .launchIn(viewModelScope)*/
     }
 
     private fun observeLoadingState() {
@@ -228,7 +228,6 @@ class CatalogViewModel(
     }
 
     fun onRemindClose() {
-        appPreferences.searchRemind.value = false
     }
 
     fun onItemClick(item: ReleaseItemState) {

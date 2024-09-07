@@ -17,8 +17,6 @@ interface PreferencesHolder {
 
     val releaseRemind: AppPreference<Boolean>
 
-    val searchRemind: AppPreference<Boolean>
-
     val episodesIsReverse: AppPreference<Boolean>
 
     val playerTransport: AppPreference<PlayerTransport>

@@ -26,6 +26,7 @@ import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.interactors.FilterType
 import ru.radiationx.data.repository.ReleaseRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils

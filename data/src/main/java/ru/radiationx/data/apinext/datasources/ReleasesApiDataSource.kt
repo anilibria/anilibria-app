@@ -2,6 +2,7 @@ package ru.radiationx.data.apinext.datasources
 
 import anilibria.api.releases.ReleasesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.entity.domain.release.Release
@@ -37,12 +38,12 @@ class ReleasesApiDataSource(
 
     suspend fun getReleasesByIds(ids: List<ReleaseId>): List<Release> {
         return coroutineScope {
-            val requests = async {
-                ids.map { id ->
+            val requests = ids.map { id ->
+                async {
                     coRunCatching { getRelease(id) }
                 }
             }
-            requests.await().mapNotNull { it.getOrNull() }
+            requests.awaitAll().mapNotNull { it.getOrNull() }
         }
     }
 }

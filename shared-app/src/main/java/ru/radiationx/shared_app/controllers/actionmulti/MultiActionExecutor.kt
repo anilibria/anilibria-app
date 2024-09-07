@@ -40,7 +40,7 @@ class MultiActionExecutor<KEY, ARG, RESULT>(
                 val event = MultiEventSuccess(key, arg, data)
                 onSuccess?.invoke(event)
             }.onFailure { error ->
-                Timber.e("key=$key, arg=$arg", error)
+                Timber.e(error, "key=$key, arg=$arg")
                 val event = MultiEventError(key, arg, error)
                 onError?.invoke(event)
             }

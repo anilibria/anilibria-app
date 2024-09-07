@@ -9,13 +9,18 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
+import ru.radiationx.anilibria.databinding.FragmentTabsListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
@@ -25,26 +30,33 @@ import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.Dimensions
-import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.data.apinext.models.Genre
+import ru.radiationx.data.apinext.models.enums.CollectionType
+import ru.radiationx.data.interactors.FilterType
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
-import ru.radiationx.shared.ktx.android.launchInResumed
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 class SearchCatalogFragment :
-    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    BaseToolbarFragment<FragmentTabsListRefreshBinding>(R.layout.fragment_tabs_list_refresh),
     SharedProvider,
     ReleasesAdapter.ItemListener,
     TopScroller {
 
     companion object {
+        private const val ARG_TYPE = "arg_type"
         private const val ARG_GENRE = "arg_genre"
 
-        fun newInstance(genre: String? = null) = SearchCatalogFragment().putExtra {
-            putString(ARG_GENRE, genre)
+        fun newInstance(
+            filterType: FilterType,
+            genre: Genre? = null
+        ) = SearchCatalogFragment().putExtra {
+            putSerializable(ARG_TYPE, filterType)
+            putParcelable(ARG_GENRE, genre)
         }
     }
 
@@ -53,7 +65,6 @@ class SearchCatalogFragment :
         loadMoreListener = { viewModel.loadMore() },
         loadRetryListener = { viewModel.loadMore() },
         listener = this,
-        remindCloseListener = { viewModel.onRemindClose() },
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
@@ -66,15 +77,11 @@ class SearchCatalogFragment :
         )
     )
 
-    private val fastSearchAdapter = FastSearchAdapter(
-        clickListener = { searchViewModel.onItemClick(it) },
-        localClickListener = { searchViewModel.onLocalItemClick(it) }
-    )
-
-    private val searchViewModel by viewModel<FastSearchViewModel>()
-
-    private val viewModel by viewModel<CatalogViewModel> {
-        CatalogExtra(genre = getExtra(ARG_GENRE))
+    private val viewModel by viewModel<FilterViewModel> {
+        FilterExtra(
+            type = getExtraNotNull(ARG_TYPE),
+            genre = getExtra(ARG_GENRE)
+        )
     }
 
     private var searchView: SearchMenuItem? = null
@@ -89,8 +96,8 @@ class SearchCatalogFragment :
 
     override val statusBarVisible: Boolean = true
 
-    override fun onCreateBinding(view: View): FragmentListRefreshBinding {
-        return FragmentListRefreshBinding.bind(view)
+    override fun onCreateBinding(view: View): FragmentTabsListRefreshBinding {
+        return FragmentTabsListRefreshBinding.bind(view)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -105,15 +112,15 @@ class SearchCatalogFragment :
         genresDialog =
             CatalogFilterDialog(requireContext(), object : CatalogFilterDialog.ClickListener {
                 override fun onAccept(state: CatalogFilterState) {
-                    viewModel.onAcceptDialog(state)
+                    //viewModel.onAcceptDialog(state)
                 }
 
                 override fun onClose() {
-                    viewModel.onCloseDialog()
+                    //viewModel.onCloseDialog()
                 }
             })
 
-        binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
+        binding.refreshLayout.setOnRefreshListener { viewModel.refresh() }
 
         binding.recyclerView.apply {
             adapter = this@SearchCatalogFragment.adapter
@@ -139,7 +146,7 @@ class SearchCatalogFragment :
             add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
-                    viewModel.onFastSearchClick()
+                    //viewModel.onFastSearchClick()
                     searchView?.requestFocus(it)
                     false
                 }
@@ -147,7 +154,7 @@ class SearchCatalogFragment :
             add("Фильтры")
                 .setIcon(R.drawable.ic_filter_toolbar)
                 .setOnMenuItemClickListener {
-                    viewModel.showDialog()
+                    //viewModel.showDialog()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -169,11 +176,11 @@ class SearchCatalogFragment :
             setTextHint("Название релиза")
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
-                    if (!hasFocus) {
-                        searchViewModel.onClose()
-                    } else {
-                        viewModel.onFastSearchOpen()
-                    }
+                    /* if (!hasFocus) {
+                         searchViewModel.onClose()
+                     } else {
+                         viewModel.onFastSearchOpen()
+                     }*/
                 }
 
             })
@@ -183,17 +190,11 @@ class SearchCatalogFragment :
                 }
 
                 override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    searchViewModel.onQueryChange(newText.toString())
+                    viewModel.onQueryChange(newText.toString())
                     return false
                 }
             })
-
-            setAdapter(fastSearchAdapter)
         }
-
-        searchViewModel.state.onEach { state ->
-            fastSearchAdapter.bindItems(state)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.state.onEach { state ->
             binding.progressBarList.isVisible = state.data.emptyLoading
@@ -201,7 +202,36 @@ class SearchCatalogFragment :
             adapter.bindState(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        viewModel.filterState.onEach { state ->
+        val tabListener = object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                viewModel.selectCollection(tab.tag as CollectionType)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+            }
+
+        }
+        binding.tabLayout.addOnTabSelectedListener(tabListener)
+        viewModel.collections
+            .onEach { binding.tabLayout.isVisible = it != null }
+            .filterNotNull()
+            .onEach { state ->
+                binding.tabLayout.removeOnTabSelectedListener(tabListener)
+                binding.tabLayout.removeAllTabs()
+                state.types.forEach { type ->
+                    val tab = binding.tabLayout.newTab().apply {
+                        setTag(type)
+                        setText(type.toString())
+                    }
+                    binding.tabLayout.addTab(tab, type == state.selected)
+                }
+                binding.tabLayout.addOnTabSelectedListener(tabListener)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+        /*viewModel.filterState.onEach { state ->
             val filtersCount = state.form.let {
                 it.genres.size + it.years.size + it.seasons.size
             }
@@ -212,11 +242,11 @@ class SearchCatalogFragment :
             }
             subtitle += ", Фильтров: $filtersCount"
             baseBinding.toolbar.subtitle = subtitle
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)*/
 
-        viewModel.showFilterAction.observe().onEach { state ->
+        /*viewModel.showFilterAction.observe().onEach { state ->
             genresDialog.showDialog(state, viewLifecycleOwner)
-        }.launchInResumed(viewLifecycleOwner)
+        }.launchInResumed(viewLifecycleOwner)*/
     }
 
     override fun updateDimens(dimensions: Dimensions) {

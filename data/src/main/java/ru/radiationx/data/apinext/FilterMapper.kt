@@ -8,6 +8,7 @@ import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterSeasonResponse
 import anilibria.api.shared.filter.FilterSortingResponse
 import ru.radiationx.data.apinext.models.filters.FilterItem
+import ru.radiationx.data.entity.domain.types.GenreId
 
 fun FilterAgeRatingResponse.toDomain(): FilterItem.Value {
     return FilterItem.Value(value, label, description)
@@ -18,7 +19,7 @@ fun FilterReleaseTypeResponse.toDomain(): FilterItem.Value {
 }
 
 fun FilterGenreResponse.toDomain(): FilterItem.Genre {
-    return FilterItem.Genre(id, name)
+    return FilterItem.Genre(GenreId(id), name)
 }
 
 fun FilterProductionStatusResponse.toDomain(): FilterItem.Value {

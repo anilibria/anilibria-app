@@ -61,8 +61,8 @@ class CollectionsApiDataSource(
     suspend fun getReleaseIds(): Set<CollectionReleaseId> {
         return api.getIds().map {
             CollectionReleaseId(
-                id = ReleaseId(it.releaseId),
-                type = it.typeOfCollection.toCollectionType()
+                id = ReleaseId(it[0].toString().toFloat().toInt()),
+                type = it[1].toString().toCollectionType()
             )
         }.toSet()
     }

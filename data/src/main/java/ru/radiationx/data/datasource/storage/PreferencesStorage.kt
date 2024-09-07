@@ -20,7 +20,6 @@ class PreferencesStorage @Inject constructor(
     companion object {
         private const val NEW_DONATION_REMIND_KEY = "new_donation_remind_access"
         private const val RELEASE_REMIND_KEY = "release_remind"
-        private const val SEARCH_REMIND_KEY = "search_remind"
         private const val EPISODES_IS_REVERSE_KEY = "episodes_is_reverse"
         private const val PLAYER_QUALITY_KEY = "player_quality"
         private const val PLAYER_TRANSPORT_KEY = "player_transport"
@@ -51,17 +50,6 @@ class PreferencesStorage @Inject constructor(
 
     override val releaseRemind: AppPreference<Boolean> = AppPreference(
         key = RELEASE_REMIND_KEY,
-        sharedPreferences = sharedPreferences,
-        get = { key ->
-            getBoolean(key, true)
-        },
-        set = { key, value ->
-            putBoolean(key, value)
-        }
-    )
-
-    override val searchRemind: AppPreference<Boolean> = AppPreference(
-        key = SEARCH_REMIND_KEY,
         sharedPreferences = sharedPreferences,
         get = { key ->
             getBoolean(key, true)

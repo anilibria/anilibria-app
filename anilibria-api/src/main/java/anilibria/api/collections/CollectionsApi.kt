@@ -27,8 +27,12 @@ interface CollectionsApi {
     @GET("accounts/users/me/collections/references/years")
     suspend fun getYears(): List<Int>
 
+    // todo API2 use this instead of fkkn arrays
     @GET("accounts/users/me/collections/ids")
-    suspend fun getIds(): List<CollectionReleaseIdNetwork>
+    suspend fun getIds1(): List<CollectionReleaseIdNetwork>
+
+    @GET("accounts/users/me/collections/ids")
+    suspend fun getIds(): List<List<Any>>
 
     @GET("accounts/users/me/collections/releases")
     suspend fun getReleases(

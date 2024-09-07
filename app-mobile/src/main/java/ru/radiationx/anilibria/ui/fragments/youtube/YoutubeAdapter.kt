@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
-import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
@@ -11,6 +10,7 @@ import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
 /* Created by radiationx on 31.10.17. */
 

@@ -31,10 +31,6 @@ import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.PageLoadParams
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.mapData
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -70,6 +66,12 @@ import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared.ktx.getDayOfWeek
 import ru.radiationx.shared.ktx.isSameDay
 import ru.radiationx.shared_app.common.SystemUtils
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderAction
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderParams
+import ru.radiationx.shared_app.controllers.loaderpage.appendData
+import ru.radiationx.shared_app.controllers.loaderpage.mapData
+import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import timber.log.Timber
 import java.util.Date
 import java.util.Locale
@@ -120,7 +122,7 @@ class FeedViewModel @Inject constructor(
         FeedAppWarningType.WARNING
     )
 
-    private val loadingController = DataLoadingController(viewModelScope) {
+    private val pageLoader = PageLoader(viewModelScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
     }
@@ -193,7 +195,7 @@ class FeedViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         combine(
-            loadingController.observeState(),
+            pageLoader.observeState(),
             releaseUpdateHolder.observeEpisodes()
         ) { loadingState, updates ->
             val updatesMap = updates.associateBy { it.id }
@@ -208,15 +210,15 @@ class FeedViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
 
-        loadingController.refresh()
+        pageLoader.refresh()
     }
 
     fun refreshReleases() {
-        loadingController.refresh()
+        pageLoader.refresh()
     }
 
     fun loadMore() {
-        loadingController.loadMore()
+        pageLoader.loadMore()
     }
 
     fun onScheduleScroll(position: Int) {
@@ -350,12 +352,12 @@ class FeedViewModel @Inject constructor(
     }
 
     private fun findScheduleRelease(id: ReleaseId): Release? {
-        val scheduleItems = loadingController.currentState.data?.schedule?.items
+        val scheduleItems = pageLoader.getData()?.schedule?.items
         return scheduleItems?.find { it.releaseItem.id == id }?.releaseItem
     }
 
     private fun findRelease(id: ReleaseId): Release? {
-        val feedItems = loadingController.currentState.data?.feedItems ?: return null
+        val feedItems = pageLoader.getData()?.feedItems ?: return null
         return feedItems
             .filterIsInstance<NativeAdItem.Data<FeedItem>>()
             .mapNotNull { it.data.release }
@@ -363,7 +365,7 @@ class FeedViewModel @Inject constructor(
     }
 
     private fun findYoutube(id: YoutubeId): YoutubeItem? {
-        val feedItems = loadingController.currentState.data?.feedItems ?: return null
+        val feedItems = pageLoader.getData()?.feedItems ?: return null
         return feedItems
             .filterIsInstance<NativeAdItem.Data<FeedItem>>()
             .mapNotNull { it.data.youtube }
@@ -405,16 +407,12 @@ class FeedViewModel @Inject constructor(
         }
 
 
-    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<FeedData> {
+    private suspend fun getDataSource(params: PageLoaderParams<FeedData>): PageLoaderAction.Data<FeedData> {
         return supervisorScope {
             val adsConfig = adsConfigRepository.getConfig().feedNative
             val newPageAsync = async { getFeedSource(params.page) }
             val scheduleAsync = async {
-                if (params.isFirstPage) {
-                    getScheduleSource()
-                } else {
-                    loadingController.currentState.data?.schedule ?: getScheduleSource()
-                }
+                params.appendData { it?.schedule ?: getScheduleSource() }
             }
             val adsAsync = async {
                 if (adsConfig.enabled) {
@@ -438,16 +436,16 @@ class FeedViewModel @Inject constructor(
                     .getOrNull()
 
                 val newPageWithAds = newPage.addAdAt(adsConfig.listInsertPosition, ad)
-                val newFeedItems = if (params.isFirstPage) {
-                    newPageWithAds
-                } else {
-                    loadingController.currentState.data?.feedItems.orEmpty() + newPageWithAds
+                val newFeedItems = params.appendData {
+                    it?.feedItems.orEmpty() + newPageWithAds
                 }
-                val feedDataState = FeedData(
-                    feedItems = newFeedItems,
-                    schedule = schedule
-                )
-                ScreenStateAction.Data(feedDataState, newPage.isNotEmpty())
+
+                params.toDataAction(newPage.isNotEmpty()) {
+                    FeedData(
+                        feedItems = newFeedItems,
+                        schedule = schedule
+                    )
+                }
             }.onFailure {
                 if (params.isFirstPage) {
                     errorHandler.handle(it)

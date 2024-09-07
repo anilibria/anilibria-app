@@ -28,6 +28,10 @@ fun <T> PageLoaderState<List<T>>.needShowListError(): Boolean {
     return isFirstPage && error != null && !needShowListData() && !emptyLoading && !initialState
 }
 
+fun <T> PageLoaderState<T>.needShowPlaceholder(dataCondition: (T?) -> Boolean = { it != null }): Boolean {
+    return !needShowData(dataCondition) && !emptyLoading && !initialState
+}
+
 fun <T, R> PageLoaderState<T>.mapData(
     newDataMapper: (T) -> R
 ): PageLoaderState<R> = PageLoaderState(
@@ -49,13 +53,16 @@ fun <T> PageLoaderState<T>.applyAction(
             emptyLoading = true,
             error = null
         )
+
         is PageLoaderAction.MoreLoading -> copy(
             moreLoading = true,
             error = null
         )
+
         is PageLoaderAction.Refresh -> copy(
             refreshLoading = true
         )
+
         is PageLoaderAction.Data -> copy(
             emptyLoading = false,
             refreshLoading = false,
@@ -64,10 +71,12 @@ fun <T> PageLoaderState<T>.applyAction(
             data = action.data,
             error = null
         )
+
         is PageLoaderAction.DataModify -> copy(
             data = action.data,
             error = null
         )
+
         is PageLoaderAction.Error -> copy(
             emptyLoading = false,
             refreshLoading = false,

@@ -11,12 +11,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import ru.radiationx.data.apinext.models.Genre
 import ru.radiationx.data.apinext.models.enums.CollectionType
+import ru.radiationx.data.apinext.models.filters.FormItem
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.CollectionsInteractor
 import ru.radiationx.data.interactors.FilterForm
 import ru.radiationx.data.interactors.FilterInteractor
 import ru.radiationx.data.interactors.FilterType
+import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
 import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
@@ -24,8 +27,8 @@ import toothpick.InjectConstructor
 
 data class FilterExtra(
     val type: FilterType,
-    val genre: String?
-)
+    val genre: Genre?
+) : QuillExtra
 
 @InjectConstructor
 class FilterViewModel(
@@ -58,12 +61,19 @@ class FilterViewModel(
     val collections = _collections.asStateFlow()
 
     init {
+        argExtra.genre?.also { genre ->
+            updateForm { it.copy(genres = it.genres.plus(FormItem.Genre(genre.id))) }
+        }
         initCollections()
 
         _loaderArg
             .drop(1)
             .onEach { releasesLoader.refresh(it) }
             .launchIn(viewModelScope)
+    }
+
+    private fun updateForm(block: (FilterForm) -> FilterForm) {
+        _loaderArg.update { it.copy(form = block(it.form)) }
     }
 
     fun selectCollection(type: CollectionType?) {

@@ -49,7 +49,7 @@ fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {
     val releaseStatus = toStatus()
     val releaseStatusHtml = "<b>Состояние релиза:</b> $releaseStatus"
     val genresHtml = "<b>Жанры:</b> " + genres.joinToString {
-        val value = it.htmlEncode()
+        val value = it.name.htmlEncode()
         "<a href=\"${ReleaseInfoState.TAG_GENRE}_$value\">${value.capitalizeDefault()}</a>"
     }
     val arrHtml = listOfNotNull(

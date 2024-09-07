@@ -1,5 +1,6 @@
 package ru.radiationx.data.apinext
 
+import anilibria.api.genres.models.GenreResponse
 import anilibria.api.shared.UserResponse
 import anilibria.api.shared.release.ReleaseEpisodeResponse
 import anilibria.api.shared.release.ReleaseMemberResponse
@@ -7,6 +8,7 @@ import anilibria.api.shared.release.ReleaseNameResponse
 import anilibria.api.shared.release.ReleaseResponse
 import anilibria.api.shared.release.ReleaseSponsorResponse
 import anilibria.api.shared.release.ReleaseTorrentResponse
+import ru.radiationx.data.apinext.models.Genre
 import ru.radiationx.data.apinext.models.ReleaseMember
 import ru.radiationx.data.apinext.models.ReleaseName
 import ru.radiationx.data.apinext.models.ReleaseSponsor
@@ -20,6 +22,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.RutubeEpisode
 import ru.radiationx.data.entity.domain.release.TorrentItem
 import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.entity.domain.types.GenreId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.types.TorrentId
@@ -155,6 +158,8 @@ fun ReleaseTorrentResponse.toDomain(releaseId: ReleaseId): TorrentItem {
     )
 }
 
+fun GenreResponse.toDomain(): Genre = Genre(GenreId(id), name)
+
 fun ReleaseResponse.toDomain(): Release {
     val releaseId = ReleaseId(id = id)
     return Release(
@@ -182,7 +187,7 @@ fun ReleaseResponse.toDomain(): Release {
         isBlockedByCopyrights = isBlockedByCopyrights,
         webPlayer = externalPlayer?.ifEmpty { null },
 
-        genres = genres?.map { it.name }.orEmpty(),
+        genres = genres?.map { it.toDomain() }.orEmpty(),
         members = members?.map { it.toDomain() }.orEmpty(),
         sponsor = sponsor?.toDomain(),
         episodes = episodes?.mapNotNull { it.toEpisode(releaseId) }.orEmpty(),

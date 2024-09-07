@@ -8,6 +8,7 @@ import ru.radiationx.data.apinext.models.filters.CollectionsFilterForm
 import ru.radiationx.data.apinext.models.filters.FavoritesFilterData
 import ru.radiationx.data.apinext.models.filters.FavoritesFilterForm
 import ru.radiationx.data.apinext.models.filters.FilterItem
+import ru.radiationx.data.apinext.models.filters.FormItem
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.repository.CatalogRepository
@@ -202,28 +203,28 @@ data class FilterData(
 )
 
 data class FilterForm(
-    val query: String?,
-    val ageRatings: List<FilterItem.Value>?,
-    val genres: List<FilterItem.Genre>?,
-    val productionStatuses: List<FilterItem.Value>?,
-    val publishStatuses: List<FilterItem.Value>?,
-    val types: List<FilterItem.Value>?,
-    val seasons: List<FilterItem.Value>?,
-    val sorting: FilterItem.Value?,
-    val years: List<FilterItem.Year>?,
-    val yearsRange: Pair<FilterItem.Year, FilterItem.Year>?
+    val query: String,
+    val ageRatings: Set<FormItem.Value>,
+    val genres: Set<FormItem.Genre>,
+    val productionStatuses: Set<FormItem.Value>,
+    val publishStatuses: Set<FormItem.Value>,
+    val types: Set<FormItem.Value>,
+    val seasons: Set<FormItem.Value>,
+    val sorting: FormItem.Value?,
+    val years: Set<FormItem.Year>,
+    val yearsRange: Pair<FormItem.Year, FormItem.Year>?
 ) {
     companion object {
         fun empty(): FilterForm = FilterForm(
-            query = null,
-            ageRatings = null,
-            genres = null,
-            productionStatuses = null,
-            publishStatuses = null,
-            types = null,
-            seasons = null,
+            query = "",
+            ageRatings = emptySet(),
+            genres = emptySet(),
+            productionStatuses = emptySet(),
+            publishStatuses = emptySet(),
+            types = emptySet(),
+            seasons = emptySet(),
             sorting = null,
-            years = null,
+            years = emptySet(),
             yearsRange = null
         )
     }

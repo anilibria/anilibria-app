@@ -26,8 +26,8 @@ class DetailDataConverter {
             id = id,
             titleRu = names.main,
             titleEn = names.english,
-            extra = listOf(
-                genres.firstOrNull(),
+            extra = listOfNotNull(
+                genres.firstOrNull()?.name,
                 "$year ${season.orEmpty()}",
                 types.joinToString(),
                 "Серий: ${episodes.ifEmpty { null }?.size ?: "Не доступно"}"

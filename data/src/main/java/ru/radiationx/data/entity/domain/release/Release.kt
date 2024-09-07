@@ -2,6 +2,7 @@ package ru.radiationx.data.entity.domain.release
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.radiationx.data.apinext.models.Genre
 import ru.radiationx.data.apinext.models.ReleaseMember
 import ru.radiationx.data.apinext.models.ReleaseName
 import ru.radiationx.data.apinext.models.ReleaseSponsor
@@ -41,7 +42,7 @@ data class Release(
     val webPlayer: String?,
 
     // semi full
-    val genres: List<String>,
+    val genres: List<Genre>,
 
     // full
     val members: List<ReleaseMember>,

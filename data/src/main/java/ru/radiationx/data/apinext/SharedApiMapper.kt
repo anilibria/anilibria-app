@@ -1,6 +1,6 @@
 package ru.radiationx.data.apinext
 
-import ru.radiationx.data.apinext.models.filters.FilterItem
+import ru.radiationx.data.apinext.models.filters.FormItem
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -9,16 +9,16 @@ fun String.apiDateToDate(): Date {
     return dateFormat.parse(this)
 }
 
-fun List<FilterItem>.toListQuery(): String {
+fun Iterable<FormItem>.toListQuery(): String {
     return joinToString(",") { filterItem ->
         filterItem.toQuery()
     }
 }
 
-fun FilterItem.toQuery(): String {
+fun FormItem.toQuery(): String {
     return when (this) {
-        is FilterItem.Genre -> id.toString()
-        is FilterItem.Value -> value
-        is FilterItem.Year -> year.toString()
+        is FormItem.Genre -> id.toString()
+        is FormItem.Value -> value
+        is FormItem.Year -> year.toString()
     }
 }

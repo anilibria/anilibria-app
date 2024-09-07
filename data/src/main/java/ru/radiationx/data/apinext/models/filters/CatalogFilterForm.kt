@@ -1,13 +1,13 @@
 package ru.radiationx.data.apinext.models.filters
 
 data class CatalogFilterForm(
-    val query: String?,
-    val ageRatings: List<FilterItem.Value>?,
-    val genres: List<FilterItem.Genre>?,
-    val productionStatuses: List<FilterItem.Value>?,
-    val publishStatuses: List<FilterItem.Value>?,
-    val types: List<FilterItem.Value>?,
-    val seasons: List<FilterItem.Value>?,
-    val sorting: FilterItem.Value?,
-    val yearsRange: Pair<FilterItem.Year, FilterItem.Year>?
+    val query: String,
+    val ageRatings: Set<FormItem.Value>,
+    val genres: Set<FormItem.Genre>,
+    val productionStatuses: Set<FormItem.Value>,
+    val publishStatuses: Set<FormItem.Value>,
+    val types: Set<FormItem.Value>,
+    val seasons: Set<FormItem.Value>,
+    val sorting: FormItem.Value?,
+    val yearsRange: Pair<FormItem.Year, FormItem.Year>?
 )

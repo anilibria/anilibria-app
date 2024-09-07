@@ -58,13 +58,13 @@ class CollectionsApiDataSource(
             .toDomain { it.toDomain() }
     }
 
-    suspend fun getReleaseIds(): List<CollectionReleaseId> {
+    suspend fun getReleaseIds(): Set<CollectionReleaseId> {
         return api.getIds().map {
             CollectionReleaseId(
                 id = ReleaseId(it.releaseId),
                 type = it.typeOfCollection.toCollectionType()
             )
-        }
+        }.toSet()
     }
 
     suspend fun deleteRelease(releaseId: ReleaseId) {

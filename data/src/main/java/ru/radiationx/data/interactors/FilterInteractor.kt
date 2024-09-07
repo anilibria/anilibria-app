@@ -68,11 +68,11 @@ class FilterInteractor(
     }
 
     suspend fun getReleases(
-        type: FilterType,
+        filterType: FilterType,
         page: Int,
         form: FilterForm,
         collectionType: CollectionType?
-    ): Paginated<Release> = when (type) {
+    ): Paginated<Release> = when (filterType) {
         FilterType.Collections -> {
             requireNotNull(collectionType) {
                 "CollectionType is null"

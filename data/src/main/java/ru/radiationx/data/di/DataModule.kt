@@ -131,6 +131,7 @@ import ru.radiationx.data.di.providers.SimpleOkHttpProvider
 import ru.radiationx.data.downloader.RemoteFileHolder
 import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.RemoteFileStorage
+import ru.radiationx.data.interactors.CollectionsInteractor
 import ru.radiationx.data.interactors.FavoritesInteractor
 import ru.radiationx.data.interactors.FilterInteractor
 import ru.radiationx.data.interactors.HistoryRuntimeCache
@@ -343,6 +344,7 @@ class DataModule(context: Context) : QuillModule() {
         single<CollectionsRepository>()
 
         single<FavoritesInteractor>()
+        single<CollectionsInteractor>()
         single<FilterInteractor>()
     }
 

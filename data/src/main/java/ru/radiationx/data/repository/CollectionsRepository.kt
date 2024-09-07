@@ -33,7 +33,7 @@ class CollectionsRepository(
         }
     }
 
-    suspend fun getReleaseIds(): List<CollectionReleaseId> {
+    suspend fun getReleaseIds(): Set<CollectionReleaseId> {
         return withContext(Dispatchers.IO) {
             api.getReleaseIds()
         }

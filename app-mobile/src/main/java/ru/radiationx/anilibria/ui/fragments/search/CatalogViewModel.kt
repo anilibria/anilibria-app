@@ -67,9 +67,9 @@ class CatalogViewModel(
     private val remindText =
         "Если не удаётся найти нужный релиз, попробуйте искать через Google или Yandex c приставкой \"AniLibria\".\nПо ссылке в поисковике можно будет открыть приложение."
 
-    private val pageLoader = PageLoader(viewModelScope) {
-        submitPageAnalytics(it.page)
-        getDataSource(it)
+    private val pageLoader = PageLoader<Unit, List<Release>>(viewModelScope) {arg->
+        submitPageAnalytics(page)
+        getDataSource(this)
     }
 
 
@@ -93,7 +93,7 @@ class CatalogViewModel(
         initSeasons()
         observeSearchRemind()
         observeLoadingState()
-        pageLoader.refresh()
+        pageLoader.refresh(Unit)
     }
 
     private fun initGenres() {
@@ -192,7 +192,7 @@ class CatalogViewModel(
     }
 
     fun refreshReleases() {
-        pageLoader.refresh()
+        pageLoader.refresh(Unit)
     }
 
     fun loadMore() {

@@ -57,9 +57,11 @@ class FilterInteractor(
         FilterType.Collections -> {
             collectionsRepository.getFilterData().toData(type, collectionsFields)
         }
+
         FilterType.Favorites -> {
             favoriteRepository.getFilterData().toData(type, favoritesFields)
         }
+
         FilterType.Catalog -> {
             catalogRepository.getFilterData().toData(type, catalogFields)
         }
@@ -210,6 +212,21 @@ data class FilterForm(
     val sorting: FilterItem.Value?,
     val years: List<FilterItem.Year>?,
     val yearsRange: Pair<FilterItem.Year, FilterItem.Year>?
-)
+) {
+    companion object {
+        fun empty(): FilterForm = FilterForm(
+            query = null,
+            ageRatings = null,
+            genres = null,
+            productionStatuses = null,
+            publishStatuses = null,
+            types = null,
+            seasons = null,
+            sorting = null,
+            years = null,
+            yearsRange = null
+        )
+    }
+}
 
 

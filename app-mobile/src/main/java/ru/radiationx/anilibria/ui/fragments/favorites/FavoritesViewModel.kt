@@ -31,6 +31,7 @@ import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderAction
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderParams
 import ru.radiationx.shared_app.controllers.loaderpage.mapData
+import ru.radiationx.shared_app.controllers.loaderpage.refresh
 import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import toothpick.InjectConstructor
 
@@ -50,8 +51,8 @@ class FavoritesViewModel(
 ) : ViewModel() {
 
     private val pageLoader = PageLoader(viewModelScope) {
-        submitPageAnalytics(it.page)
-        getDataSource(it)
+        submitPageAnalytics(page)
+        getDataSource(this)
     }
 
     private val _state = MutableStateFlow(FavoritesScreenState())

@@ -45,10 +45,10 @@ class HistoryViewModel(
 
     private fun pageToCount(page: Int) = page * 50
 
-    private val pageLoader = PageLoader(viewModelScope) {
-        val count = pageToCount(it.page)
+    private val pageLoader = PageLoader<Unit, List<Release>>(viewModelScope) {arg->
+        val count = pageToCount(page)
         val items = historyRepository.getReleases(count)
-        it.toDataAction(items.size >= count) { items }
+        toDataAction(items.size >= count) { items }
     }
 
     private val _state = MutableStateFlow(HistoryScreenState())
@@ -103,7 +103,7 @@ class HistoryViewModel(
             }
             .launchIn(viewModelScope)
 
-        pageLoader.refresh()
+        pageLoader.refresh(Unit)
     }
 
     fun onBackPressed() {
@@ -111,7 +111,7 @@ class HistoryViewModel(
     }
 
     fun refresh() {
-        pageLoader.refresh()
+        pageLoader.refresh(Unit)
     }
 
     fun loadMore() {

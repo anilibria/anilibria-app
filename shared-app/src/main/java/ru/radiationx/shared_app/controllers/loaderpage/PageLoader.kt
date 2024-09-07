@@ -2,7 +2,6 @@ package ru.radiationx.shared_app.controllers.loaderpage
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -10,11 +9,13 @@ import kotlinx.coroutines.launch
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 
-class PageLoader<T>(
+class PageLoader<ARG, T>(
     private val coroutineScope: CoroutineScope,
     private val firstPage: Int = 1,
-    private val dataSource: suspend (PageLoaderParams<T>) -> PageLoaderAction.Data<T>
+    private val dataSource: suspend PageLoaderParams<T>.(ARG) -> PageLoaderAction.Data<T>
 ) {
+
+    private val _currentArg = MutableStateFlow<ARG?>(null)
 
     private val _currentPage = MutableStateFlow(firstPage)
 
@@ -36,13 +37,14 @@ class PageLoader<T>(
         _state.value = PageLoaderState()
     }
 
-    fun refresh() {
-        loadPage(firstPage)
+    fun refresh(arg: ARG) {
+        loadPage(firstPage, arg)
     }
 
     fun loadMore() {
         if (_state.value.hasMorePages) {
-            loadPage(_currentPage.value + 1)
+            val arg = _currentArg.value ?: return
+            loadPage(_currentPage.value + 1, arg)
         }
     }
 
@@ -64,7 +66,7 @@ class PageLoader<T>(
         modifyData(newData)
     }
 
-    private fun loadPage(page: Int) {
+    private fun loadPage(page: Int, arg: ARG) {
         if (loadingJob?.isActive == true) {
             return
         }
@@ -83,9 +85,10 @@ class PageLoader<T>(
 
         loadingJob = coroutineScope.launch {
             coRunCatching {
-                dataSource.invoke(params)
+                dataSource.invoke(params, arg)
             }.onSuccess { dataAction ->
                 _currentPage.value = page
+                _currentArg.value = arg
                 updateStateByAction(dataAction, params)
             }.onFailure { error ->
                 Timber.e("page=$page", error)
@@ -114,4 +117,47 @@ class PageLoader<T>(
         }
     }
 
+    private fun <T> PageLoaderState<T>.applyAction(
+        action: PageLoaderAction<T>,
+        params: PageLoaderParams<T>
+    ): PageLoaderState<T> = when (action) {
+        is PageLoaderAction.EmptyLoading -> copy(
+            emptyLoading = true,
+            error = null
+        )
+
+        is PageLoaderAction.MoreLoading -> copy(
+            moreLoading = true,
+            error = null
+        )
+
+        is PageLoaderAction.Refresh -> copy(
+            refreshLoading = true
+        )
+
+        is PageLoaderAction.Data -> copy(
+            emptyLoading = false,
+            refreshLoading = false,
+            moreLoading = false,
+            hasMorePages = action.hasMoreData ?: hasMorePages,
+            data = action.data,
+            error = null
+        )
+
+        is PageLoaderAction.DataModify -> copy(
+            data = action.data,
+            error = null
+        )
+
+        is PageLoaderAction.Error -> copy(
+            emptyLoading = false,
+            refreshLoading = false,
+            moreLoading = false,
+            data = data.takeIf { !params.isFirstPage },
+            error = action.error
+        )
+    }.copy(
+        initialState = false,
+        isFirstPage = params.isFirstPage
+    )
 }

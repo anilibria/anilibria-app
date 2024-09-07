@@ -123,9 +123,9 @@ class FeedViewModel(
         FeedAppWarningType.WARNING
     )
 
-    private val pageLoader = PageLoader(viewModelScope) {
-        submitPageAnalytics(it.page)
-        getDataSource(it)
+    private val pageLoader = PageLoader<Unit, FeedData>(viewModelScope) { arg ->
+        submitPageAnalytics(page)
+        getDataSource(this)
     }
 
     private val _state = MutableStateFlow(FeedScreenState())
@@ -211,11 +211,11 @@ class FeedViewModel(
             }
             .launchIn(viewModelScope)
 
-        pageLoader.refresh()
+        pageLoader.refresh(Unit)
     }
 
     fun refreshReleases() {
-        pageLoader.refresh()
+        pageLoader.refresh(Unit)
     }
 
     fun loadMore() {

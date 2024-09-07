@@ -132,6 +132,7 @@ import ru.radiationx.data.downloader.RemoteFileHolder
 import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.RemoteFileStorage
 import ru.radiationx.data.interactors.FavoritesInteractor
+import ru.radiationx.data.interactors.FilterInteractor
 import ru.radiationx.data.interactors.HistoryRuntimeCache
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
@@ -139,7 +140,9 @@ import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.migration.MigrationDataSourceImpl
 import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.repository.CatalogRepository
 import ru.radiationx.data.repository.CheckerRepository
+import ru.radiationx.data.repository.CollectionsRepository
 import ru.radiationx.data.repository.ConfigurationRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FavoriteRepository
@@ -336,7 +339,11 @@ class DataModule(context: Context) : QuillModule() {
         single<VideosApiDataSource>()
 
         single<FranchisesRepository>()
+        single<CatalogRepository>()
+        single<CollectionsRepository>()
+
         single<FavoritesInteractor>()
+        single<FilterInteractor>()
     }
 
     @InjectConstructor

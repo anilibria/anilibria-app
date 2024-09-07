@@ -163,6 +163,8 @@ class SearchCatalogFragment :
                     androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
                 behavior = SearchBehavior<SearchMenuItem>()
             }
+
+
         (searchView as SearchLayout?)?.apply {
             setTextHint("Название релиза")
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {

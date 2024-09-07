@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingState
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderState
 
 data class SearchScreenState(
     val remindText: String? = null,
-    val data: DataLoadingState<List<ReleaseItemState>> = DataLoadingState()
+    val data: PageLoaderState<List<ReleaseItemState>> = PageLoaderState()
 )

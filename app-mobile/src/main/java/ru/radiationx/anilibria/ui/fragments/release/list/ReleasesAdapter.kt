@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingState
-import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -17,6 +15,8 @@ import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderState
+import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
 /* Created by radiationx on 31.10.17. */
 
@@ -50,7 +50,7 @@ class ReleasesAdapter(
     }
 
     fun bindState(
-        loadingState: DataLoadingState<List<ReleaseItemState>>,
+        loadingState: PageLoaderState<List<ReleaseItemState>>,
         withExport: Boolean = false,
     ) {
         val newItems = mutableListOf<ListItem>()
@@ -82,7 +82,7 @@ class ReleasesAdapter(
     }
 
 
-    private fun getPlaceholder(loadingState: DataLoadingState<List<ReleaseItemState>>): PlaceholderListItem? {
+    private fun getPlaceholder(loadingState: PageLoaderState<List<ReleaseItemState>>): PlaceholderListItem? {
         val needPlaceholder = loadingState.needShowPlaceholder { it?.isNotEmpty() ?: false }
         return when {
             needPlaceholder && loadingState.error != null -> errorPlaceHolder

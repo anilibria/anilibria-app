@@ -13,8 +13,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
@@ -28,6 +26,7 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.PageRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
+import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
 import timber.log.Timber
 import toothpick.InjectConstructor
 
@@ -54,8 +53,8 @@ class VkCommentsViewModel(
     private var hasVkBlockedError = false
     private var vkBlockedErrorClosed = false
 
-    private val loadingController = DataLoadingController(viewModelScope) {
-        getDataSource().let { ScreenStateAction.Data(it, false) }
+    private val loader = SingleLoader(viewModelScope) {
+        getDataSource()
     }
 
     private val _state = MutableStateFlow(VkCommentsScreenState())
@@ -75,7 +74,7 @@ class VkCommentsViewModel(
             .onEach { _reloadEvent.set(Unit) }
             .launchIn(viewModelScope)
 
-        loadingController
+        loader
             .observeState()
             .onEach { loadingData ->
                 _state.update { it.copy(data = loadingData) }
@@ -94,12 +93,12 @@ class VkCommentsViewModel(
             }
         }
 
-        loadingController.refresh()
+        loader.refresh()
     }
 
 
     fun refresh() {
-        loadingController.refresh()
+        loader.refresh()
     }
 
     fun pageReload() {

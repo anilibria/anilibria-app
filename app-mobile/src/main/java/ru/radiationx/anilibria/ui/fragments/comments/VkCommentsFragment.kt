@@ -17,7 +17,6 @@ import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.FragmentVkCommentsBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
-import ru.radiationx.anilibria.model.loading.hasAnyLoading
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
@@ -151,7 +150,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
     }
 
     private fun showState(state: VkCommentsScreenState) {
-        val anyLoading = state.data.hasAnyLoading() || state.pageState == WebPageViewState.Loading
+        val anyLoading = state.data.loading || state.pageState == WebPageViewState.Loading
         binding.progressBarWv.isVisible = anyLoading
 
         binding.webView.isVisible = state.pageState == WebPageViewState.Success && !anyLoading

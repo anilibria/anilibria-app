@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
@@ -14,6 +13,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
+import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
 /**
  * Created by radiationx on 04.03.18.

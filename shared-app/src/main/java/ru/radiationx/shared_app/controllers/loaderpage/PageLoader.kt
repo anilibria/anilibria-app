@@ -2,11 +2,12 @@ package ru.radiationx.shared_app.controllers.loaderpage
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.radiationx.shared_app.controllers.actionsingle.SingleEventError
-import ru.radiationx.shared_app.controllers.actionsingle.SingleEventSuccess
 import timber.log.Timber
 
 class PageLoader<T>(
@@ -15,23 +16,23 @@ class PageLoader<T>(
     private val dataSource: suspend (PageLoaderParams<T>) -> PageLoaderAction.Data<T>
 ) {
 
-    private var currentPage = firstPage
+    private val _currentPage = MutableStateFlow(firstPage)
 
     private var loadingJob: Job? = null
 
     private val _state = MutableStateFlow(PageLoaderState<T>())
-    val state = _state.asStateFlow()
 
-    private val _actionSuccess =
-        MutableSharedFlow<SingleEventSuccess<PageLoaderParams<T>, PageLoaderAction.Data<T>>>()
-    val actionSuccess = _actionSuccess.asSharedFlow()
+    fun observePage(): StateFlow<Int> {
+        return _currentPage
+    }
 
-    private val _actionError = MutableSharedFlow<SingleEventError<PageLoaderParams<T>>>()
-    val actionError = _actionError.asSharedFlow()
+    fun observeState(): StateFlow<PageLoaderState<T>> {
+        return _state
+    }
 
     fun reset() {
         release()
-        currentPage = firstPage
+        _currentPage.value = firstPage
         _state.value = PageLoaderState()
     }
 
@@ -41,7 +42,7 @@ class PageLoader<T>(
 
     fun loadMore() {
         if (_state.value.hasMorePages) {
-            loadPage(currentPage + 1)
+            loadPage(_currentPage.value + 1)
         }
     }
 
@@ -49,9 +50,13 @@ class PageLoader<T>(
         loadingJob?.cancel()
     }
 
+    fun getData(): T? {
+        return _state.value.data
+    }
+
     fun modifyData(data: T?) {
         val action = PageLoaderAction.DataModify(data)
-        updateStateByAction(action, createPageLoadParams(currentPage))
+        updateStateByAction(action, createPageLoadParams(_currentPage.value))
     }
 
     fun modifyData(block: (T) -> T) {
@@ -80,13 +85,11 @@ class PageLoader<T>(
             coRunCatching {
                 dataSource.invoke(params)
             }.onSuccess { dataAction ->
-                currentPage = page
+                _currentPage.value = page
                 updateStateByAction(dataAction, params)
-                _actionSuccess.emit(SingleEventSuccess(params, dataAction))
             }.onFailure { error ->
                 Timber.e("page=$page", error)
                 updateStateByAction(PageLoaderAction.Error(error), params)
-                _actionError.emit(SingleEventError(params, error))
             }
         }
     }

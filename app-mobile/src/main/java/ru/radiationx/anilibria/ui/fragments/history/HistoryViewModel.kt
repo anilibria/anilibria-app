@@ -14,9 +14,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.mapData
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -28,6 +25,9 @@ import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared_app.common.SystemUtils
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
+import ru.radiationx.shared_app.controllers.loaderpage.mapData
+import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import toothpick.InjectConstructor
 
 /**
@@ -45,10 +45,10 @@ class HistoryViewModel(
 
     private fun pageToCount(page: Int) = page * 50
 
-    private val loadingController = DataLoadingController(viewModelScope) {
+    private val pageLoader = PageLoader(viewModelScope) {
         val count = pageToCount(it.page)
         val items = historyRepository.getReleases(count)
-        ScreenStateAction.Data(items, items.size >= count)
+        it.toDataAction(items.size >= count) { items }
     }
 
     private val _state = MutableStateFlow(HistoryScreenState())
@@ -59,7 +59,7 @@ class HistoryViewModel(
     private val updates = emptyMap<ReleaseId, ReleaseUpdate>()
 
     init {
-        loadingController
+        pageLoader
             .observeState()
             .map { state ->
                 state.mapData { data ->
@@ -73,19 +73,19 @@ class HistoryViewModel(
             }
             .launchIn(viewModelScope)
 
-        loadingController
+        pageLoader
             .observePage()
             .flatMapLatest { page ->
                 historyRepository.observeReleases(pageToCount(page))
             }
             .onEach { releases ->
-                loadingController.modifyData(releases)
+                pageLoader.modifyData(releases)
             }
             .launchIn(viewModelScope)
 
         combine(
             queryFlow,
-            loadingController.observeState().map { it.data.orEmpty() }.distinctUntilChanged()
+            pageLoader.observeState().map { it.data.orEmpty() }.distinctUntilChanged()
         ) { query, releases ->
             if (query.isEmpty()) {
                 return@combine emptyList()
@@ -103,7 +103,7 @@ class HistoryViewModel(
             }
             .launchIn(viewModelScope)
 
-        loadingController.refresh()
+        pageLoader.refresh()
     }
 
     fun onBackPressed() {
@@ -111,15 +111,15 @@ class HistoryViewModel(
     }
 
     fun refresh() {
-        loadingController.refresh()
+        pageLoader.refresh()
     }
 
     fun loadMore() {
-        loadingController.loadMore()
+        pageLoader.loadMore()
     }
 
     private fun findRelease(id: ReleaseId): Release? {
-        return loadingController.currentState.data?.find { it.id == id }
+        return pageLoader.getData()?.find { it.id == id }
     }
 
     fun localSearch(query: String) {

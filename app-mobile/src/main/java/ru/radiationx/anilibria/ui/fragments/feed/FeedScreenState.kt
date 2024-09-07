@@ -4,11 +4,11 @@ import ru.radiationx.anilibria.ads.NativeAdItem
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.FeedItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingState
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderState
 
 
 data class FeedScreenState(
-    val data: DataLoadingState<FeedDataState> = DataLoadingState(),
+    val data: PageLoaderState<FeedDataState> = PageLoaderState(),
     val warnings: List<FeedAppWarning> = emptyList(),
     val donationCardItemState: DonationCardItemState? = null
 )

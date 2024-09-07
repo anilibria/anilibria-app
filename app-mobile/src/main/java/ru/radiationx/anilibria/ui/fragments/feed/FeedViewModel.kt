@@ -123,7 +123,7 @@ class FeedViewModel(
         FeedAppWarningType.WARNING
     )
 
-    private val pageLoader = PageLoader<Unit, FeedData>(viewModelScope) { arg ->
+    private val pageLoader = PageLoader<Unit, FeedData>(viewModelScope) {
         submitPageAnalytics(page)
         getDataSource(this)
     }
@@ -211,7 +211,7 @@ class FeedViewModel(
             }
             .launchIn(viewModelScope)
 
-        pageLoader.refresh(Unit)
+        refreshReleases()
     }
 
     fun refreshReleases() {

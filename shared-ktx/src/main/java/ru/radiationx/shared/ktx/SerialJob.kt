@@ -11,17 +11,6 @@ class SerialJob {
 
     private var currentJob: Job? = null
 
-    fun set(job: Job) {
-        currentJob?.cancel()
-        currentJob = job
-    }
-
-    fun get(): Job? = currentJob
-
-    fun cancel() {
-        currentJob?.takeIf { !it.isCancelled }?.cancel()
-    }
-
     fun launch(
         coroutineScope: CoroutineScope,
         context: CoroutineContext = EmptyCoroutineContext,
@@ -30,5 +19,14 @@ class SerialJob {
     ) {
         val job = coroutineScope.launch(context, start, block)
         set(job)
+    }
+
+    fun cancel() {
+        currentJob?.cancel()
+    }
+
+    private fun set(job: Job) {
+        cancel()
+        currentJob = job
     }
 }

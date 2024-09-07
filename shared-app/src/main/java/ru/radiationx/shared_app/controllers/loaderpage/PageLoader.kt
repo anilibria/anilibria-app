@@ -1,11 +1,10 @@
 package ru.radiationx.shared_app.controllers.loaderpage
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import ru.radiationx.shared.ktx.SerialJob
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 
@@ -19,7 +18,7 @@ class PageLoader<ARG, T>(
 
     private val _currentPage = MutableStateFlow(firstPage)
 
-    private var loadingJob: Job? = null
+    private val loadingJob = SerialJob()
 
     private val _state = MutableStateFlow(PageLoaderState<T>())
 
@@ -49,7 +48,7 @@ class PageLoader<ARG, T>(
     }
 
     fun release() {
-        loadingJob?.cancel()
+        loadingJob.cancel()
     }
 
     fun getData(): T? {
@@ -67,10 +66,6 @@ class PageLoader<ARG, T>(
     }
 
     private fun loadPage(page: Int, arg: ARG) {
-        if (loadingJob?.isActive == true) {
-            return
-        }
-
         val params = createPageLoadParams(page)
 
         val startLoadingAction: PageLoaderAction<T>? = when {
@@ -83,7 +78,7 @@ class PageLoader<ARG, T>(
             updateStateByAction(startLoadingAction, params)
         }
 
-        loadingJob = coroutineScope.launch {
+        loadingJob.launch(coroutineScope) {
             coRunCatching {
                 dataSource.invoke(params, arg)
             }.onSuccess { dataAction ->
@@ -91,7 +86,7 @@ class PageLoader<ARG, T>(
                 _currentArg.value = arg
                 updateStateByAction(dataAction, params)
             }.onFailure { error ->
-                Timber.e("page=$page", error)
+                Timber.e("page=$page, arg=$arg", error)
                 updateStateByAction(PageLoaderAction.Error(error), params)
             }
         }

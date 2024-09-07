@@ -1,6 +1,10 @@
 package ru.radiationx.data.apinext.models.enums
 
 sealed interface CollectionType {
+    companion object {
+        val knownTypes = setOf(Planned, Watched, Watching, Postponed, Abandoned)
+    }
+
     data object Planned : CollectionType
     data object Watched : CollectionType
     data object Watching : CollectionType

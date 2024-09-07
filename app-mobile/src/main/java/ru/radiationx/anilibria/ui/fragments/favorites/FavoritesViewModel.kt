@@ -31,7 +31,6 @@ import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderAction
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderParams
 import ru.radiationx.shared_app.controllers.loaderpage.mapData
-import ru.radiationx.shared_app.controllers.loaderpage.refresh
 import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import toothpick.InjectConstructor
 
@@ -50,7 +49,7 @@ class FavoritesViewModel(
     private val systemUtils: SystemUtils,
 ) : ViewModel() {
 
-    private val pageLoader = PageLoader(viewModelScope) {
+    private val pageLoader = PageLoader<Unit, List<Release>>(viewModelScope) {
         submitPageAnalytics(page)
         getDataSource(this)
     }
@@ -100,7 +99,7 @@ class FavoritesViewModel(
     }
 
     fun refreshReleases() {
-        pageLoader.refresh()
+        pageLoader.refresh(Unit)
     }
 
     fun loadMore() {

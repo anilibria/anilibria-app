@@ -33,7 +33,7 @@ class YoutubeViewModel(
     private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
 ) : ViewModel() {
 
-    private val pageLoader = PageLoader<Unit, List<YoutubeItem>>(viewModelScope) { arg ->
+    private val pageLoader = PageLoader<Unit, List<YoutubeItem>>(viewModelScope) {
         submitPageAnalytics(page)
         getDataSource(this)
     }
@@ -57,7 +57,7 @@ class YoutubeViewModel(
                 }
             }
             .launchIn(viewModelScope)
-        pageLoader.refresh(Unit)
+        refresh()
     }
 
     fun refresh() {

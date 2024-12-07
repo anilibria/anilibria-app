@@ -1,0 +1,989 @@
+Index: swagger.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/swagger.json b/swagger.json
+--- a/swagger.json	(revision 3aaf3d264869c9e4fb7fdbe2c121031c18e4151d)
++++ b/swagger.json	(revision 97d7cdd2d12920e1d42593d9800d695175e3ff4a)
+@@ -27,7 +27,6 @@
+                 ],
+                 "summary": "Запрашивает OTP",
+                 "description": "Запрашиваем новый одноразовый пароль",
+-                "operationId": "53594955e6c7f55f3787b13c20118a94",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -74,7 +73,6 @@
+                 ],
+                 "summary": "Присоединяем пользователя к выданному OTP",
+                 "description": "Присоединяем пользователя к выданному одноразовому паролю",
+-                "operationId": "7fad0328b8acfe70c095adefd72c4612",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -122,7 +120,6 @@
+                 ],
+                 "summary": "Авторизуемся по OTP",
+                 "description": "Авторизуемся по выданному одноразовому паролю",
+-                "operationId": "790d35f354c43efd3523b84a80ead587",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -177,7 +174,6 @@
+                 ],
+                 "summary": "Авторизация пользователя",
+                 "description": "Авторизация пользователя по логину и паролю. Создание сессии пользователя, выдача токена авторизации для использования в cookies или в Bearer Token",
+-                "operationId": "14fa6a915a5b4509014a513e36168abd",
+                 "requestBody": {
+                     "description": "Авторизационные данные",
+                     "required": true,
+@@ -230,7 +226,6 @@
+                 ],
+                 "summary": "Авторизация пользователя через социальные сети",
+                 "description": "Позволяет авторизовать пользователя через некоторые социальные сети",
+-                "operationId": "0095f8a8662997958527805d12c27324",
+                 "parameters": [
+                     {
+                         "name": "provider",
+@@ -267,7 +262,6 @@
+                 ],
+                 "summary": "Аутентифицировать пользователя через социальные сети",
+                 "description": "Позволяет аутентифицировать авторизованного через социальную сеть пользователя",
+-                "operationId": "42e1d4b7dc7676b933bcc6bf6a9109cf",
+                 "parameters": [
+                     {
+                         "name": "state",
+@@ -303,7 +297,6 @@
+                 ],
+                 "summary": "Деавторизация пользователя",
+                 "description": "Деавторизовать пользователя",
+-                "operationId": "132d66679910512b70001a8bb5f25141",
+                 "responses": {
+                     "200": {
+                         "description": "Результат деавторизации",
+@@ -333,7 +326,6 @@
+                 ],
+                 "summary": "Восстановление пароля",
+                 "description": "Отправление ссылки на восстановление забытого пароля",
+-                "operationId": "d549714f7696a9126c11c3254303cbe8",
+                 "requestBody": {
+                     "description": "Данные для восстановления",
+                     "required": true,
+@@ -368,7 +360,6 @@
+                 ],
+                 "summary": "Сброс и установка нового пароля",
+                 "description": "Сброс и установка нового пароля",
+-                "operationId": "96e405c4aad009c4c555165b0657b576",
+                 "requestBody": {
+                     "description": "Новые данные пользователя",
+                     "required": true,
+@@ -419,7 +410,6 @@
+                 ],
+                 "summary": "Список возрастных рейтингов в коллекциях пользователя",
+                 "description": "Возвращает список возрастных рейтингов в коллекциях текущего пользователя",
+-                "operationId": "8b157a7586e3c56605e42d0d328ad854",
+                 "responses": {
+                     "200": {
+                         "description": "Список возрастных рейтингов",
+@@ -449,7 +439,6 @@
+                 ],
+                 "summary": "Список жанров в коллекциях пользователя",
+                 "description": "Возвращает список жанров в коллекциях текущего пользователя",
+-                "operationId": "cdedb51df9d04015c63f820e18ae98d4",
+                 "responses": {
+                     "200": {
+                         "description": "Список жанров",
+@@ -479,7 +468,6 @@
+                 ],
+                 "summary": "Список типов в коллекциях пользователя",
+                 "description": "Возвращает список типов в коллекциях текущего пользователя",
+-                "operationId": "3bfa46759da920c8dfb3ab23f95b2b83",
+                 "responses": {
+                     "200": {
+                         "description": "Список типов",
+@@ -509,7 +497,6 @@
+                 ],
+                 "summary": "Список годов в коллекциях пользователя",
+                 "description": "Возвращает список годов в коллекциях текущего пользователя",
+-                "operationId": "7adae426acd92ba3f282eb1cb38ce4c4",
+                 "responses": {
+                     "200": {
+                         "description": "Список годов",
+@@ -539,7 +526,6 @@
+                 ],
+                 "summary": "Список идентификаторов релизов добавленных в коллекции",
+                 "description": "Возвращает данные по идентификаторам релизов и типов коллекций авторизованного пользователя",
+-                "operationId": "3952a0264ef53d5cebaebac72b70ea2a",
+                 "responses": {
+                     "200": {
+                         "description": "Список идентификаторов релизов и типов коллекций",
+@@ -572,7 +558,6 @@
+                 ],
+                 "summary": "Список релизов добавленных в коллекцию [GET]",
+                 "description": "Возвращает данные по релизам из определенной коллекции авторизованного пользователя",
+-                "operationId": "ff552f54874b00625454339a7c989109",
+                 "parameters": [
+                     {
+                         "$ref": "#/components/parameters/commons.v1.utils.pagination.parameters.page"
+@@ -597,7 +582,10 @@
+                         "in": "query",
+                         "description": "Список идентификаторов жанров",
+                         "required": false,
+-                        "example": "15,20"
++                        "example": "15,20",
++                        "schema": {
++                            "type": "string"
++                        }
+                     },
+                     {
+                         "name": "f[types]",
+@@ -619,14 +607,20 @@
+                         "in": "query",
+                         "description": "Минимальный год выхода релиза",
+                         "required": false,
+-                        "example": "2016, 2018, 2019"
++                        "example": "2016, 2018, 2019",
++                        "schema": {
++                            "type": "string"
++                        }
+                     },
+                     {
+                         "name": "f[search]",
+                         "in": "query",
+                         "description": "Поисковый запрос",
+                         "required": false,
+-                        "example": "Мастера меча"
++                        "example": "Мастера меча",
++                        "schema": {
++                            "type": "string"
++                        }
+                     },
+                     {
+                         "name": "f[age_ratings]",
+@@ -674,7 +668,6 @@
+                 ],
+                 "summary": "Список релизов добавленных в коллекцию [POST]",
+                 "description": "Возвращает данные по релизам из определенной коллекции авторизованного пользователя",
+-                "operationId": "713f5e158bb307116510418108b79ab2",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -772,7 +765,6 @@
+                 ],
+                 "summary": "Добавить релизы в коллекции",
+                 "description": "Добавляет релизы в соответствующие коллекции авторизованного пользователя",
+-                "operationId": "cfc448915a4cb9569951de2b0118db9d",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -786,7 +778,7 @@
+                                     ],
+                                     "properties": {
+                                         "release_id": {
+-                                            "type": "number"
++                                            "type": "integer"
+                                         },
+                                         "type_of_collection": {
+                                             "$ref": "#/components/schemas/enums.accounts.users.user.collection.type"
+@@ -831,7 +823,6 @@
+                 ],
+                 "summary": "Удалить релизы из коллекций",
+                 "description": "Удаляет релизы из соответствующих коллекций авторизованного пользователя",
+-                "operationId": "e7c7a8cb031577e009c11a5128c63191",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -844,7 +835,7 @@
+                                     ],
+                                     "properties": {
+                                         "release_id": {
+-                                            "type": "number"
++                                            "type": "integer"
+                                         }
+                                     },
+                                     "type": "object"
+@@ -888,7 +879,6 @@
+                 ],
+                 "summary": "Список возрастных рейтингов в избранном пользователя",
+                 "description": "Возвращает список возрастных рейтингов в избранном текущего пользователя",
+-                "operationId": "0079b1666727fca03a65def7b2882ce7",
+                 "responses": {
+                     "200": {
+                         "description": "Список возрастных рейтингов",
+@@ -918,7 +908,6 @@
+                 ],
+                 "summary": "Список жанров в избранном пользователя",
+                 "description": "Возвращает список жанров в избранном текущего пользователя",
+-                "operationId": "5714dc01fd354c98f2a92e9103f41df3",
+                 "responses": {
+                     "200": {
+                         "description": "Список жанров",
+@@ -948,7 +937,6 @@
+                 ],
+                 "summary": "Список опций сортировки в избранном пользователя",
+                 "description": "Возвращает список опций сортировки в избранном текущего пользователя",
+-                "operationId": "4d9e1c473afa35932a2daf2715d7657c",
+                 "responses": {
+                     "200": {
+                         "description": "Список опций сортировки",
+@@ -978,7 +966,6 @@
+                 ],
+                 "summary": "Список типов релизов в избранном пользователя",
+                 "description": "Возвращает список типов релизов в избранном текущего пользователя",
+-                "operationId": "8c7dd07d3f58867144a0fd88482aadac",
+                 "responses": {
+                     "200": {
+                         "description": "Список типов релизов",
+@@ -1008,7 +995,6 @@
+                 ],
+                 "summary": "Список годов выхода релизов в избранном пользователя",
+                 "description": "Возвращает список годов выхода релизов в избранном текущего пользователя",
+-                "operationId": "da82e99bb7f630094ff8adb44cc9da5e",
+                 "responses": {
+                     "200": {
+                         "description": "Список годов выхода релизов",
+@@ -1038,7 +1024,6 @@
+                 ],
+                 "summary": "Список идентификаторов релизов добавленных в избранное",
+                 "description": "Возвращает данные по идентификаторам релизов из избранного авторизованного пользователя",
+-                "operationId": "4706b730c52b2dfad48751c7c10757dc",
+                 "responses": {
+                     "200": {
+                         "description": "Список релизов из избранного",
+@@ -1068,7 +1053,6 @@
+                 ],
+                 "summary": "Список релизов в избранном пользователя",
+                 "description": "Возвращает данные по релизам из избранного текущего пользователя",
+-                "operationId": "5baafd8eec6b0a60ff67a4ac6038f4a9",
+                 "parameters": [
+                     {
+                         "$ref": "#/components/parameters/commons.v1.utils.pagination.parameters.page"
+@@ -1081,7 +1065,10 @@
+                         "in": "query",
+                         "description": "Года выхода релиза",
+                         "required": false,
+-                        "example": "2016, 2018, 2019"
++                        "example": "2016, 2018, 2019",
++                        "schema": {
++                            "type": "string"
++                        }
+                     },
+                     {
+                         "name": "f[types]",
+@@ -1103,14 +1090,20 @@
+                         "in": "query",
+                         "description": "Список идентификаторов жанров",
+                         "required": false,
+-                        "example": "15,20"
++                        "example": "15,20",
++                        "schema": {
++                            "type": "string"
++                        }
+                     },
+                     {
+                         "name": "f[search]",
+                         "in": "query",
+                         "description": "Поисковый запрос",
+                         "required": false,
+-                        "example": "Мастера меча"
++                        "example": "Мастера меча",
++                        "schema": {
++                            "type": "string"
++                        }
+                     },
+                     {
+                         "name": "f[sorting]",
+@@ -1170,7 +1163,6 @@
+                 ],
+                 "summary": "Список релизов в избранном пользователя",
+                 "description": "Возвращает данные по релизам из избранного текущего пользователя",
+-                "operationId": "89e379bb7614921658d8cbaa36b8cbdd",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -1270,7 +1262,6 @@
+                 ],
+                 "summary": "Добавить релизы в избранное",
+                 "description": "Добавляет релизы в избранное авторизованного пользователя",
+-                "operationId": "7050ee79698aa22d0b67d8d6a1ec5a3b",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -1320,7 +1311,6 @@
+                 ],
+                 "summary": "Удалить релизы из избранного",
+                 "description": "Удаляет релизы из избранного авторизованного пользователя",
+-                "operationId": "1d04983f0ba43d7c0ad3be4bc567de1f",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -1372,7 +1362,6 @@
+                 ],
+                 "summary": "Профиль авторизованного пользователя",
+                 "description": "Возвращает данные профиля авторизованного пользователя",
+-                "operationId": "69fcaa197a8b8cf6c6a4b8dd655ff0f2",
+                 "responses": {
+                     "200": {
+                         "description": "Данные профиля пользователя",
+@@ -1405,7 +1394,6 @@
+                 ],
+                 "summary": "Таймкоды просмотренных эпизодов",
+                 "description": "Возвращает таймкоды по прогрессу просмотренных эпизодов",
+-                "operationId": "38b0296d9cab60f12dfe352392167c79",
+                 "responses": {
+                     "200": {
+                         "description": "Список таймкодов просмотренных эпизодов",
+@@ -1436,7 +1424,6 @@
+                 ],
+                 "summary": "Обновление таймкодов прогресса просмотренного эпизода",
+                 "description": "Обновляет таймкоды просмотренных эпизодов",
+-                "operationId": "1add0b5beec299a484b32aaaa02b4590",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -1501,7 +1488,6 @@
+                 ],
+                 "summary": "Удаление таймкодов просмотра эпизодов",
+                 "description": "Удаляет данные по таймкодам просмотров для указанных эпизодов",
+-                "operationId": "4bd1ce1d626de6e6f15f3812dc56ec0e",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -1558,7 +1544,6 @@
+                 ],
+                 "summary": "Список возможных VAST реклам",
+                 "description": "Возвращает список со всеми доступными для использования VAST кампаниями",
+-                "operationId": "2e32c1bf877c7667ffce578a6f3043b6",
+                 "responses": {
+                     "200": {
+                         "description": "Vasts",
+@@ -1580,7 +1565,6 @@
+                 ],
+                 "summary": "VAST XML с цепочкой реклам",
+                 "description": "Возвращает XML страницу со всеми доступными для использования VAST кампаниями",
+-                "operationId": "48eb9056bf5bd8d6b6d24077c1bb3471",
+                 "responses": {
+                     "200": {
+                         "description": "XML VAST",
+@@ -1598,7 +1582,6 @@
+                 ],
+                 "summary": "Список релизов в каталоге",
+                 "description": "Возвращает список релизов по заданными параметрам",
+-                "operationId": "deb730a26ed7580e04c822a12b782831",
+                 "parameters": [
+                     {
+                         "$ref": "#/components/parameters/commons.v1.utils.pagination.parameters.page"
+@@ -1611,7 +1594,10 @@
+                         "in": "query",
+                         "description": "Список идентификаторов жанров",
+                         "required": false,
+-                        "example": "15,20"
++                        "example": "15,20",
++                        "schema": {
++                            "type": "string"
++                        }
+                     },
+                     {
+                         "name": "f[types]",
+@@ -1648,21 +1634,30 @@
+                         "in": "query",
+                         "description": "Минимальный год выхода релиза",
+                         "required": false,
+-                        "example": "2016"
++                        "example": "2016",
++                        "schema": {
++                            "type": "integer"
++                        }
+                     },
+                     {
+                         "name": "f[years][to_year]",
+                         "in": "query",
+                         "description": "Максимальный год выхода релиза",
+                         "required": false,
+-                        "example": "2020"
++                        "example": "2020",
++                        "schema": {
++                            "type": "integer"
++                        }
+                     },
+                     {
+                         "name": "f[search]",
+                         "in": "query",
+                         "description": "Поиск запрос",
+                         "required": false,
+-                        "example": "Мастера меча"
++                        "example": "Мастера меча",
++                        "schema": {
++                            "type": "string"
++                        }
+                     },
+                     {
+                         "name": "f[sorting]",
+@@ -1744,7 +1739,6 @@
+                 ],
+                 "summary": "Список релизов в каталоге",
+                 "description": "Возвращает список релизов по заданными параметрам",
+-                "operationId": "1774e330982ade57101c5af1a263b3ad",
+                 "requestBody": {
+                     "required": true,
+                     "content": {
+@@ -1872,7 +1866,6 @@
+                 ],
+                 "summary": "Список возрастных рейтингов в каталоге",
+                 "description": "Возвращает список возможных возрастных рейтингов в каталоге",
+-                "operationId": "7ccd6ec065f6a366883534288e06b946",
+                 "responses": {
+                     "200": {
+                         "description": "Список возрастных рейтингов",
+@@ -1894,7 +1887,6 @@
+                 ],
+                 "summary": "Список жанров в каталоге",
+                 "description": "Возвращает список всех жанров в каталоге",
+-                "operationId": "0849587143559ca91b030ecce1b78924",
+                 "responses": {
+                     "200": {
+                         "description": "Список жанров",
+@@ -1916,7 +1908,6 @@
+                 ],
+                 "summary": "Список возможных статусов озвучки релиза в каталоге",
+                 "description": "Возвращает список возможных статусов озвучки релиза в каталоге",
+-                "operationId": "48840b125443cfd04e9def7e82332c74",
+                 "responses": {
+                     "200": {
+                         "description": "Список статусов",
+@@ -1938,7 +1929,6 @@
+                 ],
+                 "summary": "Список возможных статусов выхода релиза в каталоге",
+                 "description": "Возвращает список возможных статусов выхода релиза в каталоге",
+-                "operationId": "b05b5536b808dab15831b8ceb0b07b3e",
+                 "responses": {
+                     "200": {
+                         "description": "Список статусов",
+@@ -1960,7 +1950,6 @@
+                 ],
+                 "summary": "Список сезонов релиза в каталоге",
+                 "description": "Возвращает список возможных сезонов релизов в каталоге",
+-                "operationId": "02c7342e6e3681bd3e68185ed969aef2",
+                 "responses": {
+                     "200": {
+                         "description": "Список сезонов релизов",
+@@ -1982,7 +1971,6 @@
+                 ],
+                 "summary": "Список возможных типов сортировок в каталоге",
+                 "description": "Возвращает список возможных типов сортировок в каталоге",
+-                "operationId": "7d515de59290b809d09c1e61804c7dfd",
+                 "responses": {
+                     "200": {
+                         "description": "Список типов сортировок",
+@@ -2004,7 +1992,6 @@
+                 ],
+                 "summary": "Список типов релизов в каталоге",
+                 "description": "Возвращает список возможных типов релизов в каталоге",
+-                "operationId": "00815d61be831012848cb3f964a73701",
+                 "responses": {
+                     "200": {
+                         "description": "Список типов релизов",
+@@ -2026,7 +2013,6 @@
+                 ],
+                 "summary": "Список годов в каталоге",
+                 "description": "Возвращает список годов в каталоге",
+-                "operationId": "107dd05a40cd2fcfb05ce6f2c9e587b8",
+                 "responses": {
+                     "200": {
+                         "description": "Список годов",
+@@ -2048,7 +2034,6 @@
+                 ],
+                 "summary": "Получить список франшиз",
+                 "description": "Возвращает список франшиз.",
+-                "operationId": "4bfab3225e23cca7cce5c8e932d261be",
+                 "responses": {
+                     "200": {
+                         "description": "Список франшиз",
+@@ -2070,7 +2055,6 @@
+                 ],
+                 "summary": "Получить франшизу",
+                 "description": "Возвращает данные франшизы",
+-                "operationId": "70ff1847fe22225d4cae12ad31075057",
+                 "parameters": [
+                     {
+                         "name": "franchiseId",
+@@ -2103,7 +2087,6 @@
+                 ],
+                 "summary": "Получить список случайных франшиз",
+                 "description": "Возвращает список случайных франшиз.",
+-                "operationId": "8cad50ab682ef2cb29271df2ba543628",
+                 "parameters": [
+                     {
+                         "name": "limit",
+@@ -2137,7 +2120,6 @@
+                 ],
+                 "summary": "Получить список франшиз для релиза",
+                 "description": "Возвращает список франшиз, в которых участвует релиз",
+-                "operationId": "d27fdeccbad6ce91c882fd615561a4ad",
+                 "parameters": [
+                     {
+                         "name": "releaseId",
+@@ -2170,7 +2152,6 @@
+                 ],
+                 "summary": "Список всех жанров",
+                 "description": "Возвращает список всех жанров",
+-                "operationId": "c674398f4cecb9b21a2d7743b16bd4d5",
+                 "responses": {
+                     "200": {
+                         "description": "Список доступных жанров",
+@@ -2192,14 +2173,16 @@
+                 ],
+                 "summary": "Данные по жанру",
+                 "description": "Возвращает данные по жанру",
+-                "operationId": "8276762d056f3ccc731848b30a89dc7a",
+                 "parameters": [
+                     {
+                         "name": "genreId",
+                         "in": "path",
+                         "description": "ID Жанра",
+                         "required": true,
+-                        "example": 15
++                        "example": 15,
++                        "schema": {
++                            "type": "integer"
++                        }
+                     }
+                 ],
+                 "responses": {
+@@ -2223,14 +2206,16 @@
+                 ],
+                 "summary": "Список случайных жанров",
+                 "description": "Возвращает список случайных жанров",
+-                "operationId": "9822b098b63cec6ffbd72c091251d9d1",
+                 "parameters": [
+                     {
+                         "name": "limit",
+                         "in": "query",
+                         "description": "Количество жанров в выдаче",
+                         "required": false,
+-                        "example": 8
++                        "example": 8,
++                        "schema": {
++                            "type": "integer"
++                        }
+                     }
+                 ],
+                 "responses": {
+@@ -2254,7 +2239,6 @@
+                 ],
+                 "summary": "Список релизов жанра",
+                 "description": "Возвращает список всех релизов жанра",
+-                "operationId": "3e7da8fb153756860d8739524f021926",
+                 "parameters": [
+                     {
+                         "name": "genreId",
+@@ -2294,7 +2278,6 @@
+                 ],
+                 "summary": "Последние релизы",
+                 "description": "Возвращает данные по последним релизам",
+-                "operationId": "da7be4d3e8d38a49fcf71358df5c0a76",
+                 "parameters": [
+                     {
+                         "name": "limit",
+@@ -2331,7 +2314,6 @@
+                 ],
+                 "summary": "Данные по случайным релизам",
+                 "description": "Возвращает данные по случайным релизам",
+-                "operationId": "9eb40a19816cdbb7621cb40d6c8eef3b",
+                 "parameters": [
+                     {
+                         "name": "limit",
+@@ -2365,7 +2347,6 @@
+                 ],
+                 "summary": "Данные по списку релизов",
+                 "description": "Возвращает данные по списку релизов",
+-                "operationId": "6efff710532e9015d91227fdb616faeb",
+                 "parameters": [
+                     {
+                         "name": "ids",
+@@ -2432,13 +2413,15 @@
+                 ],
+                 "summary": "Данные по релизу",
+                 "description": "Возвращает данные по релизу",
+-                "operationId": "db2de499f814a375405b077e3c9f081a",
+                 "parameters": [
+                     {
+                         "name": "aliasOrId",
+                         "in": "path",
+                         "description": "Alias или Id релиза",
+-                        "required": true
++                        "required": true,
++                        "schema": {
++                            "type": "string"
++                        }
+                     }
+                 ],
+                 "responses": {
+@@ -2462,14 +2445,16 @@
+                 ],
+                 "summary": "Список участников, которые работали над релизом",
+                 "description": "Возвращает данные по участникам релиза",
+-                "operationId": "4ac98853c36f2ef09ac4cf6a9e479d4c",
+                 "parameters": [
+                     {
+                         "name": "aliasOrId",
+                         "in": "path",
+                         "description": "Alias или Id релиза",
+                         "required": true,
+-                        "example": "4754"
++                        "example": "4754",
++                        "schema": {
++                            "type": "string"
++                        }
+                     }
+                 ],
+                 "responses": {
+@@ -2493,14 +2478,16 @@
+                 ],
+                 "summary": "Данные по эпизоду",
+                 "description": "Возвращает данные по эпизоду",
+-                "operationId": "c61dc0d5c11298135f31e5a0a493081e",
+                 "parameters": [
+                     {
+                         "name": "releaseEpisodeId",
+                         "in": "path",
+                         "description": "Идентификатор эпизода",
+                         "required": true,
+-                        "example": "cf31fe87-fad8-11eb-b2fa-0242ac120004"
++                        "example": "cf31fe87-fad8-11eb-b2fa-0242ac120004",
++                        "schema": {
++                            "type": "string"
++                        }
+                     }
+                 ],
+                 "responses": {
+@@ -2527,7 +2514,6 @@
+                 ],
+                 "summary": "Данные по расписанию релизов на текущую дату",
+                 "description": "Возвращает список релизов в расписании на текущую дату",
+-                "operationId": "2050390fd4fc22b85e05f08f5d9fdf4c",
+                 "responses": {
+                     "200": {
+                         "description": "Данные по релизам в расписании",
+@@ -2549,7 +2535,6 @@
+                 ],
+                 "summary": "Данные по расписанию релизов на текущую неделю",
+                 "description": "Возвращает список релизов в расписании на текущую неделю",
+-                "operationId": "210dca9590f9b5be1dbef022cdb2221d",
+                 "responses": {
+                     "200": {
+                         "description": "Данные по релизам в расписании",
+@@ -2571,7 +2556,6 @@
+                 ],
+                 "summary": "Данные по торрентам",
+                 "description": "Возвращает данные по последним торрентам",
+-                "operationId": "fcca810f1ea3f9fbd7de393b7a6ccd1b",
+                 "parameters": [
+                     {
+                         "$ref": "#/components/parameters/commons.v1.utils.pagination.parameters.page"
+@@ -2604,7 +2588,6 @@
+                 ],
+                 "summary": "Данные по торренту",
+                 "description": "Возвращает данные по торренту",
+-                "operationId": "a55686f9bd5cdcaf372a85f3ec2fc65c",
+                 "parameters": [
+                     {
+                         "name": "hashOrId",
+@@ -2640,7 +2623,6 @@
+                 ],
+                 "summary": "Торрент-файл по его hash или id",
+                 "description": "Возвращает торрент-файл",
+-                "operationId": "0d2789b05c70d7a360902559c116e4b4",
+                 "parameters": [
+                     {
+                         "name": "hashOrId",
+@@ -2665,7 +2647,12 @@
+                     "200": {
+                         "description": "Торрент файл",
+                         "content": {
+-                            "application/x-bittorrent": {}
++                            "application/x-bittorrent": {
++                                "schema": {
++                                    "type": "string",
++                                    "format": "binary"
++                                }
++                            }
+                         }
+                     },
+                     "404": {
+@@ -2681,7 +2668,6 @@
+                 ],
+                 "summary": "Данные по торрентам для релиза",
+                 "description": "Возвращает данные по торрентам релиза",
+-                "operationId": "520cfcb16987b608d2965d42df8d3010",
+                 "parameters": [
+                     {
+                         "name": "releaseId",
+@@ -2718,7 +2704,6 @@
+                 ],
+                 "summary": "RSS лента последних торрентов",
+                 "description": "Возвращает данные по последним торрентам в виде XML документа",
+-                "operationId": "530df7fab8c5f401c1827acf9de7a991",
+                 "parameters": [
+                     {
+                         "name": "limit",
+@@ -2756,7 +2741,6 @@
+                 ],
+                 "summary": "RSS лента торрентов релиза",
+                 "description": "Возвращает данные по торрентам релиза в виде RSS ленты",
+-                "operationId": "b0a67aeaf4fb4d0e67b47452c1f71161",
+                 "parameters": [
+                     {
+                         "name": "releaseId",
+@@ -2795,7 +2779,6 @@
+                 ],
+                 "summary": "Поиск релизов",
+                 "description": "Возвращает данные по релизам, которые удовлетворяют поисковому запросу",
+-                "operationId": "bdc9c56b8c4464f3629eaccabac8db20",
+                 "parameters": [
+                     {
+                         "name": "query",
+@@ -2828,7 +2811,6 @@
+                 ],
+                 "summary": "Список промо-материалов",
+                 "description": "Возвращает список промо-материалов или рекламные кампании в случайном порядке",
+-                "operationId": "a9e450153c7cb6120c51bb4737c830f8",
+                 "responses": {
+                     "200": {
+                         "description": "Промо-материал",
+@@ -2850,7 +2832,6 @@
+                 ],
+                 "summary": "Список видео-роликов",
+                 "description": "Возвращает список последних видео-роликов",
+-                "operationId": "13324a2b1d96abfe1fbb72686b164afd",
+                 "parameters": [
+                     {
+                         "name": "limit",
+@@ -2884,7 +2865,6 @@
+                 ],
+                 "summary": "Список команд АниЛибрии",
+                 "description": "Возвращает список всех команд",
+-                "operationId": "b8116e18f2ffc250bda35faa120bbe2d",
+                 "responses": {
+                     "200": {
+                         "description": "Команды",
+@@ -2906,7 +2886,6 @@
+                 ],
+                 "summary": "Список ролей",
+                 "description": "Возвращает список всех ролей в командах",
+-                "operationId": "a9c6af5eb738ffb0b0ffe2827ab8a66a",
+                 "responses": {
+                     "200": {
+                         "description": "Роли в командах",
+@@ -2928,7 +2907,6 @@
+                 ],
+                 "summary": "Список анилибрийцов",
+                 "description": "Возвращает список всех анилибрийцов с указанием команды и своих ролей",
+-                "operationId": "7595de64ca791916074cb8c193a21604",
+                 "responses": {
+                     "200": {
+                         "description": "Анилибрийцы",
+@@ -3321,7 +3299,7 @@
+                 "title": "responses.v1.accounts.users.auth.logout",
+                 "properties": {
+                     "token": {
+-                        "type": "null",
++                        "type": "string",
+                         "example": "null"
+                     }
+                 },
+@@ -3391,7 +3369,7 @@
+                 "oneOf": [
+                     {
+                         "description": "Идентификатор релиза",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 8345
+                     },
+                     {
+@@ -3511,7 +3489,7 @@
+                     },
+                     {
+                         "type": "number",
+-                        "example": 743
++                        "example": 743.5
+                     },
+                     {
+                         "type": "boolean",
+@@ -4472,23 +4450,26 @@
+                     {
+                         "properties": {
+                             "release": {
+-                                "type": "object",
+-                                "allOf": [
+-                                    {
+-                                        "$ref": "#/components/schemas/models.anime.releases.v1.release"
+-                                    },
+-                                    {
+-                                        "properties": {
+-                                            "episodes": {
+-                                                "type": "array",
+-                                                "items": {
+-                                                    "$ref": "#/components/schemas/models.anime.releases.v1.release.episode"
+-                                                }
+-                                            }
+-                                        },
+-                                        "type": "object"
+-                                    }
+-                                ]
++                                "$ref": "#/components/schemas/models.api.v1.anime.releases.episode.withRelease"
++                            }
++                        },
++                        "type": "object"
++                    }
++                ]
++            },
++            "models.api.v1.anime.releases.episode.withRelease": {
++                "type": "object",
++                "allOf": [
++                    {
++                        "$ref": "#/components/schemas/models.anime.releases.v1.release"
++                    },
++                    {
++                        "properties": {
++                            "episodes": {
++                                "type": "array",
++                                "items": {
++                                    "$ref": "#/components/schemas/models.anime.releases.v1.release.episode"
++                                }
+                             }
+                         },
+                         "type": "object"
+@@ -4521,7 +4502,7 @@
+                         "$ref": "#/components/schemas/models.anime.releases.v1.release.member.role"
+                     },
+                     "user": {
+-                        "oneOf": [
++                        "allOf": [
+                             {
+                                 "$ref": "#/components/schemas/models.anime.releases.v1.release.member.user"
+                             }
+@@ -4541,7 +4522,7 @@
+                 "description": "Краткая информация о пользователе",
+                 "properties": {
+                     "id": {
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 2346
+                     },
+                     "avatar": {
+@@ -4639,7 +4620,7 @@
+                 "properties": {
+                     "id": {
+                         "description": "Идентификатор релиза",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 7439
+                     },
+                     "type": {
+@@ -4647,7 +4628,7 @@
+                     },
+                     "year": {
+                         "description": "Год",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 2018
+                     },
+                     "name": {
+@@ -4705,7 +4686,7 @@
+                     },
+                     "episodes_total": {
+                         "description": "Всего эпизодов",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 36
+                     },
+                     "external_player": {
+@@ -4730,37 +4711,37 @@
+                     },
+                     "added_in_users_favorites": {
+                         "description": "Рейтинг по добавлению в коллекцию",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 25557
+                     },
+                     "average_duration_of_episode": {
+                         "description": "Средняя продолжительность серий",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 25
+                     },
+                     "added_in_planned_collection": {
+                         "description": "Кол-во добавлений в PLANNED коллекцию",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 2457
+                     },
+                     "added_in_watched_collection": {
+                         "description": "Кол-во добавлений в WATCHED коллекцию",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 467
+                     },
+                     "added_in_watching_collection": {
+                         "description": "Кол-во добавлений в WATCHING коллекцию",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 346
+                     },
+                     "added_in_postponed_collection": {
+                         "description": "Кол-во добавлений в POSTPONED коллекцию",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 212
+                     },
+                     "added_in_abandoned_collection": {
+                         "description": "Кол-во добавлений в ABANDONED коллекцию",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 12
+                     }
+                 },
+@@ -4772,12 +4753,12 @@
+                 "properties": {
+                     "start": {
+                         "description": "Время начала. Количество секунд от начала или конца эпизода",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 6
+                     },
+                     "stop": {
+                         "description": "Время окончания. Количество секунд от начала или конца эпизода",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 125
+                     }
+                 },
+@@ -4825,7 +4806,7 @@
+                     },
+                     "duration": {
+                         "description": "Длительность эпизода в секундах",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 1432
+                     },
+                     "rutube_id": {
+@@ -4846,7 +4827,7 @@
+                     },
+                     "sort_order": {
+                         "description": "Порядковый номер эпизода для сортировки",
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 12
+                     },
+                     "name_english": {
+@@ -5173,7 +5154,7 @@
+                 "description": "Данные по связанному с участником торрента пользователю",
+                 "properties": {
+                     "id": {
+-                        "type": "number",
++                        "type": "integer",
+                         "example": 2346
+                     },
+                     "avatar": {

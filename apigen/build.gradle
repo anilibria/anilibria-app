@@ -1,0 +1,81 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.ksp
+    alias libs.plugins.openapi.generator
+}
+
+android {
+    namespace 'anilibria.apigen'
+
+    compileSdk app_compile_sdk_version
+
+    defaultConfig {
+        minSdkVersion app_min_sdk_version
+        targetSdkVersion app_target_sdk_version
+    }
+}
+
+kotlin {
+    jvmToolchain(jvm_toolchain_version)
+}
+
+dependencies {
+    implementation fileTree(include: ["*.jar"], dir: "libs")
+
+    implementation libs.kotlin.stdlib
+    implementation libs.kotlin.coroutines.core
+
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.okhttp.urlconnection)
+
+    implementation(libs.moshi)
+    implementation(libs.moshi.adapters)
+    ksp(libs.moshi.compiler)
+
+    implementation libs.retrofit
+    implementation libs.retrofit.moshi
+    implementation libs.retrofit.scalars
+}
+
+def projectDir = project.layout.projectDirectory.asFile
+def buildDir = project.layout.buildDirectory.asFile.get()
+def swaggerDir = new File(projectDir, "swagger")
+def tempSwaggerGenDir = new File(buildDir, "swagger-gen")
+
+tasks.register('generateSwagger', GenerateTask) {
+    doFirst {
+        tempSwaggerGenDir.deleteDir()
+    }
+    inputSpec = new File(swaggerDir, "swagger.json").toString()
+    outputDir = tempSwaggerGenDir.toString()
+
+    generatorName = "kotlin"
+    library = "jvm-retrofit2"
+    apiPackage = "${android.namespace}.apis"
+    modelPackage = "${android.namespace}.models"
+    ignoreFileOverride = "${projectDir}/openapi-generator-ignore"
+
+    configOptions = [
+            "dateLibrary"            : "string",
+            "serializationLibrary"   : "moshi",
+            "useCoroutines"          : "true",
+            "moshiCodeGen"           : "true",
+            "useResponseAsReturnType": "true",
+    ]
+}
+
+tasks.register("buildSwagger", Copy) {
+    dependsOn("${project.path}:generateSwagger")
+    doFirst {
+        new File(projectDir, "src/main/kotlin").deleteDir()
+    }
+    into(projectDir)
+    into("src/main/kotlin") {
+        from(new File(tempSwaggerGenDir, "src/main/kotlin"))
+    }
+}

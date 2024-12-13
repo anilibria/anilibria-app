@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 plugins {
     alias libs.plugins.android.application
     alias libs.plugins.kotlin.android
-    id("kotlin-kapt")
+    alias libs.plugins.ksp
 }
 
 static def getDateTime() {
@@ -115,7 +115,7 @@ dependencies {
     implementation project(":bottomsheet")
 
     implementation libs.toothpick
-    kapt libs.toothpick.compiler
+    ksp libs.toothpick.compiler
 
     implementation libs.androidnetworktools
 

@@ -1,7 +1,7 @@
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
-    id("kotlin-kapt")
+    alias libs.plugins.ksp
 }
 
 android {
@@ -29,7 +29,7 @@ dependencies {
     implementation libs.coil
 
     implementation libs.toothpick
-    kapt libs.toothpick.compiler
+    ksp libs.toothpick.compiler
 
     implementation libs.cicerone
 

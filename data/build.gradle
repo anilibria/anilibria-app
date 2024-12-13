@@ -2,7 +2,6 @@ plugins {
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
     alias libs.plugins.ksp
-    id("kotlin-kapt")
     id("kotlin-parcelize")
 }
 
@@ -51,7 +50,7 @@ dependencies {
     implementation libs.media3.datasource.cronet
 
     implementation libs.toothpick
-    kapt libs.toothpick.compiler
+    ksp libs.toothpick.compiler
 
     implementation libs.androidnetworktools
 }

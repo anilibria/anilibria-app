@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 plugins {
     alias libs.plugins.android.application
     alias libs.plugins.kotlin.android
-    id("kotlin-kapt")
+    alias libs.plugins.ksp
 }
 
 static def getDateTime() {
@@ -68,7 +68,7 @@ dependencies {
     implementation libs.cicerone
 
     implementation libs.toothpick
-    kapt libs.toothpick.compiler
+    ksp libs.toothpick.compiler
 
     implementation libs.media3.ui.leanback
     implementation libs.media3.exoplayer

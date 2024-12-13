@@ -233,7 +233,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
     }

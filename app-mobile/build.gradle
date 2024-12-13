@@ -1,10 +1,11 @@
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-apply plugin: "com.android.application"
-apply plugin: "kotlin-android"
-apply plugin: "kotlin-kapt"
-
+plugins {
+    alias libs.plugins.android.application
+    alias libs.plugins.kotlin.android
+    id("kotlin-kapt")
+}
 
 static def getDateTime() {
     DateFormat df = new SimpleDateFormat("dd MMMMM yyyy")
@@ -18,10 +19,10 @@ android {
 
     defaultConfig {
         applicationId "ru.radiationx.anilibria.app"
-        minSdkVersion app_min_sdk_version
-        targetSdkVersion app_target_sdk_version
-        versionCode 70
-        versionName "2.13.0"
+        minSdk app_min_sdk_version
+        targetSdk app_target_sdk_version
+        versionCode mobile_version_code
+        versionName mobile_version_name
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations += ['ru']
@@ -73,9 +74,8 @@ kotlin {
 }
 
 dependencies {
-    implementation fileTree(include: ["*.jar"], dir: "libs")
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_version"
+    implementation libs.kotlin.stdlib
+    implementation libs.androidx.constraintlayout
 
     implementation project(":data")
     implementation project(":shared-android-ktx")
@@ -83,49 +83,49 @@ dependencies {
     implementation project(":quill-di")
     implementation project(":media-mobile")
 
-    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
-    implementation "com.google.android.material:material:$material_version"
-    implementation "androidx.cardview:cardview:$androidx_cardview_version"
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidx_swiperefresh_version"
-    implementation "androidx.preference:preference-ktx:$androidx_preference_version"
+    implementation libs.androidx.appcompat
+    implementation libs.google.material
+    implementation libs.androidx.cardview
+    implementation libs.androidx.swiperefreshlayout
+    implementation libs.androidx.preference
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    implementation libs.kotlin.coroutines.core
 
-    implementation "com.github.terrakok:cicerone:$cicerone_version"
+    implementation libs.cicerone
 
     //implementation "com.lapism:searchview:4.0"
     //implementation "com.lapism:search:1.0.0"
     implementation project(":lapism-search")
 
-    implementation "com.google.android.flexbox:flexbox:$flexbox_version"
+    implementation libs.google.flexbox
 
-    implementation "androidx.media3:media3-exoplayer:$androidx_media3_version"
-    implementation "androidx.media3:media3-exoplayer-hls:$androidx_media3_version"
-    implementation "androidx.media3:media3-session:$androidx_media3_version"
+    implementation libs.media3.exoplayer
+    implementation libs.media3.exoplayer.hls
+    implementation libs.media3.session
 
-    implementation "org.bsc.util:minitemplator-repackaged:$minitemplator_version"
+    implementation libs.minitemplator
 
-    implementation "com.hannesdorfmann:adapterdelegates4:$adapterdelegates_version"
+    implementation libs.adapterdelegates
 
-    implementation "com.github.mintrocket.MintPermissions:mintpermissions:$mintpermissions_version"
-    implementation "com.github.mintrocket.MintPermissions:mintpermissions-flows:$mintpermissions_version"
+    implementation libs.mintpermissions
+    implementation libs.mintpermissions.flows
 
-    implementation "me.zhanghai.android.materialprogressbar:library:$materialprogressbar_version"
+    implementation libs.materialprogressbar
 
     implementation project(":bottomsheet")
 
-    implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
-    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
+    implementation libs.toothpick
+    kapt libs.toothpick.compiler
 
-    implementation "com.github.stealthcopter:AndroidNetworkTools:$androidnetworktools_version"
+    implementation libs.androidnetworktools
 
 
-    implementation "com.google.firebase:firebase-messaging:$firebase_messaging_version"
-    implementation "com.google.firebase:firebase-core:$firebase_core_version"
+    implementation libs.firebase.messaging
+    implementation libs.firebase.core
 
-    implementation "com.github.kirich1409:viewbindingpropertydelegate:$viewbindingdelegate_version"
+    implementation libs.viewbindingpropertydelegate
 
-    implementation "com.yandex.android:mobileads:$mobileads_version"
+    implementation libs.yandex.mobileads
 }
 
 apply plugin: "com.google.gms.google-services"

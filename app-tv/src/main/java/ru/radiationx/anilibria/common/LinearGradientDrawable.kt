@@ -175,6 +175,9 @@ class LinearGradientDrawable(
 
     override fun setAlpha(alpha: Int) {}
 
+    @Deprecated("Deprecated in Java",
+        ReplaceWith("PixelFormat.TRANSLUCENT", "android.graphics.PixelFormat")
+    )
     override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 
     override fun setColorFilter(colorFilter: ColorFilter?) {}

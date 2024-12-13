@@ -1,4 +1,6 @@
-apply plugin: "com.android.library"
+plugins {
+    alias libs.plugins.android.library
+}
 
 // from https://github.com/michaelbel/bottomsheet.git
 android {
@@ -7,12 +9,12 @@ android {
     compileSdk app_compile_sdk_version
 
     defaultConfig {
-        minSdkVersion app_min_sdk_version
-        targetSdkVersion app_target_sdk_version
+        minSdk app_min_sdk_version
+        targetSdk app_target_sdk_version
     }
 }
 
 dependencies {
-    implementation "com.google.android.material:material:$material_version"
-    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
+    implementation libs.google.material
+    implementation libs.androidx.appcompat
 }

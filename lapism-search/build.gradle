@@ -1,23 +1,14 @@
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
-buildscript {
-    repositories {
-    }
-}
-
 android {
     namespace "com.lapism.search"
 
     compileSdk app_compile_sdk_version
 
     defaultConfig {
-        minSdkVersion app_min_sdk_version
-        targetSdkVersion app_target_sdk_version
-    }
-
-    sourceSets {
-        main.java.srcDirs += "src/main/kotlin"
+        minSdk app_min_sdk_version
+        targetSdk app_target_sdk_version
     }
 }
 
@@ -26,10 +17,10 @@ kotlin {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation libs.kotlin.stdlib
 
-    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
-    implementation "androidx.recyclerview:recyclerview:$androidx_recyclerview_version"
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.recyclerview
 
-    implementation "com.google.android.material:material:$material_version"
+    implementation libs.google.material
 }

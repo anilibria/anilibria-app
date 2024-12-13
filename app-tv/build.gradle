@@ -1,9 +1,11 @@
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-apply plugin: "com.android.application"
-apply plugin: "kotlin-android"
-apply plugin: "kotlin-kapt"
+plugins {
+    alias libs.plugins.android.application
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.ksp
+}
 
 static def getDateTime() {
     DateFormat df = new SimpleDateFormat("dd MMMMM yyyy")
@@ -17,10 +19,10 @@ android {
 
     defaultConfig {
         applicationId "ru.radiationx.anilibria.app.tv"
-        minSdkVersion tv_min_sdk_version
-        targetSdkVersion app_target_sdk_version
-        versionCode 5
-        versionName "1.2.0"
+        minSdk tv_min_sdk_version
+        targetSdk app_target_sdk_version
+        versionCode tv_version_code
+        versionName tv_version_name
         buildConfigField "String", 'BUILD_DATE', '"' + getDateTime() + '"'
     }
 
@@ -50,32 +52,30 @@ kotlin {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation libs.kotlin.stdlib
 
     implementation project(":data")
     implementation project(":shared-android-ktx")
     implementation project(":shared-app")
     implementation project(":quill-di")
 
-    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
-    implementation "androidx.leanback:leanback:$androidx_leanback_version"
-    implementation "androidx.leanback:leanback-preference:$androidx_leanback_version"
-    implementation "com.google.android.material:material:$material_version"
-    implementation "androidx.constraintlayout:constraintlayout:$androidx_constraint_version"
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.leanback
+    implementation libs.androidx.leanback.preference
+    implementation libs.google.material
+    implementation libs.androidx.constraintlayout
 
-    implementation "com.github.terrakok:cicerone:$cicerone_version"
+    implementation libs.cicerone
 
-    implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
-    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
+    implementation libs.toothpick
+    ksp libs.toothpick.compiler
 
-    implementation "androidx.media3:media3-ui-leanback:$androidx_media3_version"
-    implementation "androidx.media3:media3-exoplayer:$androidx_media3_version"
-    implementation "androidx.media3:media3-exoplayer-hls:$androidx_media3_version"
+    implementation libs.media3.ui.leanback
+    implementation libs.media3.exoplayer
+    implementation libs.media3.exoplayer.hls
 
-    implementation "com.github.mintrocket.MintPermissions:mintpermissions:$mintpermissions_version"
-    implementation "com.github.mintrocket.MintPermissions:mintpermissions-flows:$mintpermissions_version"
+    implementation libs.mintpermissions
+    implementation libs.mintpermissions.flows
 
-    implementation "com.github.kirich1409:viewbindingpropertydelegate:$viewbindingdelegate_version"
+    implementation libs.viewbindingpropertydelegate
 }

@@ -1,5 +1,7 @@
-apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+}
 
 android {
     namespace "ru.radiationx.media.mobile"
@@ -7,8 +9,8 @@ android {
     compileSdk app_compile_sdk_version
 
     defaultConfig {
-        minSdkVersion app_min_sdk_version
-        targetSdkVersion app_target_sdk_version
+        minSdk app_min_sdk_version
+        targetSdk app_target_sdk_version
     }
 
     buildFeatures {
@@ -21,16 +23,15 @@ kotlin {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation project(":shared-android-ktx")
 
-    implementation "com.jakewharton.timber:timber:$timber_version"
+    implementation libs.timber
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
-    implementation "com.google.android.material:material:$material_version"
+    implementation libs.kotlin.stdlib
+    implementation libs.androidx.appcompat
+    implementation libs.google.material
 
-    implementation "androidx.media3:media3-exoplayer:$androidx_media3_version"
+    implementation libs.media3.exoplayer
 
-    implementation "com.github.kirich1409:viewbindingpropertydelegate:$viewbindingdelegate_version"
+    implementation libs.viewbindingpropertydelegate
 }

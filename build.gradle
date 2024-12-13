@@ -1,89 +1,29 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
-
-
     ext {
-        // only tv
-        androidx_leanback_version = '1.2.0-alpha04'
-        exoplayer_leanback_version = '2.19.1'
-
         // main
-        app_compile_sdk_version = 34
-        app_target_sdk_version = 34
+        app_compile_sdk_version = 35
+        app_target_sdk_version = 35
         app_min_sdk_version = 21
         tv_min_sdk_version = 21
 
+        mobile_version_code = 70
+        mobile_version_name = "2.13.0"
+
+        tv_version_code = 5
+        tv_version_name = "1.2.0"
+
         //java
         jvm_toolchain_version = 17
-
-        kotlin_version = '2.0.20'
-        coroutines_version = '1.8.1'
-        timber_version = '5.0.1'
-        cicerone_version = '7.1'
-        toothpick_version = '3.1.0'
-        coil_version = '2.7.0'
-        viewbindingdelegate_version = '1.5.9'
-
-        androidx_appcompat_version = '1.7.0'
-        androidx_core_version = '1.13.1'
-        androidx_collection_version = '1.4.3'
-        androidx_fragment_version = '1.8.2'
-        androidx_lifecycle_version = '2.8.4'
-        androidx_palette_version = '1.0.0'
-        androidx_recyclerview_version = '1.3.2'
-        androidx_constraint_version = '2.1.4'
-        androidx_cardview_version = '1.0.0'
-        androidx_preference_version = '1.2.1'
-        androidx_swiperefresh_version = '1.1.0'
-        androidx_media3_version = '1.4.0'
-
-        material_version = '1.12.0'
-        flexbox_version = '3.0.0'
-
-        firebase_core_version = '21.1.1'
-        firebase_messaging_version = '24.0.1'
-
-        mobmetrica_version = '5.3.0'
-        mobileads_version = '7.4.0'
-
-        mintpermissions_version = '1.1.2'
-        minitemplator_version = '1.4.1'
-        adapterdelegates_version = '4.3.2'
-        materialprogressbar_version = '1.6.1'
-
-        chucker_version = '4.0.0'
-        okHttpVersion = '4.12.0'
-        moshi_version = '1.15.1'
-        androidnetworktools_version = '0.4.5.3'
-    }
-
-
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.2'
-        classpath 'com.google.gms:google-services:4.4.2'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 plugins {
-    id 'com.google.devtools.ksp' version '2.0.20-1.0.24' apply false
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-        maven { url "https://maven.google.com" }
-    }
+    alias libs.plugins.android.application apply false
+    alias libs.plugins.android.library apply false
+    alias libs.plugins.kotlin.android apply false
+    alias libs.plugins.kotlin.jvm apply false
+    alias libs.plugins.ksp apply false
+    alias libs.plugins.gms apply false
 }
 
 tasks.register('clean', Delete) {

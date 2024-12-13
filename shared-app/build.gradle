@@ -1,6 +1,8 @@
-apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
-apply plugin: "kotlin-kapt"
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.ksp
+}
 
 android {
     namespace "ru.radiationx.shared_app"
@@ -8,8 +10,8 @@ android {
     compileSdk app_compile_sdk_version
 
     defaultConfig {
-        minSdkVersion app_min_sdk_version
-        targetSdkVersion app_target_sdk_version
+        minSdk app_min_sdk_version
+        targetSdk app_target_sdk_version
     }
 }
 
@@ -18,19 +20,18 @@ kotlin {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation libs.kotlin.stdlib
 
     implementation project(":data")
     implementation project(":shared-android-ktx")
     implementation project(":quill-di")
-    implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
-    implementation "io.coil-kt:coil:$coil_version"
+    implementation libs.androidx.appcompat
+    implementation libs.coil
 
-    implementation "com.github.stephanenicolas.toothpick:ktp:$toothpick_version"
-    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpick_version"
+    implementation libs.toothpick
+    ksp libs.toothpick.compiler
 
-    implementation "com.github.terrakok:cicerone:$cicerone_version"
+    implementation libs.cicerone
 
-    api "com.yandex.android:mobmetricalib:$mobmetrica_version"
+    api libs.yandex.appmetrica
 }

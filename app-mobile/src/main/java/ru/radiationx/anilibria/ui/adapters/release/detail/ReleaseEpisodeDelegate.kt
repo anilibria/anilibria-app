@@ -4,7 +4,6 @@ import android.view.View
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.core.view.isVisible
-import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
@@ -90,8 +89,7 @@ class ReleaseEpisodeDelegate(
                     state.actionIconRes?.let { binding.tvAction.getCompatDrawable(it) }
 
                 binding.tvAction.setTextColor(textColor)
-                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    binding.tvAction,
+                binding.tvAction.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     null,
                     null,
                     iconDrawable,

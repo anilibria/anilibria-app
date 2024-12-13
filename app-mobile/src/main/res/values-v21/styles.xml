@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="DayNightAppTheme.NoActionBar" parent="DayNightAppTheme.NoActionBarBase">
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">#33000000</item>
-        <item name="android:windowContentTransitions">true</item>
-    </style>
-
-    <style name="PreferencesDayNightAppTheme" parent="BasePreferencesDayNightAppTheme">
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">#33000000</item>
-        <item name="android:windowContentTransitions">true</item>
+    <style name="Splash.DayNightAppTheme" parent="BaseSplash.DayNightAppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
 </resources>

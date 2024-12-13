@@ -2,6 +2,7 @@
 
     <style name="MediaPlayerTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:windowContentTransitions">true</item>
 
         <item name="colorPrimary">@color/light_colorAccent</item>
         <item name="colorSecondary">@color/light_colorAccent</item>
@@ -34,6 +35,7 @@
     <!-- Base application theme. -->
     <style name="DayNightAppTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:windowContentTransitions">true</item>
 
         <item name="colorPrimary">@color/light_colorAccent</item>
         <item name="colorSecondary">@color/light_colorAccent</item>
@@ -50,8 +52,6 @@
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="alertDialogTheme">@style/DayNightAppTheme.Dialog</item>
         <item name="android:windowBackground">@color/light_windowBackground</item>
-
-        <item name="android:windowTranslucentStatus">false</item>
 
         <item name="android:textColorLink">@color/light_textLink</item>
 
@@ -87,7 +87,7 @@
 
     <style name="DayNightAppTheme.NoActionBar" parent="DayNightAppTheme.NoActionBarBase" />
 
-    <style name="BasePreferencesDayNightAppTheme" parent="DayNightAppTheme">
+    <style name="BasePreferencesDayNightAppTheme" parent="DayNightAppTheme.NoActionBar">
         <item name="colorPrimary">@color/light_colorPrimary</item>
         <item name="colorPrimaryDark">@color/light_colorPrimaryDark</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
@@ -95,10 +95,13 @@
 
     <style name="PreferencesDayNightAppTheme" parent="BasePreferencesDayNightAppTheme" />
 
-    <style name="Splash.DayNightAppTheme" parent="DayNightAppTheme.NoActionBar">
+    <style name="BaseSplash.DayNightAppTheme" parent="DayNightAppTheme.NoActionBar">
         <item name="android:windowBackground">@drawable/bg_splash_light</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="Splash.DayNightAppTheme" parent="BaseSplash.DayNightAppTheme" />
 
     <style name="DayNightAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="android:singleLine">true</item>

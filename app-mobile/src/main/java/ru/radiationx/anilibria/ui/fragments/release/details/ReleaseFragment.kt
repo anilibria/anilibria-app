@@ -3,9 +3,12 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -13,8 +16,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentPagedBinding
@@ -65,9 +72,14 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
     override val needToolbarShadow: Boolean = false
 
     private val pagerAdapter: CustomPagerAdapter by lazy { CustomPagerAdapter() }
-    private var currentColor: Int = Color.TRANSPARENT
-    private var currentTitle: String? = null
+    private val topAppearanceState = MutableStateFlow(TopAppearance())
     private var toolbarHelperJob: Job? = null
+
+    private val windowInsetsController by lazy {
+        requireActivity().window.let {
+            WindowCompat.getInsetsController(it, it.decorView)
+        }
+    }
 
     private val shortcutHelper by inject<ShortcutHelper>()
 
@@ -98,6 +110,12 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        topAppearanceState.update {
+            it.copy(
+                defaultLightStatusBar = windowInsetsController.isAppearanceLightStatusBars,
+                title = getString(R.string.fragment_title_release)
+            )
+        }
         baseBinding.toolbarImage.transitionName = transitionNameLocal
         postopneEnterTransitionWithTimout()
         ToolbarHelper.setTransparent(baseBinding.toolbar, baseBinding.appbarLayout)
@@ -109,7 +127,6 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         ToolbarHelper.marqueeTitle(baseBinding.toolbar)
 
         baseBinding.toolbar.apply {
-            currentTitle = getString(R.string.fragment_title_release)
             setNavigationOnClickListener {
                 viewModel.onBackPressed()
             }
@@ -135,30 +152,46 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         baseBinding.toolbarInsetShadow.isVisible = true
         baseBinding.toolbarImage.isVisible = true
 
-
-
         baseBinding.toolbarImage.maxHeight = (resources.displayMetrics.heightPixels * 0.75f).toInt()
 
         val scrimHelper = ScrimHelper(baseBinding.appbarLayout, baseBinding.toolbarLayout)
-        scrimHelper.setScrimListener(object : ScrimHelper.ScrimListener {
-            @Suppress("DEPRECATION")
-            override fun onScrimChanged(scrim: Boolean) {
-                baseBinding.toolbarInsetShadow.isGone = scrim
-                if (scrim) {
-                    baseBinding.toolbar.let {
-                        it.navigationIcon?.clearColorFilter()
-                        it.overflowIcon?.clearColorFilter()
-                        it.title = currentTitle
-                    }
-                } else {
-                    baseBinding.toolbar.let {
-                        it.navigationIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
-                        it.overflowIcon?.setColorFilter(currentColor, PorterDuff.Mode.SRC_ATOP)
-                        it.title = null
-                    }
+
+        combine(
+            topAppearanceState,
+            scrimHelper.scrimState
+        ) { topAppearance, scrim ->
+            if (topAppearance.isFragmentHidden || topAppearance.isDarkImage == null || scrim) {
+                TopAppearanceStyle(
+                    iconColor = null,
+                    title = topAppearance.title,
+                    lightStatusBar = topAppearance.defaultLightStatusBar,
+                    scrim = true
+                )
+            } else {
+                val iconColor = (if (topAppearance.isDarkImage) Color.WHITE else Color.BLACK)
+                TopAppearanceStyle(
+                    iconColor = iconColor,
+                    title = null,
+                    lightStatusBar = !topAppearance.isDarkImage,
+                    scrim = false
+                )
+            }
+        }.distinctUntilChanged()
+            .onEach { style ->
+                baseBinding.toolbarInsetShadow.isGone = style.scrim
+
+                val iconColorFilter = style.iconColor?.let {
+                    PorterDuffColorFilter(it, PorterDuff.Mode.SRC_ATOP)
+                }
+
+                baseBinding.toolbar.let {
+                    it.navigationIcon?.colorFilter = iconColorFilter
+                    it.overflowIcon?.colorFilter = iconColorFilter
+                    it.title = style.title
+                    windowInsetsController.isAppearanceLightStatusBars = style.lightStatusBar
                 }
             }
-        })
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
         binding.viewPagerPaged.addOnPageChangeListener(object :
             ViewPager.SimpleOnPageChangeListener() {
@@ -192,6 +225,14 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         viewModel.openCommentsAction.onEach {
             binding.viewPagerPaged.currentItem = PAGE_COMMENTS
         }.launchInResumed(viewLifecycleOwner)
+
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        topAppearanceState.update {
+            it.copy(isFragmentHidden = hidden)
+        }
     }
 
     override fun onBackPressed(): Boolean {
@@ -217,14 +258,17 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         }
 
         if (state.title != null) {
-            currentTitle = state.title
+            topAppearanceState.update {
+                it.copy(title = state.title)
+            }
         }
 
         binding.progressBarPaged.isVisible = state.loading
     }
 
     override fun onDestroyView() {
-        toolbarHelperJob?.cancel()
+        windowInsetsController.isAppearanceLightStatusBars =
+            topAppearanceState.value.defaultLightStatusBar
         super.onDestroyView()
     }
 
@@ -242,16 +286,9 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         toolbarHelperJob?.cancel()
         toolbarHelperJob = viewLifecycleOwner.lifecycleScope.launch {
             val isDark = ToolbarHelper.isDarkImage(loadedImage)
-            currentColor = if (isDark) Color.WHITE else Color.BLACK
-
-            baseBinding.toolbar.navigationIcon?.setColorFilter(
-                currentColor,
-                PorterDuff.Mode.SRC_ATOP
-            )
-            baseBinding.toolbar.overflowIcon?.setColorFilter(
-                currentColor,
-                PorterDuff.Mode.SRC_ATOP
-            )
+            topAppearanceState.update {
+                it.copy(isDarkImage = isDark)
+            }
         }
     }
 
@@ -272,4 +309,18 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         override fun getCount(): Int = fragments.size
 
     }
+
+    private data class TopAppearance(
+        val isFragmentHidden: Boolean = false,
+        val isDarkImage: Boolean? = null,
+        val title: String = "",
+        val defaultLightStatusBar: Boolean = false
+    )
+
+    private data class TopAppearanceStyle(
+        val iconColor: Int?,
+        val title: String?,
+        val lightStatusBar: Boolean,
+        val scrim: Boolean
+    )
 }

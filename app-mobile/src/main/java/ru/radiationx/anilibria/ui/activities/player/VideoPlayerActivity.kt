@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Rational
 import android.view.WindowManager
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -133,7 +134,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     @UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         if (isLaunchedFromHistory()) {
             get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)

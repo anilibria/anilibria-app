@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Spanned
+import androidx.activity.enableEdgeToEdge
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.ViewCompat
@@ -69,7 +70,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         if (isLaunchedFromHistory()) {
             get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)

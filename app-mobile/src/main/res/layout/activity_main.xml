@@ -23,6 +23,7 @@
         android:id="@+id/appFooter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?colorSurface"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
@@ -30,7 +31,6 @@
             android:id="@+id/tabsRecycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?colorSurface"
             android:overScrollMode="never"
             android:transitionGroup="true" />
 

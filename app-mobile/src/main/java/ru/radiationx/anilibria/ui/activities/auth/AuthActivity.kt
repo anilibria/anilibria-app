@@ -3,8 +3,11 @@ package ru.radiationx.anilibria.ui.activities.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.view.WindowCompat
+import androidx.activity.enableEdgeToEdge
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityAuthBinding
 import ru.radiationx.anilibria.navigation.BaseFragmentScreen
@@ -15,15 +18,12 @@ import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.getExtra
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.AppNavigator
 
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthActivity : BaseActivity(R.layout.activity_main) {
+class AuthActivity : BaseActivity(R.layout.activity_auth) {
 
     companion object {
         private const val ARG_INIT_SCREEN = "arg_screen"
@@ -44,7 +44,7 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         binding.initInsets(dimensionsProvider)

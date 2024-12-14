@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
-import com.github.terrakok.cicerone.androidx.FragmentScreen
 import ru.radiationx.anilibria.ui.activities.SettingsActivity
 import ru.radiationx.anilibria.ui.activities.WebPlayerActivity
 import ru.radiationx.anilibria.ui.activities.auth.AuthActivity
@@ -38,10 +37,6 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
  * Created by radiationx on 17.11.17.
  */
 object Screens {
-
-    fun kek() = FragmentScreen{
-        Fragment()
-    }
 
     class AppUpdateScreen(
         private val force: Boolean,

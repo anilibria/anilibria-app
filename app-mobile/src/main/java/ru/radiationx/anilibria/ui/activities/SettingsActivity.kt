@@ -4,8 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
+import androidx.core.view.updatePadding
+import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ActivitySettingsBinding
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
+import ru.radiationx.anilibria.utils.Dimensions
+import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.quill.inject
+import kotlin.math.max
 
 
 /**
@@ -14,21 +25,22 @@ import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
 
 class SettingsActivity : BaseActivity(R.layout.activity_settings) {
 
+    private val binding by viewBinding<ActivitySettingsBinding>()
+
+    private val dimensionsProvider by inject<DimensionsProvider>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.PreferencesDayNightAppTheme)
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        val actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true)
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setDisplayShowTitleEnabled(true)
-            actionBar.title = "Настройки"
+        binding.initInsets(dimensionsProvider)
+        binding.toolbar.setNavigationOnClickListener {
+            finish()
         }
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_content, SettingsFragment())
-            .commit()
+            .commitNow()
     }
 
 
@@ -36,6 +48,35 @@ class SettingsActivity : BaseActivity(R.layout.activity_settings) {
         if (item.itemId == android.R.id.home)
             finish()
         return true
+    }
+
+    private fun ActivitySettingsBinding.initInsets(dimensionsProvider: DimensionsProvider) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            val dimensions = Dimensions(
+                statusBar = systemBarInsets.top,
+                navigationBar = max(systemBarInsets.bottom, imeInsets.bottom),
+            )
+
+            appbarLayout.updatePadding(
+                left = systemBarInsets.left,
+                top = systemBarInsets.top,
+                right = systemBarInsets.right,
+            )
+
+            fragmentContent.updatePadding(
+                left = systemBarInsets.left,
+                right = systemBarInsets.right,
+            )
+            dimensionsProvider.update(dimensions)
+            insets
+        }
+
+        root.doOnAttach {
+            it.requestApplyInsets()
+        }
     }
 
     companion object {

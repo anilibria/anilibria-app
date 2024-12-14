@@ -79,7 +79,6 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
         }
 
         binding.webView.setJsLifeCycleListener(jsLifeCycleListener(binding.webView))
-        binding.webView.addJavascriptInterface(this, "KEK")
 
         binding.webView.settings.apply {
             this.databaseEnabled = true

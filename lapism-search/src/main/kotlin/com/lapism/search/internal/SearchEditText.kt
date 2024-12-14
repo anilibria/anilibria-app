@@ -6,6 +6,8 @@ import android.view.KeyEvent
 import androidx.annotation.AttrRes
 import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 /**
  * @hide
@@ -27,7 +29,10 @@ class SearchEditText : AppCompatEditText {
     // *********************************************************************************************
     override fun onKeyPreIme(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-            if (hasFocus()) {
+            val imeVisible = ViewCompat.getRootWindowInsets(this)
+                ?.isVisible(WindowInsetsCompat.Type.ime())
+                ?: false
+            if (hasFocus() && !imeVisible) {
                 clearFocus()
                 return true
             }

@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.SearchUtils
-import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchView
 import kotlinx.coroutines.flow.launchIn
@@ -111,7 +110,9 @@ class FeedFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchView(baseBinding.coordinatorLayout.context)
+        searchView = SearchView(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
         binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
         binding.recyclerView.apply {
             adapter = this@FeedFragment.adapter
@@ -148,18 +149,18 @@ class FeedFragment :
                     CoordinatorLayout.LayoutParams.MATCH_PARENT
                 height =
                     CoordinatorLayout.LayoutParams.WRAP_CONTENT
-
-                behavior = SearchBehavior<SearchView>()
             }
         searchView?.apply {
             setTextHint("Поиск по названию")
             navigationIconSupport = SearchUtils.NavigationIconSupport.SEARCH
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
-                    if (!hasFocus) {
-                        searchViewModel.onClose()
-                    } else {
+                    if (hasFocus) {
+                        navigationIconSupport = SearchUtils.NavigationIconSupport.ARROW
                         viewModel.onFastSearchOpen()
+                        baseBinding.appbarLayout.setExpanded(true)
+                    } else {
+                        navigationIconSupport = SearchUtils.NavigationIconSupport.SEARCH
                     }
                 }
             })

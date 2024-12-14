@@ -115,7 +115,6 @@ class SearchView @JvmOverloads constructor(
         val frameLayout = findViewById<FrameLayout>(R.id.search_frameLayout)
         TransitionManager.beginDelayedTransition(frameLayout, SuperTransition())
         mOnFocusChangeListener?.onFocusChange(true)
-        filter("")
 
         mViewShadow?.visibility = View.VISIBLE
         setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_none).toFloat())
@@ -170,41 +169,6 @@ class SearchView @JvmOverloads constructor(
 
         elevation = context.resources.getDimensionPixelSize(R.dimen.search_elevation).toFloat()
         hideKeyboard()
-    }
-
-    private fun addFocus2() {
-        mOnFocusChangeListener?.onFocusChange(true)
-        filter("")
-
-        mViewShadow?.visibility = View.VISIBLE
-        animateHamburgerToArrow(false)
-        mViewDivider?.visibility = View.VISIBLE
-
-        val paddingLeftRight =
-            context.resources.getDimensionPixelSize(R.dimen.search_key_line_8)
-        mSearchEditText?.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
-        setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height_focus))
-        setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_none).toFloat())
-        margins = SearchUtils.Margins.NONE_TOOLBAR
-        elevation =
-            context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
-
-        showAdapter()
-    }
-
-    private fun removeFocus2() {
-        mViewShadow?.visibility = View.GONE
-        animateArrowToHamburger(false)
-        hideKeyboard()
-        hideAdapter()
-        mViewDivider?.visibility = View.GONE
-        margins = SearchUtils.Margins.TOOLBAR
-        elevation = context.resources.getDimensionPixelSize(R.dimen.search_elevation).toFloat()
-        setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_rounded).toFloat())
-        setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height))
-        mSearchEditText?.setPadding(0, 0, 0, 0)
-
-        mOnFocusChangeListener?.onFocusChange(false)
     }
 
     override fun getBehavior(): CoordinatorLayout.Behavior<*> {

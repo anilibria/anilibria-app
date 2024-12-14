@@ -12,7 +12,6 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
@@ -27,6 +26,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
@@ -64,8 +65,6 @@ abstract class SearchLayout @JvmOverloads constructor(
     private var mOnMicClickListener: OnMicClickListener? = null
     private var mOnClearClickListener: OnClearClickListener? = null
     private var mOnMenuClickListener: OnMenuClickListener? = null
-
-    private var navigationClicked = false
 
     // *********************************************************************************************
     @SearchUtils.NavigationIconSupport
@@ -612,7 +611,6 @@ abstract class SearchLayout @JvmOverloads constructor(
         if (!isInEditMode) {
             val inputMethodManager =
                 context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.isAcceptingText
             inputMethodManager.hideSoftInputFromWindow(
                 windowToken,
                 InputMethodManager.RESULT_UNCHANGED_SHOWN
@@ -625,7 +623,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         return mAnimationDuration
     }
 
-    fun filter(constraint: CharSequence) {
+    protected fun filter(constraint: CharSequence) {
         if (mOnQueryTextListener != null) {
             mOnQueryTextListener?.onQueryTextChange(constraint)
         }
@@ -708,8 +706,8 @@ abstract class SearchLayout @JvmOverloads constructor(
     // *********************************************************************************************
     override fun onSaveInstanceState(): Parcelable? {
         val superState = super.onSaveInstanceState()
-        val ss = SearchViewSavedState(superState!!)
-        ss.query = mSearchEditText?.text
+        val ss = SearchViewSavedState(superState)
+        ss.query = mSearchEditText?.text?.toString()
         ss.hasFocus = mSearchEditText?.hasFocus()!!
         return ss
     }
@@ -745,12 +743,15 @@ abstract class SearchLayout @JvmOverloads constructor(
     override fun onClick(view: View?) {
         if (view === mImageViewNavigation) {
             if (mSearchEditText?.hasFocus()!!) {
-                if (navigationClicked) {
-                    mSearchEditText?.clearFocus()
-                } else {
+                val imeVisible = ViewCompat.getRootWindowInsets(this)
+                    ?.isVisible(WindowInsetsCompat.Type.ime())
+                    ?: false
+                if (imeVisible && mSearchEditText?.text?.isEmpty() == false) {
                     hideKeyboard()
+                } else {
+                    mSearchEditText?.clearFocus()
+                    mSearchEditText?.clearText()
                 }
-                navigationClicked = !navigationClicked
             } else {
                 if (mOnNavigationClickListener != null) {
                     mOnNavigationClickListener?.onNavigationClick()
@@ -773,6 +774,7 @@ abstract class SearchLayout @JvmOverloads constructor(
             }
         } else if (view === mViewShadow) {
             mSearchEditText?.clearFocus()
+            mSearchEditText?.clearText()
         }
     }
 

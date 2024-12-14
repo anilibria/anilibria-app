@@ -101,7 +101,10 @@ class SearchCatalogFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
+        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
+
         genresDialog =
             CatalogFilterDialog(requireContext(), object : CatalogFilterDialog.ClickListener {
                 override fun onAccept(state: CatalogFilterState) {
@@ -161,15 +164,12 @@ class SearchCatalogFragment :
                     androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
                 height =
                     androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
-                behavior = SearchBehavior<SearchMenuItem>()
             }
         (searchView as SearchLayout?)?.apply {
             setTextHint("Название релиза")
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
-                    if (!hasFocus) {
-                        searchViewModel.onClose()
-                    } else {
+                    if (hasFocus) {
                         viewModel.onFastSearchOpen()
                     }
                 }

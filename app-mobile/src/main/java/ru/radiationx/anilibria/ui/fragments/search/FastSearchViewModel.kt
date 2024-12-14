@@ -71,11 +71,6 @@ class FastSearchViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun onClose() {
-        currentQuery = ""
-        showItems(emptyList(), currentQuery)
-    }
-
     private fun showItems(items: List<SuggestionItem>, query: String, appendEmpty: Boolean = true) {
         currentSuggestions.clear()
         currentSuggestions.addAll(items)

@@ -114,7 +114,9 @@ class HistoryFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
+        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
         ToolbarHelper.fixInsets(baseBinding.toolbar)
 
         baseBinding.toolbar.apply {
@@ -157,7 +159,6 @@ class HistoryFragment :
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
                 width = CoordinatorLayout.LayoutParams.MATCH_PARENT
                 height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
-                behavior = SearchBehavior<SearchMenuItem>()
             }
         searchView?.apply {
             setTextHint("Название релиза")

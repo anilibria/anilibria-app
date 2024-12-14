@@ -84,7 +84,7 @@ class DetailHeaderViewModel(
 
     fun onContinueClick() {
         viewModelScope.launch {
-            releaseInteractor.getAccesses(releaseId).maxByOrNull { it.lastAccess }?.also {
+            releaseInteractor.getAccesses(releaseId).maxByOrNull { it.lastAccessRaw }?.also {
                 router.navigateTo(PlayerScreen(releaseId, it.id))
             }
         }
@@ -98,7 +98,7 @@ class DetailHeaderViewModel(
         } else {
             viewModelScope.launch {
                 val episodeId =
-                    releaseInteractor.getAccesses(releaseId).maxByOrNull { it.lastAccess }?.id
+                    releaseInteractor.getAccesses(releaseId).maxByOrNull { it.lastAccessRaw }?.id
                 guidedRouter.open(PlayerEpisodesGuidedScreen(releaseId, episodeId))
             }
         }

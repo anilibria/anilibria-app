@@ -28,7 +28,7 @@ fun EpisodeAccess.toExport() = EpisodeAccessExport(
     releaseId = id.releaseId.id,
     seek = seek,
     isViewed = isViewed,
-    lastAccess = lastAccess
+    lastAccess = lastAccessRaw
 )
 
 fun ReleaseUpdate.toExport() = ReleaseUpdateExport(

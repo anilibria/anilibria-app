@@ -319,7 +319,7 @@ class ReleaseInfoViewModel(
             releaseAnalytics.episodesContinueClick(release.id.id)
         })
         viewModelScope.launch {
-            releaseInteractor.getAccesses(release.id).maxByOrNull { it.lastAccess }?.also {
+            releaseInteractor.getAccesses(release.id).maxByOrNull { it.lastAccessRaw }?.also {
                 playEpisodeAction.set(ActionPlayEpisode(it.id))
             }
         }

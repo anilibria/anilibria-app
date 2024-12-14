@@ -18,7 +18,7 @@ fun EpisodeAccess.toDb(): EpisodeAccessDb = EpisodeAccessDb(
     releaseId = id.releaseId.id,
     seek = seek,
     isViewed = isViewed,
-    lastAccess = lastAccess
+    lastAccess = lastAccessRaw
 )
 
 fun EpisodeAccessLegacyDb.toDb(): EpisodeAccessDb = EpisodeAccessDb(

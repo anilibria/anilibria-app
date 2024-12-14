@@ -28,7 +28,7 @@ class WatchingContinueViewModel(
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = episodesCheckerHolder
         .getEpisodes()
         .let { episodeAccesses ->
-            episodeAccesses.sortedByDescending { it.lastAccess }.map { it.id.releaseId }
+            episodeAccesses.sortedByDescending { it.lastAccessRaw }.map { it.id.releaseId }
         }
         .let { ids ->
             if (ids.isEmpty()) {
@@ -41,12 +41,12 @@ class WatchingContinueViewModel(
         .let { releases ->
             releases.map { release ->
                 val lastEpisode =
-                    releaseInteractor.getAccesses(release.id).maxByOrNull { it.lastAccess }
+                    releaseInteractor.getAccesses(release.id).maxByOrNull { it.lastAccessRaw }
                 Pair(release, lastEpisode)
             }
         }
         .let { pairs ->
-            pairs.sortedByDescending { it.second?.lastAccess }.map {
+            pairs.sortedByDescending { it.second?.lastAccessRaw }.map {
                 converter.toCard(it.first)
                     .copy(description = "Вы остановились на ${it.second?.id?.id} серии")
             }

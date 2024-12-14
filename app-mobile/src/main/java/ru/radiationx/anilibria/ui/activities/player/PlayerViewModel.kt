@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,7 +33,7 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.ReleaseRepository
+import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import toothpick.InjectConstructor
 import java.util.concurrent.TimeUnit
@@ -40,7 +42,7 @@ import java.util.concurrent.TimeUnit
 class PlayerViewModel(
     private val sharedPlayerData: SharedPlayerData,
     private val releaseInteractor: ReleaseInteractor,
-    private val releaseRepository: ReleaseRepository,
+    private val historyRepository: HistoryRepository,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
     private val preferencesHolder: PreferencesHolder,
 ) : ViewModel() {
@@ -82,6 +84,12 @@ class PlayerViewModel(
                 error = dataState.error
             )
         }.launchIn(viewModelScope)
+
+        episodeId
+            .map { it.releaseId }
+            .distinctUntilChanged()
+            .onEach { historyRepository.putReleaseId(it) }
+            .launchIn(viewModelScope)
 
         preferencesHolder
             .playerQuality

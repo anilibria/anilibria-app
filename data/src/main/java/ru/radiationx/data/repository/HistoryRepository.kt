@@ -47,6 +47,12 @@ class HistoryRepository @Inject constructor(
         .filterNotNull()
         .flowOn(Dispatchers.IO)
 
+    suspend fun putReleaseId(id: ReleaseId) {
+        withContext(Dispatchers.IO) {
+            historyStorage.putId(id)
+        }
+    }
+
     suspend fun putRelease(releaseItem: Release) {
         withContext(Dispatchers.IO) {
             historyStorage.putId(releaseItem.id)

@@ -136,12 +136,12 @@ class ReleaseInteractor @Inject constructor(
     }
 
     suspend fun markAllViewed(id: ReleaseId) {
-        updateEpisodes(id) { accesses ->
-            accesses.map { it.copy(isViewed = true) }
+        updateEpisodes(id) {
+            it.copy(isViewed = true)
         }
     }
 
-    suspend fun markUnviewed(id: EpisodeId) {
+    suspend fun markUnViewed(id: EpisodeId) {
         updateEpisode(id) {
             EpisodeAccess.createDefault(id)
         }
@@ -165,11 +165,12 @@ class ReleaseInteractor @Inject constructor(
 
     private suspend fun updateEpisodes(
         id: ReleaseId,
-        block: (List<EpisodeAccess>) -> List<EpisodeAccess>,
+        block: (EpisodeAccess) -> EpisodeAccess,
     ) {
-        val access = episodesCheckerStorage.getEpisodes(id)
-        val newAccess = block.invoke(access)
-        episodesCheckerStorage.putAllEpisode(newAccess)
+        val release = getFull(releaseId = id) ?: return
+        release.episodes.forEach { episode ->
+            updateEpisode(episode.id, block)
+        }
     }
 
     private suspend fun updateIfNotExists(

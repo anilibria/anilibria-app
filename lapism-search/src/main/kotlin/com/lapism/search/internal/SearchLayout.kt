@@ -706,11 +706,9 @@ abstract class SearchLayout @JvmOverloads constructor(
     // *********************************************************************************************
     override fun onSaveInstanceState(): Parcelable? {
         val superState = super.onSaveInstanceState()
-        val ss = SearchViewSavedState(
-            state = superState,
-            query = mSearchEditText?.text?.toString(),
-            hasFocus = mSearchEditText?.hasFocus()!!
-        )
+        val ss = SearchViewSavedState(superState)
+        ss.query = mSearchEditText?.text?.toString()
+        ss.hasFocus = mSearchEditText?.hasFocus()!!
         return ss
     }
 

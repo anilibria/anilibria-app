@@ -37,7 +37,7 @@ class HistoryFileRepository @Inject constructor(
     suspend fun exportFile(): LocalFile {
         return withContext(Dispatchers.IO) {
             val data = HistoryExport(
-                history = historyHolder.getEpisodes().map { it.toExport() },
+                history = historyHolder.getIds().map { it.toExport() },
                 updates = releaseHolder.getReleases().map { it.toExport() },
                 episodes = episodesHolder.getEpisodes().map { it.toExport() }
             )
@@ -64,7 +64,7 @@ class HistoryFileRepository @Inject constructor(
             requireNotNull(data) {
                 "Readed data by file is null"
             }
-            historyHolder.putAllRelease(data.history.map { it.toDomain() })
+            historyHolder.putAllIds(data.history.map { it.toDomain() })
             releaseHolder.putAllRelease(data.updates.map { it.toDomain() })
             episodesHolder.putAllEpisode(data.episodes.map { it.toDomain() })
         }

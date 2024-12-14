@@ -34,7 +34,7 @@ class WatchingViewModel(
     init {
         combine(
             episodesCheckerHolder.observeEpisodes().map { it.isNotEmpty() },
-            historyRepository.observeReleases().map { it.isNotEmpty() },
+            historyRepository.observeReleases().map { it.items.isNotEmpty() },
             authRepository.observeAuthState().map { it == AuthState.AUTH }
         ) { hasContinue, hasHistory, hasAuth ->
             updateAvailableRow(CONTINUE_ROW_ID, hasContinue)

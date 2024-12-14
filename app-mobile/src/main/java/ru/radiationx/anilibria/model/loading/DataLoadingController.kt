@@ -47,8 +47,8 @@ class DataLoadingController<T>(
         dataJob?.cancel()
     }
 
-    fun modifyData(data: T?) {
-        val action = ScreenStateAction.DataModify(data)
+    fun modifyData(data: T?, hasMoreData: Boolean? = null) {
+        val action = ScreenStateAction.DataModify(data, hasMoreData)
         updateStateByAction(action)
     }
 

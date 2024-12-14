@@ -625,7 +625,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         return mAnimationDuration
     }
 
-    fun filter(constraint: CharSequence) {
+    protected fun filter(constraint: CharSequence) {
         if (mOnQueryTextListener != null) {
             mOnQueryTextListener?.onQueryTextChange(constraint)
         }

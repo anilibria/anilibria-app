@@ -167,9 +167,7 @@ class SearchCatalogFragment :
             setTextHint("Название релиза")
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
-                    if (!hasFocus) {
-                        searchViewModel.onClose()
-                    } else {
+                    if (hasFocus) {
                         viewModel.onFastSearchOpen()
                     }
                 }

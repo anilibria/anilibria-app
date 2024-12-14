@@ -114,7 +114,6 @@ class SearchMenuItem @JvmOverloads constructor(
             SearchAnimation.OnAnimationListener {
             override fun onAnimationStart() {
                 mOnFocusChangeListener?.onFocusChange(true)
-                filter("")
                 if (mShadowVisibility) {
                     SearchUtils.fadeAddFocus(mViewShadow, getAnimationDuration())
                 }

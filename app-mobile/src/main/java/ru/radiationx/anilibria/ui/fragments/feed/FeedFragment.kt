@@ -156,9 +156,7 @@ class FeedFragment :
             navigationIconSupport = SearchUtils.NavigationIconSupport.SEARCH
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
-                    if (!hasFocus) {
-                        searchViewModel.onClose()
-                    } else {
+                    if (hasFocus) {
                         viewModel.onFastSearchOpen()
                     }
                 }

@@ -164,7 +164,6 @@ class SearchCatalogFragment :
                     androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
                 height =
                     androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
-                behavior = SearchBehavior<SearchMenuItem>()
             }
         (searchView as SearchLayout?)?.apply {
             setTextHint("Название релиза")

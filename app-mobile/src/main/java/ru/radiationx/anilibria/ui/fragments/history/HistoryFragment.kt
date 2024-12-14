@@ -159,7 +159,6 @@ class HistoryFragment :
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
                 width = CoordinatorLayout.LayoutParams.MATCH_PARENT
                 height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
-                behavior = SearchBehavior<SearchMenuItem>()
             }
         searchView?.apply {
             setTextHint("Название релиза")

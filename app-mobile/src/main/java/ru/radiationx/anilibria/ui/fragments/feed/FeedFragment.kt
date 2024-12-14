@@ -150,8 +150,6 @@ class FeedFragment :
                     CoordinatorLayout.LayoutParams.MATCH_PARENT
                 height =
                     CoordinatorLayout.LayoutParams.WRAP_CONTENT
-
-                behavior = SearchBehavior<SearchView>()
             }
         searchView?.apply {
             setTextHint("Поиск по названию")
@@ -160,6 +158,7 @@ class FeedFragment :
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (hasFocus) {
                         viewModel.onFastSearchOpen()
+                        baseBinding.appbarLayout.setExpanded(true)
                     }
                 }
             })

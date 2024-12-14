@@ -101,7 +101,10 @@ class SearchCatalogFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
+        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
+
         genresDialog =
             CatalogFilterDialog(requireContext(), object : CatalogFilterDialog.ClickListener {
                 override fun onAccept(state: CatalogFilterState) {

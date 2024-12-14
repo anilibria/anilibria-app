@@ -90,7 +90,9 @@ class FavoritesFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
+        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
 
         baseBinding.toolbar.apply {
             title = getString(R.string.fragment_title_favorites)

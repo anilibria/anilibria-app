@@ -111,7 +111,9 @@ class FeedFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchView(baseBinding.coordinatorLayout.context)
+        searchView = SearchView(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
         binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
         binding.recyclerView.apply {
             adapter = this@FeedFragment.adapter

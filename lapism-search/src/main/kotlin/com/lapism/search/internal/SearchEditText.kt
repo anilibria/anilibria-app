@@ -35,9 +35,4 @@ class SearchEditText : AppCompatEditText {
         return super.onKeyPreIme(keyCode, event)
     }
 
-    override fun clearFocus() {
-        text?.clear()
-        super.clearFocus()
-    }
-
 }

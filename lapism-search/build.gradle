@@ -1,5 +1,8 @@
-apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    id("kotlin-parcelize")
+}
 
 android {
     namespace "com.lapism.search"

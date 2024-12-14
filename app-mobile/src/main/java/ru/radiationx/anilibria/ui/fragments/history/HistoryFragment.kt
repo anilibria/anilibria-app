@@ -114,7 +114,9 @@ class HistoryFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
+        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
         ToolbarHelper.fixInsets(baseBinding.toolbar)
 
         baseBinding.toolbar.apply {

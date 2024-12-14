@@ -219,7 +219,7 @@ class ReleaseInfoViewModel(
     fun markEpisodeUnviewed(episode: Episode) {
         viewModelScope.launch {
             releaseAnalytics.historyResetEpisode()
-            releaseInteractor.markUnviewed(episode.id)
+            releaseInteractor.markUnViewed(episode.id)
         }
     }
 

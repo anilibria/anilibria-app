@@ -12,6 +12,7 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
@@ -19,7 +20,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.annotation.*
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.Dimension
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,6 +64,8 @@ abstract class SearchLayout @JvmOverloads constructor(
     private var mOnMicClickListener: OnMicClickListener? = null
     private var mOnClearClickListener: OnClearClickListener? = null
     private var mOnMenuClickListener: OnMenuClickListener? = null
+
+    private var navigationClicked = false
 
     // *********************************************************************************************
     @SearchUtils.NavigationIconSupport
@@ -605,6 +612,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         if (!isInEditMode) {
             val inputMethodManager =
                 context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.isAcceptingText
             inputMethodManager.hideSoftInputFromWindow(
                 windowToken,
                 InputMethodManager.RESULT_UNCHANGED_SHOWN
@@ -737,7 +745,12 @@ abstract class SearchLayout @JvmOverloads constructor(
     override fun onClick(view: View?) {
         if (view === mImageViewNavigation) {
             if (mSearchEditText?.hasFocus()!!) {
-                mSearchEditText?.clearFocus()
+                if (navigationClicked) {
+                    mSearchEditText?.clearFocus()
+                } else {
+                    hideKeyboard()
+                }
+                navigationClicked = !navigationClicked
             } else {
                 if (mOnNavigationClickListener != null) {
                     mOnNavigationClickListener?.onNavigationClick()

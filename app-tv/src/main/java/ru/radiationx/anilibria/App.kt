@@ -3,8 +3,8 @@ package ru.radiationx.anilibria
 import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
-import com.yandex.metrica.YandexMetrica
-import com.yandex.metrica.YandexMetricaConfig
+import io.appmetrica.analytics.AppMetrica
+import io.appmetrica.analytics.AppMetricaConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
 import ru.mintrocket.lib.mintpermissions.flows.ext.initMintPermissionsFlow
@@ -46,9 +46,9 @@ class App : Application() {
 
     private fun initYandexAppMetrica() {
         val config =
-            YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
-        YandexMetrica.activate(applicationContext, config)
-        YandexMetrica.enableActivityAutoTracking(this)
+            AppMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
+        AppMetrica.activate(applicationContext, config)
+        AppMetrica.enableActivityAutoTracking(this)
     }
 
     private fun initInMainProcess() {
@@ -59,15 +59,15 @@ class App : Application() {
         initMintPermissions()
         initMintPermissionsFlow()
 
-       /* StrictMode.setThreadPolicy(
-            StrictMode.ThreadPolicy.Builder()
-                .detectNetwork()
-                .detectDiskReads()
-                .detectDiskWrites()
-                .penaltyLog()
-                .penaltyDeath()
-                .build()
-        )*/
+        /* StrictMode.setThreadPolicy(
+             StrictMode.ThreadPolicy.Builder()
+                 .detectNetwork()
+                 .detectDiskReads()
+                 .detectDiskWrites()
+                 .penaltyLog()
+                 .penaltyDeath()
+                 .build()
+         )*/
         /*StrictMode.setVmPolicy(
             StrictMode.VmPolicy.Builder()
                 .penaltyLog()

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.HistoryHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
+import ru.radiationx.data.entity.domain.HistoryReleases
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.HistoryRuntimeCache
@@ -24,33 +25,36 @@ class HistoryRepository @Inject constructor(
     private val historyRuntimeCache: HistoryRuntimeCache,
 ) {
 
-    suspend fun getReleases(count: Int = Int.MAX_VALUE): List<Release> =
+    suspend fun getReleases(count: Int = Int.MAX_VALUE): HistoryReleases =
         withContext(Dispatchers.IO) {
-            historyStorage
-                .getEpisodes()
+            val allIds = historyStorage.getIds()
+            val trimmedReleases = allIds
                 .takeLast(count)
                 .asReversed()
                 .let { historyRuntimeCache.getCached(it) }
+            HistoryReleases(trimmedReleases, allIds.size)
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun observeReleases(count: Int = Int.MAX_VALUE): Flow<List<Release>> = historyStorage
-        .observeEpisodes()
-        .map { it.takeLast(count).asReversed() }
-        .flatMapLatest {
-            historyRuntimeCache.observeCached(it)
+    fun observeReleases(count: Int = Int.MAX_VALUE): Flow<HistoryReleases> = historyStorage
+        .observeIds()
+        .map { it.takeLast(count).asReversed() to it.size }
+        .flatMapLatest { (allIds, total) ->
+            historyRuntimeCache.observeCached(allIds).map { releases ->
+                HistoryReleases(releases, total)
+            }
         }
         .filterNotNull()
         .flowOn(Dispatchers.IO)
 
     suspend fun putRelease(releaseItem: Release) {
         withContext(Dispatchers.IO) {
-            historyStorage.putRelease(releaseItem.id)
+            historyStorage.putId(releaseItem.id)
             updateHolder.viewRelease(releaseItem)
         }
     }
 
     suspend fun removeRelease(id: ReleaseId) = withContext(Dispatchers.IO) {
-        historyStorage.removerRelease(id)
+        historyStorage.removeId(id)
     }
 }

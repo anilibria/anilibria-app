@@ -29,6 +29,7 @@ class WatchingRecommendsViewModel(
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = historyRepository
         .getReleases()
+        .items
         .let { releases ->
             val genresMap = mutableMapOf<String, Int>()
             releases.forEach { release ->

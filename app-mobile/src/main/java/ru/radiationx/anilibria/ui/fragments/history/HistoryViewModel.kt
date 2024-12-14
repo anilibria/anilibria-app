@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.history
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -28,7 +28,6 @@ import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
 import toothpick.InjectConstructor
 
 /**
@@ -48,8 +47,8 @@ class HistoryViewModel(
 
     private val loadingController = DataLoadingController(viewModelScope) {
         val count = pageToCount(it.page)
-        val items = historyRepository.getReleases(count)
-        ScreenStateAction.Data(items, items.size >= count)
+        val history = historyRepository.getReleases(count)
+        ScreenStateAction.Data(history.items, history.hasMore)
     }
 
     private val _state = MutableStateFlow(HistoryScreenState())
@@ -79,8 +78,8 @@ class HistoryViewModel(
             .flatMapLatest { page ->
                 historyRepository.observeReleases(pageToCount(page))
             }
-            .onEach { releases ->
-                loadingController.modifyData(releases)
+            .onEach { history ->
+                loadingController.modifyData(history.items, history.hasMore)
             }
             .launchIn(viewModelScope)
 

@@ -62,7 +62,7 @@ class AnalyticsProfileDataSource(
     }
 
     fun getHistoryItemsCount(): Flow<Int> = single {
-        historyHolder.getEpisodes().size
+        historyHolder.getIds().size
     }
 
     fun getEpisodesItemsCount(): Flow<Int> = single {

@@ -34,7 +34,7 @@ class WatchingContinueViewModel(
             if (ids.isEmpty()) {
                 return@let emptyList()
             }
-            historyRepository.getReleases().let { releases ->
+            historyRepository.getReleases().items.let { releases ->
                 releases.filter { ids.contains(it.id) }
             }
         }

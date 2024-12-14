@@ -23,6 +23,7 @@ class WatchingHistoryViewModel(
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = historyRepository
         .getReleases()
+        .items
         .let { historyItems ->
             historyItems.map { converter.toCard(it) }
         }

@@ -231,6 +231,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
         binding.playerView.mediaItemTransitionFlow
             .onEach { binding.playerView.pause() }
+            .onEach { transition ->
+                val episode = transition.mediaItem?.getEpisode() ?: return@onEach
+                viewModel.onEpisodeChanged(episode.id)
+            }
             .mapLatest { transition ->
                 val timeline = binding.playerView.timelineState.first { it.duration > 0 }
                 transition to timeline

@@ -180,6 +180,10 @@ class PlayerViewModel(
         }
     }
 
+    fun onEpisodeChanged(episodeId: EpisodeId) {
+        _episodeId.value = episodeId
+    }
+
     fun onEpisodeTransition(episodeId: EpisodeId, duration: Long) {
         _episodeId.value = episodeId
         viewModelScope.launch {

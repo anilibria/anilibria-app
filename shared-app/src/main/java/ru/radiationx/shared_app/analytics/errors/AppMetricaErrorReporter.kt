@@ -1,6 +1,6 @@
 package ru.radiationx.shared_app.analytics.errors
 
-import com.yandex.metrica.YandexMetrica
+import io.appmetrica.analytics.AppMetrica
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
 import timber.log.Timber
 import toothpick.InjectConstructor
@@ -10,19 +10,19 @@ class AppMetricaErrorReporter : AnalyticsErrorReporter {
 
     override fun report(message: String, error: Throwable) {
         safeReport {
-            YandexMetrica.reportError(message, error)
+            AppMetrica.reportError(message, error)
         }
     }
 
     override fun report(group: String, message: String) {
         safeReport {
-            YandexMetrica.reportError(group, message)
+            AppMetrica.reportError(group, message)
         }
     }
 
     override fun report(group: String, message: String, error: Throwable) {
         safeReport {
-            YandexMetrica.reportError(group, message, error)
+            AppMetrica.reportError(group, message, error)
         }
     }
 

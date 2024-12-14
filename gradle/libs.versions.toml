@@ -29,7 +29,7 @@ media3 = "1.4.1"
 minitemplator = "1.4.1"
 mintpermissions = "1.1.2"
 yandex-mobileads = "7.8.0"
-yandex-appmetrica = "5.3.0"
+yandex-appmetrica = "7.5.0"
 moshi = "1.15.2"
 okhttp = "4.12.0"
 androidx-palette = "1.0.0"
@@ -85,7 +85,7 @@ minitemplator = { module = "org.bsc.util:minitemplator-repackaged", version.ref 
 mintpermissions-flows = { module = "com.github.mintrocket.MintPermissions:mintpermissions-flows", version.ref = "mintpermissions" }
 mintpermissions = { module = "com.github.mintrocket.MintPermissions:mintpermissions", version.ref = "mintpermissions" }
 yandex-mobileads = { module = "com.yandex.android:mobileads", version.ref = "yandex-mobileads" }
-yandex-appmetrica = { module = "com.yandex.android:mobmetricalib", version.ref = "yandex-appmetrica" }
+yandex-appmetrica = { module = "io.appmetrica.analytics:analytics", version.ref = "yandex-appmetrica" }
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-adapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "moshi" }
 moshi-compiler = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }

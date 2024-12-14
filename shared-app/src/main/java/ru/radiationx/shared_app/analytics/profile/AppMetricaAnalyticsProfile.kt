@@ -1,12 +1,19 @@
 package ru.radiationx.shared_app.analytics.profile
 
-import com.yandex.metrica.YandexMetrica
-import com.yandex.metrica.profile.Attribute
-import com.yandex.metrica.profile.UserProfile
-import com.yandex.metrica.profile.UserProfileUpdate
+import io.appmetrica.analytics.AppMetrica
+import io.appmetrica.analytics.profile.Attribute
+import io.appmetrica.analytics.profile.UserProfile
+import io.appmetrica.analytics.profile.UserProfileUpdate
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
@@ -75,7 +82,7 @@ class AppMetricaAnalyticsProfile(
                     Timber.e(it)
                 }
                 .onEach {
-                    YandexMetrica.reportUserProfile(it)
+                    AppMetrica.reportUserProfile(it)
                 }
                 .launchIn(GlobalScope)
         }

@@ -88,7 +88,7 @@
 
         <activity
             android:name=".ui.activities.player.VideoPlayerActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout|screenSize"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout|screenSize|uiMode"
             android:exported="false"
             android:launchMode="singleTask"
             android:supportsPictureInPicture="true"

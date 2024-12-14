@@ -32,12 +32,17 @@ class SearchEditText : AppCompatEditText {
             val imeVisible = ViewCompat.getRootWindowInsets(this)
                 ?.isVisible(WindowInsetsCompat.Type.ime())
                 ?: false
-            if (hasFocus() && !imeVisible) {
+            if (hasFocus() && (!imeVisible || text?.isEmpty() == true)) {
                 clearFocus()
+                clearText()
                 return true
             }
         }
         return super.onKeyPreIme(keyCode, event)
+    }
+
+    fun clearText() {
+        text?.clear()
     }
 
 }

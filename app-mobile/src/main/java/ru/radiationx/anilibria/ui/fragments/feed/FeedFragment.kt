@@ -10,7 +10,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.SearchUtils
-import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchView
 import kotlinx.coroutines.flow.launchIn
@@ -157,8 +156,11 @@ class FeedFragment :
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
                     if (hasFocus) {
+                        navigationIconSupport = SearchUtils.NavigationIconSupport.ARROW
                         viewModel.onFastSearchOpen()
                         baseBinding.appbarLayout.setExpanded(true)
+                    } else {
+                        navigationIconSupport = SearchUtils.NavigationIconSupport.SEARCH
                     }
                 }
             })

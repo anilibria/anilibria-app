@@ -748,10 +748,11 @@ abstract class SearchLayout @JvmOverloads constructor(
                 val imeVisible = ViewCompat.getRootWindowInsets(this)
                     ?.isVisible(WindowInsetsCompat.Type.ime())
                     ?: false
-                if (imeVisible) {
+                if (imeVisible && mSearchEditText?.text?.isEmpty() == false) {
                     hideKeyboard()
                 } else {
                     mSearchEditText?.clearFocus()
+                    mSearchEditText?.clearText()
                 }
             } else {
                 if (mOnNavigationClickListener != null) {
@@ -775,6 +776,7 @@ abstract class SearchLayout @JvmOverloads constructor(
             }
         } else if (view === mViewShadow) {
             mSearchEditText?.clearFocus()
+            mSearchEditText?.clearText()
         }
     }
 

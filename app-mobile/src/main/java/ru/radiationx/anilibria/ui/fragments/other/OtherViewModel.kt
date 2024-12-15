@@ -226,8 +226,8 @@ class OtherViewModel @Inject constructor(
         _state.update {
             it.copy(
                 profile = profileState,
-                profileMenuItems = profileMenuState,
-                menuItems = menuState
+                profileMenuGroups = profileMenuState,
+                menuGroups = menuState
             )
         }
     }

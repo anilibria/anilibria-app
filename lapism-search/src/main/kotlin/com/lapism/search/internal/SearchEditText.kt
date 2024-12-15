@@ -8,7 +8,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-internal class SearchEditText : AppCompatEditText {
+class SearchEditText : AppCompatEditText {
 
     // *********************************************************************************************
     constructor(context: Context) : super(context)

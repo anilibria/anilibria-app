@@ -15,6 +15,7 @@ import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
 import com.lapism.search.ChangeElevation
 import com.lapism.search.ChangeOutlineRadius
+import com.lapism.search.MarginsType
 import com.lapism.search.R
 import com.lapism.search.SearchUtils
 import com.lapism.search.behavior.SearchBehavior
@@ -36,17 +37,7 @@ class SearchView @JvmOverloads constructor(
         inflate(context, R.layout.search_view, this)
         init()
 
-        val a = context.obtainStyledAttributes(
-            attrs, R.styleable.SearchView, defStyleAttr, defStyleRes
-        )
-        navigationIconSupport =
-            a.getInteger(
-                R.styleable.SearchView_search_navigation_icon_support,
-                SearchUtils.NavigationIconSupport.ANIMATION
-            )
-        a.recycle()
 
-        // TODO - MORE ATTRIBUTTES IN THE FUTURE RELEASE
         setClearIconImageResource(R.drawable.search_ic_outline_clear_24px)
         mViewShadow?.setBackgroundColor(
             ContextCompat.getColor(
@@ -90,7 +81,7 @@ class SearchView @JvmOverloads constructor(
 
     // *********************************************************************************************
     private fun setDefault() {
-        margins = SearchUtils.Margins.TOOLBAR
+        applyMarginsType(MarginsType.Toolbar)
         elevation =
             context.resources.getDimensionPixelSize(R.dimen.search_elevation).toFloat()
         setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_rounded).toFloat())
@@ -118,9 +109,8 @@ class SearchView @JvmOverloads constructor(
 
         mViewShadow?.visibility = View.VISIBLE
         setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_none).toFloat())
-        margins = SearchUtils.Margins.NONE_TOOLBAR
+        applyMarginsType(MarginsType.NoneToolbar)
         mViewDivider?.visibility = View.VISIBLE
-        animateHamburgerToArrow(false)
         elevation =
             context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
         val paddingLeftRight = context.resources.getDimensionPixelSize(R.dimen.search_key_line_16)
@@ -147,10 +137,9 @@ class SearchView @JvmOverloads constructor(
         hideAdapter()
 
         mViewShadow?.visibility = View.GONE
-        animateArrowToHamburger(false)
 
         mViewDivider?.visibility = View.GONE
-        margins = SearchUtils.Margins.TOOLBAR
+        applyMarginsType(MarginsType.Toolbar)
 
         setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_rounded).toFloat())
         //setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height))

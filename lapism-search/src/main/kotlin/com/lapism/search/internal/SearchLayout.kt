@@ -21,6 +21,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
 import androidx.annotation.Dimension
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -28,11 +29,15 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.card.MaterialCardView
+import com.lapism.search.MarginsType
+import com.lapism.search.NavigationIcon
 import com.lapism.search.R
-import com.lapism.search.SearchUtils
+import com.lapism.search.databinding.CommonHierarchyBinding
 
 /**
  * @hide
@@ -44,6 +49,8 @@ abstract class SearchLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0,
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes), View.OnClickListener {
+
+    protected val binding by viewBinding<CommonHierarchyBinding>(attachToRoot = false)
 
     // *********************************************************************************************
     protected var mLinearLayout: LinearLayout? = null
@@ -59,139 +66,58 @@ abstract class SearchLayout @JvmOverloads constructor(
     private var mImageViewClear: ImageView? = null
     private var mImageViewMenu: ImageView? = null
     private var mRecyclerView: RecyclerView? = null
-    private var mSearchArrowDrawable: SearchArrowDrawable? = null
     private var mOnQueryTextListener: OnQueryTextListener? = null
     private var mOnNavigationClickListener: OnNavigationClickListener? = null
     private var mOnMicClickListener: OnMicClickListener? = null
     private var mOnClearClickListener: OnClearClickListener? = null
     private var mOnMenuClickListener: OnMenuClickListener? = null
 
-    // *********************************************************************************************
-    @SearchUtils.NavigationIconSupport
-    @get:SearchUtils.NavigationIconSupport
-    var navigationIconSupport: Int = 0
-        set(@SearchUtils.NavigationIconSupport navigationIconSupport) {
-            field = navigationIconSupport
+    private fun getDimensionPixelSize(@DimenRes dimenRes: Int): Int {
+        return context.resources.getDimensionPixelSize(dimenRes)
+    }
 
-            when (navigationIconSupport) {
-                SearchUtils.NavigationIconSupport.HAMBURGER -> setNavigationIconImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.search_ic_outline_menu_24px
-                    )
-                )
-
-                SearchUtils.NavigationIconSupport.ARROW -> setNavigationIconImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.search_ic_outline_arrow_back_24px
-                    )
-                )
-
-                SearchUtils.NavigationIconSupport.ANIMATION -> {
-                    mSearchArrowDrawable = SearchArrowDrawable(context)
-                    setNavigationIconImageDrawable(mSearchArrowDrawable)
+    protected fun applyMarginsType(type: MarginsType) {
+        mCardView?.updateLayoutParams<MarginLayoutParams> {
+            when (type) {
+                MarginsType.NoneToolbar -> {
+                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+                    topMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                    // todo mb wrap?
+                    height = ViewGroup.LayoutParams.MATCH_PARENT
                 }
 
-                SearchUtils.NavigationIconSupport.SEARCH -> setNavigationIconImageDrawable(
-                    ContextCompat.getDrawable(
-                        context,
-                        R.drawable.search_ic_outline_search_24px
-                    )
-                )
-
-            }
-        }
-
-    @SearchUtils.Margins
-    @get:SearchUtils.Margins
-    protected var margins: Int = 0
-        set(@SearchUtils.Margins margins) {
-            field = margins
-
-            val left: Int
-            val top: Int
-            val right: Int
-            val bottom: Int
-            val params: LayoutParams
-
-            when (margins) {
-                SearchUtils.Margins.NONE_TOOLBAR -> {
-                    left =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    top =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    right =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    bottom =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-
-                    params =
-                        LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
-                    params.setMargins(left, top, right, bottom)
-                    mCardView?.layoutParams = params
+                MarginsType.NoneMenuItem -> {
+                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+                    topMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT
                 }
 
-                SearchUtils.Margins.NONE_MENU_ITEM -> {
-                    left =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    top =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    right =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    bottom =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-
-                    params =
-                        LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    params.setMargins(left, top, right, bottom)
-                    mCardView?.layoutParams = params
+                MarginsType.Toolbar -> {
+                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
+                    topMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
+                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
+                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
+                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT
                 }
 
-                SearchUtils.Margins.TOOLBAR -> {
-                    left =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
-                    top =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
-                    right =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
-                    bottom =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
-
-                    params =
-                        LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    params.setMargins(left, top, right, bottom)
-                    mCardView?.layoutParams = params
-                }
-
-                SearchUtils.Margins.MENU_ITEM -> {
-                    left =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    top =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    right =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    bottom =
-                        context.resources.getDimensionPixelSize(R.dimen.search_margins_menu_item)
-
-                    params = LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    params.setMargins(left, top, right, bottom)
-                    mCardView?.layoutParams = params
+                MarginsType.MenuItem -> {
+                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
+                    topMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
+                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
+                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
+                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT
                 }
             }
         }
+    }
 
     // *********************************************************************************************
     protected abstract fun addFocus()
@@ -276,6 +202,14 @@ abstract class SearchLayout @JvmOverloads constructor(
 
 
     // *********************************************************************************************
+    fun setNavigationIcon(icon: NavigationIcon) {
+        val icRes = when (icon) {
+            NavigationIcon.Arrow -> R.drawable.search_ic_outline_arrow_back_24px
+            NavigationIcon.Search -> R.drawable.search_ic_outline_search_24px
+        }
+        setNavigationIconImageDrawable(ContextCompat.getDrawable(context, icRes))
+    }
+
     fun setNavigationIconImageResource(@DrawableRes resId: Int) {
         mImageViewNavigation?.setImageResource(resId)
     }
@@ -652,26 +586,6 @@ abstract class SearchLayout @JvmOverloads constructor(
         if (mRecyclerView?.adapter != null) {
             mRecyclerView?.visibility = View.GONE
         }
-    }
-
-    protected fun animateHamburgerToArrow(verticalMirror: Boolean) {
-        if (verticalMirror) {
-            mSearchArrowDrawable?.setVerticalMirror(false)
-        }
-        mSearchArrowDrawable?.animate(
-            SearchArrowDrawable.STATE_ARROW,
-            getAnimationDuration()
-        )
-    }
-
-    protected fun animateArrowToHamburger(verticalMirror: Boolean) {
-        if (verticalMirror) {
-            mSearchArrowDrawable?.setVerticalMirror(true)
-        }
-        mSearchArrowDrawable?.animate(
-            SearchArrowDrawable.STATE_HAMBURGER,
-            getAnimationDuration()
-        )
     }
 
     // *********************************************************************************************

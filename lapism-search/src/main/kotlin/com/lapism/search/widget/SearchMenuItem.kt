@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
+import com.lapism.search.MarginsType
 import com.lapism.search.R
 import com.lapism.search.SearchUtils
 import com.lapism.search.internal.SearchAnimation
@@ -28,17 +29,6 @@ class SearchMenuItem @JvmOverloads constructor(
         inflate(context, R.layout.search_menu_item, this)
         init()
 
-        val a = context.obtainStyledAttributes(
-            attrs, R.styleable.SearchMenuItem, defStyleAttr, defStyleRes
-        )
-        navigationIconSupport =
-            a.getInteger(
-                R.styleable.SearchMenuItem_search_navigation_icon_support,
-                SearchUtils.NavigationIconSupport.ANIMATION
-            )
-        a.recycle()
-
-        // TODO - MORE ATTRIBUTTES IN THE FUTURE RELEASE
         setClearIconImageResource(R.drawable.search_ic_outline_clear_24px)
         mViewShadow?.setBackgroundColor(
             ContextCompat.getColor(
@@ -72,7 +62,7 @@ class SearchMenuItem @JvmOverloads constructor(
 
     // *********************************************************************************************
     private fun setDefault() {
-        margins = SearchUtils.Margins.NONE_MENU_ITEM
+        applyMarginsType(MarginsType.NoneMenuItem)
         elevation =
             context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
         setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_none).toFloat())
@@ -117,7 +107,6 @@ class SearchMenuItem @JvmOverloads constructor(
                 if (mShadowVisibility) {
                     SearchUtils.fadeAddFocus(mViewShadow, getAnimationDuration())
                 }
-                animateHamburgerToArrow(true)
             }
 
             override fun onAnimationEnd() {
@@ -153,7 +142,6 @@ class SearchMenuItem @JvmOverloads constructor(
                 if (mShadowVisibility) {
                     SearchUtils.fadeRemoveFocus(mViewShadow, getAnimationDuration())
                 }
-                animateArrowToHamburger(true)
                 hideKeyboard()
                 hideAdapter()
                 mOnFocusChangeListener?.onFocusChange(false)

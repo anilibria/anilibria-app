@@ -9,7 +9,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.LinearLayout
 import androidx.cardview.widget.CardView
 import com.lapism.search.R
-import com.lapism.search.SearchUtils
 import kotlin.math.hypot
 import kotlin.math.max
 
@@ -30,12 +29,7 @@ internal class SearchAnimation {
         var cx = x
         if (cx <= 0) {
             val padding = context.resources.getDimensionPixelSize(R.dimen.search_reveal)
-            cx = if (SearchUtils.isLayoutRtl(context)) {
-                padding
-            } else {
-                // cardView?.width!! - padding TODO Test
-                cardView?.measuredWidth!! - padding
-            }
+            cx = cardView?.measuredWidth!! - padding
         }
         val cy = linearLayout?.height!! / 2
 

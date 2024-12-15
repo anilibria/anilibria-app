@@ -24,13 +24,9 @@ fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
         val containerInsetsBottom = containerInsetList.max()
 
         val dimensions = Dimensions(
-            statusBar = systemBarInsets.top,
-            navigationBar = max(systemBarInsets.bottom, imeInsets.bottom),
-            insets = systemBarInsets,
             left = systemBarInsets.left,
             top = systemBarInsets.top,
             right = systemBarInsets.right,
-            bottom = max(systemBarInsets.bottom, imeInsets.bottom)
         )
         layoutActivityContainer.root.updatePadding(
             bottom = containerInsetsBottom
@@ -64,27 +60,17 @@ fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
 
 fun ActivityAuthBinding.initInsets(provider: DimensionsProvider) {
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
-        val systemBarInsets = insets.getInsets(
+        val contentInsets = insets.getInsets(
             WindowInsetsCompat.Type.systemBars()
-        )
-        val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
-
-        val containerInsetList = listOf(
-            systemBarInsets.bottom,
-            imeInsets.bottom
-        )
-        val containerInsetsBottom = containerInsetList.max()
-
-        val dimensions = Dimensions(
-            statusBar = systemBarInsets.top,
-            navigationBar = max(systemBarInsets.bottom, imeInsets.bottom),
+                .or(WindowInsetsCompat.Type.displayCutout())
+                .or(WindowInsetsCompat.Type.ime())
         )
         layoutActivityContainer.root.updatePadding(
-            left = systemBarInsets.left,
-            right = systemBarInsets.right,
-            bottom = containerInsetsBottom
+            top = contentInsets.top,
+            left = contentInsets.left,
+            right = contentInsets.right,
+            bottom = contentInsets.bottom
         )
-        provider.update(dimensions)
         insets
     }
 

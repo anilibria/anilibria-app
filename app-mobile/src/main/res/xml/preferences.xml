@@ -23,7 +23,7 @@
 
     </PreferenceCategory>
 
-    <Preference android:layout="@layout/preference_shadow_top" />
+    <Preference android:layout="@layout/preference_shadow_double" />
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="Общие">
@@ -47,7 +47,7 @@
 
     </PreferenceCategory>
 
-    <Preference android:layout="@layout/preference_shadow_top" />
+    <Preference android:layout="@layout/preference_shadow_double" />
     <PreferenceCategory
         android:layout="@layout/preference_category_custom"
         android:title="Плеер">

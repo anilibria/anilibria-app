@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.lapism.search.MarginsType
 import com.lapism.search.R
 import com.lapism.search.SearchUtils
@@ -38,7 +39,7 @@ class SearchMenuItem @JvmOverloads constructor(
         )
 
         setDefault()
-        binding.contentDivider.visibility = View.VISIBLE
+        binding.contentDivider.isVisible = true
     }
 
     // *********************************************************************************************
@@ -52,11 +53,7 @@ class SearchMenuItem @JvmOverloads constructor(
     }
 
     fun setShadowVisibility(visibility: Boolean) {
-        if (visibility) {
-            binding.shadow.visibility = View.VISIBLE
-        } else {
-            binding.shadow.visibility = View.GONE
-        }
+        binding.shadow.isVisible = visibility
         mShadowVisibility = visibility
     }
 
@@ -71,8 +68,8 @@ class SearchMenuItem @JvmOverloads constructor(
         binding.input.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
 
         binding.shadow.setOnClickListener(this)
-        binding.cardView.visibility = View.GONE
-        visibility = View.GONE
+        binding.cardView.isVisible = false
+        this.isVisible = false
     }
 
     private fun getMenuItemPosition(menuItemId: Int) {
@@ -96,8 +93,8 @@ class SearchMenuItem @JvmOverloads constructor(
 
     // *********************************************************************************************
     override fun addFocus() {
-        visibility = View.VISIBLE
-        binding.cardView.visibility = View.VISIBLE
+        this.isVisible = true
+        binding.cardView.isVisible = true
 
         val animation = SearchAnimation()
         animation.setOnAnimationListener(object :
@@ -148,8 +145,8 @@ class SearchMenuItem @JvmOverloads constructor(
             }
 
             override fun onAnimationEnd() {
-                binding.cardView.visibility = View.GONE
-                visibility = View.GONE
+                binding.cardView.isVisible = false
+                this@SearchMenuItem.isVisible = false
             }
         })
         animation.start(

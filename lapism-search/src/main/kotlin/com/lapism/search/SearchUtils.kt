@@ -4,6 +4,7 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import androidx.core.view.isVisible
 
 enum class NavigationIcon {
     Arrow,
@@ -26,7 +27,7 @@ object SearchUtils {
         anim.duration = duration
         anim.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-                view.visibility = View.VISIBLE
+                view.isVisible = true
             }
 
             override fun onAnimationEnd(animation: Animation) {
@@ -51,7 +52,7 @@ object SearchUtils {
             }
 
             override fun onAnimationEnd(animation: Animation) {
-                view.visibility = View.GONE
+                view.isVisible = false
             }
 
             override fun onAnimationRepeat(animation: Animation) {

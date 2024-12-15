@@ -17,7 +17,6 @@ import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
@@ -27,6 +26,7 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -52,7 +52,7 @@ abstract class SearchLayout @JvmOverloads constructor(
     // *********************************************************************************************
     protected var mOnFocusChangeListener: OnFocusChangeListener? = null
 
-    private var mAnimationDuration: Long = 0
+    private var mAnimationDuration: Long = 300L
     private var mOnQueryTextListener: OnQueryTextListener? = null
     private var mOnNavigationClickListener: OnNavigationClickListener? = null
     private var mOnClearClickListener: OnClearClickListener? = null
@@ -110,18 +110,13 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     protected abstract fun removeFocus()
 
-    // *********************************************************************************************
     protected fun init() {
-        setAnimationDuration(
-            context.resources.getInteger(R.integer.search_animation_duration).toLong()
-        )
-
         binding.navigationButton.setOnClickListener(this)
 
-        binding.clearButton.visibility = View.GONE
+        binding.clearButton.isVisible = false
         binding.clearButton.setOnClickListener(this)
 
-        binding.menuButton.visibility = View.GONE
+        binding.menuButton.isVisible = false
         binding.menuButton.setOnClickListener(this)
 
         binding.input.addTextChangedListener(object : TextWatcher {
@@ -150,7 +145,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         }
 
         binding.content.layoutManager = LinearLayoutManager(context)
-        binding.content.visibility = View.GONE
+        binding.content.isVisible = false
         binding.content.isNestedScrollingEnabled = false
         binding.content.itemAnimator = null
         binding.content.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -162,9 +157,9 @@ abstract class SearchLayout @JvmOverloads constructor(
             }
         })
 
-        binding.contentDivider.visibility = View.GONE
+        binding.contentDivider.isVisible = false
 
-        binding.shadow.visibility = View.GONE
+        binding.shadow.isVisible = false
 
         isFocusable = true
         isFocusableInTouchMode = true
@@ -455,7 +450,7 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     fun setOnMenuClickListener(listener: OnMenuClickListener) {
         mOnMenuClickListener = listener
-        binding.menuButton.visibility = View.VISIBLE
+        binding.menuButton.isVisible = true
     }
 
     // *********************************************************************************************
@@ -502,13 +497,13 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     protected fun showAdapter() {
         if (binding.content.adapter != null) {
-            binding.content.visibility = View.VISIBLE
+            binding.content.isVisible = true
         }
     }
 
     protected fun hideAdapter() {
         if (binding.content.adapter != null) {
-            binding.content.visibility = View.GONE
+            binding.content.isVisible = false
         }
     }
 

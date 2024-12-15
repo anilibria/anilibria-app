@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.transition.ChangeBounds
 import androidx.transition.ChangeTransform
@@ -105,10 +106,10 @@ class SearchView @JvmOverloads constructor(
         TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
         mOnFocusChangeListener?.onFocusChange(true)
 
-        binding.shadow.visibility = View.VISIBLE
+        binding.shadow.isVisible = true
         setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_none).toFloat())
         applyMarginsType(MarginsType.NoneToolbar)
-        binding.contentDivider.visibility = View.VISIBLE
+        binding.contentDivider.isVisible = true
         elevation =
             context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
         val paddingLeftRight = context.resources.getDimensionPixelSize(R.dimen.search_key_line_16)
@@ -132,9 +133,9 @@ class SearchView @JvmOverloads constructor(
         TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
         hideAdapter()
 
-        binding.shadow.visibility = View.GONE
+        binding.shadow.isVisible = false
 
-        binding.contentDivider.visibility = View.GONE
+        binding.contentDivider.isVisible = false
         applyMarginsType(MarginsType.Toolbar)
 
         setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_rounded).toFloat())

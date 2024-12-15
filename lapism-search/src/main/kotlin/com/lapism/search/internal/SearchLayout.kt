@@ -1,19 +1,14 @@
 package com.lapism.search.internal
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Rect
-import android.graphics.Typeface
 import android.os.Parcelable
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
-import androidx.annotation.Dimension
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
@@ -58,8 +53,12 @@ abstract class SearchLayout @JvmOverloads constructor(
     private var mOnNavigationClickListener: OnNavigationClickListener? = null
     private var mOnClearClickListener: OnClearClickListener? = null
 
-    private fun getDimensionPixelSize(@DimenRes dimenRes: Int): Int {
+    protected fun getDimensionPixelSize(@DimenRes dimenRes: Int): Int {
         return context.resources.getDimensionPixelSize(dimenRes)
+    }
+
+    protected fun getDimension(@DimenRes dimenRes: Int): Float {
+        return context.resources.getDimension(dimenRes)
     }
 
     protected fun applyMarginsType(type: MarginsType) {
@@ -170,7 +169,6 @@ abstract class SearchLayout @JvmOverloads constructor(
         isFocusableInTouchMode = true
     }
 
-
     // *********************************************************************************************
     fun setNavigationIcon(icon: NavigationIcon) {
         val icRes = when (icon) {
@@ -181,17 +179,8 @@ abstract class SearchLayout @JvmOverloads constructor(
     }
 
     // *********************************************************************************************
-    fun setClearIconImageResource(@DrawableRes resId: Int) {
-
-    }
-
-    // *********************************************************************************************
     fun setAdapter(adapter: RecyclerView.Adapter<*>?) {
         binding.content.adapter = adapter
-    }
-
-    fun getAdapter(): RecyclerView.Adapter<*>? {
-        return binding.content.adapter
     }
 
     // *********************************************************************************************
@@ -217,60 +206,13 @@ abstract class SearchLayout @JvmOverloads constructor(
     }
 
     // *********************************************************************************************
-    override fun setBackgroundColor(@ColorInt color: Int) {
-        binding.cardView.setCardBackgroundColor(color)
-    }
 
-    fun setBackgroundColor(color: ColorStateList?) {
-        binding.cardView.setCardBackgroundColor(color)
-    }
-
-    // TODO PUBLIC
-    override fun setElevation(elevation: Float) {
+    protected fun setCardElevation(elevation: Float) {
         binding.cardView.cardElevation = elevation
     }
 
-    // TODO PUBLIC
-    protected fun setMaxElevation(maxElevation: Float) {
-        binding.cardView.maxCardElevation = maxElevation
-    }
-
-    // TODO PUBLIC
     protected fun setBackgroundRadius(radius: Float) {
         binding.cardView.radius = radius
-    }
-
-    fun setBackgroundRippleColor(@ColorRes rippleColorResourceId: Int) {
-        binding.cardView.setRippleColorResource(rippleColorResourceId)
-    }
-
-    fun setBackgroundRippleColorResource(rippleColor: ColorStateList?) {
-        binding.cardView.rippleColor = rippleColor
-    }
-
-    fun setBackgroundStrokeColor(@ColorInt strokeColor: Int) {
-        binding.cardView.strokeColor = strokeColor
-    }
-
-    fun setBackgroundStrokeColor(strokeColor: ColorStateList) {
-        binding.cardView.setStrokeColor(strokeColor)
-    }
-
-    fun setBackgroundStrokeWidth(@Dimension strokeWidth: Int) {
-        binding.cardView.strokeWidth = strokeWidth
-    }
-
-    // *********************************************************************************************
-    fun setBackgroundColorViewOnly(@ColorInt color: Int) {
-        binding.field.setBackgroundColor(color)
-    }
-
-    fun setDividerColor(@ColorInt color: Int) {
-        binding.contentDivider.setBackgroundColor(color)
-    }
-
-    fun setShadowColor(@ColorInt color: Int) {
-        binding.shadow.setBackgroundColor(color)
     }
 
     // *********************************************************************************************

@@ -60,11 +60,10 @@ class SearchMenuItem @JvmOverloads constructor(
     // *********************************************************************************************
     private fun setDefault() {
         applyMarginsType(MarginsType.NoneMenuItem)
-        elevation =
-            context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
-        setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_none).toFloat())
-        setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height_focus))
-        val paddingLeftRight = context.resources.getDimensionPixelSize(R.dimen.search_key_line_16)
+        setCardElevation(getDimension(R.dimen.search_elevation_focus))
+        setBackgroundRadius(getDimension(R.dimen.search_shape_none))
+        setLayoutHeight(getDimensionPixelSize(R.dimen.search_layout_height_focus))
+        val paddingLeftRight = getDimensionPixelSize(R.dimen.search_key_line_16)
         binding.input.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
 
         binding.shadow.setOnClickListener {

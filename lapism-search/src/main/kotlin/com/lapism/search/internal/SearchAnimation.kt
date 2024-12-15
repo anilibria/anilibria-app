@@ -20,8 +20,8 @@ internal class SearchAnimation {
     // *********************************************************************************************
     fun start(
         context: Context,
-        linearLayout: LinearLayout?,
-        cardView: CardView?,
+        linearLayout: LinearLayout,
+        cardView: CardView,
         x: Int,
         duration: Long,
         back: Boolean,
@@ -29,9 +29,9 @@ internal class SearchAnimation {
         var cx = x
         if (cx <= 0) {
             val padding = context.resources.getDimensionPixelSize(R.dimen.search_reveal)
-            cx = cardView?.measuredWidth!! - padding
+            cx = cardView.measuredWidth - padding
         }
-        val cy = linearLayout?.height!! / 2
+        val cy = linearLayout.height / 2
 
         if (cx != 0 && cy != 0) {
             val displaySize = Point()

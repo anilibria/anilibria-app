@@ -5,12 +5,12 @@
     android:layout_height="wrap_content">
 
     <View
-        android:id="@+id/search_view_shadow"
+        android:id="@+id/shadow"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/search_materialCardView"
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -20,18 +20,18 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/search_linearLayout"
+                android:id="@+id/field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/search_imageView_navigation"
+                    android:id="@+id/navigation_button"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent" />
 
                 <com.lapism.search.internal.SearchEditText
-                    android:id="@+id/search_searchEditText"
+                    android:id="@+id/input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent" />
 
@@ -40,31 +40,31 @@
                     android:layout_height="match_parent">
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/search_imageView_mic"
+                        android:id="@+id/mic_button"
                         android:layout_width="@dimen/search_icon_56"
                         android:layout_height="match_parent" />
 
                     <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/search_imageView_clear"
+                        android:id="@+id/clear_button"
                         android:layout_width="@dimen/search_icon_56"
                         android:layout_height="match_parent" />
 
                 </FrameLayout>
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/search_imageView_menu"
+                    android:id="@+id/menu_button"
                     android:layout_width="@dimen/search_icon_48"
                     android:layout_height="match_parent" />
 
             </LinearLayout>
 
             <View
-                android:id="@+id/search_view_divider"
+                android:id="@+id/content_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/search_divider" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/search_recyclerView"
+                android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

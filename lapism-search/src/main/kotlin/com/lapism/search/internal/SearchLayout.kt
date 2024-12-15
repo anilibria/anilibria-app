@@ -204,23 +204,23 @@ abstract class SearchLayout @JvmOverloads constructor(
             context.resources.getInteger(R.integer.search_animation_duration).toLong()
         )
 
-        mLinearLayout = findViewById(R.id.search_linearLayout)
+        mLinearLayout = findViewById(R.id.field)
 
-        mImageViewNavigation = findViewById(R.id.search_imageView_navigation)
+        mImageViewNavigation = findViewById(R.id.navigation_button)
         mImageViewNavigation?.setOnClickListener(this)
 
-        mImageViewMic = findViewById(R.id.search_imageView_mic)
+        mImageViewMic = findViewById(R.id.mic_button)
         mImageViewMic?.setOnClickListener(this)
 
-        mImageViewClear = findViewById(R.id.search_imageView_clear)
+        mImageViewClear = findViewById(R.id.clear_button)
         mImageViewClear?.visibility = View.GONE
         mImageViewClear?.setOnClickListener(this)
 
-        mImageViewMenu = findViewById(R.id.search_imageView_menu)
+        mImageViewMenu = findViewById(R.id.menu_button)
         mImageViewMenu?.visibility = View.GONE
         mImageViewMenu?.setOnClickListener(this)
 
-        mSearchEditText = findViewById(R.id.search_searchEditText)
+        mSearchEditText = findViewById(R.id.input)
         mSearchEditText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
@@ -246,7 +246,7 @@ abstract class SearchLayout @JvmOverloads constructor(
             }
         }
 
-        mRecyclerView = findViewById(R.id.search_recyclerView)
+        mRecyclerView = findViewById(R.id.content)
         mRecyclerView?.layoutManager = LinearLayoutManager(context)
         mRecyclerView?.visibility = View.GONE
         mRecyclerView?.isNestedScrollingEnabled = false
@@ -260,13 +260,13 @@ abstract class SearchLayout @JvmOverloads constructor(
             }
         })
 
-        mViewDivider = findViewById(R.id.search_view_divider)
+        mViewDivider = findViewById(R.id.content_divider)
         mViewDivider?.visibility = View.GONE
 
-        mViewShadow = findViewById(R.id.search_view_shadow)
+        mViewShadow = findViewById(R.id.shadow)
         mViewShadow?.visibility = View.GONE
 
-        mCardView = findViewById<MaterialCardView>(R.id.search_materialCardView)
+        mCardView = findViewById<MaterialCardView>(R.id.card_view)
 
         isFocusable = true
         isFocusableInTouchMode = true

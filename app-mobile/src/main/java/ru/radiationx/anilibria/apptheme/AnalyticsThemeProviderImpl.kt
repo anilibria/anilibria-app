@@ -2,10 +2,9 @@ package ru.radiationx.anilibria.apptheme
 
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.analytics.profile.AnalyticsThemeProvider
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AnalyticsThemeProviderImpl(
+class AnalyticsThemeProviderImpl @Inject constructor(
     private val appThemeController: AppThemeController
 ) : AnalyticsThemeProvider {
 

@@ -7,10 +7,9 @@ import ru.radiationx.shared_app.codecs.isDecoder
 import ru.radiationx.shared_app.codecs.isHardware
 import ru.radiationx.shared_app.codecs.isSoftware
 import ru.radiationx.shared_app.codecs.types.KnownCodec
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CodecsProfileAnalytics {
+class CodecsProfileAnalytics @Inject constructor() {
 
     fun getCodecsInfo(): Map<String, String> {
         return KnownCodec.values().associate { knownCodec ->

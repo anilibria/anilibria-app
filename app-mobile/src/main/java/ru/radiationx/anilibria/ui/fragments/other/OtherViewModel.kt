@@ -2,9 +2,14 @@ package ru.radiationx.anilibria.ui.fragments.other
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.asDataIconRes
@@ -13,7 +18,14 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.analytics.features.*
+import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
+import ru.radiationx.data.analytics.features.AuthMainAnalytics
+import ru.radiationx.data.analytics.features.DonationDetailAnalytics
+import ru.radiationx.data.analytics.features.HistoryAnalytics
+import ru.radiationx.data.analytics.features.OtherAnalytics
+import ru.radiationx.data.analytics.features.PageAnalytics
+import ru.radiationx.data.analytics.features.SettingsAnalytics
+import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.entity.domain.other.LinkMenuItem
 import ru.radiationx.data.entity.domain.other.OtherMenuItem
@@ -23,12 +35,10 @@ import ru.radiationx.data.repository.MenuRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class OtherViewModel(
+class OtherViewModel @Inject constructor(
     private val router: Router,
     private val systemMessenger: SystemMessenger,
     private val authRepository: AuthRepository,

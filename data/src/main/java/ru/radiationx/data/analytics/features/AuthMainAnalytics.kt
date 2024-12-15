@@ -6,10 +6,9 @@ import ru.radiationx.data.analytics.features.extensions.toErrorParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toParam
 import ru.radiationx.data.analytics.features.extensions.toTimeParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AuthMainAnalytics(
+class AuthMainAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

@@ -67,7 +67,7 @@ dependencies {
 
     implementation libs.cicerone
 
-    implementation libs.toothpick
+    compileOnly libs.toothpick
     ksp libs.toothpick.compiler
 
     implementation libs.media3.ui.leanback

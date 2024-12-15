@@ -6,10 +6,9 @@ import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.FeedRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class MainFeedViewModel(
+class MainFeedViewModel @Inject constructor(
     private val feedRepository: FeedRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,

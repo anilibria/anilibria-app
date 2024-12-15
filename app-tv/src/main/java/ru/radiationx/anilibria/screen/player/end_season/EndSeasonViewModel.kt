@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.player.end_season
 
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
@@ -8,11 +9,9 @@ import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.interactors.ReleaseInteractor
-import com.github.terrakok.cicerone.Router
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class EndSeasonViewModel(
+class EndSeasonViewModel @Inject constructor(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,

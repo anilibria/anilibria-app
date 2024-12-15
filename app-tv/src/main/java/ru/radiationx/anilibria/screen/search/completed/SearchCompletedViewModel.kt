@@ -4,10 +4,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SearchCompletedViewModel(
+class SearchCompletedViewModel @Inject constructor(
     argExtra: SearchCompletedExtra,
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter,

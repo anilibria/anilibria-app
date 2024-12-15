@@ -10,10 +10,9 @@ import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.interactors.ReleaseInteractor
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class DetailRelatedViewModel(
+class DetailRelatedViewModel @Inject constructor(
     argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,

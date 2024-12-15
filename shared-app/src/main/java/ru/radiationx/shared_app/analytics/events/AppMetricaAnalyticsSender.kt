@@ -3,10 +3,9 @@ package ru.radiationx.shared_app.analytics.events
 import io.appmetrica.analytics.AppMetrica
 import ru.radiationx.data.analytics.AnalyticsSender
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AppMetricaAnalyticsSender : AnalyticsSender {
+class AppMetricaAnalyticsSender @Inject constructor() : AnalyticsSender {
     override fun send(key: String, vararg params: Pair<String, String>) {
         try {
             if (params.isEmpty()) {

@@ -14,10 +14,9 @@ import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.repository.AuthRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AnalyticsProfileDataSource(
+class AnalyticsProfileDataSource @Inject constructor(
     private val preferencesHolder: PreferencesHolder,
     private val analyticsThemeProvider: AnalyticsThemeProvider,
     private val apiConfig: ApiConfig,

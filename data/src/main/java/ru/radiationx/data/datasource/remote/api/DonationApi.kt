@@ -8,10 +8,9 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.data.entity.response.donation.DonationInfoResponse
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class DonationApi(
+class DonationApi @Inject constructor(
     @ApiClient private val client: IClient,
     @MainClient private val mainClient: IClient,
     private val apiConfig: ApiConfig,

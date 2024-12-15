@@ -13,7 +13,6 @@ import ru.radiationx.data.analytics.features.model.AnalyticsTransport
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.shared.ktx.asTimeSecString
 import timber.log.Timber
-import toothpick.InjectConstructor
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.security.cert.CertPathBuilderException
@@ -24,14 +23,14 @@ import java.security.cert.CertificateExpiredException
 import java.security.cert.CertificateNotYetValidException
 import java.security.cert.CertificateParsingException
 import java.util.Date
+import javax.inject.Inject
 import javax.net.ssl.SSLException
 import javax.net.ssl.SSLHandshakeException
 import javax.net.ssl.SSLKeyException
 import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.SSLProtocolException
 
-@InjectConstructor
-class PlayerAnalytics(
+class PlayerAnalytics @Inject constructor(
     private val sender: AnalyticsSender,
 ) {
 

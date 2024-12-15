@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -37,15 +38,13 @@ import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 data class CatalogExtra(
     val genre: String?,
 ) : QuillExtra
 
-@InjectConstructor
-class CatalogViewModel(
+class CatalogViewModel @Inject constructor(
     argExtra: CatalogExtra,
     private val searchRepository: SearchRepository,
     private val router: Router,

@@ -2,10 +2,9 @@ package ru.radiationx.anilibria.ui.fragments.configuring
 
 import androidx.lifecycle.ViewModel
 import ru.radiationx.data.interactors.ConfiguringInteractor
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ConfiguringViewModel(
+class ConfiguringViewModel @Inject constructor(
     private val configuringInteractor: ConfiguringInteractor
 ) : ViewModel() {
 

@@ -6,10 +6,9 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.entity.response.team.TeamsResponse
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class TeamsApi(
+class TeamsApi @Inject constructor(
     @ApiClient private val client: IClient,
     private val apiConfig: ApiConfig,
     private val moshi: Moshi

@@ -2,17 +2,23 @@ package ru.radiationx.shared_app.analytics.profile
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.analytics.profile.ProfileConstants
 import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class LoggingAnalyticsProfile(
+class LoggingAnalyticsProfile @Inject constructor(
     private val dataSource: AnalyticsProfileDataSource,
     private val codecs: CodecsProfileAnalytics,
 ) : AnalyticsProfile {

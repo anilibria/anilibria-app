@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -69,17 +70,15 @@ import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared.ktx.getDayOfWeek
 import ru.radiationx.shared.ktx.isSameDay
 import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
 import timber.log.Timber
-import toothpick.InjectConstructor
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@InjectConstructor
-class FeedViewModel(
+class FeedViewModel @Inject constructor(
     private val nativeAdsRepository: NativeAdsRepository,
     private val adsConfigRepository: AdsConfigRepository,
     private val feedRepository: FeedRepository,

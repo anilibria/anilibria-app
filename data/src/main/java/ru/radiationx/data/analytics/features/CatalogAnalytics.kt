@@ -4,10 +4,9 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toPageParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CatalogAnalytics(
+class CatalogAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

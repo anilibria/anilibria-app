@@ -7,14 +7,13 @@ import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared_app.common.SystemUtils
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 data class DonationDialogExtra(
     val tag: String,
 ) : QuillExtra
 
-@InjectConstructor
-class DonationDialogViewModel(
+class DonationDialogViewModel @Inject constructor(
     private val argExtra: DonationDialogExtra,
     donationRepository: DonationRepository,
     private val analytics: DonationDialogAnalytics,

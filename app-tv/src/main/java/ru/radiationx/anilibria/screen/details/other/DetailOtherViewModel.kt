@@ -6,10 +6,9 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.details.DetailExtra
 import ru.radiationx.data.interactors.ReleaseInteractor
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class DetailOtherViewModel(
+class DetailOtherViewModel @Inject constructor(
     private val argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,

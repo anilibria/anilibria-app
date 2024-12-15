@@ -59,10 +59,9 @@ import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ReleaseInfoViewModel(
+class ReleaseInfoViewModel @Inject constructor(
     private val argExtra: ReleaseExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val authRepository: AuthRepository,

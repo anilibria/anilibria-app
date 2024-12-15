@@ -11,10 +11,9 @@ import ru.radiationx.anilibria.screen.update.UpdateController
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared_app.common.SystemUtils
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class UpdateSourceViewModel(
+class UpdateSourceViewModel @Inject constructor(
     checkerRepository: CheckerRepository,
     private val guidedRouter: GuidedRouter,
     private val systemUtils: SystemUtils,

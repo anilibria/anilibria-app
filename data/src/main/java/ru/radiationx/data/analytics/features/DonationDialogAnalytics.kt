@@ -5,10 +5,9 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toLinkParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class DonationDialogAnalytics(
+class DonationDialogAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

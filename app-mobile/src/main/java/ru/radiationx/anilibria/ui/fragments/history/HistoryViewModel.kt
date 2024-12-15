@@ -28,13 +28,12 @@ import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared_app.common.SystemUtils
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.02.18.
  */
-@InjectConstructor
-class HistoryViewModel(
+class HistoryViewModel @Inject constructor(
     private val router: Router,
     private val historyRepository: HistoryRepository,
     private val historyAnalytics: HistoryAnalytics,

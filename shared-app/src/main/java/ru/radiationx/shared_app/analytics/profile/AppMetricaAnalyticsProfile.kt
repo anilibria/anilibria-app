@@ -20,10 +20,9 @@ import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.analytics.profile.ProfileConstants
 import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AppMetricaAnalyticsProfile(
+class AppMetricaAnalyticsProfile @Inject constructor(
     private val dataSource: AnalyticsProfileDataSource,
     private val codecs: CodecsProfileAnalytics
 ) : AnalyticsProfile {

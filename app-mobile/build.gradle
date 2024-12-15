@@ -114,7 +114,7 @@ dependencies {
 
     implementation project(":bottomsheet")
 
-    implementation libs.toothpick
+    compileOnly libs.toothpick
     ksp libs.toothpick.compiler
 
     implementation libs.androidnetworktools

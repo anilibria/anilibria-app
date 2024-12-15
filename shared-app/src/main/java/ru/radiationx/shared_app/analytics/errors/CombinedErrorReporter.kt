@@ -1,10 +1,9 @@
 package ru.radiationx.shared_app.analytics.errors
 
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CombinedErrorReporter(
+class CombinedErrorReporter @Inject constructor(
     private val appMetrica: AppMetricaErrorReporter,
     private val logging: LoggingErrorReporter
 ) : AnalyticsErrorReporter {

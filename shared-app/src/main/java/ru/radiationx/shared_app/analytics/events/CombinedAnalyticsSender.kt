@@ -1,10 +1,9 @@
 package ru.radiationx.shared_app.analytics.events
 
 import ru.radiationx.data.analytics.AnalyticsSender
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CombinedAnalyticsSender(
+class CombinedAnalyticsSender @Inject constructor(
     private val appMetrica: AppMetricaAnalyticsSender,
     private val logging: LoggingAnalyticsSender,
 ) : AnalyticsSender {

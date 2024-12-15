@@ -9,10 +9,9 @@ import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.data.repository.SearchRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class WatchingRecommendsViewModel(
+class WatchingRecommendsViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val searchRepository: SearchRepository,
     private val releaseInteractor: ReleaseInteractor,

@@ -5,10 +5,9 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toErrorParam
 import ru.radiationx.data.analytics.features.extensions.toIdParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CommentsAnalytics(
+class CommentsAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

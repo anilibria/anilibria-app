@@ -5,10 +5,9 @@ import android.os.Bundle
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ActivityLaunchAnalytics(
+class ActivityLaunchAnalytics @Inject constructor(
     private val sender: AnalyticsSender,
 ) {
 

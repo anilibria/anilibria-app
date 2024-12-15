@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.screen.main
 
+import com.github.terrakok.cicerone.Router
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
@@ -14,12 +15,10 @@ import ru.radiationx.shared.ktx.asMsk
 import ru.radiationx.shared.ktx.getDayOfWeek
 import ru.radiationx.shared.ktx.isSameDay
 import ru.radiationx.shared.ktx.lowercaseDefault
-import com.github.terrakok.cicerone.Router
-import toothpick.InjectConstructor
 import java.util.Date
+import javax.inject.Inject
 
-@InjectConstructor
-class MainScheduleViewModel(
+class MainScheduleViewModel @Inject constructor(
     private val scheduleRepository: ScheduleRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,

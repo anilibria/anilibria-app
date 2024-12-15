@@ -31,7 +31,7 @@ import ru.radiationx.shared.ktx.coRunCatching
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 
 data class MainScreenState(
@@ -41,8 +41,7 @@ data class MainScreenState(
     val adsConfig: AdsConfig? = null,
 )
 
-@InjectConstructor
-class MainViewModel(
+class MainViewModel @Inject constructor(
     private val router: Router,
     private val authRepository: AuthRepository,
     private val donationRepository: DonationRepository,

@@ -13,10 +13,9 @@ import ru.radiationx.data.entity.domain.auth.OtpAcceptedException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class OtpAcceptViewModel(
+class OtpAcceptViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val errorHandler: IErrorHandler,
     private val authDeviceAnalytics: AuthDeviceAnalytics

@@ -27,6 +27,8 @@ dependencies {
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
 
-    implementation libs.toothpick
+    implementation libs.toothpick.runtime
     ksp libs.toothpick.compiler
+
+    api libs.javax.inject
 }

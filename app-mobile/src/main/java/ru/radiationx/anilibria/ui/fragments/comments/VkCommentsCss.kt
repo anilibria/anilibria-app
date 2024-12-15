@@ -1,10 +1,9 @@
 package ru.radiationx.anilibria.ui.fragments.comments
 
 import android.content.Context
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class VkCommentsCss(
+class VkCommentsCss @Inject constructor(
     private val context: Context
 ) {
 

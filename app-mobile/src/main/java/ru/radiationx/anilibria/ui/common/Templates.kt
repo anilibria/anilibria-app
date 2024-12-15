@@ -3,12 +3,11 @@ package ru.radiationx.anilibria.ui.common
 import android.content.Context
 import biz.source_code.miniTemplator.MiniTemplator
 import timber.log.Timber
-import toothpick.InjectConstructor
 import java.io.ByteArrayInputStream
 import java.io.IOException
+import javax.inject.Inject
 
-@InjectConstructor
-class Templates(
+class Templates @Inject constructor(
     private val context: Context,
 ) {
 

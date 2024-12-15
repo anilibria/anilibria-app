@@ -221,7 +221,7 @@ class SearchCatalogFragment :
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-                topMargin = dimensions.insets.top
+                topMargin = dimensions.top
             }
         searchView?.requestLayout()
     }

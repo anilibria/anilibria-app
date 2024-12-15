@@ -11,6 +11,8 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseTorrentItemState
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.shared.ktx.android.relativeDate
 
@@ -39,7 +41,10 @@ class ReleaseTorrentDelegate(
 
         private val binding by viewBinding<ItemReleaseTorrentBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         fun bind(state: ReleaseTorrentItemState) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemTorrentTitle.text = state.title
             binding.itemTorrentDesc.text = state.subtitle
             binding.itemTorrentSize.text = state.size

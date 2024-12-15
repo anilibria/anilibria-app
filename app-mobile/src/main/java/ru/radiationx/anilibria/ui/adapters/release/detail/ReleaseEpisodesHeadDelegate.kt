@@ -6,12 +6,14 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayout
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseHeadEpisodesBinding
-import ru.radiationx.shared.ktx.android.getColorFromAttr
-import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.EpisodesTabState
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
+import ru.radiationx.shared.ktx.android.getColorFromAttr
+import ru.radiationx.shared.ktx.android.getCompatColor
 
 /**
  * Created by radiationx on 21.01.18.
@@ -34,6 +36,8 @@ class ReleaseEpisodesHeadDelegate(
 
         private val binding by viewBinding<ItemReleaseHeadEpisodesBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         private var currentItem: ReleaseEpisodesHeadListItem? = null
 
         private val tabListener = object : TabLayout.OnTabSelectedListener {
@@ -53,6 +57,7 @@ class ReleaseEpisodesHeadDelegate(
         }
 
         fun bind(item: ReleaseEpisodesHeadListItem) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             currentItem = item
             binding.tabLayout.removeOnTabSelectedListener(tabListener)
             updateSelectedColors(item.tabs, item.selectedTag)

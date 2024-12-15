@@ -37,7 +37,7 @@ open class BaseSettingFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
         setDividerHeight(0)
         dimensionsProvider.observe().onEach {
-            listView.updatePadding(bottom = it.insets.bottom)
+            listView.updatePadding(bottom = it.bottom)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 }

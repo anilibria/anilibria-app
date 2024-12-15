@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
-import android.util.Log
 import android.view.View
 import androidx.core.text.parseAsHtml
 import androidx.core.view.doOnLayout
@@ -16,6 +15,8 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseDetailModifie
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFavoriteState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.utils.LinkMovementMethod
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.android.setCompatDrawable
 
@@ -39,6 +40,8 @@ class ReleaseHeadDelegate(
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemReleaseHeadNewBinding>()
+
+        private val dimensionsApplier by dimensionsApplier()
 
         init {
             val tagsRegex = Regex("(\\w+?)_([\\s\\S]+)")
@@ -71,6 +74,7 @@ class ReleaseHeadDelegate(
         }
 
         fun bind(state: ReleaseInfoState, modifiers: ReleaseDetailModifiersState) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.fullTitle.text = state.titleRus
             binding.fullTitleEn.text = state.titleEng
             binding.fullUpdated.isVisible = state.updatedAt != null

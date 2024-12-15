@@ -11,6 +11,8 @@ import ru.radiationx.anilibria.ui.adapters.FeedListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
@@ -35,8 +37,11 @@ class FeedYoutubeDelegate(
 
         private val binding by viewBinding<ItemFeedYoutubeBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         fun bind(item: FeedListItem) {
             val state = requireNotNull(item.item.youtube)
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.apply {
                 itemTitle.text = state.title
 

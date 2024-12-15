@@ -12,6 +12,8 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.YoutubeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
@@ -36,7 +38,10 @@ class YoutubeDelegate(
 
         private val binding by viewBinding<ItemFeedYoutubeBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         fun bind(item: YoutubeListItem) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.run {
                 itemTitle.text = item.state.title
 

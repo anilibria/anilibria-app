@@ -26,7 +26,11 @@ fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
         val dimensions = Dimensions(
             statusBar = systemBarInsets.top,
             navigationBar = max(systemBarInsets.bottom, imeInsets.bottom),
-            insets = systemBarInsets
+            insets = systemBarInsets,
+            left = systemBarInsets.left,
+            top = systemBarInsets.top,
+            right = systemBarInsets.right,
+            bottom = max(systemBarInsets.bottom, imeInsets.bottom)
         )
         layoutActivityContainer.root.updatePadding(
             bottom = containerInsetsBottom

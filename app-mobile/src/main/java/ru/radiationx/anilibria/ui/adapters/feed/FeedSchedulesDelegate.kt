@@ -17,6 +17,8 @@ import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.feed.FeedSchedulesAdapter
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared.ktx.android.inflate
 
 /**
@@ -54,6 +56,8 @@ class FeedSchedulesDelegate(
 
         private val binding by viewBinding<ItemFeedSchedulesBinding>()
 
+        private val dimensionsApplier by binding.itemFeedScheduleList.dimensionsApplier()
+
         private val currentItems = mutableListOf<ScheduleItemState>()
         private val scheduleAdapter = FeedSchedulesAdapter(clickListener)
 
@@ -78,6 +82,7 @@ class FeedSchedulesDelegate(
         }
 
         fun bind(items: List<ScheduleItemState>) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             currentItems.clear()
             currentItems.addAll(items)
             scheduleAdapter.bindItems(currentItems)

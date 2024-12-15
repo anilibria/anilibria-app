@@ -13,6 +13,8 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemState
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getCompatColor
@@ -44,6 +46,8 @@ class ReleaseEpisodeDelegate(
 
         private val binding by viewBinding<ItemReleaseEpisodeBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         private val viewedDrawable by lazy {
             val size = (binding.root.context.resources.displayMetrics.density * 18).roundToInt()
             binding.root.context
@@ -54,6 +58,7 @@ class ReleaseEpisodeDelegate(
         }
 
         fun bind(state: ReleaseEpisodeItemState, isEven: Boolean) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemTitle.text = buildSpannedString {
                 if (state.isViewed) {
                     inSpans(CompatDrawableSpan(viewedDrawable, CompatDrawableSpan.ALIGN_CENTER)) {

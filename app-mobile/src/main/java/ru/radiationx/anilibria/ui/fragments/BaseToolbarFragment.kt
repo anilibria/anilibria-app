@@ -62,13 +62,10 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
 
     override fun interceptDimens(dimensions: Dimensions) {
         baseBinding.baseStatusBar.updateLayoutParams {
-            height = dimensions.insets.top
+            height = dimensions.top
         }
         val correctedDimens = if (statusBarVisible) {
-            val insets = dimensions.insets.let {
-                Insets.of(it.left, 0, it.right, it.bottom)
-            }
-            dimensions.copy(statusBar = 0, insets = insets)
+            dimensions.copy(top = 0)
         } else {
             dimensions
         }
@@ -78,7 +75,9 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         baseBinding.toolbar.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
-            topMargin = dimensions.insets.top
+            leftMargin = dimensions.left
+            topMargin = dimensions.top
+            rightMargin = dimensions.right
         }
     }
 

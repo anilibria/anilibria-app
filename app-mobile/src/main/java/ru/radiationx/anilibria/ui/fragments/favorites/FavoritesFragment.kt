@@ -160,7 +160,7 @@ class FavoritesFragment :
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                topMargin = dimensions.insets.top
+                topMargin = dimensions.top
             }
         searchView?.requestLayout()
     }

@@ -8,6 +8,8 @@ import ru.radiationx.anilibria.databinding.ItemReleaseRemindBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 
 /**
  * Created by radiationx on 21.01.18.
@@ -29,6 +31,8 @@ class ReleaseRemindDelegate(
 
         private val binding by viewBinding<ItemReleaseRemindBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         init {
             binding.remindClose.setOnClickListener {
                 itemListener.invoke()
@@ -36,6 +40,7 @@ class ReleaseRemindDelegate(
         }
 
         fun bind(item: String) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemTitle.text = item
         }
     }

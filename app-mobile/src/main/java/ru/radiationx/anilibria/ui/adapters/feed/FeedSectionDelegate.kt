@@ -12,6 +12,8 @@ import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.setCompatDrawable
@@ -39,6 +41,7 @@ class FeedSectionDelegate(
 
         private val binding by viewBinding<ItemFeedSectionHeaderBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
 
         init {
             binding.itemFeedScheduleBtn.setCompoundDrawablesWithIntrinsicBounds(
@@ -50,6 +53,7 @@ class FeedSectionDelegate(
         }
 
         fun bind(item: FeedSectionListItem) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemFeedScheduleTitle.text = item.title
             binding.itemFeedScheduleTitle.gravity = if (item.center) {
                 Gravity.CENTER

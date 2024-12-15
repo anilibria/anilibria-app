@@ -1,51 +1,19 @@
 package ru.radiationx.anilibria.utils.dimensions
 
 import android.view.View
-import android.view.ViewGroup.MarginLayoutParams
-import androidx.core.view.marginBottom
-import androidx.core.view.marginLeft
-import androidx.core.view.marginRight
-import androidx.core.view.marginTop
+import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.utils.view.attachedCoroutineScope
 import ru.radiationx.quill.get
 
-fun ViewHolder.applyDimensions(block: (Dimensions) -> Unit) {
-    itemView.applyDimensions(block)
-}
-
-fun View.applyDimensions(block: (Dimensions) -> Unit) {
-    val provider = get<DimensionsProvider>()
-    provider.observe()
-        .onEach { block.invoke(it) }
-        .launchIn(attachedCoroutineScope)
-}
-
-fun View.getPaddings(): Offsets {
-    return Offsets(paddingLeft, paddingTop, paddingRight, paddingBottom)
-}
-
-fun View.getMargins(): Offsets {
-    return Offsets(marginLeft, marginTop, marginRight, marginBottom)
-}
-
-fun View.dimensionsApplier(): Lazy<DimensionsApplier> = lazy {
-    DimensionsApplier(this)
-}
-
-fun ViewHolder.dimensionsApplier(): Lazy<DimensionsApplier> = lazy {
-    DimensionsApplier(itemView)
-}
-
 class DimensionsApplier(private val view: View) {
 
-    private val initialPaddings by lazy(LazyThreadSafetyMode.NONE) { view.getPaddings() }
+    private val initialPaddings by lazy(LazyThreadSafetyMode.NONE) { view.getPaddingOffsets() }
 
-    private val initialMargins by lazy(LazyThreadSafetyMode.NONE) { view.getMargins() }
+    private val initialMargins by lazy(LazyThreadSafetyMode.NONE) { view.getMarginOffsets() }
 
     fun applyPaddings(vararg sides: Side) {
         view.applyDimensions { dimensions ->
@@ -57,7 +25,7 @@ class DimensionsApplier(private val view: View) {
     fun applyMargins(vararg sides: Side) {
         view.applyDimensions { dimensions ->
             val offsets = computeOffset(initialMargins, dimensions, *sides)
-            view.updateLayoutParams<MarginLayoutParams> {
+            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 leftMargin = offsets.left
                 topMargin = offsets.top
                 rightMargin = offsets.right
@@ -86,6 +54,12 @@ class DimensionsApplier(private val view: View) {
         return Offsets(leftOffset, topOffset, rightOffset, bottomOffset)
     }
 
+    private fun View.applyDimensions(block: (Dimensions) -> Unit) {
+        val provider = get<DimensionsProvider>()
+        provider.observe()
+            .onEach { block.invoke(it) }
+            .launchIn(attachedCoroutineScope)
+    }
 }
 
 enum class Side {

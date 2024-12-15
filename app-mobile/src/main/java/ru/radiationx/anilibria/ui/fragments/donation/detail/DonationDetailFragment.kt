@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdap
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
-import ru.radiationx.anilibria.utils.dimensions.getPaddings
+import ru.radiationx.anilibria.utils.dimensions.getPaddingOffsets
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.launchInResumed
 
@@ -31,7 +31,7 @@ class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation
 
     private val binding by viewBinding<FragmentDonationDetailBinding>()
 
-    private val recyclerPaddings by lazy { binding.donationRecycler.getPaddings() }
+    private val recyclerPaddings by lazy { binding.donationRecycler.getPaddingOffsets() }
 
     private val viewModel by viewModel<DonationDetailViewModel>()
 

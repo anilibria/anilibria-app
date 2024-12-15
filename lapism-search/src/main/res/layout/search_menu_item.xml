@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/search_frameLayout"
+    android:id="@+id/search_frame"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -56,29 +56,14 @@
                     android:textSize="@dimen/search_text_16"
                     android:windowSoftInputMode="stateAlwaysHidden|adjustPan|adjustNothing" />
 
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/mic_button"
-                        android:layout_width="@dimen/search_icon_56"
-                        android:layout_height="match_parent"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/search_name"
-                        android:scaleType="center"
-                        app:tint="?attr/colorControlNormal" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/clear_button"
-                        android:layout_width="@dimen/search_icon_56"
-                        android:layout_height="match_parent"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/search_name"
-                        android:scaleType="center"
-                        app:tint="?attr/colorControlNormal" />
-
-                </FrameLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/clear_button"
+                    android:layout_width="@dimen/search_icon_56"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/search_name"
+                    android:scaleType="center"
+                    app:tint="?attr/colorControlNormal" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/menu_button"

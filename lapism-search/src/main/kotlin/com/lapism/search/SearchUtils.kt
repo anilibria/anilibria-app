@@ -20,13 +20,13 @@ enum class MarginsType {
 object SearchUtils {
 
     @JvmStatic
-    fun fadeAddFocus(view: View?, duration: Long) {
+    fun fadeAddFocus(view: View, duration: Long) {
         val anim = AlphaAnimation(0.0f, 1.0f)
         anim.interpolator = AccelerateDecelerateInterpolator()
         anim.duration = duration
         anim.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
-                view?.visibility = View.VISIBLE
+                view.visibility = View.VISIBLE
             }
 
             override fun onAnimationEnd(animation: Animation) {
@@ -37,11 +37,11 @@ object SearchUtils {
 
             }
         })
-        view?.startAnimation(anim)
+        view.startAnimation(anim)
     }
 
     @JvmStatic
-    fun fadeRemoveFocus(view: View?, duration: Long) {
+    fun fadeRemoveFocus(view: View, duration: Long) {
         val anim = AlphaAnimation(1.0f, 0.0f)
         anim.interpolator = AccelerateDecelerateInterpolator()
         anim.duration = duration
@@ -51,14 +51,14 @@ object SearchUtils {
             }
 
             override fun onAnimationEnd(animation: Animation) {
-                view?.visibility = View.GONE
+                view.visibility = View.GONE
             }
 
             override fun onAnimationRepeat(animation: Animation) {
 
             }
         })
-        view?.startAnimation(anim)
+        view.startAnimation(anim)
     }
 
 }

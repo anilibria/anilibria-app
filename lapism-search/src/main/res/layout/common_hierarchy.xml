@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/search_frameLayout"
+    android:id="@+id/search_frame"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -35,21 +35,10 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent" />
 
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/mic_button"
-                        android:layout_width="@dimen/search_icon_56"
-                        android:layout_height="match_parent" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/clear_button"
-                        android:layout_width="@dimen/search_icon_56"
-                        android:layout_height="match_parent" />
-
-                </FrameLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/clear_button"
+                    android:layout_width="@dimen/search_icon_56"
+                    android:layout_height="match_parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/menu_button"

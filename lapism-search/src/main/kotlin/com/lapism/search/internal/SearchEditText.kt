@@ -1,6 +1,7 @@
 package com.lapism.search.internal
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
 import androidx.annotation.AttrRes
@@ -34,6 +35,10 @@ class SearchEditText : AppCompatEditText {
             }
         }
         return super.onKeyPreIme(keyCode, event)
+    }
+
+    fun isTextEmpty(): Boolean {
+        return TextUtils.isEmpty(text)
     }
 
     fun clearText() {

@@ -14,6 +14,7 @@ import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
+import ru.radiationx.anilibria.ui.adapters.ShadowDirection
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.MenuItemDelegate
 import ru.radiationx.anilibria.ui.adapters.other.ProfileItemDelegate
@@ -77,18 +78,30 @@ class OtherFragment : BaseDimensionsFragment(R.layout.fragment_list) {
 
         fun bindItems(state: ProfileScreenState) {
             items = mutableListOf<ListItem>().apply {
-                state.profile?.also { profile ->
-                    add(ProfileListItem("profile", profile))
-                    addAll(state.profileMenuItems.map { MenuListItem(it) })
-                    add(DividerShadowListItem("profile"))
-                }
 
-                val lastItem = state.menuItems.lastOrNull()
-                state.menuItems.forEach { menuItems ->
+                add(ProfileListItem("profile", state.profile))
+                addAll(state.profileMenuGroups.map { MenuListItem(it) })
+                val profileShadow = if (state.menuGroups.isNotEmpty()) {
+                    ShadowDirection.Double
+                } else {
+                    ShadowDirection.Bottom
+                }
+                add(DividerShadowListItem(profileShadow, "profile"))
+
+                val lastGroup = state.menuGroups.lastOrNull()
+                state.menuGroups.forEach { menuItems ->
                     addAll(menuItems.map { MenuListItem(it) })
-                    if (menuItems.isNotEmpty() && lastItem != menuItems) {
-                        add(DividerShadowListItem("divider_${menuItems.lastOrNull()?.id ?: 0}"))
+                    val itemsShadow = if (lastGroup != menuItems) {
+                        ShadowDirection.Double
+                    } else {
+                        ShadowDirection.Bottom
                     }
+                    add(
+                        DividerShadowListItem(
+                            itemsShadow,
+                            "divider_${menuItems.lastOrNull()?.id ?: 0}"
+                        )
+                    )
                 }
             }
         }

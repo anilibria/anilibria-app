@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="top_search_view" type="id" />
+    <item name="attached_view_coroutine_scope" type="id" />
 </resources>

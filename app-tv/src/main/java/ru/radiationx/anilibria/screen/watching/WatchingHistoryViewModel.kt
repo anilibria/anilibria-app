@@ -5,10 +5,9 @@ import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.repository.HistoryRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class WatchingHistoryViewModel(
+class WatchingHistoryViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val converter: CardsDataConverter,
     private val cardRouter: LibriaCardRouter

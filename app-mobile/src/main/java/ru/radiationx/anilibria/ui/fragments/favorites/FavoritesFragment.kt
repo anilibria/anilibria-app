@@ -8,9 +8,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
 import kotlinx.coroutines.flow.launchIn
@@ -28,7 +28,7 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.utils.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.showWithLifecycle
@@ -65,7 +65,9 @@ class FavoritesFragment :
 
     private val viewModel by viewModel<FavoritesViewModel>()
 
-    private var searchView: SearchMenuItem? = null
+    private var _searchView: SearchMenuItem? = null
+    private val searchView: SearchMenuItem
+        get() = requireNotNull(_searchView)
 
     override var sharedViewLocal: View? = null
 
@@ -82,16 +84,20 @@ class FavoritesFragment :
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        _searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
+        baseBinding.coordinatorLayout.addView(searchView)
+        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
+            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        }
         super.onViewCreated(view, savedInstanceState)
 
         //ToolbarHelper.fixInsets(toolbar)
         postopneEnterTransitionWithTimout()
         binding.recyclerView.doOnLayout {
             startPostponedEnterTransition()
-        }
-
-        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
-            id = R.id.top_search_view
         }
 
         baseBinding.toolbar.apply {
@@ -119,23 +125,14 @@ class FavoritesFragment :
             add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
-                    searchView?.requestFocus(it)
+                    searchView.requestFocus(it)
                     viewModel.onSearchClick()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
-
-        baseBinding.coordinatorLayout.addView(searchView)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                width =
-                    CoordinatorLayout.LayoutParams.MATCH_PARENT
-                height =
-                    CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            }
-        searchView?.apply {
+        searchView.apply {
             setTextHint("Название релиза")
             setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: CharSequence): Boolean {
@@ -158,19 +155,18 @@ class FavoritesFragment :
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                topMargin = dimensions.statusBar
-            }
-        searchView?.requestLayout()
+        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            leftMargin = dimensions.left
+            topMargin = dimensions.top
+            rightMargin = dimensions.right
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        searchView?.clearFocus()
         binding.recyclerView.adapter = null
-        searchView?.setAdapter(null)
-        searchView = null
+        searchView.setAdapter(null)
+        _searchView = null
     }
 
     override fun onItemClick(position: Int, view: View) {

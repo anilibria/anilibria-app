@@ -10,10 +10,9 @@ import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.anilibria.screen.player.PlayerExtra
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.interactors.ReleaseInteractor
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class EndEpisodeViewModel(
+class EndEpisodeViewModel @Inject constructor(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,

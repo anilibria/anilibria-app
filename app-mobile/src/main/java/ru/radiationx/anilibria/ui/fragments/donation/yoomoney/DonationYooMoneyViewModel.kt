@@ -2,7 +2,11 @@ package ru.radiationx.anilibria.ui.fragments.donation.yoomoney
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
@@ -13,10 +17,9 @@ import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class DonationYooMoneyViewModel(
+class DonationYooMoneyViewModel @Inject constructor(
     private val donationRepository: DonationRepository,
     private val errorHandler: ErrorHandler,
     private val analytics: DonationYooMoneyAnalytics,

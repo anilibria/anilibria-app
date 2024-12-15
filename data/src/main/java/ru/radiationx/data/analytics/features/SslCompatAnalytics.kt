@@ -2,10 +2,9 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.sslcompat.SslCompat
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SslCompatAnalytics(
+class SslCompatAnalytics @Inject constructor(
     private val sender: AnalyticsSender,
 ) {
 

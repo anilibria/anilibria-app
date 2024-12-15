@@ -19,8 +19,6 @@ import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.quill.Quill
 import ru.radiationx.quill.get
 import timber.log.Timber
-import toothpick.Toothpick
-import toothpick.configuration.Configuration
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
@@ -100,7 +98,6 @@ class App : Application() {
     }
 
     private fun initDependencies() {
-        Toothpick.setConfiguration(Configuration.forProduction())
         Quill.getRootScope().installModules(AppModule(this), DataModule(this))
     }
 

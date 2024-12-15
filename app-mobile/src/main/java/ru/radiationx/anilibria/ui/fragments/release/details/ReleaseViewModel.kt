@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
@@ -22,8 +23,7 @@ import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
-import com.github.terrakok.cicerone.Router
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 data class ReleaseExtra(
     val id: ReleaseId?,
@@ -31,8 +31,7 @@ data class ReleaseExtra(
     val release: Release?,
 ) : QuillExtra
 
-@InjectConstructor
-class ReleaseViewModel(
+class ReleaseViewModel @Inject constructor(
     private val argExtra: ReleaseExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,

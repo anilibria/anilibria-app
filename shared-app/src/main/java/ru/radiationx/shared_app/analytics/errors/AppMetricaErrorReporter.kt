@@ -3,10 +3,9 @@ package ru.radiationx.shared_app.analytics.errors
 import io.appmetrica.analytics.AppMetrica
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AppMetricaErrorReporter : AnalyticsErrorReporter {
+class AppMetricaErrorReporter @Inject constructor() : AnalyticsErrorReporter {
 
     override fun report(message: String, error: Throwable) {
         safeReport {

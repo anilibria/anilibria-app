@@ -12,11 +12,12 @@ import androidx.core.view.updatePadding
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivitySettingsBinding
+import ru.radiationx.anilibria.di.DimensionsModule
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
-import ru.radiationx.anilibria.utils.Dimensions
-import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.quill.inject
-import kotlin.math.max
+import ru.radiationx.quill.installModules
 
 
 /**
@@ -32,6 +33,7 @@ class SettingsActivity : BaseActivity(R.layout.activity_settings) {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.PreferencesDayNightAppTheme)
         enableEdgeToEdge()
+        installModules(DimensionsModule())
         super.onCreate(savedInstanceState)
         binding.initInsets(dimensionsProvider)
         binding.toolbar.setNavigationOnClickListener {
@@ -52,23 +54,20 @@ class SettingsActivity : BaseActivity(R.layout.activity_settings) {
 
     private fun ActivitySettingsBinding.initInsets(dimensionsProvider: DimensionsProvider) {
         ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
-            val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val contentInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars().or(WindowInsetsCompat.Type.displayCutout())
+            )
 
             val dimensions = Dimensions(
-                statusBar = systemBarInsets.top,
-                navigationBar = max(systemBarInsets.bottom, imeInsets.bottom),
+                left = contentInsets.left,
+                right = contentInsets.right,
+                bottom = contentInsets.bottom
             )
 
             appbarLayout.updatePadding(
-                left = systemBarInsets.left,
-                top = systemBarInsets.top,
-                right = systemBarInsets.right,
-            )
-
-            fragmentContent.updatePadding(
-                left = systemBarInsets.left,
-                right = systemBarInsets.right,
+                left = contentInsets.left,
+                top = contentInsets.top,
+                right = contentInsets.right,
             )
             dimensionsProvider.update(dimensions)
             insets

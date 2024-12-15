@@ -10,14 +10,17 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import ru.radiationx.shared.ktx.repeatWhen
 import ru.radiationx.shared_app.common.SimpleActivityLifecycleCallbacks
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AppThemeControllerImpl(
+class AppThemeControllerImpl @Inject constructor(
     private val application: Application,
     private val sharedPreferences: SharedPreferences
 ) : AppThemeController {

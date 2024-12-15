@@ -10,6 +10,8 @@ import ru.radiationx.anilibria.databinding.ItemLoadMoreBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 
 /**
  * Created by radiationx on 13.01.18.
@@ -31,12 +33,15 @@ class LoadMoreDelegate(
 
         private val binding by viewBinding<ItemLoadMoreBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         init {
             binding.itemLoadMoreBtn.isGone = true
             binding.itemLoadMoreContainer.isVisible = true
         }
 
         fun bind(needNotify: Boolean) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             if (needNotify) {
                 listener?.invoke()
             }

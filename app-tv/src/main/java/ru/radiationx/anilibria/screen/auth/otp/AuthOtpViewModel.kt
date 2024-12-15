@@ -13,10 +13,9 @@ import ru.radiationx.data.entity.domain.auth.OtpNotFoundException
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AuthOtpViewModel(
+class AuthOtpViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val guidedRouter: GuidedRouter,
 ) : LifecycleViewModel() {

@@ -28,7 +28,7 @@ dependencies {
     implementation libs.androidx.appcompat
     implementation libs.coil
 
-    implementation libs.toothpick
+    compileOnly libs.toothpick
     ksp libs.toothpick.compiler
 
     implementation libs.cicerone

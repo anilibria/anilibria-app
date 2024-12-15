@@ -17,10 +17,10 @@ import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdapter
 import ru.radiationx.anilibria.ui.fragments.donation.jointeam.DonationDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.yoomoney.DonationYooMoneyDialogFragment
-import ru.radiationx.anilibria.utils.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.getPaddingOffsets
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.launchInResumed
-import kotlin.math.roundToInt
 
 class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation_detail) {
 
@@ -30,6 +30,8 @@ class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation
     )
 
     private val binding by viewBinding<FragmentDonationDetailBinding>()
+
+    private val recyclerPaddings by lazy { binding.donationRecycler.getPaddingOffsets() }
 
     private val viewModel by viewModel<DonationDetailViewModel>()
 
@@ -66,9 +68,17 @@ class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        binding.donationToolbar.updatePadding(top = dimensions.statusBar)
+        binding.donationToolbar.updatePadding(
+            left = dimensions.left,
+            top = dimensions.top,
+            right = dimensions.right
+        )
         binding.donationToolbar.doOnNextLayout {
-            binding.donationRecycler.updatePadding(top = it.height + (16 * binding.donationRecycler.resources.displayMetrics.density).roundToInt())
+            binding.donationRecycler.updatePadding(
+                left = recyclerPaddings.left + dimensions.left,
+                top = recyclerPaddings.top + it.height,
+                right = recyclerPaddings.right + dimensions.right
+            )
         }
     }
 

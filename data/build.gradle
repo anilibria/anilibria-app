@@ -49,7 +49,7 @@ dependencies {
     implementation libs.media3.datasource.okhttp
     implementation libs.media3.datasource.cronet
 
-    implementation libs.toothpick
+    compileOnly libs.toothpick
     ksp libs.toothpick.compiler
 
     implementation libs.androidnetworktools

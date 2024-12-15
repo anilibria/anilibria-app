@@ -4,10 +4,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class PlayerSpeedViewModel(
+class PlayerSpeedViewModel @Inject constructor(
     private val preferencesHolder: PreferencesHolder,
     private val guidedRouter: GuidedRouter,
 ) : LifecycleViewModel() {

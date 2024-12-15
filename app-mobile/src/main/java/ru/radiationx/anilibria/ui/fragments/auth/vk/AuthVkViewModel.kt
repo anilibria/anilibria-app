@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.auth.vk
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -11,15 +12,13 @@ import ru.radiationx.anilibria.ui.fragments.auth.social.WebAuthSoFastDetector
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
-import com.github.terrakok.cicerone.Router
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 data class AuthVkExtra(
     val url: String,
 ) : QuillExtra
 
-@InjectConstructor
-class AuthVkViewModel(
+class AuthVkViewModel @Inject constructor(
     private val argExtra: AuthVkExtra,
     private val authHolder: AuthHolder,
     private val router: Router,

@@ -3,10 +3,9 @@ package ru.radiationx.data.analytics.features
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class Analytics(
+class Analytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

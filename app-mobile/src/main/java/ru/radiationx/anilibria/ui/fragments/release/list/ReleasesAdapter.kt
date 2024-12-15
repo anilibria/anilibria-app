@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
+import ru.radiationx.anilibria.ui.adapters.ShadowDirection
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
@@ -65,7 +66,12 @@ class ReleasesAdapter(
 
         loadingState.data?.let { data ->
             if (withExport) {
-                newItems.add(DividerShadowListItem("history"))
+                val historyShadow = if (data.isEmpty()) {
+                    ShadowDirection.Bottom
+                } else {
+                    ShadowDirection.Double
+                }
+                newItems.add(DividerShadowListItem(historyShadow, "history"))
             }
             newItems.addAll(data.map { ReleaseListItem(it) })
         }

@@ -2,10 +2,9 @@ package ru.radiationx.shared_app.analytics.events
 
 import ru.radiationx.data.analytics.AnalyticsSender
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class LoggingAnalyticsSender : AnalyticsSender {
+class LoggingAnalyticsSender @Inject constructor() : AnalyticsSender {
 
     override fun send(key: String, vararg params: Pair<String, String>) {
         Timber.tag("AnalyticsSender").d("key: $key, params: ${params.toMap()}")

@@ -2,9 +2,19 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.SuggestionItemState
@@ -19,13 +29,11 @@ import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import com.github.terrakok.cicerone.Router
-import toothpick.InjectConstructor
 import java.net.URLEncoder
+import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-@InjectConstructor
-class FastSearchViewModel(
+class FastSearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val router: Router,
     private val systemUtils: SystemUtils,
@@ -124,6 +132,7 @@ class FastSearchViewModel(
                 val urlQuery = URLEncoder.encode("anilibria $currentQuery", "utf-8")
                 systemUtils.externalLink("https://www.google.com/search?q=$urlQuery")
             }
+
             ITEM_ID_SEARCH -> {
                 catalogAnalytics.open(AnalyticsConstants.screen_fast_search)
                 fastSearchAnalytics.catalogClick()

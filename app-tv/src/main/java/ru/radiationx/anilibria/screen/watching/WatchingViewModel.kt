@@ -9,10 +9,9 @@ import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class WatchingViewModel(
+class WatchingViewModel @Inject constructor(
     authRepository: AuthRepository,
     historyRepository: HistoryRepository,
     episodesCheckerHolder: EpisodesCheckerHolder,

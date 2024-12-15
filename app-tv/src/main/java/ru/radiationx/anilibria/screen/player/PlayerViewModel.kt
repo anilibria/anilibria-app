@@ -20,10 +20,9 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class PlayerViewModel(
+class PlayerViewModel @Inject constructor(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,

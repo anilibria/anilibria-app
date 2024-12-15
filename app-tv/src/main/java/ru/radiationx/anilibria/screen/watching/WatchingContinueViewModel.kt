@@ -7,10 +7,9 @@ import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class WatchingContinueViewModel(
+class WatchingContinueViewModel @Inject constructor(
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,
     private val episodesCheckerHolder: EpisodesCheckerHolder,

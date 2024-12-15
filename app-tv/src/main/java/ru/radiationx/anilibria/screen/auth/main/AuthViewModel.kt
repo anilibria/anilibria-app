@@ -7,10 +7,9 @@ import ru.radiationx.anilibria.screen.AuthCredentialsGuidedScreen
 import ru.radiationx.anilibria.screen.AuthOtpGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.repository.AuthRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AuthViewModel(
+class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val guidedRouter: GuidedRouter
 ) : LifecycleViewModel() {

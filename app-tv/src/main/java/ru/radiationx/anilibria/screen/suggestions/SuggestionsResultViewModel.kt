@@ -18,11 +18,10 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-@InjectConstructor
-class SuggestionsResultViewModel(
+class SuggestionsResultViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val cardRouter: LibriaCardRouter,
     private val suggestionsController: SuggestionsController,

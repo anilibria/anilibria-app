@@ -12,10 +12,9 @@ import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SearchYearViewModel(
+class SearchYearViewModel @Inject constructor(
     argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,

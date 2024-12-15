@@ -7,10 +7,9 @@ import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toParam
 import ru.radiationx.data.analytics.features.extensions.toQualityParam
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ReleaseAnalytics(
+class ReleaseAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.teams.adapter.TeamsAdapter
-import ru.radiationx.anilibria.utils.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.putExtra
 
@@ -73,7 +73,11 @@ class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams), TopScroll
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        binding.teamsToolbar.updatePadding(top = dimensions.statusBar)
+        binding.root.updatePadding(
+            left = dimensions.left,
+            top = dimensions.top,
+            right = dimensions.right
+        )
     }
 
     override fun onDestroyView() {

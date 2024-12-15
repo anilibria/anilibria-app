@@ -24,9 +24,12 @@ dependencies {
 
     implementation libs.androidx.appcompat
     implementation libs.androidx.fragment
+    implementation libs.androidx.recyclerview
 
     implementation libs.androidx.lifecycle.viewmodel.ktx
 
-    implementation libs.toothpick
+    implementation libs.toothpick.runtime
     ksp libs.toothpick.compiler
+
+    api libs.javax.inject
 }

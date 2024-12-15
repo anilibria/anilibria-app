@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.view.View
+import ru.radiationx.anilibria.ads.NativeAdItem
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
-import ru.radiationx.anilibria.ads.NativeAdItem
 import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.AppInfoCardListItem
 import ru.radiationx.anilibria.ui.adapters.AppWarningCardListItem
@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 import ru.radiationx.anilibria.ui.adapters.NativeAdListItem
 import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.ShadowDirection
 import ru.radiationx.anilibria.ui.adapters.ads.NativeAdDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.AppInfoCardDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.AppWarningCardDelegate
@@ -140,7 +141,12 @@ class FeedAdapter(
                     }
                 }
                 if (lastType != null && lastType != type) {
-                    newItems.add(DividerShadowListItem("$type, ${item.getItemId()}"))
+                    newItems.add(
+                        DividerShadowListItem(
+                            ShadowDirection.Double,
+                            "$type, ${item.getItemId()}"
+                        )
+                    )
                 }
                 newItems.add(item)
                 lastType = type

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.utils
+package ru.radiationx.anilibria.utils.dimensions
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

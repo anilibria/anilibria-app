@@ -16,6 +16,8 @@ import ru.radiationx.anilibria.databinding.ItemNativeAdBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.NativeAdListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 
 /**
@@ -36,6 +38,8 @@ class NativeAdDelegate :
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemNativeAdBinding>()
+
+        private val dimensionsApplier by dimensionsApplier()
 
         private val appearance by lazy {
             val backgroundColor = binding.root.context.getColorFromAttr(R.attr.colorSurface)
@@ -74,6 +78,7 @@ class NativeAdDelegate :
         }
 
         fun bind(item: NativeAdListItem) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             val adview = updateAdView()
             adview.applyAppearance(appearance)
             adview.setAd(item.nativeAd)

@@ -12,8 +12,6 @@ import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.quill.Quill
 import timber.log.Timber
-import toothpick.Toothpick
-import toothpick.configuration.Configuration
 
 class App : Application() {
 
@@ -77,7 +75,6 @@ class App : Application() {
     }
 
     private fun initDependencies() {
-        Toothpick.setConfiguration(Configuration.forProduction())
         Quill.getRootScope().installModules(AppModule(this), DataModule(this))
     }
 

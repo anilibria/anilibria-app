@@ -11,10 +11,9 @@ import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.shared.ktx.asDayName
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ScheduleViewModel(
+class ScheduleViewModel @Inject constructor(
     scheduleRepository: ScheduleRepository,
     private val dataConverter: CardsDataConverter,
     private val cardRouter: LibriaCardRouter,

@@ -17,10 +17,9 @@ import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class UpdateViewModel(
+class UpdateViewModel @Inject constructor(
     private val checkerRepository: CheckerRepository,
     private val guidedRouter: GuidedRouter,
     private val updateController: UpdateController,

@@ -19,10 +19,9 @@ import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
 import ru.radiationx.shared_app.common.SystemUtils
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class YoutubeViewModel(
+class YoutubeViewModel @Inject constructor(
     private val youtubeRepository: YoutubeRepository,
     private val errorHandler: IErrorHandler,
     private val systemUtils: SystemUtils,

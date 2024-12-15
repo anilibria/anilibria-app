@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
-import android.text.Html
 import android.view.View
 import androidx.core.text.parseAsHtml
 import androidx.core.view.ViewCompat
@@ -14,6 +13,8 @@ import ru.radiationx.anilibria.ui.adapters.FeedListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
 /**
@@ -40,9 +41,11 @@ class FeedReleaseDelegate(
 
         private val binding by viewBinding<ItemFeedReleaseBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         fun bind(item: FeedListItem) {
             val state = requireNotNull(item.item.release)
-
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemTitle.text = state.title
             binding.itemDesc.text = state.description.parseAsHtml()
             ViewCompat.setTransitionName(

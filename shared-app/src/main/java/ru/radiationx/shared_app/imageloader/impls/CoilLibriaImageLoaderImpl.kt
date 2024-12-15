@@ -18,10 +18,9 @@ import ru.radiationx.shared_app.R
 import ru.radiationx.shared_app.imageloader.ImageLoaderScopeConfig
 import ru.radiationx.shared_app.imageloader.LibriaImageLoader
 import ru.radiationx.shared_app.imageloader.utils.toCacheKey
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CoilLibriaImageLoaderImpl(
+class CoilLibriaImageLoaderImpl @Inject constructor(
     private val context: Context,
     private val apiClientWrapper: ApiClientWrapper,
 ) : LibriaImageLoader {

@@ -14,9 +14,13 @@ import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
+import androidx.core.view.doOnLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -25,6 +29,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.Back
 import com.github.terrakok.cicerone.Command
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Replace
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -35,6 +43,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ads.BannerAdController
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
+import ru.radiationx.anilibria.di.DimensionsModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
@@ -47,23 +56,20 @@ import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.TabResetter
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
-import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.anilibria.utils.initInsets
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.launchInResumed
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Replace
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.AppNavigator
 
 class MainActivity : BaseActivity(R.layout.activity_main) {
 
@@ -118,7 +124,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         enableEdgeToEdge()
-
+        installModules(DimensionsModule())
         super.onCreate(savedInstanceState)
         if (isLaunchedFromHistory()) {
             get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
@@ -292,6 +298,55 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             return
         } else {
             viewModel.onBackPressed()
+        }
+    }
+
+    private fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            val systemBarInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            val containerInsetList = listOf(
+                systemBarInsets.bottom,
+                appFooter.height,
+                imeInsets.bottom
+            )
+            val containerInsetsBottom = containerInsetList.max()
+
+            val dimensions = Dimensions(
+                left = systemBarInsets.left,
+                top = systemBarInsets.top,
+                right = systemBarInsets.right,
+            )
+            layoutActivityContainer.root.updatePadding(
+                bottom = containerInsetsBottom
+            )
+            configuringContainer.updatePadding(
+                left = systemBarInsets.left,
+                top = systemBarInsets.top,
+                right = systemBarInsets.right,
+                bottom = systemBarInsets.bottom
+            )
+            appFooter.updatePadding(
+                left = systemBarInsets.left,
+                right = systemBarInsets.right,
+                bottom = systemBarInsets.bottom
+            )
+            provider.update(dimensions)
+            insets
+        }
+
+        root.doOnAttach {
+            it.requestApplyInsets()
+        }
+
+        appFooter.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            root.requestApplyInsets()
+        }
+        appFooter.doOnLayout {
+            root.requestApplyInsets()
         }
     }
 

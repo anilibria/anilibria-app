@@ -9,11 +9,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.content.FileProvider
 import ru.radiationx.data.downloader.LocalFile
-import toothpick.InjectConstructor
 import java.io.File
+import javax.inject.Inject
 
-@InjectConstructor
-class SystemUtils(
+class SystemUtils @Inject constructor(
     private val context: Context,
 ) {
 

@@ -8,19 +8,17 @@ import ru.radiationx.anilibria.AppBuildConfig
 import ru.radiationx.anilibria.AppMigrationExecutor
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.MobileCheckerSources
+import ru.radiationx.anilibria.ads.NativeAdsRepository
 import ru.radiationx.anilibria.apptheme.AnalyticsThemeProviderImpl
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.apptheme.AppThemeControllerImpl
-import ru.radiationx.anilibria.ads.NativeAdsRepository
 import ru.radiationx.anilibria.navigation.CiceroneHolder
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
-import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsCss
-import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.SharedBuildConfig
@@ -87,9 +85,6 @@ class AppModule(application: Application) : QuillModule() {
         instance {
             cicerone.getNavigatorHolder()
         }
-
-
-        single<DimensionsProvider>()
 
         singleImpl<ILinkHandler, LinkRouter>()
         singleImpl<IErrorHandler, ErrorHandler>()

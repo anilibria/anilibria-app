@@ -1,10 +1,9 @@
 package ru.radiationx.anilibria
 
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class TvCheckerSources : CheckerReserveSources {
+class TvCheckerSources @Inject constructor() : CheckerReserveSources {
 
     override val sources: List<String> = listOf(
         "https://github.com/anilibria/anilibria-app/raw/master/check-tv.json",

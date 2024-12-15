@@ -14,17 +14,13 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentMainBaseBinding
-import ru.radiationx.anilibria.utils.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
 
 /* Created by radiationx on 18.11.17. */
 
 abstract class BaseToolbarFragment<T : ViewBinding>(
     @LayoutRes private val contentLayoutId: Int
 ) : BaseDimensionsFragment(R.layout.fragment_main_base) {
-
-    companion object {
-        private const val CONTAINER_ID = R.id.fragment_content
-    }
 
     protected open val needToolbarShadow = true
 
@@ -34,7 +30,7 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
         onCreateBinding(it)
     }, viewProvider = {
         ViewCompat
-            .requireViewById<FrameLayout>(requireView(), CONTAINER_ID)
+            .requireViewById<FrameLayout>(requireView(), R.id.fragment_content)
             .getChildAt(0)
     })
 
@@ -49,7 +45,7 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
     ): View? = super.onCreateView(inflater, container, savedInstanceState)?.also { view ->
         inflater.inflate(
             contentLayoutId,
-            view.findViewById(CONTAINER_ID),
+            view.findViewById(R.id.fragment_content),
             true
         )
     }
@@ -61,10 +57,10 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
 
     override fun interceptDimens(dimensions: Dimensions) {
         baseBinding.baseStatusBar.updateLayoutParams {
-            height = dimensions.statusBar
+            height = dimensions.top
         }
         val correctedDimens = if (statusBarVisible) {
-            dimensions.copy(statusBar = 0)
+            dimensions.copy(top = 0)
         } else {
             dimensions
         }
@@ -74,7 +70,9 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         baseBinding.toolbar.updateLayoutParams<CollapsingToolbarLayout.LayoutParams> {
-            topMargin = dimensions.statusBar
+            leftMargin = dimensions.left
+            topMargin = dimensions.top
+            rightMargin = dimensions.right
         }
     }
 

@@ -133,7 +133,7 @@ import ru.radiationx.data.sslcompat.SslCompat
 import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.data.system.AppCookieJar
 import ru.radiationx.quill.QuillModule
-import toothpick.InjectConstructor
+import javax.inject.Inject
 import javax.inject.Provider
 
 class DataModule(context: Context) : QuillModule() {
@@ -291,9 +291,7 @@ class DataModule(context: Context) : QuillModule() {
         single<PlayerDataSourceProvider>()
     }
 
-
-    @InjectConstructor
-    class PreferencesProvider(
+    class PreferencesProvider @Inject constructor(
         private val context: Context,
     ) : Provider<SharedPreferences> {
         @Suppress("DEPRECATION")
@@ -307,8 +305,7 @@ class DataModule(context: Context) : QuillModule() {
         }
     }
 
-    @InjectConstructor
-    class DataPreferencesProvider(
+    class DataPreferencesProvider @Inject constructor(
         private val context: Context,
     ) : Provider<SharedPreferences> {
         override fun get(): SharedPreferences {

@@ -35,11 +35,10 @@ import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared.ktx.coRunCatching
-import toothpick.InjectConstructor
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-@InjectConstructor
-class PlayerViewModel(
+class PlayerViewModel @Inject constructor(
     private val sharedPlayerData: SharedPlayerData,
     private val releaseInteractor: ReleaseInteractor,
     private val historyRepository: HistoryRepository,

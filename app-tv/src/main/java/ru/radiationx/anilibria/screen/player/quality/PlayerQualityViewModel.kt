@@ -11,10 +11,9 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class PlayerQualityViewModel(
+class PlayerQualityViewModel @Inject constructor(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val preferencesHolder: PreferencesHolder,

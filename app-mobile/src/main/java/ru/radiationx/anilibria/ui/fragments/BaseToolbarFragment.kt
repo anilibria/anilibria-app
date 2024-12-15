@@ -23,10 +23,6 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
     @LayoutRes private val contentLayoutId: Int
 ) : BaseDimensionsFragment(R.layout.fragment_main_base) {
 
-    companion object {
-        private const val CONTAINER_ID = R.id.fragment_content
-    }
-
     protected open val needToolbarShadow = true
 
     protected open val statusBarVisible = false
@@ -35,7 +31,7 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
         onCreateBinding(it)
     }, viewProvider = {
         ViewCompat
-            .requireViewById<FrameLayout>(requireView(), CONTAINER_ID)
+            .requireViewById<FrameLayout>(requireView(), R.id.fragment_content)
             .getChildAt(0)
     })
 
@@ -50,7 +46,7 @@ abstract class BaseToolbarFragment<T : ViewBinding>(
     ): View? = super.onCreateView(inflater, container, savedInstanceState)?.also { view ->
         inflater.inflate(
             contentLayoutId,
-            view.findViewById(CONTAINER_ID),
+            view.findViewById(R.id.fragment_content),
             true
         )
     }

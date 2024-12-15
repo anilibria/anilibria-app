@@ -274,6 +274,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         setOnClickListener(this)
     }
 
+
     // *********************************************************************************************
     fun setNavigationIconImageResource(@DrawableRes resId: Int) {
         mImageViewNavigation?.setImageResource(resId)

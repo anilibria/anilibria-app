@@ -5,11 +5,12 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
 import kotlinx.coroutines.flow.launchIn
@@ -77,7 +78,9 @@ class SearchCatalogFragment :
         CatalogExtra(genre = getExtra(ARG_GENRE))
     }
 
-    private var searchView: SearchMenuItem? = null
+    private var _searchView: SearchMenuItem? = null
+    private val searchView: SearchMenuItem
+        get() = requireNotNull(_searchView)
 
     override var sharedViewLocal: View? = null
 
@@ -94,6 +97,14 @@ class SearchCatalogFragment :
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        _searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
+        baseBinding.coordinatorLayout.addView(searchView)
+        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
+            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        }
         super.onViewCreated(view, savedInstanceState)
 
         postopneEnterTransitionWithTimout()
@@ -101,9 +112,6 @@ class SearchCatalogFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
-            id = R.id.top_search_view
-        }
 
         genresDialog =
             CatalogFilterDialog(requireContext(), object : CatalogFilterDialog.ClickListener {
@@ -143,7 +151,7 @@ class SearchCatalogFragment :
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
                     viewModel.onFastSearchClick()
-                    searchView?.requestFocus(it)
+                    searchView.requestFocus(it)
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -157,15 +165,7 @@ class SearchCatalogFragment :
         }
 
 
-        baseBinding.coordinatorLayout.addView(searchView)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-                width =
-                    androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
-                height =
-                    androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            }
-        (searchView as SearchLayout?)?.apply {
+        searchView.apply {
             setTextHint("Название релиза")
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
@@ -219,18 +219,18 @@ class SearchCatalogFragment :
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-                topMargin = dimensions.top
-            }
-        searchView?.requestLayout()
+        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            leftMargin = dimensions.left
+            topMargin = dimensions.top
+            rightMargin = dimensions.right
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding.recyclerView.adapter = null
-        searchView?.setAdapter(null)
-        searchView = null
+        searchView.setAdapter(null)
+        _searchView = null
     }
 
     override fun onItemClick(position: Int, view: View) {

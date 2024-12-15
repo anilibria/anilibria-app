@@ -1,12 +1,15 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.SearchUtils
@@ -86,7 +89,9 @@ class FeedFragment :
 
     private val searchViewModel by viewModel<FastSearchViewModel>()
 
-    private var searchView: SearchView? = null
+    private var _searchView: SearchView? = null
+    private val searchView: SearchView
+        get() = requireNotNull(_searchView)
 
     override var sharedViewLocal: View? = null
 
@@ -102,7 +107,24 @@ class FeedFragment :
         return FragmentListRefreshBinding.bind(view)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        _searchView = SearchView(baseBinding.coordinatorLayout.context).apply {
+            id = R.id.top_search_view
+        }
+        baseBinding.coordinatorLayout.addView(searchView)
+        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
+            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
+        }
+
         super.onViewCreated(view, savedInstanceState)
 
         postopneEnterTransitionWithTimout()
@@ -110,9 +132,6 @@ class FeedFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchView(baseBinding.coordinatorLayout.context).apply {
-            id = R.id.top_search_view
-        }
         binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
         binding.recyclerView.apply {
             adapter = this@FeedFragment.adapter
@@ -141,16 +160,7 @@ class FeedFragment :
             updateToolbarShadow(it)
         }
 
-
-        baseBinding.coordinatorLayout.addView(searchView)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                width =
-                    CoordinatorLayout.LayoutParams.MATCH_PARENT
-                height =
-                    CoordinatorLayout.LayoutParams.WRAP_CONTENT
-            }
-        searchView?.apply {
+        searchView.apply {
             setTextHint("Поиск по названию")
             navigationIconSupport = SearchUtils.NavigationIconSupport.SEARCH
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
@@ -176,8 +186,6 @@ class FeedFragment :
             })
 
             setAdapter(searchAdapter)
-
-
         }
 
         viewModel.state.onEach { state ->
@@ -193,11 +201,11 @@ class FeedFragment :
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                topMargin = dimensions.top
-            }
-        searchView?.requestLayout()
+        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            leftMargin = dimensions.left
+            topMargin = dimensions.top
+            rightMargin = dimensions.right
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -214,8 +222,8 @@ class FeedFragment :
         super.onDestroyView()
         adapter.saveState(null)
         binding.recyclerView.adapter = null
-        searchView?.setAdapter(null)
-        searchView = null
+        searchView.setAdapter(null)
+        _searchView = null
     }
 
     override fun scrollToTop() {

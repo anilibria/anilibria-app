@@ -73,7 +73,11 @@ class TeamsFragment : BaseDimensionsFragment(R.layout.fragment_teams), TopScroll
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        binding.teamsToolbar.updatePadding(top = dimensions.top)
+        binding.root.updatePadding(
+            left = dimensions.left,
+            top = dimensions.top,
+            right = dimensions.right
+        )
     }
 
     override fun onDestroyView() {

@@ -8,7 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
@@ -79,9 +78,20 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
             return
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            binding.toolbar.updatePadding(top = systemBarInsets.top)
-            binding.updateContent.updatePadding(bottom = systemBarInsets.bottom)
+            val systemBarInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            binding.root.updatePadding(
+                top = systemBarInsets.top,
+                left = systemBarInsets.left,
+                right = systemBarInsets.right,
+            )
+            binding.updateRecycler.updatePadding(
+                bottom = systemBarInsets.bottom
+            )
+            binding.updatePlaceholder.updatePadding(
+                bottom = systemBarInsets.bottom
+            )
             insets
         }
         lifecycle.addObserver(useTimeCounter)

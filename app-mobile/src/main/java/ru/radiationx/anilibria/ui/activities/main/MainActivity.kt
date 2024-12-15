@@ -14,8 +14,13 @@ import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
+import androidx.core.view.doOnLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -51,8 +56,8 @@ import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.TabResetter
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
-import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.anilibria.utils.initInsets
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
@@ -293,6 +298,55 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             return
         } else {
             viewModel.onBackPressed()
+        }
+    }
+
+    private fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            val systemBarInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            val containerInsetList = listOf(
+                systemBarInsets.bottom,
+                appFooter.height,
+                imeInsets.bottom
+            )
+            val containerInsetsBottom = containerInsetList.max()
+
+            val dimensions = Dimensions(
+                left = systemBarInsets.left,
+                top = systemBarInsets.top,
+                right = systemBarInsets.right,
+            )
+            layoutActivityContainer.root.updatePadding(
+                bottom = containerInsetsBottom
+            )
+            configuringContainer.updatePadding(
+                left = systemBarInsets.left,
+                top = systemBarInsets.top,
+                right = systemBarInsets.right,
+                bottom = systemBarInsets.bottom
+            )
+            appFooter.updatePadding(
+                left = systemBarInsets.left,
+                right = systemBarInsets.right,
+                bottom = systemBarInsets.bottom
+            )
+            provider.update(dimensions)
+            insets
+        }
+
+        root.doOnAttach {
+            it.requestApplyInsets()
+        }
+
+        appFooter.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            root.requestApplyInsets()
+        }
+        appFooter.doOnLayout {
+            root.requestApplyInsets()
         }
     }
 

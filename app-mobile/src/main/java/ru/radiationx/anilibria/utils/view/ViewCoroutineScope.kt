@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.utils.lifecycle
+package ru.radiationx.anilibria.utils.view
 
 import android.view.View
 import android.view.View.OnAttachStateChangeListener

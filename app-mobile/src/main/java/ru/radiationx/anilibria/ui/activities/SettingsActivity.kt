@@ -14,8 +14,8 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivitySettingsBinding
 import ru.radiationx.anilibria.di.DimensionsModule
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
-import ru.radiationx.anilibria.utils.Dimensions
-import ru.radiationx.anilibria.utils.DimensionsProvider
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 

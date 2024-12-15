@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.utils
+package ru.radiationx.anilibria.utils.dimensions
 
 data class Dimensions(
     val left: Int = 0,

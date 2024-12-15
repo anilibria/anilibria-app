@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
+import androidx.core.view.updatePadding
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
@@ -15,8 +19,6 @@ import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
-import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.shared.ktx.android.getExtra
@@ -42,7 +44,11 @@ class AuthActivity : BaseActivity(R.layout.activity_auth) {
 
     private val navigationHolder by inject<NavigatorHolder>()
 
-    private val dimensionsProvider by inject<DimensionsProvider>()
+    private val navigatorNew by lazy {
+        object : AppNavigator(this, R.id.root_container) {
+
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
@@ -50,7 +56,7 @@ class AuthActivity : BaseActivity(R.layout.activity_auth) {
         installModules(DimensionsModule())
         super.onCreate(savedInstanceState)
 
-        binding.initInsets(dimensionsProvider)
+        binding.initInsets()
 
         if (savedInstanceState == null) {
             val initScreen = getExtra<BaseFragmentScreen>(ARG_INIT_SCREEN) ?: Screens.AuthMain()
@@ -87,9 +93,24 @@ class AuthActivity : BaseActivity(R.layout.activity_auth) {
         }
     }
 
-    private val navigatorNew by lazy {
-        object : AppNavigator(this, R.id.root_container) {
+    private fun ActivityAuthBinding.initInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            val contentInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                    .or(WindowInsetsCompat.Type.displayCutout())
+                    .or(WindowInsetsCompat.Type.ime())
+            )
+            layoutActivityContainer.root.updatePadding(
+                top = contentInsets.top,
+                left = contentInsets.left,
+                right = contentInsets.right,
+                bottom = contentInsets.bottom
+            )
+            insets
+        }
 
+        root.doOnAttach {
+            it.requestApplyInsets()
         }
     }
 }

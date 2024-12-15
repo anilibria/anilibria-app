@@ -28,7 +28,7 @@ import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.comments.webview.VkWebChromeClient
 import ru.radiationx.anilibria.ui.fragments.comments.webview.VkWebViewClient
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
-import ru.radiationx.anilibria.utils.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.quill.get

@@ -12,10 +12,12 @@ import androidx.core.view.updatePadding
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivitySettingsBinding
+import ru.radiationx.anilibria.di.DimensionsModule
 import ru.radiationx.anilibria.ui.fragments.settings.SettingsFragment
 import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import kotlin.math.max
 
 
@@ -32,6 +34,7 @@ class SettingsActivity : BaseActivity(R.layout.activity_settings) {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.PreferencesDayNightAppTheme)
         enableEdgeToEdge()
+        installModules(DimensionsModule())
         super.onCreate(savedInstanceState)
         binding.initInsets(dimensionsProvider)
         binding.toolbar.setNavigationOnClickListener {

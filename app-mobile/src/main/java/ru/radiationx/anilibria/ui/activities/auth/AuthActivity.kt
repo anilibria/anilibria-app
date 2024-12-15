@@ -10,6 +10,7 @@ import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityAuthBinding
+import ru.radiationx.anilibria.di.DimensionsModule
 import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
@@ -17,6 +18,7 @@ import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.utils.DimensionsProvider
 import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import ru.radiationx.shared.ktx.android.getExtra
 
 
@@ -45,6 +47,7 @@ class AuthActivity : BaseActivity(R.layout.activity_auth) {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         enableEdgeToEdge()
+        installModules(DimensionsModule())
         super.onCreate(savedInstanceState)
 
         binding.initInsets(dimensionsProvider)

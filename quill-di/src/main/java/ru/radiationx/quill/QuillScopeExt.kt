@@ -1,10 +1,13 @@
 package ru.radiationx.quill
 
 import android.content.Context
+import android.content.ContextWrapper
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 
 
 fun Fragment.getParentScope(): QuillScope {
@@ -46,5 +49,18 @@ fun FragmentActivity.getScope(): QuillScope {
 }
 
 fun Context.getScope(): QuillScope {
-    return Quill.getRootScope()
+    return findFragmentActivity()?.getScope() ?: Quill.getRootScope()
+}
+
+fun View.getScope(): QuillScope {
+    return context.getScope()
+}
+
+fun ViewHolder.getScope(): QuillScope {
+    return itemView.getScope()
+}
+
+private tailrec fun Context.findFragmentActivity(): FragmentActivity? = when {
+    this is FragmentActivity -> this
+    else -> (this as? ContextWrapper)?.baseContext?.findFragmentActivity()
 }

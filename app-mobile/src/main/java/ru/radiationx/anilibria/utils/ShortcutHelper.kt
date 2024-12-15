@@ -19,11 +19,10 @@ import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.imageloader.loadImageBitmap
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 import kotlin.math.min
 
-@InjectConstructor
-class ShortcutHelper(
+class ShortcutHelper @Inject constructor(
     private val context: Context,
 ) {
 

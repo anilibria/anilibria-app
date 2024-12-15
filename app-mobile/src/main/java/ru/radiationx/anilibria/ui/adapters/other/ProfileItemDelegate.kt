@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.adapters.other
 
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import ru.radiationx.anilibria.R
@@ -10,8 +11,7 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ProfileListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
-import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.quill.Quill
+import ru.radiationx.anilibria.utils.dimensions.applyDimensions
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
 class ProfileItemDelegate(
@@ -33,15 +33,12 @@ class ProfileItemDelegate(
 
         private val binding by viewBinding<ItemOtherProfileBinding>()
 
-        private val dimensionsProvider = Quill.getRootScope().get(DimensionsProvider::class)
-
         fun bind(state: ProfileItemState) {
-            dimensionsProvider.get().also {
-                binding.root.setPadding(
-                    binding.root.paddingLeft,
-                    it.statusBar,
-                    binding.root.paddingRight,
-                    binding.root.paddingBottom
+            applyDimensions {
+                binding.root.updatePadding(
+                    left = it.insets.left,
+                    top = it.insets.top,
+                    right = it.insets.right
                 )
             }
             binding.profileNick.text = state.title

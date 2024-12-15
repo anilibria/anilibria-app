@@ -66,7 +66,7 @@ class DonationDetailFragment : BaseDimensionsFragment(R.layout.fragment_donation
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        binding.donationToolbar.updatePadding(top = dimensions.statusBar)
+        binding.donationToolbar.updatePadding(top = dimensions.insets.top)
         binding.donationToolbar.doOnNextLayout {
             binding.donationRecycler.updatePadding(top = it.height + (16 * binding.donationRecycler.resources.displayMetrics.density).roundToInt())
         }

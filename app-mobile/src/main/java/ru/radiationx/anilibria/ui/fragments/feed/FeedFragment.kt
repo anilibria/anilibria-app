@@ -195,7 +195,7 @@ class FeedFragment :
         super.updateDimens(dimensions)
         searchView?.layoutParams =
             (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                topMargin = dimensions.statusBar
+                topMargin = dimensions.insets.top
             }
         searchView?.requestLayout()
     }

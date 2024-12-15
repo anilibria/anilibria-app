@@ -14,7 +14,6 @@ import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -25,6 +24,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.Back
 import com.github.terrakok.cicerone.Command
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Replace
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
@@ -35,6 +38,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ads.BannerAdController
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
+import ru.radiationx.anilibria.di.DimensionsModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
@@ -55,15 +59,12 @@ import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.launchInResumed
-import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Replace
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.androidx.AppNavigator
 
 class MainActivity : BaseActivity(R.layout.activity_main) {
 
@@ -118,7 +119,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
         enableEdgeToEdge()
-
+        installModules(DimensionsModule())
         super.onCreate(savedInstanceState)
         if (isLaunchedFromHistory()) {
             get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)

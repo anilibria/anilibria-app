@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
+import ru.radiationx.anilibria.utils.dimensions.applyDimensions
 import ru.radiationx.shared.ktx.android.setCompatDrawable
 
 class MenuItemDelegate(
@@ -29,6 +30,9 @@ class MenuItemDelegate(
         private val binding by viewBinding<ItemOtherMenuBinding>()
 
         fun bind(state: OtherMenuItemState) {
+            applyDimensions {
+
+            }
             binding.otherMenuTitle.text = state.title
             binding.otherMenuIcon.setCompatDrawable(state.iconRes)
             binding.root.setOnClickListener { clickListener(state) }

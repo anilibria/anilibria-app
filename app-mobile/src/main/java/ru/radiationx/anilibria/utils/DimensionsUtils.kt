@@ -11,7 +11,9 @@ import kotlin.math.max
 
 fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
-        val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val systemBarInsets = insets.getInsets(
+            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+        )
         val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
 
         val containerInsetList = listOf(
@@ -24,10 +26,9 @@ fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
         val dimensions = Dimensions(
             statusBar = systemBarInsets.top,
             navigationBar = max(systemBarInsets.bottom, imeInsets.bottom),
+            insets = systemBarInsets
         )
         layoutActivityContainer.root.updatePadding(
-            left = systemBarInsets.left,
-            right = systemBarInsets.right,
             bottom = containerInsetsBottom
         )
         configuringContainer.updatePadding(
@@ -59,7 +60,9 @@ fun ActivityMainBinding.initInsets(provider: DimensionsProvider) {
 
 fun ActivityAuthBinding.initInsets(provider: DimensionsProvider) {
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
-        val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val systemBarInsets = insets.getInsets(
+            WindowInsetsCompat.Type.systemBars()
+        )
         val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
 
         val containerInsetList = listOf(

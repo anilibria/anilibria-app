@@ -3,8 +3,6 @@ package com.lapism.search.widget
 import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
@@ -30,7 +28,7 @@ class SearchView @JvmOverloads constructor(
 ) : SearchLayout(context, attrs, defStyleAttr, defStyleRes), CoordinatorLayout.AttachedBehavior {
 
     // *********************************************************************************************
-    private var mBehavior: CoordinatorLayout.Behavior<*> = SearchBehavior<SearchView>()
+    private val viewBehavior = SearchBehavior<SearchView>()
 
     // *********************************************************************************************
     init {
@@ -38,7 +36,6 @@ class SearchView @JvmOverloads constructor(
         init()
 
 
-        setClearIconImageResource(R.drawable.search_ic_outline_clear_24px)
         binding.shadow.setBackgroundColor(
             ContextCompat.getColor(
                 context,
@@ -51,32 +48,8 @@ class SearchView @JvmOverloads constructor(
         val transition = LayoutTransition()
         transition.enableTransitionType(LayoutTransition.CHANGING)
         transition.setDuration(getAnimationDuration())
-        transition.addTransitionListener(object : LayoutTransition.TransitionListener {
-            override fun startTransition(
-                transition: LayoutTransition?,
-                container: ViewGroup?,
-                view: View?,
-                transitionType: Int,
-            ) {
-
-            }
-
-            override fun endTransition(
-                transition: LayoutTransition?,
-                container: ViewGroup?,
-                view: View?,
-                transitionType: Int,
-            ) {
-
-            }
-        })
 
         this.layoutTransition = transition
-    }
-
-    // *********************************************************************************************
-    fun setBehavior(behavior: CoordinatorLayout.Behavior<*>) {
-        mBehavior = behavior
     }
 
     // *********************************************************************************************
@@ -157,7 +130,7 @@ class SearchView @JvmOverloads constructor(
     }
 
     override fun getBehavior(): CoordinatorLayout.Behavior<*> {
-        return mBehavior
+        return viewBehavior
     }
 
 }

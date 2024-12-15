@@ -30,8 +30,8 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
@@ -162,16 +162,9 @@ class HistoryFragment :
 
         searchView.apply {
             setTextHint("Название релиза")
-            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    viewModel.localSearch(newText.toString())
-                    return false
-                }
-            })
+            setOnQueryTextListener { newText ->
+                viewModel.localSearch(newText)
+            }
 
             setAdapter(searchAdapter)
         }

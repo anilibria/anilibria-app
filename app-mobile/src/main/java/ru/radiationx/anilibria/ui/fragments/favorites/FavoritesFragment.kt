@@ -134,16 +134,9 @@ class FavoritesFragment :
 
         searchView.apply {
             setTextHint("Название релиза")
-            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    viewModel.localSearch(newText.toString())
-                    return false
-                }
-            })
+            setOnQueryTextListener { newText ->
+                viewModel.localSearch(newText)
+            }
 
             setAdapter(searchAdapter)
         }

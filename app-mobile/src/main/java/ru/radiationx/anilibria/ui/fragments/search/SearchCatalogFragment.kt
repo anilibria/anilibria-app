@@ -167,24 +167,14 @@ class SearchCatalogFragment :
 
         searchView.apply {
             setTextHint("Название релиза")
-            setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
-                override fun onFocusChange(hasFocus: Boolean) {
-                    if (hasFocus) {
-                        viewModel.onFastSearchOpen()
-                    }
+            setOnFocusChangeListener { hasFocus ->
+                if (hasFocus) {
+                    viewModel.onFastSearchOpen()
                 }
-
-            })
-            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    searchViewModel.onQueryChange(newText.toString())
-                    return false
-                }
-            })
+            }
+            setOnQueryTextListener { newText ->
+                searchViewModel.onQueryChange(newText)
+            }
 
             setAdapter(fastSearchAdapter)
         }

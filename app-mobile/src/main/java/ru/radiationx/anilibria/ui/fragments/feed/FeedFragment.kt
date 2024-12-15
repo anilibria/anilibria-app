@@ -163,27 +163,18 @@ class FeedFragment :
         searchView.apply {
             setTextHint("Поиск по названию")
             setNavigationIcon(NavigationIcon.Search)
-            setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
-                override fun onFocusChange(hasFocus: Boolean) {
-                    if (hasFocus) {
-                        setNavigationIcon(NavigationIcon.Arrow)
-                        viewModel.onFastSearchOpen()
-                        baseBinding.appbarLayout.setExpanded(true)
-                    } else {
-                        setNavigationIcon(NavigationIcon.Search)
-                    }
+            setOnFocusChangeListener { hasFocus ->
+                if (hasFocus) {
+                    setNavigationIcon(NavigationIcon.Arrow)
+                    viewModel.onFastSearchOpen()
+                    baseBinding.appbarLayout.setExpanded(true)
+                } else {
+                    setNavigationIcon(NavigationIcon.Search)
                 }
-            })
-            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    searchViewModel.onQueryChange(newText.toString())
-                    return false
-                }
-            })
+            }
+            setOnQueryTextListener { newText ->
+                searchViewModel.onQueryChange(newText)
+            }
 
             setAdapter(searchAdapter)
         }

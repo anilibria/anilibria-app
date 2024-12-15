@@ -28,7 +28,7 @@ class SearchEditText : AppCompatEditText {
             val imeVisible = ViewCompat.getRootWindowInsets(this)
                 ?.isVisible(WindowInsetsCompat.Type.ime())
                 ?: false
-            if (hasFocus() && (!imeVisible || text?.isEmpty() == true)) {
+            if (hasFocus() && (!imeVisible || isTextEmpty())) {
                 clearFocus()
                 clearText()
                 return true
@@ -43,6 +43,10 @@ class SearchEditText : AppCompatEditText {
 
     fun clearText() {
         text?.clear()
+    }
+
+    fun getQuery(): String {
+        return text?.toString().orEmpty()
     }
 
 }

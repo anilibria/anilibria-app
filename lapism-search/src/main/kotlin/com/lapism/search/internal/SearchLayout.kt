@@ -2,20 +2,13 @@ package com.lapism.search.internal
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.graphics.drawable.Drawable
 import android.os.Parcelable
-import android.text.Editable
 import android.text.TextUtils
-import android.text.TextWatcher
 import android.util.AttributeSet
-import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -24,12 +17,15 @@ import androidx.annotation.Dimension
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.SoftwareKeyboardControllerCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.lapism.search.MarginsType
 import com.lapism.search.NavigationIcon
@@ -45,18 +41,22 @@ abstract class SearchLayout @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0,
-) : FrameLayout(context, attrs, defStyleAttr, defStyleRes), View.OnClickListener {
+) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
-    protected val binding by viewBinding<CommonHierarchyBinding>(attachToRoot = false)
+    protected val binding by viewBinding<CommonHierarchyBinding>(createMethod = CreateMethod.BIND)
+
+    private val keyboardController by lazy {
+        SoftwareKeyboardControllerCompat(binding.input)
+    }
 
     // *********************************************************************************************
     protected var mOnFocusChangeListener: OnFocusChangeListener? = null
 
     private var mAnimationDuration: Long = 300L
     private var mOnQueryTextListener: OnQueryTextListener? = null
+    private var mOnQuerySubmitListener: OnQuerySubmitListener? = null
     private var mOnNavigationClickListener: OnNavigationClickListener? = null
     private var mOnClearClickListener: OnClearClickListener? = null
-    private var mOnMenuClickListener: OnMenuClickListener? = null
 
     private fun getDimensionPixelSize(@DimenRes dimenRes: Int): Int {
         return context.resources.getDimensionPixelSize(dimenRes)
@@ -111,27 +111,32 @@ abstract class SearchLayout @JvmOverloads constructor(
     protected abstract fun removeFocus()
 
     protected fun init() {
-        binding.navigationButton.setOnClickListener(this)
+        binding.clearButton.setImageResource(R.drawable.search_ic_outline_clear_24px)
+        binding.navigationButton.setOnClickListener {
+            if (binding.input.hasFocus()) {
+                val imeVisible = ViewCompat.getRootWindowInsets(this)
+                    ?.isVisible(WindowInsetsCompat.Type.ime())
+                    ?: false
+                if (imeVisible && !binding.input.isTextEmpty()) {
+                    hideKeyboard()
+                } else {
+                    binding.input.clearFocus()
+                    binding.input.clearText()
+                }
+            } else {
+                mOnNavigationClickListener?.onNavigationClick()
+            }
+        }
 
         binding.clearButton.isVisible = false
-        binding.clearButton.setOnClickListener(this)
+        binding.clearButton.setOnClickListener {
+            binding.input.clearText()
+            mOnClearClickListener?.onClearClick()
+        }
 
-        binding.menuButton.isVisible = false
-        binding.menuButton.setOnClickListener(this)
-
-        binding.input.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                this@SearchLayout.onTextChanged(s)
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-
-            }
-        })
+        binding.input.doOnTextChanged { text, _, _, _ ->
+            this@SearchLayout.onTextChanged(text?.toString().orEmpty())
+        }
         binding.input.setOnEditorActionListener { _, _, _ ->
             onSubmitQuery()
             return@setOnEditorActionListener true // true
@@ -163,8 +168,6 @@ abstract class SearchLayout @JvmOverloads constructor(
 
         isFocusable = true
         isFocusableInTouchMode = true
-        //isClickable = true TODO
-        setOnClickListener(this)
     }
 
 
@@ -174,115 +177,15 @@ abstract class SearchLayout @JvmOverloads constructor(
             NavigationIcon.Arrow -> R.drawable.search_ic_outline_arrow_back_24px
             NavigationIcon.Search -> R.drawable.search_ic_outline_search_24px
         }
-        setNavigationIconImageDrawable(ContextCompat.getDrawable(context, icRes))
-    }
-
-    fun setNavigationIconImageResource(@DrawableRes resId: Int) {
-        binding.navigationButton.setImageResource(resId)
-    }
-
-    fun setNavigationIconImageDrawable(drawable: Drawable?) {
-        binding.navigationButton.setImageDrawable(drawable)
-    }
-
-    fun setNavigationIconColorFilter(color: Int) {
-        binding.navigationButton.setColorFilter(color)
-    }
-
-    fun setNavigationIconColorFilter(color: Int, mode: PorterDuff.Mode) {
-        binding.navigationButton.setColorFilter(color, mode)
-    }
-
-    fun setNavigationIconColorFilter(cf: ColorFilter?) {
-        binding.navigationButton.colorFilter = cf
-    }
-
-    fun clearNavigationIconColorFilter() {
-        binding.navigationButton.clearColorFilter()
-    }
-
-    fun setNavigationIconContentDescription(contentDescription: CharSequence) {
-        binding.navigationButton.contentDescription = contentDescription
+        binding.navigationButton.setImageDrawable(ContextCompat.getDrawable(context, icRes))
     }
 
     // *********************************************************************************************
     fun setClearIconImageResource(@DrawableRes resId: Int) {
-        binding.clearButton.setImageResource(resId)
-    }
 
-    fun setClearIconImageDrawable(drawable: Drawable?) {
-        binding.clearButton.setImageDrawable(drawable)
-    }
-
-    fun setClearIconColorFilter(color: Int) {
-        binding.clearButton.setColorFilter(color)
-    }
-
-    fun setClearIconColorFilter(color: Int, mode: PorterDuff.Mode) {
-        binding.clearButton.setColorFilter(color, mode)
-    }
-
-    fun setClearIconColorFilter(cf: ColorFilter?) {
-        binding.clearButton.colorFilter = cf
-    }
-
-    fun clearClearIconColorFilter() {
-        binding.clearButton.clearColorFilter()
-    }
-
-    fun setClearIconContentDescription(contentDescription: CharSequence) {
-        binding.clearButton.contentDescription = contentDescription
     }
 
     // *********************************************************************************************
-    fun setMenuIconImageResource(@DrawableRes resId: Int) {
-        binding.menuButton.setImageResource(resId)
-    }
-
-    fun setMenuIconImageDrawable(drawable: Drawable?) {
-        binding.menuButton.setImageDrawable(drawable)
-    }
-
-    fun setMenuIconColorFilter(color: Int) {
-        binding.menuButton.setColorFilter(color)
-    }
-
-    fun setMenuIconColorFilter(color: Int, mode: PorterDuff.Mode) {
-        binding.menuButton.setColorFilter(color, mode)
-    }
-
-    fun setMenuIconColorFilter(cf: ColorFilter?) {
-        binding.menuButton.colorFilter = cf
-    }
-
-    fun clearMenuIconColorFilter() {
-        binding.menuButton.clearColorFilter()
-    }
-
-    fun setMenuIconContentDescription(contentDescription: CharSequence) {
-        binding.menuButton.contentDescription = contentDescription
-    }
-
-    // *********************************************************************************************
-    fun setAdapterLayoutManager(layout: RecyclerView.LayoutManager?) {
-        binding.content.layoutManager = layout
-    }
-
-    fun setAdapterHasFixedSize(hasFixedSize: Boolean) {
-        binding.content.setHasFixedSize(hasFixedSize)
-    }
-
-    /**
-     * DividerItemDecoration class
-     */
-    fun addAdapterItemDecoration(decor: RecyclerView.ItemDecoration) {
-        binding.content.addItemDecoration(decor)
-    }
-
-    fun removeAdapterItemDecoration(decor: RecyclerView.ItemDecoration) {
-        binding.content.removeItemDecoration(decor)
-    }
-
     fun setAdapter(adapter: RecyclerView.Adapter<*>?) {
         binding.content.adapter = adapter
     }
@@ -292,86 +195,25 @@ abstract class SearchLayout @JvmOverloads constructor(
     }
 
     // *********************************************************************************************
-    /**
-     * Typeface.NORMAL
-     * Typeface.BOLD
-     * Typeface.ITALIC
-     * Typeface.BOLD_ITALIC
-     *
-     * Typeface.DEFAULT
-     * Typeface.DEFAULT_BOLD
-     * Typeface.SANS_SERIF
-     * Typeface.SERIF
-     * Typeface.MONOSPACE
-     *
-     * Typeface.create(Typeface.NORMAL, Typeface.DEFAULT)
-     *
-     * TODO PARAMETERS NAME
-     */
-    fun setTextTypeface(typeface: Typeface?) {
-        binding.input.typeface = typeface
-    }
 
-    fun getTextTypeface(): Typeface? {
-        return binding.input.typeface
-    }
-
-    fun setTextInputType(inputType: Int) {
-        binding.input.inputType = inputType
-    }
-
-    fun getTextInputType(): Int {
-        return binding.input.inputType
-    }
-
-    fun setTextImeOptions(imeOptions: Int) {
-        binding.input.imeOptions = imeOptions
-    }
-
-    fun getTextImeOptions(): Int {
-        return binding.input.imeOptions
-    }
-
-    fun setTextQuery(query: CharSequence?, submit: Boolean) {
+    fun setTextQuery(query: String, submit: Boolean) {
         binding.input.setText(query)
-        if (query != null) {
-            binding.input.setSelection(binding.input.length())
-        }
-        if (submit && !TextUtils.isEmpty(query)) {
+        binding.input.setSelection(binding.input.length())
+        if (submit) {
             onSubmitQuery()
         }
     }
 
-    fun getTextQuery(): CharSequence? {
-        return binding.input.text
+    fun getTextQuery(): String {
+        return binding.input.getQuery()
     }
 
-    fun setTextHint(hint: CharSequence?) {
+    fun setTextHint(hint: String) {
         binding.input.hint = hint
-    }
-
-    fun getTextHint(): CharSequence? {
-        return binding.input.hint
-    }
-
-    fun setTextColor(@ColorInt color: Int) {
-        binding.input.setTextColor(color)
-    }
-
-    fun setTextSize(size: Float) {
-        binding.input.textSize = size
-    }
-
-    fun setTextGravity(gravity: Int) {
-        binding.input.gravity = gravity
     }
 
     fun setTextHint(@StringRes hint: Int) {
         binding.input.setHint(hint)
-    }
-
-    fun setTextHintColor(@ColorInt color: Int) {
-        binding.input.setHintTextColor(color)
     }
 
     // *********************************************************************************************
@@ -440,6 +282,10 @@ abstract class SearchLayout @JvmOverloads constructor(
         mOnQueryTextListener = listener
     }
 
+    fun setOnQuerySubmitListener(listener: OnQuerySubmitListener) {
+        mOnQuerySubmitListener = listener
+    }
+
     fun setOnNavigationClickListener(listener: OnNavigationClickListener) {
         mOnNavigationClickListener = listener
     }
@@ -448,44 +294,20 @@ abstract class SearchLayout @JvmOverloads constructor(
         mOnClearClickListener = listener
     }
 
-    fun setOnMenuClickListener(listener: OnMenuClickListener) {
-        mOnMenuClickListener = listener
-        binding.menuButton.isVisible = true
-    }
-
     // *********************************************************************************************
-    fun showKeyboard() {
-        if (!isInEditMode) {
-            val inputMethodManager =
-                context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.showSoftInput(
-                binding.input,
-                InputMethodManager.SHOW_IMPLICIT
-                //InputMethodManager.RESULT_UNCHANGED_SHOWN todo
-            )
-        }
+    protected fun showKeyboard() {
+        if (isInEditMode) return
+        keyboardController.show()
     }
 
-    fun hideKeyboard() {
-        if (!isInEditMode) {
-            val inputMethodManager =
-                context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(
-                windowToken,
-                InputMethodManager.HIDE_IMPLICIT_ONLY
-            )
-        }
+    protected fun hideKeyboard() {
+        if (isInEditMode) return
+        keyboardController.hide()
     }
 
     // *********************************************************************************************
     protected fun getAnimationDuration(): Long {
         return mAnimationDuration
-    }
-
-    protected fun filter(constraint: CharSequence) {
-        if (mOnQueryTextListener != null) {
-            mOnQueryTextListener?.onQueryTextChange(constraint)
-        }
     }
 
     protected fun setLayoutHeight(newHeight: Int) {
@@ -496,32 +318,25 @@ abstract class SearchLayout @JvmOverloads constructor(
     }
 
     protected fun showAdapter() {
-        if (binding.content.adapter != null) {
-            binding.content.isVisible = true
-        }
+        if (binding.content.adapter == null) return
+        binding.content.isVisible = true
     }
 
     protected fun hideAdapter() {
-        if (binding.content.adapter != null) {
-            binding.content.isVisible = false
-        }
+        if (binding.content.adapter == null) return
+        binding.content.isVisible = false
     }
 
     // *********************************************************************************************
-    // TODO - SET AS PUBLIC IN THE FUTURE RELEASE
-    private fun setAnimationDuration(animationDuration: Long) {
-        mAnimationDuration = animationDuration
-    }
-
-    private fun onTextChanged(newText: CharSequence) {
-        filter(newText)
+    private fun onTextChanged(newText: String) {
+        mOnQueryTextListener?.onQueryTextChange(newText)
     }
 
     private fun onSubmitQuery() {
-        val query = binding.input.text
-        if (query == null || TextUtils.getTrimmedLength(query) <= 0) return
-        if (mOnQueryTextListener?.onQueryTextSubmit(query.toString()) == false) {
-            binding.input.text = query
+        val query = binding.input.getQuery()
+        if (TextUtils.getTrimmedLength(query) <= 0) return
+        if (mOnQuerySubmitListener?.onQueryTextSubmit(query) == false) {
+            binding.input.setText(query)
         }
     }
 
@@ -529,7 +344,7 @@ abstract class SearchLayout @JvmOverloads constructor(
     override fun onSaveInstanceState(): Parcelable? {
         val superState = super.onSaveInstanceState()
         val ss = SearchViewSavedState(superState)
-        ss.query = binding.input.text?.toString()
+        ss.query = binding.input.getQuery()
         ss.hasFocus = binding.input.hasFocus()
         return ss
     }
@@ -543,8 +358,8 @@ abstract class SearchLayout @JvmOverloads constructor(
         if (state.hasFocus) {
             binding.input.requestFocus()
         }
-        if (state.query != null) {
-            setTextQuery(state.query, false)
+        state.query?.also {
+            setTextQuery(it, false)
         }
         requestLayout()
     }
@@ -562,46 +377,23 @@ abstract class SearchLayout @JvmOverloads constructor(
         binding.input.clearFocus()
     }
 
-    override fun onClick(view: View?) {
-        if (view === binding.navigationButton) {
-            if (binding.input.hasFocus()) {
-                val imeVisible = ViewCompat.getRootWindowInsets(this)
-                    ?.isVisible(WindowInsetsCompat.Type.ime())
-                    ?: false
-                if (imeVisible && !binding.input.isTextEmpty()) {
-                    hideKeyboard()
-                } else {
-                    binding.input.clearFocus()
-                    binding.input.clearText()
-                }
-            } else {
-                mOnNavigationClickListener?.onNavigationClick()
-            }
-        } else if (view === binding.clearButton) {
-            binding.input.clearText()
-            mOnClearClickListener?.onClearClick()
-        } else if (view === binding.menuButton) {
-            mOnMenuClickListener?.onMenuClick()
-        } else if (view === binding.shadow) {
-            binding.input.clearFocus()
-            binding.input.clearText()
-        }
-    }
-
     // *********************************************************************************************
-    interface OnFocusChangeListener {
+    fun interface OnFocusChangeListener {
 
         fun onFocusChange(hasFocus: Boolean)
     }
 
-    interface OnQueryTextListener {
+    fun interface OnQueryTextListener {
 
-        fun onQueryTextChange(newText: CharSequence): Boolean
-
-        fun onQueryTextSubmit(query: CharSequence): Boolean
+        fun onQueryTextChange(newText: String)
     }
 
-    interface OnNavigationClickListener {
+    fun interface OnQuerySubmitListener {
+
+        fun onQueryTextSubmit(query: String): Boolean
+    }
+
+    fun interface OnNavigationClickListener {
 
         fun onNavigationClick()
     }

@@ -30,11 +30,10 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/navigation_button"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/search_icon_56"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/search_name"
-                    android:minWidth="@dimen/search_icon_56"
                     android:scaleType="center"
                     app:tint="?attr/colorControlNormal" />
 
@@ -59,15 +58,6 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/clear_button"
                     android:layout_width="@dimen/search_icon_56"
-                    android:layout_height="match_parent"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/search_name"
-                    android:scaleType="center"
-                    app:tint="?attr/colorControlNormal" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/menu_button"
-                    android:layout_width="@dimen/search_icon_48"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/search_name"

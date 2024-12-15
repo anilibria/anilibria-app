@@ -30,7 +30,7 @@ class SearchMenuItem @JvmOverloads constructor(
         inflate(context, R.layout.search_menu_item, this)
         init()
 
-        setClearIconImageResource(R.drawable.search_ic_outline_clear_24px)
+
         binding.shadow.setBackgroundColor(
             ContextCompat.getColor(
                 context,
@@ -67,7 +67,10 @@ class SearchMenuItem @JvmOverloads constructor(
         val paddingLeftRight = context.resources.getDimensionPixelSize(R.dimen.search_key_line_16)
         binding.input.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
 
-        binding.shadow.setOnClickListener(this)
+        binding.shadow.setOnClickListener {
+            binding.input.clearFocus()
+            binding.input.clearText()
+        }
         binding.cardView.isVisible = false
         this.isVisible = false
     }

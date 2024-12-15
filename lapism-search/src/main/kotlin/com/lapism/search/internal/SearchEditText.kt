@@ -4,16 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
 import androidx.annotation.AttrRes
-import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-/**
- * @hide
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-class SearchEditText : AppCompatEditText {
+internal class SearchEditText : AppCompatEditText {
 
     // *********************************************************************************************
     constructor(context: Context) : super(context)

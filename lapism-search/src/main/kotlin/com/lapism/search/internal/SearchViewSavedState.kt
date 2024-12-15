@@ -3,12 +3,7 @@ package com.lapism.search.internal
 import android.os.Parcel
 import android.os.Parcelable
 import android.view.View
-import androidx.annotation.RestrictTo
 
-/**
- * @hide
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class SearchViewSavedState : View.BaseSavedState {
     var query: String? = null
     var hasFocus: Boolean = false

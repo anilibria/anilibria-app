@@ -13,6 +13,10 @@ android {
         minSdk app_min_sdk_version
         targetSdk app_target_sdk_version
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 kotlin {
@@ -26,4 +30,6 @@ dependencies {
     implementation libs.androidx.recyclerview
 
     implementation libs.google.material
+
+    implementation libs.viewbindingpropertydelegate
 }

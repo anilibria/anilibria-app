@@ -4,21 +4,15 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.graphics.Point
-import android.os.Build
 import android.view.ViewAnimationUtils
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.LinearLayout
-import androidx.annotation.RestrictTo
 import androidx.cardview.widget.CardView
 import com.lapism.search.R
 import com.lapism.search.SearchUtils
 import kotlin.math.hypot
 import kotlin.math.max
 
-/**
- * @hide
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class SearchAnimation {
 
     // *********************************************************************************************

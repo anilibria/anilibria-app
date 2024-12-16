@@ -28,7 +28,6 @@ class SearchMenuItem @JvmOverloads constructor(
         inflate(context, R.layout.search_menu_item, this)
         init()
         setDefault()
-        binding.contentDivider.isVisible = true
     }
 
     // *********************************************************************************************
@@ -52,27 +51,9 @@ class SearchMenuItem @JvmOverloads constructor(
             binding.input.clearFocus()
             binding.input.clearText()
         }
+        binding.contentDivider.isVisible = true
         binding.cardView.isVisible = false
         this.isVisible = false
-    }
-
-    private fun getMenuItemPosition(menuItemId: Int) {
-        var viewParent = parent
-        while (viewParent is View) {
-            val parent = viewParent as View
-            val view = parent.findViewById<View>(menuItemId)
-            if (view != null) {
-                mMenuItemCx = getCenterX(view)
-                break
-            }
-            viewParent = viewParent.getParent()
-        }
-    }
-
-    private fun getCenterX(view: View): Int {
-        val location = IntArray(2)
-        view.getLocationOnScreen(location)
-        return location[0] + view.width / 2
     }
 
     // *********************************************************************************************
@@ -122,6 +103,25 @@ class SearchMenuItem @JvmOverloads constructor(
             }
         })
         animation.start(binding, mMenuItemCx, getAnimationDuration(), false)
+    }
+
+    private fun getMenuItemPosition(menuItemId: Int) {
+        var viewParent = parent
+        while (viewParent is View) {
+            val parent = viewParent as View
+            val view = parent.findViewById<View>(menuItemId)
+            if (view != null) {
+                mMenuItemCx = getCenterX(view)
+                break
+            }
+            viewParent = viewParent.getParent()
+        }
+    }
+
+    private fun getCenterX(view: View): Int {
+        val location = IntArray(2)
+        view.getLocationOnScreen(location)
+        return location[0] + view.width / 2
     }
 
 }

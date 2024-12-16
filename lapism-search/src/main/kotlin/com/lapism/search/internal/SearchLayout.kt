@@ -112,12 +112,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         binding.contentDivider.isVisible = false
 
         binding.shadow.isVisible = false
-        binding.shadow.setBackgroundColor(
-            ContextCompat.getColor(
-                context,
-                R.color.search_shadow
-            )
-        )
+        binding.shadow.setBackgroundColor(ContextCompat.getColor(context, R.color.search_shadow))
 
         isFocusable = true
         isFocusableInTouchMode = true
@@ -313,6 +308,7 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     // *********************************************************************************************
     private fun onTextChanged(newText: String) {
+        binding.clearButton.isVisible = newText.isNotEmpty()
         mOnQueryTextListener?.onQueryTextChange(newText)
     }
 

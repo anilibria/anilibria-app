@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.transition.ChangeBounds
@@ -18,7 +17,6 @@ import com.lapism.search.MarginsType
 import com.lapism.search.R
 import com.lapism.search.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
-
 
 class SearchView @JvmOverloads constructor(
     context: Context,
@@ -41,7 +39,7 @@ class SearchView @JvmOverloads constructor(
         transition.enableTransitionType(LayoutTransition.CHANGING)
         transition.setDuration(getAnimationDuration())
 
-        this.layoutTransition = transition
+        //this.layoutTransition = transition
     }
 
     // *********************************************************************************************
@@ -50,34 +48,19 @@ class SearchView @JvmOverloads constructor(
         setCardElevation(getDimension(R.dimen.search_elevation))
         setCardRadius(getDimension(R.dimen.search_shape_rounded))
         setFieldHeight(getDimensionPixelSize(R.dimen.search_layout_height))
-        binding.input.setPadding(0, 0, 0, 0)
-    }
-
-    class SuperTransition : TransitionSet() {
-        init {
-            //addTransition(Fade(Fade.OUT))
-            addTransition(ChangeBounds())
-            addTransition(ChangeTransform())
-            addTransition(ChangeElevation())
-            addTransition(ChangeOutlineRadius())
-            //addTransition(Fade(Fade.IN))
-            interpolator = AccelerateDecelerateInterpolator()
-        }
     }
 
     // *********************************************************************************************
     override fun addFocus() {
-        TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
         mOnFocusChangeListener?.onFocusChange(true)
+        TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
 
-        binding.shadow.isVisible = true
-        setCardRadius(getDimension(R.dimen.search_shape_none))
         applyMarginsType(MarginsType.NoneToolbar)
-        binding.contentDivider.isVisible = true
+        setCardRadius(getDimension(R.dimen.search_shape_none))
         setCardElevation(getDimension(R.dimen.search_elevation_focus))
+
         val paddingLeftRight = getDimensionPixelSize(R.dimen.search_key_line_16)
         val paddingTop = getDimensionPixelSize(R.dimen.search_key_line_4)
-        //mSearchEditText?.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
         binding.input.updateLayoutParams<MarginLayoutParams> {
             marginEnd = paddingLeftRight
             marginStart = paddingLeftRight
@@ -86,24 +69,21 @@ class SearchView @JvmOverloads constructor(
             topMargin = paddingTop
         }
 
-        //setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height_focus))
-        showContent()
+        binding.shadow.isVisible = true
+        binding.contentDivider.isVisible = true
 
+        showContent()
         showKeyboard()
     }
 
     override fun removeFocus() {
+        mOnFocusChangeListener?.onFocusChange(false)
         TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
-        hideContent()
 
-        binding.shadow.isVisible = false
-
-        binding.contentDivider.isVisible = false
         applyMarginsType(MarginsType.Toolbar)
-
         setCardRadius(getDimension(R.dimen.search_shape_rounded))
-        //setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height))
-        //mSearchEditText?.setPadding(0, 0, 0, 0)
+        setCardElevation(context.resources.getDimension(R.dimen.search_elevation))
+
         binding.input.updateLayoutParams<MarginLayoutParams> {
             marginEnd = 0
             marginStart = 0
@@ -112,10 +92,10 @@ class SearchView @JvmOverloads constructor(
             topMargin = 0
         }
 
+        binding.shadow.isVisible = false
+        binding.contentDivider.isVisible = false
 
-        mOnFocusChangeListener?.onFocusChange(false)
-
-        setCardElevation(context.resources.getDimension(R.dimen.search_elevation))
+        hideContent()
         hideKeyboard()
     }
 
@@ -123,4 +103,13 @@ class SearchView @JvmOverloads constructor(
         return viewBehavior
     }
 
+    class SuperTransition : TransitionSet() {
+        init {
+            addTransition(ChangeBounds())
+            addTransition(ChangeTransform())
+            addTransition(ChangeElevation())
+            addTransition(ChangeOutlineRadius())
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+    }
 }

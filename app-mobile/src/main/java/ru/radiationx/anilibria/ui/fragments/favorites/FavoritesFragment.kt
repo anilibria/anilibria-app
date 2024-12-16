@@ -6,12 +6,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -133,19 +133,12 @@ class FavoritesFragment :
         }
 
         searchView.apply {
-            setTextHint("Название релиза")
-            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    return true
-                }
+            setHint("Название релиза")
+            setOnQueryTextListener { newText ->
+                viewModel.localSearch(newText)
+            }
 
-                override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    viewModel.localSearch(newText.toString())
-                    return false
-                }
-            })
-
-            setAdapter(searchAdapter)
+            setContentAdapter(searchAdapter)
         }
 
         viewModel.state.onEach {
@@ -156,16 +149,15 @@ class FavoritesFragment :
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
-            leftMargin = dimensions.left
             topMargin = dimensions.top
-            rightMargin = dimensions.right
         }
+        searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding.recyclerView.adapter = null
-        searchView.setAdapter(null)
+        searchView.setContentAdapter(null)
         _searchView = null
     }
 

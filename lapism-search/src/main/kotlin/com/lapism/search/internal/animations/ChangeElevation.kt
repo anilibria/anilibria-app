@@ -1,4 +1,4 @@
-package com.lapism.search
+package com.lapism.search.internal.animations
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
@@ -18,7 +18,7 @@ import androidx.transition.TransitionValues
  *
  * @author Stefan de Bruijn
  */
-class ChangeElevation : Transition {
+internal class ChangeElevation : Transition {
 
     private companion object {
         /**

@@ -3,23 +3,20 @@ package com.lapism.search.widget
 import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.transition.ChangeBounds
 import androidx.transition.ChangeTransform
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
-import com.lapism.search.ChangeElevation
-import com.lapism.search.ChangeOutlineRadius
+import com.lapism.search.internal.animations.ChangeElevation
+import com.lapism.search.internal.animations.ChangeOutlineRadius
+import com.lapism.search.internal.MarginsType
 import com.lapism.search.R
-import com.lapism.search.SearchUtils
-import com.lapism.search.behavior.SearchBehavior
+import com.lapism.search.internal.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
-
 
 class SearchView @JvmOverloads constructor(
     context: Context,
@@ -29,150 +26,106 @@ class SearchView @JvmOverloads constructor(
 ) : SearchLayout(context, attrs, defStyleAttr, defStyleRes), CoordinatorLayout.AttachedBehavior {
 
     // *********************************************************************************************
-    private var mBehavior: CoordinatorLayout.Behavior<*> = SearchBehavior<SearchView>()
+    private val viewBehavior = SearchBehavior<SearchView>()
 
     // *********************************************************************************************
     init {
         inflate(context, R.layout.search_view, this)
         init()
-
-        val a = context.obtainStyledAttributes(
-            attrs, R.styleable.SearchView, defStyleAttr, defStyleRes
-        )
-        navigationIconSupport =
-            a.getInteger(
-                R.styleable.SearchView_search_navigation_icon_support,
-                SearchUtils.NavigationIconSupport.ANIMATION
-            )
-        a.recycle()
-
-        // TODO - MORE ATTRIBUTTES IN THE FUTURE RELEASE
-        setClearIconImageResource(R.drawable.search_ic_outline_clear_24px)
-        mViewShadow?.setBackgroundColor(
-            ContextCompat.getColor(
-                context,
-                R.color.search_shadow
-            )
-        )
-
         setDefault()
 
         val transition = LayoutTransition()
         transition.enableTransitionType(LayoutTransition.CHANGING)
         transition.setDuration(getAnimationDuration())
-        transition.addTransitionListener(object : LayoutTransition.TransitionListener {
-            override fun startTransition(
-                transition: LayoutTransition?,
-                container: ViewGroup?,
-                view: View?,
-                transitionType: Int,
-            ) {
 
-            }
-
-            override fun endTransition(
-                transition: LayoutTransition?,
-                container: ViewGroup?,
-                view: View?,
-                transitionType: Int,
-            ) {
-
-            }
-        })
-
-        this.layoutTransition = transition
-    }
-
-    // *********************************************************************************************
-    fun setBehavior(behavior: CoordinatorLayout.Behavior<*>) {
-        mBehavior = behavior
+        //this.layoutTransition = transition
     }
 
     // *********************************************************************************************
     private fun setDefault() {
-        margins = SearchUtils.Margins.TOOLBAR
-        elevation =
-            context.resources.getDimensionPixelSize(R.dimen.search_elevation).toFloat()
-        setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_rounded).toFloat())
-        setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height))
-        mSearchEditText?.setPadding(0, 0, 0, 0)
-    }
-
-    class SuperTransition : TransitionSet() {
-        init {
-            //addTransition(Fade(Fade.OUT))
-            addTransition(ChangeBounds())
-            addTransition(ChangeTransform())
-            addTransition(ChangeElevation())
-            addTransition(ChangeOutlineRadius())
-            //addTransition(Fade(Fade.IN))
-            interpolator = AccelerateDecelerateInterpolator()
-        }
+        applyDefaultLayout()
+        setFieldHeight(getDimensionPixelSize(R.dimen.search_layout_height))
+        binding.shadow.isVisible = false
+        binding.contentDivider.isVisible = false
     }
 
     // *********************************************************************************************
     override fun addFocus() {
-        val frameLayout = findViewById<FrameLayout>(R.id.search_frameLayout)
-        TransitionManager.beginDelayedTransition(frameLayout, SuperTransition())
         mOnFocusChangeListener?.onFocusChange(true)
-
-        mViewShadow?.visibility = View.VISIBLE
-        setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_none).toFloat())
-        margins = SearchUtils.Margins.NONE_TOOLBAR
-        mViewDivider?.visibility = View.VISIBLE
-        animateHamburgerToArrow(false)
-        elevation =
-            context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
-        val paddingLeftRight = context.resources.getDimensionPixelSize(R.dimen.search_key_line_16)
-        val paddingTop = context.resources.getDimensionPixelSize(R.dimen.search_key_line_4)
-        //mSearchEditText?.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
-        mSearchEditText?.layoutParams =
-            (mSearchEditText?.layoutParams as MarginLayoutParams?)?.apply {
-                marginEnd = paddingLeftRight
-                marginStart = paddingLeftRight
-            }
-        mLinearLayout?.layoutParams = (mLinearLayout?.layoutParams as MarginLayoutParams?)?.apply {
-            topMargin = paddingTop
-        }
-
-        //setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height_focus))
-        showAdapter()
-
+        TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
+        applyFocusedLayout()
+        binding.shadow.isVisible = true
+        binding.contentDivider.isVisible = true
+        showContent()
         showKeyboard()
     }
 
     override fun removeFocus() {
-        val frameLayout = findViewById<FrameLayout>(R.id.search_frameLayout)
-        TransitionManager.beginDelayedTransition(frameLayout, SuperTransition())
-        hideAdapter()
-
-        mViewShadow?.visibility = View.GONE
-        animateArrowToHamburger(false)
-
-        mViewDivider?.visibility = View.GONE
-        margins = SearchUtils.Margins.TOOLBAR
-
-        setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_shape_rounded).toFloat())
-        //setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height))
-        //mSearchEditText?.setPadding(0, 0, 0, 0)
-        mSearchEditText?.layoutParams =
-            (mSearchEditText?.layoutParams as? MarginLayoutParams)?.apply {
-                marginEnd = 0
-                marginStart = 0
-            }
-        mLinearLayout?.layoutParams = (mLinearLayout?.layoutParams as MarginLayoutParams?)?.apply {
-            topMargin = 0
-        }
-
-
         mOnFocusChangeListener?.onFocusChange(false)
-
-        elevation = context.resources.getDimensionPixelSize(R.dimen.search_elevation).toFloat()
+        TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
+        applyDefaultLayout()
+        binding.shadow.isVisible = false
+        binding.contentDivider.isVisible = false
+        hideContent()
         hideKeyboard()
     }
 
-    override fun getBehavior(): CoordinatorLayout.Behavior<*> {
-        return mBehavior
+    override fun fieldInsetsChanged() {
+        if (binding.input.hasFocus()) {
+            applyFocusedLayout()
+        } else {
+            applyDefaultLayout()
+        }
     }
 
+    private fun applyDefaultLayout() {
+        applyMarginsType(MarginsType.Toolbar) {
+            leftMargin += mFieldInsets.left
+            rightMargin += mFieldInsets.right
+        }
+        setCardRadius(getDimension(R.dimen.search_shape_rounded))
+        setCardElevation(context.resources.getDimension(R.dimen.search_elevation))
+
+        binding.input.updateLayoutParams<MarginLayoutParams> {
+            marginEnd = 0
+            marginStart = 0
+        }
+        binding.field.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = 0
+            topMargin = 0
+            rightMargin = 0
+        }
+    }
+
+    private fun applyFocusedLayout() {
+        applyMarginsType(MarginsType.NoneToolbar)
+        setCardRadius(getDimension(R.dimen.search_shape_none))
+        setCardElevation(getDimension(R.dimen.search_elevation_focus))
+
+        val paddingLeftRight = getDimensionPixelSize(R.dimen.search_key_line_16)
+        val paddingTop = getDimensionPixelSize(R.dimen.search_key_line_4)
+        binding.input.updateLayoutParams<MarginLayoutParams> {
+            marginEnd = paddingLeftRight
+            marginStart = paddingLeftRight
+        }
+        binding.field.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = mFieldInsets.left
+            topMargin = paddingTop
+            rightMargin = mFieldInsets.right
+        }
+    }
+
+    override fun getBehavior(): CoordinatorLayout.Behavior<*> {
+        return viewBehavior
+    }
+
+    class SuperTransition : TransitionSet() {
+        init {
+            addTransition(ChangeBounds())
+            addTransition(ChangeTransform())
+            addTransition(ChangeElevation())
+            addTransition(ChangeOutlineRadius())
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+    }
 }

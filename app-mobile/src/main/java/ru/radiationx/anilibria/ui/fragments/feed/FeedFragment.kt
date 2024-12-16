@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.lapism.search.SearchUtils
-import com.lapism.search.internal.SearchLayout
+import com.lapism.search.NavigationIcon
 import com.lapism.search.widget.SearchView
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -161,31 +161,22 @@ class FeedFragment :
         }
 
         searchView.apply {
-            setTextHint("Поиск по названию")
-            navigationIconSupport = SearchUtils.NavigationIconSupport.SEARCH
-            setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
-                override fun onFocusChange(hasFocus: Boolean) {
-                    if (hasFocus) {
-                        navigationIconSupport = SearchUtils.NavigationIconSupport.ARROW
-                        viewModel.onFastSearchOpen()
-                        baseBinding.appbarLayout.setExpanded(true)
-                    } else {
-                        navigationIconSupport = SearchUtils.NavigationIconSupport.SEARCH
-                    }
+            setHint("Поиск по названию")
+            setNavigationIcon(NavigationIcon.Search)
+            setOnFocusChangeListener { hasFocus ->
+                if (hasFocus) {
+                    setNavigationIcon(NavigationIcon.Arrow)
+                    viewModel.onFastSearchOpen()
+                    baseBinding.appbarLayout.setExpanded(true)
+                } else {
+                    setNavigationIcon(NavigationIcon.Search)
                 }
-            })
-            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    return true
-                }
+            }
+            setOnQueryTextListener { newText ->
+                searchViewModel.onQueryChange(newText)
+            }
 
-                override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    searchViewModel.onQueryChange(newText.toString())
-                    return false
-                }
-            })
-
-            setAdapter(searchAdapter)
+            setContentAdapter(searchAdapter)
         }
 
         viewModel.state.onEach { state ->
@@ -202,10 +193,9 @@ class FeedFragment :
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
-            leftMargin = dimensions.left
             topMargin = dimensions.top
-            rightMargin = dimensions.right
         }
+        searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -222,7 +212,7 @@ class FeedFragment :
         super.onDestroyView()
         adapter.saveState(null)
         binding.recyclerView.adapter = null
-        searchView.setAdapter(null)
+        searchView.setContentAdapter(null)
         _searchView = null
     }
 

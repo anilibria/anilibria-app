@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/search_frameLayout"
+    android:id="@+id/search_frame"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <View
-        android:id="@+id/search_view_shadow"
+        android:id="@+id/shadow"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/search_materialCardView"
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -21,25 +21,24 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/search_linearLayout"
+                android:id="@+id/field"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/search_layout_height"
                 android:layoutDirection="locale"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/search_imageView_navigation"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/navigation_button"
+                    android:layout_width="@dimen/search_icon_56"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/search_name"
-                    android:minWidth="@dimen/search_icon_56"
                     android:scaleType="center"
                     app:tint="?attr/colorControlNormal"
                     app:tintMode="src_in" />
 
                 <com.lapism.search.internal.SearchEditText
-                    android:id="@+id/search_searchEditText"
+                    android:id="@+id/input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
@@ -56,35 +55,9 @@
                     android:textSize="@dimen/search_text_16"
                     android:windowSoftInputMode="stateAlwaysHidden|adjustPan|adjustNothing" />
 
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/search_imageView_mic"
-                        android:layout_width="@dimen/search_icon_56"
-                        android:layout_height="match_parent"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/search_name"
-                        android:scaleType="center"
-                        app:tint="?attr/colorControlNormal"
-                        app:tintMode="src_in" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/search_imageView_clear"
-                        android:layout_width="@dimen/search_icon_56"
-                        android:layout_height="match_parent"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/search_name"
-                        android:scaleType="center"
-                        app:tint="?attr/colorControlNormal"
-                        app:tintMode="src_in" />
-
-                </FrameLayout>
-
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/search_imageView_menu"
-                    android:layout_width="@dimen/search_icon_48"
+                    android:id="@+id/clear_button"
+                    android:layout_width="@dimen/search_icon_56"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/search_name"
@@ -95,13 +68,13 @@
             </LinearLayout>
 
             <View
-                android:id="@+id/search_view_divider"
+                android:id="@+id/content_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/search_divider"
                 android:background="?android:attr/listDivider" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/search_recyclerView"
+                android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:overScrollMode="always" />

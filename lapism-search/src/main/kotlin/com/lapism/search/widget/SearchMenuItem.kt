@@ -7,11 +7,11 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.lapism.search.MarginsType
+import com.lapism.search.internal.MarginsType
 import com.lapism.search.NavigationIcon
 import com.lapism.search.R
-import com.lapism.search.SearchUtils
-import com.lapism.search.internal.SearchAnimation
+import com.lapism.search.internal.SearchUtils
+import com.lapism.search.internal.animations.SearchAnimation
 import com.lapism.search.internal.SearchLayout
 
 class SearchMenuItem @JvmOverloads constructor(

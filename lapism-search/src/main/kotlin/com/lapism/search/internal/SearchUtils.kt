@@ -1,4 +1,4 @@
-package com.lapism.search
+package com.lapism.search.internal
 
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -6,19 +6,7 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import androidx.core.view.isVisible
 
-enum class NavigationIcon {
-    Arrow,
-    Search
-}
-
-enum class MarginsType {
-    NoneToolbar,
-    NoneMenuItem,
-    Toolbar,
-    MenuItem
-}
-
-object SearchUtils {
+internal object SearchUtils {
 
     @JvmStatic
     fun fadeAddFocus(view: View, duration: Long) {

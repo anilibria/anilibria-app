@@ -11,11 +11,11 @@ import androidx.transition.ChangeBounds
 import androidx.transition.ChangeTransform
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
-import com.lapism.search.ChangeElevation
-import com.lapism.search.ChangeOutlineRadius
-import com.lapism.search.MarginsType
+import com.lapism.search.internal.animations.ChangeElevation
+import com.lapism.search.internal.animations.ChangeOutlineRadius
+import com.lapism.search.internal.MarginsType
 import com.lapism.search.R
-import com.lapism.search.behavior.SearchBehavior
+import com.lapism.search.internal.behavior.SearchBehavior
 import com.lapism.search.internal.SearchLayout
 
 class SearchView @JvmOverloads constructor(

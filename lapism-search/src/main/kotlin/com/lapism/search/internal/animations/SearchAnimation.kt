@@ -1,13 +1,10 @@
-package com.lapism.search.internal
+package com.lapism.search.internal.animations
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.content.Context
 import android.graphics.Point
 import android.view.ViewAnimationUtils
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.LinearLayout
-import androidx.cardview.widget.CardView
 import com.lapism.search.R
 import com.lapism.search.databinding.CommonHierarchyBinding
 import kotlin.math.hypot

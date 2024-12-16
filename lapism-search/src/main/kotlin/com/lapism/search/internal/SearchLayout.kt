@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.lapism.search.MarginsType
 import com.lapism.search.NavigationIcon
 import com.lapism.search.R
 import com.lapism.search.databinding.CommonHierarchyBinding

@@ -1,4 +1,4 @@
-package com.lapism.search.behavior
+package com.lapism.search.internal.behavior
 
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -7,7 +7,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.lapism.search.internal.SearchLayout
 
 
-class SearchBehavior<S : SearchLayout> : CoordinatorLayout.Behavior<S>() {
+internal class SearchBehavior<S : SearchLayout> : CoordinatorLayout.Behavior<S>() {
 
     override fun layoutDependsOn(
         parent: CoordinatorLayout,

@@ -1,4 +1,4 @@
-package com.lapism.search
+package com.lapism.search.internal.animations
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
@@ -19,7 +19,7 @@ import com.google.android.material.card.MaterialCardView
  *
  * @author Stefan de Bruijn
  */
-class ChangeOutlineRadius : Transition {
+internal class ChangeOutlineRadius : Transition {
 
     private companion object {
         /**

@@ -11,7 +11,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchMenuItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -166,7 +165,7 @@ class SearchCatalogFragment :
 
 
         searchView.apply {
-            setTextHint("Название релиза")
+            setHint("Название релиза")
             setOnFocusChangeListener { hasFocus ->
                 if (hasFocus) {
                     viewModel.onFastSearchOpen()
@@ -176,7 +175,7 @@ class SearchCatalogFragment :
                 searchViewModel.onQueryChange(newText)
             }
 
-            setAdapter(fastSearchAdapter)
+            setContentAdapter(fastSearchAdapter)
         }
 
         searchViewModel.state.onEach { state ->
@@ -219,7 +218,7 @@ class SearchCatalogFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         binding.recyclerView.adapter = null
-        searchView.setAdapter(null)
+        searchView.setContentAdapter(null)
         _searchView = null
     }
 

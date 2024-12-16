@@ -9,7 +9,6 @@ import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.SoftwareKeyboardControllerCompat
@@ -53,64 +52,12 @@ abstract class SearchLayout @JvmOverloads constructor(
     private var mOnNavigationClickListener: OnNavigationClickListener? = null
     private var mOnClearClickListener: OnClearClickListener? = null
 
-    protected fun getDimensionPixelSize(@DimenRes dimenRes: Int): Int {
-        return context.resources.getDimensionPixelSize(dimenRes)
-    }
-
-    protected fun getDimension(@DimenRes dimenRes: Int): Float {
-        return context.resources.getDimension(dimenRes)
-    }
-
-    protected fun applyMarginsType(type: MarginsType) {
-        binding.cardView.updateLayoutParams<MarginLayoutParams> {
-            when (type) {
-                MarginsType.NoneToolbar -> {
-                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    topMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    width = ViewGroup.LayoutParams.MATCH_PARENT
-                    // todo mb wrap?
-                    height = ViewGroup.LayoutParams.MATCH_PARENT
-                }
-
-                MarginsType.NoneMenuItem -> {
-                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    topMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    width = ViewGroup.LayoutParams.MATCH_PARENT
-                    height = ViewGroup.LayoutParams.WRAP_CONTENT
-                }
-
-                MarginsType.Toolbar -> {
-                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
-                    topMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
-                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
-                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
-                    width = ViewGroup.LayoutParams.MATCH_PARENT
-                    height = ViewGroup.LayoutParams.WRAP_CONTENT
-                }
-
-                MarginsType.MenuItem -> {
-                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    topMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    width = ViewGroup.LayoutParams.MATCH_PARENT
-                    height = ViewGroup.LayoutParams.WRAP_CONTENT
-                }
-            }
-        }
-    }
-
     // *********************************************************************************************
     protected abstract fun addFocus()
 
     protected abstract fun removeFocus()
 
     protected fun init() {
-        binding.clearButton.setImageResource(R.drawable.search_ic_outline_clear_24px)
         binding.navigationButton.setOnClickListener {
             if (binding.input.hasFocus()) {
                 val imeVisible = ViewCompat.getRootWindowInsets(this)
@@ -128,6 +75,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         }
 
         binding.clearButton.isVisible = false
+        binding.clearButton.setImageResource(R.drawable.search_ic_outline_clear_24px)
         binding.clearButton.setOnClickListener {
             binding.input.clearText()
             mOnClearClickListener?.onClearClick()
@@ -164,122 +112,15 @@ abstract class SearchLayout @JvmOverloads constructor(
         binding.contentDivider.isVisible = false
 
         binding.shadow.isVisible = false
+        binding.shadow.setBackgroundColor(
+            ContextCompat.getColor(
+                context,
+                R.color.search_shadow
+            )
+        )
 
         isFocusable = true
         isFocusableInTouchMode = true
-    }
-
-    // *********************************************************************************************
-    fun setNavigationIcon(icon: NavigationIcon) {
-        val icRes = when (icon) {
-            NavigationIcon.Arrow -> R.drawable.search_ic_outline_arrow_back_24px
-            NavigationIcon.Search -> R.drawable.search_ic_outline_search_24px
-        }
-        binding.navigationButton.setImageDrawable(ContextCompat.getDrawable(context, icRes))
-    }
-
-    // *********************************************************************************************
-    fun setAdapter(adapter: RecyclerView.Adapter<*>?) {
-        binding.content.adapter = adapter
-    }
-
-    // *********************************************************************************************
-
-    fun setTextQuery(query: String, submit: Boolean) {
-        binding.input.setText(query)
-        binding.input.setSelection(binding.input.length())
-        if (submit) {
-            onSubmitQuery()
-        }
-    }
-
-    fun getTextQuery(): String {
-        return binding.input.getQuery()
-    }
-
-    fun setTextHint(hint: String) {
-        binding.input.hint = hint
-    }
-
-    fun setTextHint(@StringRes hint: Int) {
-        binding.input.setHint(hint)
-    }
-
-    // *********************************************************************************************
-
-    protected fun setCardElevation(elevation: Float) {
-        binding.cardView.cardElevation = elevation
-    }
-
-    protected fun setBackgroundRadius(radius: Float) {
-        binding.cardView.radius = radius
-    }
-
-    // *********************************************************************************************
-    fun setOnFocusChangeListener(listener: OnFocusChangeListener) {
-        mOnFocusChangeListener = listener
-    }
-
-    fun setOnQueryTextListener(listener: OnQueryTextListener) {
-        mOnQueryTextListener = listener
-    }
-
-    fun setOnQuerySubmitListener(listener: OnQuerySubmitListener) {
-        mOnQuerySubmitListener = listener
-    }
-
-    fun setOnNavigationClickListener(listener: OnNavigationClickListener) {
-        mOnNavigationClickListener = listener
-    }
-
-    fun setOnClearClickListener(listener: OnClearClickListener) {
-        mOnClearClickListener = listener
-    }
-
-    // *********************************************************************************************
-    protected fun showKeyboard() {
-        if (isInEditMode) return
-        keyboardController.show()
-    }
-
-    protected fun hideKeyboard() {
-        if (isInEditMode) return
-        keyboardController.hide()
-    }
-
-    // *********************************************************************************************
-    protected fun getAnimationDuration(): Long {
-        return mAnimationDuration
-    }
-
-    protected fun setLayoutHeight(newHeight: Int) {
-        binding.field.updateLayoutParams {
-            height = newHeight
-            width = ViewGroup.LayoutParams.MATCH_PARENT
-        }
-    }
-
-    protected fun showAdapter() {
-        if (binding.content.adapter == null) return
-        binding.content.isVisible = true
-    }
-
-    protected fun hideAdapter() {
-        if (binding.content.adapter == null) return
-        binding.content.isVisible = false
-    }
-
-    // *********************************************************************************************
-    private fun onTextChanged(newText: String) {
-        mOnQueryTextListener?.onQueryTextChange(newText)
-    }
-
-    private fun onSubmitQuery() {
-        val query = binding.input.getQuery()
-        if (TextUtils.getTrimmedLength(query) <= 0) return
-        if (mOnQuerySubmitListener?.onQueryTextSubmit(query) == false) {
-            binding.input.setText(query)
-        }
     }
 
     // *********************************************************************************************
@@ -301,7 +142,7 @@ abstract class SearchLayout @JvmOverloads constructor(
             binding.input.requestFocus()
         }
         state.query?.also {
-            setTextQuery(it, false)
+            setQuery(it, false)
         }
         requestLayout()
     }
@@ -317,6 +158,170 @@ abstract class SearchLayout @JvmOverloads constructor(
     override fun clearFocus() {
         super.clearFocus()
         binding.input.clearFocus()
+    }
+
+    // *********************************************************************************************
+    fun setNavigationIcon(icon: NavigationIcon) {
+        val icRes = when (icon) {
+            NavigationIcon.Arrow -> R.drawable.search_ic_outline_arrow_back_24px
+            NavigationIcon.Search -> R.drawable.search_ic_outline_search_24px
+        }
+        binding.navigationButton.setImageDrawable(ContextCompat.getDrawable(context, icRes))
+    }
+
+    // *********************************************************************************************
+    fun setContentAdapter(adapter: RecyclerView.Adapter<*>?) {
+        binding.content.adapter = adapter
+    }
+
+    // *********************************************************************************************
+
+    fun setQuery(query: String, submit: Boolean) {
+        binding.input.setText(query)
+        binding.input.setSelection(binding.input.length())
+        if (submit) {
+            onSubmitQuery()
+        }
+    }
+
+    fun getQuery(): String {
+        return binding.input.getQuery()
+    }
+
+    fun setHint(hint: String) {
+        binding.input.hint = hint
+    }
+
+    fun setHint(@StringRes hint: Int) {
+        binding.input.setHint(hint)
+    }
+
+    // *********************************************************************************************
+    fun setOnFocusChangeListener(listener: OnFocusChangeListener?) {
+        mOnFocusChangeListener = listener
+    }
+
+    fun setOnQueryTextListener(listener: OnQueryTextListener?) {
+        mOnQueryTextListener = listener
+    }
+
+    fun setOnQuerySubmitListener(listener: OnQuerySubmitListener?) {
+        mOnQuerySubmitListener = listener
+    }
+
+    fun setOnNavigationClickListener(listener: OnNavigationClickListener?) {
+        mOnNavigationClickListener = listener
+    }
+
+    fun setOnClearClickListener(listener: OnClearClickListener?) {
+        mOnClearClickListener = listener
+    }
+
+    // *********************************************************************************************
+
+    protected fun setCardElevation(elevation: Float) {
+        binding.cardView.cardElevation = elevation
+    }
+
+    protected fun setCardRadius(radius: Float) {
+        binding.cardView.radius = radius
+    }
+
+
+    // *********************************************************************************************
+    protected fun showKeyboard() {
+        if (isInEditMode) return
+        keyboardController.show()
+    }
+
+    protected fun hideKeyboard() {
+        if (isInEditMode) return
+        keyboardController.hide()
+    }
+
+    // *********************************************************************************************
+    protected fun getAnimationDuration(): Long {
+        return mAnimationDuration
+    }
+
+    protected fun setFieldHeight(newHeight: Int) {
+        binding.field.updateLayoutParams {
+            height = newHeight
+            width = ViewGroup.LayoutParams.MATCH_PARENT
+        }
+    }
+
+    protected fun showContent() {
+        if (binding.content.adapter == null) return
+        binding.content.isVisible = true
+    }
+
+    protected fun hideContent() {
+        if (binding.content.adapter == null) return
+        binding.content.isVisible = false
+    }
+
+    protected fun applyMarginsType(type: MarginsType) {
+        binding.cardView.updateLayoutParams<MarginLayoutParams> {
+            when (type) {
+                MarginsType.NoneToolbar -> {
+                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+                    topMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                    height = ViewGroup.LayoutParams.MATCH_PARENT
+                }
+
+                MarginsType.NoneMenuItem -> {
+                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+                    topMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT
+                }
+
+                MarginsType.Toolbar -> {
+                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
+                    topMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
+                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
+                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
+                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT
+                }
+
+                MarginsType.MenuItem -> {
+                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
+                    topMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
+                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
+                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
+                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT
+                }
+            }
+        }
+    }
+
+    protected fun getDimensionPixelSize(@DimenRes dimenRes: Int): Int {
+        return context.resources.getDimensionPixelSize(dimenRes)
+    }
+
+    protected fun getDimension(@DimenRes dimenRes: Int): Float {
+        return context.resources.getDimension(dimenRes)
+    }
+
+    // *********************************************************************************************
+    private fun onTextChanged(newText: String) {
+        mOnQueryTextListener?.onQueryTextChange(newText)
+    }
+
+    private fun onSubmitQuery() {
+        val query = binding.input.getQuery()
+        if (TextUtils.getTrimmedLength(query) <= 0) return
+        if (mOnQuerySubmitListener?.onQueryTextSubmit(query) == false) {
+            binding.input.setText(query)
+        }
     }
 
     // *********************************************************************************************
@@ -343,11 +348,6 @@ abstract class SearchLayout @JvmOverloads constructor(
     interface OnClearClickListener {
 
         fun onClearClick()
-    }
-
-    interface OnMenuClickListener {
-
-        fun onMenuClick()
     }
 
 }

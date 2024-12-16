@@ -9,6 +9,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.LinearLayout
 import androidx.cardview.widget.CardView
 import com.lapism.search.R
+import com.lapism.search.databinding.CommonHierarchyBinding
 import kotlin.math.hypot
 import kotlin.math.max
 
@@ -19,28 +20,26 @@ internal class SearchAnimation {
 
     // *********************************************************************************************
     fun start(
-        context: Context,
-        linearLayout: LinearLayout,
-        cardView: CardView,
+        binding: CommonHierarchyBinding,
         x: Int,
         duration: Long,
         back: Boolean,
     ) {
         var cx = x
         if (cx <= 0) {
-            val padding = context.resources.getDimensionPixelSize(R.dimen.search_reveal)
-            cx = cardView.measuredWidth - padding
+            val padding = binding.root.resources.getDimensionPixelSize(R.dimen.search_reveal)
+            cx = binding.cardView.measuredWidth - padding
         }
-        val cy = linearLayout.height / 2
+        val cy = binding.field.height / 2
 
         if (cx != 0 && cy != 0) {
             val displaySize = Point()
             val radius = hypot(max(cx, displaySize.x - cx).toDouble(), cy.toDouble()).toFloat()
 
             val animator: Animator = if (back) {
-                ViewAnimationUtils.createCircularReveal(cardView, cx, cy, 0.0f, radius)
+                ViewAnimationUtils.createCircularReveal(binding.cardView, cx, cy, 0.0f, radius)
             } else {
-                ViewAnimationUtils.createCircularReveal(cardView, cx, cy, radius, 0.0f)
+                ViewAnimationUtils.createCircularReveal(binding.cardView, cx, cy, radius, 0.0f)
             }
             animator.interpolator = AccelerateDecelerateInterpolator()
             animator.duration = duration

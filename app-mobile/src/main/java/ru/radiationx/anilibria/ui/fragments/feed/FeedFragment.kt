@@ -13,7 +13,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lapism.search.NavigationIcon
-import com.lapism.search.internal.SearchLayout
 import com.lapism.search.widget.SearchView
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -161,7 +160,7 @@ class FeedFragment :
         }
 
         searchView.apply {
-            setTextHint("Поиск по названию")
+            setHint("Поиск по названию")
             setNavigationIcon(NavigationIcon.Search)
             setOnFocusChangeListener { hasFocus ->
                 if (hasFocus) {
@@ -176,7 +175,7 @@ class FeedFragment :
                 searchViewModel.onQueryChange(newText)
             }
 
-            setAdapter(searchAdapter)
+            setContentAdapter(searchAdapter)
         }
 
         viewModel.state.onEach { state ->
@@ -213,7 +212,7 @@ class FeedFragment :
         super.onDestroyView()
         adapter.saveState(null)
         binding.recyclerView.adapter = null
-        searchView.setAdapter(null)
+        searchView.setContentAdapter(null)
         _searchView = null
     }
 

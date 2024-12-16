@@ -35,14 +35,6 @@ class SearchView @JvmOverloads constructor(
         inflate(context, R.layout.search_view, this)
         init()
 
-
-        binding.shadow.setBackgroundColor(
-            ContextCompat.getColor(
-                context,
-                R.color.search_shadow
-            )
-        )
-
         setDefault()
 
         val transition = LayoutTransition()
@@ -56,8 +48,8 @@ class SearchView @JvmOverloads constructor(
     private fun setDefault() {
         applyMarginsType(MarginsType.Toolbar)
         setCardElevation(getDimension(R.dimen.search_elevation))
-        setBackgroundRadius(getDimension(R.dimen.search_shape_rounded))
-        setLayoutHeight(getDimensionPixelSize(R.dimen.search_layout_height))
+        setCardRadius(getDimension(R.dimen.search_shape_rounded))
+        setFieldHeight(getDimensionPixelSize(R.dimen.search_layout_height))
         binding.input.setPadding(0, 0, 0, 0)
     }
 
@@ -79,7 +71,7 @@ class SearchView @JvmOverloads constructor(
         mOnFocusChangeListener?.onFocusChange(true)
 
         binding.shadow.isVisible = true
-        setBackgroundRadius(getDimension(R.dimen.search_shape_none))
+        setCardRadius(getDimension(R.dimen.search_shape_none))
         applyMarginsType(MarginsType.NoneToolbar)
         binding.contentDivider.isVisible = true
         setCardElevation(getDimension(R.dimen.search_elevation_focus))
@@ -95,21 +87,21 @@ class SearchView @JvmOverloads constructor(
         }
 
         //setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height_focus))
-        showAdapter()
+        showContent()
 
         showKeyboard()
     }
 
     override fun removeFocus() {
         TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
-        hideAdapter()
+        hideContent()
 
         binding.shadow.isVisible = false
 
         binding.contentDivider.isVisible = false
         applyMarginsType(MarginsType.Toolbar)
 
-        setBackgroundRadius(getDimension(R.dimen.search_shape_rounded))
+        setCardRadius(getDimension(R.dimen.search_shape_rounded))
         //setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height))
         //mSearchEditText?.setPadding(0, 0, 0, 0)
         binding.input.updateLayoutParams<MarginLayoutParams> {

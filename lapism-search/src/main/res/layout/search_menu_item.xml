@@ -20,8 +20,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- TODO -->
-            <com.google.android.material.circularreveal.CircularRevealLinearLayout
+            <LinearLayout
                 android:id="@+id/field"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/search_layout_height"
@@ -64,7 +63,7 @@
                     android:scaleType="center"
                     app:tint="?attr/colorControlNormal" />
 
-            </com.google.android.material.circularreveal.CircularRevealLinearLayout>
+            </LinearLayout>
 
             <View
                 android:id="@+id/content_divider"

@@ -5,15 +5,14 @@ import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.lapism.search.MarginsType
+import com.lapism.search.NavigationIcon
 import com.lapism.search.R
 import com.lapism.search.SearchUtils
 import com.lapism.search.internal.SearchAnimation
 import com.lapism.search.internal.SearchLayout
 
-// TODO CircularRevealLinearLayout
 class SearchMenuItem @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -22,47 +21,30 @@ class SearchMenuItem @JvmOverloads constructor(
 ) : SearchLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     // *********************************************************************************************
-    private var mShadowVisibility: Boolean = true
     private var mMenuItemCx = -1
 
     // *********************************************************************************************
     init {
         inflate(context, R.layout.search_menu_item, this)
         init()
-
-
-        binding.shadow.setBackgroundColor(
-            ContextCompat.getColor(
-                context,
-                R.color.search_shadow
-            )
-        )
-
         setDefault()
         binding.contentDivider.isVisible = true
     }
 
     // *********************************************************************************************
     fun requestFocus(menuItem: MenuItem) {
-        if (!isFocusable) {
-            return
-        } else {
-            getMenuItemPosition(menuItem.itemId)
-            binding.input.requestFocus()
-        }
-    }
-
-    fun setShadowVisibility(visibility: Boolean) {
-        binding.shadow.isVisible = visibility
-        mShadowVisibility = visibility
+        if (!isFocusable) return
+        getMenuItemPosition(menuItem.itemId)
+        binding.input.requestFocus()
     }
 
     // *********************************************************************************************
     private fun setDefault() {
+        setNavigationIcon(NavigationIcon.Arrow)
         applyMarginsType(MarginsType.NoneMenuItem)
         setCardElevation(getDimension(R.dimen.search_elevation_focus))
-        setBackgroundRadius(getDimension(R.dimen.search_shape_none))
-        setLayoutHeight(getDimensionPixelSize(R.dimen.search_layout_height_focus))
+        setCardRadius(getDimension(R.dimen.search_shape_none))
+        setFieldHeight(getDimensionPixelSize(R.dimen.search_layout_height_focus))
         val paddingLeftRight = getDimensionPixelSize(R.dimen.search_key_line_16)
         binding.input.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
 
@@ -103,13 +85,11 @@ class SearchMenuItem @JvmOverloads constructor(
             SearchAnimation.OnAnimationListener {
             override fun onAnimationStart() {
                 mOnFocusChangeListener?.onFocusChange(true)
-                if (mShadowVisibility) {
-                    SearchUtils.fadeAddFocus(binding.shadow, getAnimationDuration())
-                }
+                SearchUtils.fadeAddFocus(binding.shadow, getAnimationDuration())
             }
 
             override fun onAnimationEnd() {
-                showAdapter()
+                showContent()
                 showKeyboard()
             }
         })
@@ -119,15 +99,7 @@ class SearchMenuItem @JvmOverloads constructor(
             viewTreeObserver.addOnGlobalLayoutListener(object :
                 ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
-                    animation.start(
-                        context,
-                        binding.field,
-                        binding.cardView,
-                        mMenuItemCx,
-                        getAnimationDuration(),
-                        true
-                    )
-
+                    animation.start(binding, mMenuItemCx, getAnimationDuration(), true)
                     binding.cardView.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 }
             })
@@ -138,11 +110,9 @@ class SearchMenuItem @JvmOverloads constructor(
         val animation = SearchAnimation()
         animation.setOnAnimationListener(object : SearchAnimation.OnAnimationListener {
             override fun onAnimationStart() {
-                if (mShadowVisibility) {
-                    SearchUtils.fadeRemoveFocus(binding.shadow, getAnimationDuration())
-                }
+                SearchUtils.fadeRemoveFocus(binding.shadow, getAnimationDuration())
                 hideKeyboard()
-                hideAdapter()
+                hideContent()
                 mOnFocusChangeListener?.onFocusChange(false)
             }
 
@@ -151,14 +121,7 @@ class SearchMenuItem @JvmOverloads constructor(
                 this@SearchMenuItem.isVisible = false
             }
         })
-        animation.start(
-            context,
-            binding.field,
-            binding.cardView,
-            mMenuItemCx,
-            getAnimationDuration(),
-            false
-        )
+        animation.start(binding, mMenuItemCx, getAnimationDuration(), false)
     }
 
 }

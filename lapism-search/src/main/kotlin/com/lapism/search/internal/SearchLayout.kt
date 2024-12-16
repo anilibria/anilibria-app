@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import androidx.annotation.DimenRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.Insets
 import androidx.core.view.SoftwareKeyboardControllerCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -43,6 +44,8 @@ abstract class SearchLayout @JvmOverloads constructor(
         SoftwareKeyboardControllerCompat(binding.input)
     }
 
+    protected var mFieldInsets = Insets.NONE
+
     // *********************************************************************************************
     protected var mOnFocusChangeListener: OnFocusChangeListener? = null
 
@@ -56,6 +59,8 @@ abstract class SearchLayout @JvmOverloads constructor(
     protected abstract fun addFocus()
 
     protected abstract fun removeFocus()
+
+    protected abstract fun fieldInsetsChanged()
 
     protected fun init() {
         binding.navigationButton.setOnClickListener {
@@ -169,6 +174,11 @@ abstract class SearchLayout @JvmOverloads constructor(
         binding.content.adapter = adapter
     }
 
+    fun setFieldInsets(insets: Insets) {
+        mFieldInsets = insets
+        fieldInsetsChanged()
+    }
+
     // *********************************************************************************************
 
     fun setQuery(query: String, submit: Boolean) {
@@ -256,45 +266,54 @@ abstract class SearchLayout @JvmOverloads constructor(
         binding.content.isVisible = false
     }
 
-    protected fun applyMarginsType(type: MarginsType) {
+    protected fun applyMarginsType(
+        type: MarginsType,
+        block: (MarginLayoutParams.() -> Unit)? = null
+    ) {
+        val toolbarNone = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+        val menuItemNone = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+        val toolbarLeftRight = getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
+        val toolbarTopBottom = getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
+        val menuItem = getDimensionPixelSize(R.dimen.search_margins_menu_item)
         binding.cardView.updateLayoutParams<MarginLayoutParams> {
             when (type) {
                 MarginsType.NoneToolbar -> {
-                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    topMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
-                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
+                    leftMargin = toolbarNone
+                    topMargin = toolbarNone
+                    rightMargin = toolbarNone
+                    bottomMargin = toolbarNone
                     width = ViewGroup.LayoutParams.MATCH_PARENT
                     height = ViewGroup.LayoutParams.MATCH_PARENT
                 }
 
                 MarginsType.NoneMenuItem -> {
-                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    topMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
-                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)
+                    leftMargin = menuItemNone
+                    topMargin = menuItemNone
+                    rightMargin = menuItemNone
+                    bottomMargin = menuItemNone
                     width = ViewGroup.LayoutParams.MATCH_PARENT
                     height = ViewGroup.LayoutParams.WRAP_CONTENT
                 }
 
                 MarginsType.Toolbar -> {
-                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
-                    topMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
-                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_left_right)
-                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_toolbar_top_bottom)
+                    leftMargin = toolbarLeftRight
+                    topMargin = toolbarTopBottom
+                    rightMargin = toolbarLeftRight
+                    bottomMargin = toolbarTopBottom
                     width = ViewGroup.LayoutParams.MATCH_PARENT
                     height = ViewGroup.LayoutParams.WRAP_CONTENT
                 }
 
                 MarginsType.MenuItem -> {
-                    leftMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    topMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    rightMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
-                    bottomMargin = getDimensionPixelSize(R.dimen.search_margins_menu_item)
+                    leftMargin = menuItem
+                    topMargin = menuItem
+                    rightMargin = menuItem
+                    bottomMargin = menuItem
                     width = ViewGroup.LayoutParams.MATCH_PARENT
                     height = ViewGroup.LayoutParams.WRAP_CONTENT
                 }
             }
+            block?.invoke(this)
         }
     }
 

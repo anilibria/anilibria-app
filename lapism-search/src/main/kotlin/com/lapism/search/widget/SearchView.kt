@@ -32,7 +32,6 @@ class SearchView @JvmOverloads constructor(
     init {
         inflate(context, R.layout.search_view, this)
         init()
-
         setDefault()
 
         val transition = LayoutTransition()
@@ -44,17 +43,61 @@ class SearchView @JvmOverloads constructor(
 
     // *********************************************************************************************
     private fun setDefault() {
-        applyMarginsType(MarginsType.Toolbar)
-        setCardElevation(getDimension(R.dimen.search_elevation))
-        setCardRadius(getDimension(R.dimen.search_shape_rounded))
+        applyDefaultLayout()
         setFieldHeight(getDimensionPixelSize(R.dimen.search_layout_height))
+        binding.shadow.isVisible = false
+        binding.contentDivider.isVisible = false
     }
 
     // *********************************************************************************************
     override fun addFocus() {
         mOnFocusChangeListener?.onFocusChange(true)
         TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
+        applyFocusedLayout()
+        binding.shadow.isVisible = true
+        binding.contentDivider.isVisible = true
+        showContent()
+        showKeyboard()
+    }
 
+    override fun removeFocus() {
+        mOnFocusChangeListener?.onFocusChange(false)
+        TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
+        applyDefaultLayout()
+        binding.shadow.isVisible = false
+        binding.contentDivider.isVisible = false
+        hideContent()
+        hideKeyboard()
+    }
+
+    override fun fieldInsetsChanged() {
+        if (binding.input.hasFocus()) {
+            applyFocusedLayout()
+        } else {
+            applyDefaultLayout()
+        }
+    }
+
+    private fun applyDefaultLayout() {
+        applyMarginsType(MarginsType.Toolbar) {
+            leftMargin += mFieldInsets.left
+            rightMargin += mFieldInsets.right
+        }
+        setCardRadius(getDimension(R.dimen.search_shape_rounded))
+        setCardElevation(context.resources.getDimension(R.dimen.search_elevation))
+
+        binding.input.updateLayoutParams<MarginLayoutParams> {
+            marginEnd = 0
+            marginStart = 0
+        }
+        binding.field.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = 0
+            topMargin = 0
+            rightMargin = 0
+        }
+    }
+
+    private fun applyFocusedLayout() {
         applyMarginsType(MarginsType.NoneToolbar)
         setCardRadius(getDimension(R.dimen.search_shape_none))
         setCardElevation(getDimension(R.dimen.search_elevation_focus))
@@ -66,37 +109,10 @@ class SearchView @JvmOverloads constructor(
             marginStart = paddingLeftRight
         }
         binding.field.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = mFieldInsets.left
             topMargin = paddingTop
+            rightMargin = mFieldInsets.right
         }
-
-        binding.shadow.isVisible = true
-        binding.contentDivider.isVisible = true
-
-        showContent()
-        showKeyboard()
-    }
-
-    override fun removeFocus() {
-        mOnFocusChangeListener?.onFocusChange(false)
-        TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
-
-        applyMarginsType(MarginsType.Toolbar)
-        setCardRadius(getDimension(R.dimen.search_shape_rounded))
-        setCardElevation(context.resources.getDimension(R.dimen.search_elevation))
-
-        binding.input.updateLayoutParams<MarginLayoutParams> {
-            marginEnd = 0
-            marginStart = 0
-        }
-        binding.field.updateLayoutParams<MarginLayoutParams> {
-            topMargin = 0
-        }
-
-        binding.shadow.isVisible = false
-        binding.contentDivider.isVisible = false
-
-        hideContent()
-        hideKeyboard()
     }
 
     override fun getBehavior(): CoordinatorLayout.Behavior<*> {

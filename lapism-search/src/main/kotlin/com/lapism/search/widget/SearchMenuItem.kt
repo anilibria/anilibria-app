@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.lapism.search.MarginsType
 import com.lapism.search.NavigationIcon
 import com.lapism.search.R
@@ -40,13 +41,10 @@ class SearchMenuItem @JvmOverloads constructor(
     // *********************************************************************************************
     private fun setDefault() {
         setNavigationIcon(NavigationIcon.Arrow)
-        applyMarginsType(MarginsType.NoneMenuItem)
         setCardElevation(getDimension(R.dimen.search_elevation_focus))
         setCardRadius(getDimension(R.dimen.search_shape_none))
         setFieldHeight(getDimensionPixelSize(R.dimen.search_layout_height_focus))
-        val paddingLeftRight = getDimensionPixelSize(R.dimen.search_key_line_16)
-        binding.input.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
-
+        applyDefaultLayout()
         binding.shadow.setOnClickListener {
             binding.input.clearFocus()
             binding.input.clearText()
@@ -103,6 +101,20 @@ class SearchMenuItem @JvmOverloads constructor(
             }
         })
         animation.start(binding, mMenuItemCx, getAnimationDuration(), false)
+    }
+
+    override fun fieldInsetsChanged() {
+        applyDefaultLayout()
+    }
+
+    private fun applyDefaultLayout() {
+        applyMarginsType(MarginsType.NoneMenuItem)
+        val paddingLeftRight = getDimensionPixelSize(R.dimen.search_key_line_16)
+        binding.input.setPadding(paddingLeftRight, 0, paddingLeftRight, 0)
+        binding.field.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = mFieldInsets.left
+            rightMargin = mFieldInsets.right
+        }
     }
 
     private fun getMenuItemPosition(menuItemId: Int) {

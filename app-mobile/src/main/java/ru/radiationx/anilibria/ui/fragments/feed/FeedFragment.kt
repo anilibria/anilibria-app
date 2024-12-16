@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -192,10 +193,9 @@ class FeedFragment :
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
         searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
-            leftMargin = dimensions.left
             topMargin = dimensions.top
-            rightMargin = dimensions.right
         }
+        searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

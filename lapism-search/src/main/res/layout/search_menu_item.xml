@@ -59,6 +59,14 @@
                     android:textSize="@dimen/search_text_16"
                     android:windowSoftInputMode="stateAlwaysHidden|adjustPan|adjustNothing" />
 
+                <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_width="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="24dp" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/clear_button"
                     android:layout_width="@dimen/search_icon_56"

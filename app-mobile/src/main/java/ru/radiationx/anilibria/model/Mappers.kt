@@ -92,9 +92,10 @@ fun SuggestionItem.toState(query: String): SuggestionItemState {
     }
 
     return SuggestionItemState(
-        id,
-        itemTitle,
-        poster.orEmpty(),
-        matchRanges
+        id = id,
+        code = code,
+        title = itemTitle,
+        poster = poster.orEmpty(),
+        matchRanges = matchRanges
     )
 }

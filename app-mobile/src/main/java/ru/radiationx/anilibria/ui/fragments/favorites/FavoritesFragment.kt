@@ -32,6 +32,7 @@ import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.showWithLifecycle
+import ru.radiationx.shared_app.controllers.loaderpage.hasAnyLoading
 
 
 /**
@@ -199,6 +200,7 @@ class FavoritesFragment :
         binding.progressBarList.isVisible = state.data.emptyLoading
         binding.refreshLayout.isRefreshing =
             state.data.refreshLoading || state.deletingItemIds.isNotEmpty()
+        searchView.setLoading(state.data.hasAnyLoading())
         adapter.bindState(state.data)
         searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }

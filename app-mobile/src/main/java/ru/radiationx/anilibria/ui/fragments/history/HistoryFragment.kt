@@ -37,6 +37,7 @@ import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 import ru.radiationx.shared.ktx.android.showWithLifecycle
+import ru.radiationx.shared_app.controllers.loaderpage.hasAnyLoading
 
 /**
  * Created by radiationx on 18.02.18.
@@ -232,6 +233,7 @@ class HistoryFragment :
     private fun showState(state: HistoryScreenState) {
         binding.progressBarList.isVisible = state.data.emptyLoading
         binding.refreshLayout.isRefreshing = state.data.refreshLoading
+        searchView.setLoading(state.data.hasAnyLoading())
         adapter.bindState(state.data, withExport = true)
         searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }

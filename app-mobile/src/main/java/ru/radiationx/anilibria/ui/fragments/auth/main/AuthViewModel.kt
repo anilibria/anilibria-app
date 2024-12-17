@@ -73,7 +73,7 @@ class AuthViewModel @Inject constructor(
 
     fun onSocialClick(item: SocialAuthItemState) {
         authMainAnalytics.socialClick(item.key)
-        authSocialAnalytics.open(AnalyticsConstants.screen_auth_main)
+        authSocialAnalytics.open(AnalyticsConstants.screen_auth_main, item.key)
         router.navigateTo(Screens.AuthSocial(item.key))
     }
 
@@ -99,7 +99,7 @@ class AuthViewModel @Inject constructor(
                 if (isEmpty2FaCode(inputData, it)) {
                     router.navigateTo(Screens.Auth2FaCode(inputData.login, inputData.password))
                 } else {
-                    authMainAnalytics.error(it)
+                    authMainAnalytics.error()
                     errorHandler.handle(it)
                 }
             }

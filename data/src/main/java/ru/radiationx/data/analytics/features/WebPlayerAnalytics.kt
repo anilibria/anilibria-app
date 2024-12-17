@@ -24,11 +24,8 @@ class WebPlayerAnalytics @Inject constructor(
         sender.send(AnalyticsConstants.web_player_loaded)
     }
 
-    fun error(error: Throwable) {
-        sender.send(
-            AnalyticsConstants.web_player_error,
-            error.toErrorParam()
-        )
+    fun error() {
+        sender.send(AnalyticsConstants.web_player_error)
     }
 
     fun useTime(timeInMillis: Long) {

@@ -15,6 +15,7 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
+import timber.log.Timber
 import javax.inject.Inject
 
 data class AuthSocialExtra(
@@ -53,7 +54,6 @@ class AuthSocialViewModel @Inject constructor(
                 detector.loadUrl(data.socialUrl)
                 _state.update { it.copy(data = data) }
             }.onFailure {
-                authSocialAnalytics.error(it)
                 errorHandler.handle(it)
             }
         }
@@ -76,7 +76,7 @@ class AuthSocialViewModel @Inject constructor(
     }
 
     fun submitUseTime(time: Long) {
-        authSocialAnalytics.useTime(time)
+        authSocialAnalytics.useTime(argExtra.key, time)
     }
 
     fun onSuccessAuthResult(result: String) {
@@ -93,7 +93,8 @@ class AuthSocialViewModel @Inject constructor(
     }
 
     fun sendAnalyticsPageError(error: Exception) {
-        authSocialAnalytics.error(error)
+        Timber.e(error, "sendAnalyticsPageError")
+        authSocialAnalytics.pageError(argExtra.key)
     }
 
     fun onPageStateChanged(pageState: WebPageViewState) {
@@ -108,10 +109,10 @@ class AuthSocialViewModel @Inject constructor(
             coRunCatching {
                 authRepository.signInSocial(resultUrl, data)
             }.onSuccess {
-                authSocialAnalytics.success()
+                authSocialAnalytics.success(argExtra.key)
                 router.finishChain()
             }.onFailure {
-                authSocialAnalytics.error(it)
+                authSocialAnalytics.error(argExtra.key)
                 if (it is SocialAuthException) {
                     _errorEvent.set(Unit)
                 } else {

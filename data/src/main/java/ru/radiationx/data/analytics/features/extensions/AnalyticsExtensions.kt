@@ -24,8 +24,6 @@ fun Long?.toTimeParam(name: String = "time") = Pair(name, this?.toSecondsString(
 
 fun Long?.toPreciseTimeParam(name: String = "time") = Pair(name, this?.toPreciseSecondsString().toString())
 
-fun Throwable?.toErrorParam(name: String = "error") = Pair(name, this.toString())
-
 fun AnalyticsConfigState?.toStateParam(name: String = "state") = Pair(name, this.toString())
 
 fun AnalyticsQuality?.toQualityParam(name: String = "quality") = Pair(name, this?.value.toString())

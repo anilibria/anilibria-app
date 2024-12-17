@@ -48,7 +48,7 @@ class OtpAcceptViewModel @Inject constructor(
             }.onSuccess {
                 onSuccess()
             }.onFailure { error ->
-                authDeviceAnalytics.error(error)
+                authDeviceAnalytics.error()
                 if (error is OtpAcceptedException) {
                     onSuccess()
                     return@onFailure

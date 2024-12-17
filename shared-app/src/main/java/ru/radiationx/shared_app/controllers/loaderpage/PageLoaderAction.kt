@@ -5,6 +5,6 @@ sealed class PageLoaderAction<T> {
     class MoreLoading<T> : PageLoaderAction<T>()
     class Refresh<T> : PageLoaderAction<T>()
     class Data<T>(val data: T?, val hasMoreData: Boolean? = null) : PageLoaderAction<T>()
-    class DataModify<T>(val data: T?) : PageLoaderAction<T>()
+    class ModifyData<T>(val data: T?, val hasMoreData: Boolean? = null) : PageLoaderAction<T>()
     class Error<T>(val error: Throwable) : PageLoaderAction<T>()
 }

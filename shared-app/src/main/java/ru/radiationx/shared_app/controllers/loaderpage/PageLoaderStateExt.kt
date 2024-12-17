@@ -72,7 +72,7 @@ fun <T> PageLoaderState<T>.applyAction(
             error = null
         )
 
-        is PageLoaderAction.DataModify -> copy(
+        is PageLoaderAction.ModifyData -> copy(
             data = action.data,
             error = null
         )

@@ -47,7 +47,7 @@ class HistoryViewModel @Inject constructor(
     private val pageLoader = PageLoader(viewModelScope) {
         val count = pageToCount(it.page)
         val history = historyRepository.getReleases(count)
-        it.toDataAction(history.items.size >= count) { history.hasMore }
+        it.toDataAction(history.hasMore) { history.items }
     }
 
     private val _state = MutableStateFlow(HistoryScreenState())

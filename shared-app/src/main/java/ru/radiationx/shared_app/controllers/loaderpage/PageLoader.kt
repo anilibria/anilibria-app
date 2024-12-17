@@ -2,7 +2,6 @@ package ru.radiationx.shared_app.controllers.loaderpage
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -54,14 +53,14 @@ class PageLoader<T>(
         return _state.value.data
     }
 
-    fun modifyData(data: T?) {
-        val action = PageLoaderAction.DataModify(data)
+    fun modifyData(data: T?, hasMoreData: Boolean? = null) {
+        val action = PageLoaderAction.ModifyData(data, hasMoreData)
         updateStateByAction(action, createPageLoadParams(_currentPage.value))
     }
 
-    fun modifyData(block: (T) -> T) {
+    fun modifyData(hasMoreData: Boolean? = null, block: (T) -> T) {
         val newData = _state.value.data?.let(block)
-        modifyData(newData)
+        modifyData(newData, hasMoreData)
     }
 
     private fun loadPage(page: Int) {

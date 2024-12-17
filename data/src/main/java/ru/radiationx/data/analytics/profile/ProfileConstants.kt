@@ -17,6 +17,7 @@ object ProfileConstants {
     const val releases_count = "releases_count"
     const val downloads_count = "downloads_count"
     const val app_versions = "app_versions"
+    const val fail_attributes = "fail_attributes"
 
     const val codec_audio_aac = "codec_audio_aac"
     const val codec_audio_opus = "codec_audio_opus"

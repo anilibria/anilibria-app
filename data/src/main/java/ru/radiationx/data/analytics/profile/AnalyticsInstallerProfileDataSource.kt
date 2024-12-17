@@ -8,7 +8,7 @@ import androidx.annotation.RequiresApi
 import ru.radiationx.shared.ktx.coRunCatching
 import javax.inject.Inject
 
-class AnalyticsInstallerDataSource @Inject constructor(
+class AnalyticsInstallerProfileDataSource @Inject constructor(
     private val context: Context
 ) {
 

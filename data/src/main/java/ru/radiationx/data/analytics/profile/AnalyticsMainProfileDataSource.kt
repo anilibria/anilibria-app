@@ -17,7 +17,7 @@ import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.repository.AuthRepository
 import javax.inject.Inject
 
-class AnalyticsProfileDataSource @Inject constructor(
+class AnalyticsMainProfileDataSource @Inject constructor(
     private val preferencesHolder: PreferencesHolder,
     private val analyticsThemeProvider: AnalyticsThemeProvider,
     private val apiConfig: ApiConfig,

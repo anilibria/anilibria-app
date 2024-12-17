@@ -11,7 +11,7 @@ import ru.radiationx.shared_app.codecs.isSoftware
 import ru.radiationx.shared_app.codecs.types.KnownCodec
 import javax.inject.Inject
 
-class CodecsProfileAnalytics @Inject constructor() {
+class AnalyticsCodecsProfileDataSource @Inject constructor() {
 
     fun getAttributes(): List<ProfileAttribute> = KnownCodec.entries.map { knownCodec ->
         coRunCatching {

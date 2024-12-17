@@ -7,19 +7,19 @@ import io.appmetrica.analytics.profile.UserProfileUpdate
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import ru.radiationx.data.analytics.profile.AnalyticsInstallerDataSource
+import ru.radiationx.data.analytics.profile.AnalyticsInstallerProfileDataSource
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
-import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
+import ru.radiationx.data.analytics.profile.AnalyticsMainProfileDataSource
 import ru.radiationx.data.analytics.profile.ProfileAttribute
 import ru.radiationx.data.analytics.profile.ProfileConstants
-import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
+import ru.radiationx.shared_app.analytics.AnalyticsCodecsProfileDataSource
 import timber.log.Timber
 import javax.inject.Inject
 
 class AppMetricaAnalyticsProfile @Inject constructor(
-    private val info: AnalyticsProfileDataSource,
-    private val codecs: CodecsProfileAnalytics,
-    private val installer: AnalyticsInstallerDataSource
+    private val main: AnalyticsMainProfileDataSource,
+    private val codecs: AnalyticsCodecsProfileDataSource,
+    private val installer: AnalyticsInstallerProfileDataSource
 ) : AnalyticsProfile {
 
     override fun update() {
@@ -33,10 +33,10 @@ class AppMetricaAnalyticsProfile @Inject constructor(
     @OptIn(DelicateCoroutinesApi::class)
     private fun unsafeUpdate() {
         GlobalScope.launch {
-            val infoAttributes = info.getAttributes()
+            val mainAttributes = main.getAttributes()
             val codecAttributes = codecs.getAttributes()
             val installerAttributes = installer.getAttributes()
-            val allAttributes = infoAttributes + codecAttributes + installerAttributes
+            val allAttributes = mainAttributes + codecAttributes + installerAttributes
             val yandexAttributes = allAttributes.mapNotNull { it.mapToYandex() }
             val errorAttributes = allAttributes.filterIsInstance<ProfileAttribute.Error>()
             val userProfile = UserProfile.newBuilder().run {

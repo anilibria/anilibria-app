@@ -46,8 +46,8 @@ import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
-import ru.radiationx.data.analytics.profile.AnalyticsInstallerDataSource
-import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
+import ru.radiationx.data.analytics.profile.AnalyticsInstallerProfileDataSource
+import ru.radiationx.data.analytics.profile.AnalyticsMainProfileDataSource
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.DonationHolder
@@ -255,8 +255,8 @@ class DataModule(context: Context) : QuillModule() {
         /* Analytics */
         single<ActivityLaunchAnalytics>()
         single<SslCompatAnalytics>()
-        single<AnalyticsProfileDataSource>()
-        single<AnalyticsInstallerDataSource>()
+        single<AnalyticsMainProfileDataSource>()
+        single<AnalyticsInstallerProfileDataSource>()
         single<AuthDeviceAnalytics>()
         single<AuthMainAnalytics>()
         single<AuthSocialAnalytics>()

@@ -40,7 +40,7 @@ class PageLoader<T>(
     }
 
     fun loadMore() {
-        if (_state.value.hasMorePages) {
+        if (_state.value.hasMoreData) {
             loadPage(_currentPage.value + 1)
         }
     }

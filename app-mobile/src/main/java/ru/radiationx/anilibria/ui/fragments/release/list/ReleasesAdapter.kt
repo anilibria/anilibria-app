@@ -76,7 +76,7 @@ class ReleasesAdapter(
             newItems.addAll(data.map { ReleaseListItem(it) })
         }
 
-        if (loadingState.hasMorePages) {
+        if (loadingState.hasMoreData) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
             } else {

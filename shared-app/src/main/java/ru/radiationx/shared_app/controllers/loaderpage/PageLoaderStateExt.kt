@@ -39,7 +39,7 @@ fun <T, R> PageLoaderState<T>.mapData(
     emptyLoading = emptyLoading,
     refreshLoading = refreshLoading,
     moreLoading = moreLoading,
-    hasMorePages = hasMorePages,
+    hasMoreData = hasMoreData,
     error = error,
     data = data?.let(newDataMapper)
 )
@@ -67,12 +67,13 @@ fun <T> PageLoaderState<T>.applyAction(
             emptyLoading = false,
             refreshLoading = false,
             moreLoading = false,
-            hasMorePages = action.hasMoreData ?: hasMorePages,
+            hasMoreData = action.hasMoreData ?: hasMoreData,
             data = action.data,
             error = null
         )
 
         is PageLoaderAction.ModifyData -> copy(
+            hasMoreData = action.hasMoreData ?: hasMoreData,
             data = action.data,
             error = null
         )

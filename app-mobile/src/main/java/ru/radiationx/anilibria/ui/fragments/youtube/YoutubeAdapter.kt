@@ -42,7 +42,7 @@ class YoutubeAdapter(
             newItems.addAll(data.map { YoutubeListItem(it) })
         }
 
-        if (loadingState.hasMorePages) {
+        if (loadingState.hasMoreData) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
             } else {

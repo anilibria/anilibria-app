@@ -75,7 +75,7 @@ class AppThemeControllerImpl @Inject constructor(
     override fun getMode(): AppThemeMode {
         return sharedPreferences.getString(APP_THEME_KEY, null)
             ?.let { prefMode ->
-                AppThemeMode.values().find { it.value == prefMode }
+                AppThemeMode.entries.find { it.value == prefMode }
             }
             ?: AppThemeMode.SYSTEM
     }

@@ -29,7 +29,7 @@ import ru.radiationx.data.analytics.profile.AnalyticsThemeProvider
 import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
 import ru.radiationx.data.migration.MigrationExecutor
 import ru.radiationx.quill.QuillModule
-import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
+import ru.radiationx.shared_app.analytics.AnalyticsCodecsProfileDataSource
 import ru.radiationx.shared_app.analytics.errors.AppMetricaErrorReporter
 import ru.radiationx.shared_app.analytics.errors.CombinedErrorReporter
 import ru.radiationx.shared_app.analytics.errors.LoggingErrorReporter
@@ -94,7 +94,7 @@ class AppModule(application: Application) : QuillModule() {
         single<NativeAdsRepository>()
 
         /* Analytics */
-        single<CodecsProfileAnalytics>()
+        single<AnalyticsCodecsProfileDataSource>()
 
         single<AppMetricaAnalyticsSender>()
         single<AppMetricaAnalyticsProfile>()

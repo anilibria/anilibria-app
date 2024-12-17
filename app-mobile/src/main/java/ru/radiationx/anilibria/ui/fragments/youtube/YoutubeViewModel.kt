@@ -15,6 +15,7 @@ import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
+import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderAction
@@ -77,17 +78,16 @@ class YoutubeViewModel @Inject constructor(
     }
 
     private suspend fun getDataSource(params: PageLoaderParams<List<YoutubeItem>>): PageLoaderAction.Data<List<YoutubeItem>> {
-        return try {
+        return coRunCatching {
             val result = youtubeRepository.getYoutubeList(params.page)
             params.toDataAction(!result.isEnd()) {
                 it.orEmpty() + result.data
             }
-        } catch (ex: Throwable) {
+        }.onFailure {
             if (params.isFirstPage) {
-                errorHandler.handle(ex)
+                errorHandler.handle(it)
             }
-            throw ex
-        }
+        }.getOrThrow()
     }
 
 }

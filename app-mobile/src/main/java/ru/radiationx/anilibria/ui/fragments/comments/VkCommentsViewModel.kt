@@ -164,17 +164,16 @@ class VkCommentsViewModel @Inject constructor(
     private suspend fun getDataSource(): VkCommentsState {
         val commentsSource = flow { emit(pageRepository.getComments()) }
         val releaseSource = releaseInteractor.observeFull(argExtra.id, argExtra.code)
-        return try {
+        return coRunCatching {
             combine(releaseSource, commentsSource) { release, comments ->
                 VkCommentsState(
                     url = "${comments.baseUrl}release/${release.code.code}.html",
                     script = comments.script
                 )
             }.first()
-        } catch (ex: Throwable) {
-            commentsAnalytics.error(ex)
-            errorHandler.handle(ex)
-            throw ex
-        }
+        }.onFailure {
+            commentsAnalytics.error(it)
+            errorHandler.handle(it)
+        }.getOrThrow()
     }
 }

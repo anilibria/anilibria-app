@@ -179,15 +179,14 @@ class FavoritesViewModel @Inject constructor(
     }
 
     private suspend fun getDataSource(params: PageLoaderParams<List<Release>>): PageLoaderAction.Data<List<Release>> {
-        return try {
+        return coRunCatching {
             val result = favoriteRepository.getFavorites(params.page)
             params.toDataAction { it.orEmpty() + result.data }
-        } catch (ex: Throwable) {
+        }.onFailure {
             if (params.isFirstPage) {
-                errorHandler.handle(ex)
+                errorHandler.handle(it)
             }
-            throw ex
-        }
+        }.getOrThrow()
     }
 
     private fun List<Release>.filterByQuery(query: String): List<Release> {

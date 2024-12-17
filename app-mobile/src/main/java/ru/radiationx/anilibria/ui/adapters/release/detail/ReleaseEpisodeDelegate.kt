@@ -89,7 +89,7 @@ class ReleaseEpisodeDelegate(
                 binding.tvAction.text = state.actionTitle
                 val textColor = state.actionColorRes
                     ?.let { binding.tvAction.getCompatColor(it) }
-                    ?: binding.tvAction.context.getColorFromAttr(R.attr.colorAccent)
+                    ?: binding.tvAction.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent)
                 val iconDrawable =
                     state.actionIconRes?.let { binding.tvAction.getCompatDrawable(it) }
 
@@ -103,7 +103,7 @@ class ReleaseEpisodeDelegate(
             }
 
             val bgColor = if (isEven) {
-                binding.root.context.getColorFromAttr(R.attr.colorSurface)
+                binding.root.context.getColorFromAttr(com.google.android.material.R.attr.colorSurface)
             } else {
                 binding.root.context.getColorFromAttr(R.attr.episode_even)
             }

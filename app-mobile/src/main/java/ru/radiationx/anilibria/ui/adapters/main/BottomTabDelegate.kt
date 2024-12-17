@@ -30,7 +30,7 @@ class BottomTabDelegate(private val clickListener: Listener) :
         private val binding by viewBinding<ItemBottomTabBinding>()
 
         fun bind(item: MainActivity.Tab, selected: Boolean) {
-            val colorRes = if (selected) R.attr.colorSecondaryVariant else R.attr.colorOnBackground
+            val colorRes = if (selected) com.google.android.material.R.attr.colorSecondaryVariant else com.google.android.material.R.attr.colorOnBackground
             binding.tabIcon.setCompatDrawable(item.icon)
             binding.tabIcon.setTintColorAttr(colorRes)
             binding.root.setOnClickListener { clickListener.onTabClick(item) }

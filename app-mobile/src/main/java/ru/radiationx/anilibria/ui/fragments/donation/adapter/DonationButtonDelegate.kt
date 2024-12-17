@@ -39,7 +39,7 @@ class DonationButtonDelegate(
 
             val textColor = data.brand?.asDataColorRes()
                 ?.let { binding.btAction.getCompatColor(it) }
-                ?: binding.btAction.context.getColorFromAttr(R.attr.colorAccent)
+                ?: binding.btAction.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent)
 
             binding.btAction.icon =
                 data.icon?.asDataIconRes()?.let { binding.btAction.getCompatDrawable(it) }

@@ -48,7 +48,7 @@ class SuggestionLocalDelegate(
         fun bind(item: SuggestionLocalItemState) {
             dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemImage.setCompatDrawable(item.icRes)
-            binding.itemImage.setTintColorAttr(R.attr.colorOnSurface)
+            binding.itemImage.setTintColorAttr(com.google.android.material.R.attr.colorOnSurface)
             binding.itemImage.background = null
             binding.itemTitle.text = item.title
             binding.root.setOnClickListener {

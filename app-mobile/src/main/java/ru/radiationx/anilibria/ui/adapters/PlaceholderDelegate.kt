@@ -30,7 +30,7 @@ class PlaceholderDelegate :
         fun bind(icRes: Int, titleRes: Int, descRes: Int) {
             dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemPlaceholderIcon.setCompatDrawable(icRes)
-            binding.itemPlaceholderIcon.setTintColorAttr(R.attr.colorOnSurface)
+            binding.itemPlaceholderIcon.setTintColorAttr(com.google.android.material.R.attr.colorOnSurface)
             binding.itemPlaceholderTitle.setText(titleRes)
             binding.itemPlaceholderDesc.setText(descRes)
         }

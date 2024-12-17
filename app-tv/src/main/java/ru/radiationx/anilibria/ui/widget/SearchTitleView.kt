@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.databinding.ViewSearchControlsBinding
 class SearchTitleView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.browseTitleViewStyle
+    defStyleAttr: Int = androidx.leanback.R.attr.browseTitleViewStyle
 ) : BrowseTitleView(context, attrs, defStyleAttr) {
 
     private var binding: ViewSearchControlsBinding

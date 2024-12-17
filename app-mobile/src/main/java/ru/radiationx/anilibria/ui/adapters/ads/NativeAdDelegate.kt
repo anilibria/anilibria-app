@@ -42,7 +42,7 @@ class NativeAdDelegate :
         private val dimensionsApplier by dimensionsApplier()
 
         private val appearance by lazy {
-            val backgroundColor = binding.root.context.getColorFromAttr(R.attr.colorSurface)
+            val backgroundColor = binding.root.context.getColorFromAttr(com.google.android.material.R.attr.colorSurface)
             val textDefaultColor = binding.root.context.getColorFromAttr(R.attr.textDefault)
             val textSecondColor = binding.root.context.getColorFromAttr(R.attr.textSecond)
             val textDefault = TextAppearance.Builder().setTextColor(textDefaultColor).build()

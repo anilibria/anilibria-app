@@ -69,7 +69,7 @@ class FeedSectionDelegate(
 
             binding.root.setBackgroundColor(
                 if (item.hasBg) {
-                    binding.root.context.getColorFromAttr(R.attr.colorSurface)
+                    binding.root.context.getColorFromAttr(com.google.android.material.R.attr.colorSurface)
                 } else {
                     Color.TRANSPARENT
                 }

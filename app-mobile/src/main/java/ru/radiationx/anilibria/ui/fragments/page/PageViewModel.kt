@@ -46,7 +46,7 @@ class PageViewModel @Inject constructor(
             }.onSuccess { data ->
                 _state.update { it.copy(data = data) }
             }.onFailure {
-                pageAnalytics.error(it)
+                pageAnalytics.error()
                 errorHandler.handle(it)
             }
             _state.update { it.copy(loading = false) }

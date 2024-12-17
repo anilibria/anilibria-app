@@ -1,5 +1,8 @@
 package ru.radiationx.shared_app.controllers.loadersingle
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
 fun <T> SingleLoaderState<T>.needShowError(): Boolean {
     return error != null && !loading
 }
@@ -22,12 +25,18 @@ fun <T> SingleLoaderState<List<T>>.needShowListData(): Boolean {
     return needShowData { it?.isNotEmpty() == true }
 }
 
-fun <T, R> SingleLoaderState<T>.mapData(block: (T) -> R): SingleLoaderState<R> {
-    return SingleLoaderState(
-        data = data?.let { block.invoke(it) },
-        error = error,
-        loading = loading
-    )
+fun <T, R> SingleLoaderState<T>.mapData(
+    block: (T) -> R
+): SingleLoaderState<R> = SingleLoaderState(
+    data = data?.let { block.invoke(it) },
+    error = error,
+    loading = loading
+)
+
+fun <T, R> Flow<SingleLoaderState<T>>.mapData(
+    block: (T) -> R
+): Flow<SingleLoaderState<R>> = map { state ->
+    state.mapData(block)
 }
 
 fun <T> SingleLoaderState<T>.mapOtherLoading(otherLoading: Boolean): SingleLoaderState<T> {

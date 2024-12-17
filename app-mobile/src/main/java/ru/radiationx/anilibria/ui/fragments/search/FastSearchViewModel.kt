@@ -24,6 +24,7 @@ import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loadersearch.SearchLoader
 import ru.radiationx.shared_app.controllers.loadersearch.SearchQuery
+import ru.radiationx.shared_app.controllers.loadersingle.mapData
 import java.net.URLEncoder
 import javax.inject.Inject
 
@@ -51,7 +52,8 @@ class FastSearchViewModel @Inject constructor(
 
     init {
         searchLoader
-            .observeState { data ->
+            .observeState()
+            .mapData { data ->
                 val localItems = if (data.items.isEmpty()) {
                     createLocalItems(data.query)
                 } else {

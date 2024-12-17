@@ -20,6 +20,7 @@ import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderAction
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderParams
+import ru.radiationx.shared_app.controllers.loaderpage.mapData
 import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import javax.inject.Inject
 
@@ -43,7 +44,8 @@ class YoutubeViewModel @Inject constructor(
 
     init {
         pageLoader
-            .observeState { items ->
+            .observeState()
+            .mapData { items ->
                 items.map { it.toState() }
             }
             .onEach { loadingState ->

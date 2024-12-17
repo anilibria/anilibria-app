@@ -27,12 +27,6 @@ class SingleLoader<DATA>(
         return _state
     }
 
-    fun <R> observeState(dataMapper: (DATA) -> R): Flow<SingleLoaderState<R>> {
-        return observeState().map { state ->
-            state.mapData(dataMapper)
-        }
-    }
-
     fun cancel() {
         loadingJob.cancel()
     }

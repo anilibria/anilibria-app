@@ -2,10 +2,8 @@ package ru.radiationx.shared_app.controllers.loaderpage
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.shared.ktx.coRunCatching
@@ -29,12 +27,6 @@ class PageLoader<T>(
 
     fun observeState(): StateFlow<PageLoaderState<T>> {
         return _state
-    }
-
-    fun <R> observeState(dataMapper: (T) -> R): Flow<PageLoaderState<R>> {
-        return observeState().map { state ->
-            state.mapData(dataMapper)
-        }
     }
 
     fun reset() {

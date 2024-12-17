@@ -26,6 +26,7 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
+import ru.radiationx.shared_app.controllers.loaderpage.mapData
 import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import javax.inject.Inject
 
@@ -58,7 +59,8 @@ class HistoryViewModel @Inject constructor(
 
     init {
         pageLoader
-            .observeState { data ->
+            .observeState()
+            .mapData { data ->
                 data.map { it.toState(updates) }
             }
             .onEach { loadingState ->

@@ -1,5 +1,8 @@
 package ru.radiationx.shared_app.controllers.loaderpage
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
 
 fun PageLoaderState<*>.hasAnyLoading(): Boolean {
     return emptyLoading || refreshLoading || moreLoading
@@ -33,7 +36,7 @@ fun <T> PageLoaderState<T>.needShowPlaceholder(dataCondition: (T?) -> Boolean = 
 }
 
 fun <T, R> PageLoaderState<T>.mapData(
-    dataMapper: (T) -> R
+    block: (T) -> R
 ): PageLoaderState<R> = PageLoaderState(
     initialState = initialState,
     emptyLoading = emptyLoading,
@@ -42,5 +45,11 @@ fun <T, R> PageLoaderState<T>.mapData(
     hasMoreData = hasMoreData,
     isFirstPage = isFirstPage,
     error = error,
-    data = data?.let(dataMapper)
+    data = data?.let(block)
 )
+
+fun <T, R> Flow<PageLoaderState<T>>.mapData(
+    block: (T) -> R
+): Flow<PageLoaderState<R>> = map {
+    it.mapData(block)
+}

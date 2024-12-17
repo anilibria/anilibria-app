@@ -6,9 +6,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import ru.radiationx.shared.ktx.SerialJob
 import ru.radiationx.shared.ktx.coRunCatching
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderState
+import ru.radiationx.shared_app.controllers.loaderpage.mapData
 import timber.log.Timber
 
 class SingleLoader<DATA>(
@@ -22,6 +25,12 @@ class SingleLoader<DATA>(
 
     fun observeState(): StateFlow<SingleLoaderState<DATA>> {
         return _state
+    }
+
+    fun <R> observeState(dataMapper: (DATA) -> R): Flow<SingleLoaderState<R>> {
+        return observeState().map { state ->
+            state.mapData(dataMapper)
+        }
     }
 
     fun cancel() {

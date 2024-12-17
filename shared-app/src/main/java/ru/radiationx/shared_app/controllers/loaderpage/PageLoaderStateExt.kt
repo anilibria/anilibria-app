@@ -33,7 +33,7 @@ fun <T> PageLoaderState<T>.needShowPlaceholder(dataCondition: (T?) -> Boolean = 
 }
 
 fun <T, R> PageLoaderState<T>.mapData(
-    newDataMapper: (T) -> R
+    dataMapper: (T) -> R
 ): PageLoaderState<R> = PageLoaderState(
     initialState = initialState,
     emptyLoading = emptyLoading,
@@ -42,52 +42,5 @@ fun <T, R> PageLoaderState<T>.mapData(
     hasMoreData = hasMoreData,
     isFirstPage = isFirstPage,
     error = error,
-    data = data?.let(newDataMapper)
+    data = data?.let(dataMapper)
 )
-
-fun <T> PageLoaderState<T>.applyAction(
-    action: PageLoaderAction<T>,
-    params: PageLoaderParams<T>
-): PageLoaderState<T> {
-    return when (action) {
-        is PageLoaderAction.EmptyLoading -> copy(
-            emptyLoading = true,
-            error = null
-        )
-
-        is PageLoaderAction.MoreLoading -> copy(
-            moreLoading = true,
-            error = null
-        )
-
-        is PageLoaderAction.Refresh -> copy(
-            refreshLoading = true
-        )
-
-        is PageLoaderAction.Data -> copy(
-            emptyLoading = false,
-            refreshLoading = false,
-            moreLoading = false,
-            hasMoreData = action.hasMoreData ?: hasMoreData,
-            data = action.data,
-            error = null
-        )
-
-        is PageLoaderAction.ModifyData -> copy(
-            hasMoreData = action.hasMoreData ?: hasMoreData,
-            data = action.data,
-            error = null
-        )
-
-        is PageLoaderAction.Error -> copy(
-            emptyLoading = false,
-            refreshLoading = false,
-            moreLoading = false,
-            data = data.takeIf { !params.isFirstPage },
-            error = action.error
-        )
-    }.copy(
-        initialState = false,
-        isFirstPage = params.isFirstPage
-    )
-}

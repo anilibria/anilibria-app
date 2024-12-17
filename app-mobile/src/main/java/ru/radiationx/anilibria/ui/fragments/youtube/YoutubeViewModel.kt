@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import ru.radiationx.anilibria.model.YoutubeItemState
@@ -20,7 +19,6 @@ import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderAction
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderParams
-import ru.radiationx.shared_app.controllers.loaderpage.mapData
 import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import javax.inject.Inject
 
@@ -44,11 +42,8 @@ class YoutubeViewModel @Inject constructor(
 
     init {
         pageLoader
-            .observeState()
-            .map { loadingState ->
-                loadingState.mapData { items ->
-                    items.map { it.toState() }
-                }
+            .observeState { items ->
+                items.map { it.toState() }
             }
             .onEach { loadingState ->
                 _state.update {

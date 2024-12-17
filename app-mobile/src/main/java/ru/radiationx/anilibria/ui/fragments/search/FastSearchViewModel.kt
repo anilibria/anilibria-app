@@ -8,7 +8,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import ru.radiationx.anilibria.R
@@ -25,7 +24,6 @@ import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loadersearch.SearchLoader
 import ru.radiationx.shared_app.controllers.loadersearch.SearchQuery
-import ru.radiationx.shared_app.controllers.loadersingle.mapData
 import java.net.URLEncoder
 import javax.inject.Inject
 
@@ -53,19 +51,16 @@ class FastSearchViewModel @Inject constructor(
 
     init {
         searchLoader
-            .observeState()
-            .map { state ->
-                state.mapData { data ->
-                    val localItems = if (data.items.isEmpty()) {
-                        createLocalItems(data.query)
-                    } else {
-                        emptyList()
-                    }
-                    FastSearchDataState(
-                        localItems,
-                        data.items.map { it.toState(data.query) }
-                    )
+            .observeState { data ->
+                val localItems = if (data.items.isEmpty()) {
+                    createLocalItems(data.query)
+                } else {
+                    emptyList()
                 }
+                FastSearchDataState(
+                    localItems,
+                    data.items.map { it.toState(data.query) }
+                )
             }
             .onEach { state ->
                 _state.update {

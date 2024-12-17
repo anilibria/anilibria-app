@@ -1,6 +1,7 @@
 package ru.radiationx.shared_app.controllers.loadersearch
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
@@ -9,9 +10,11 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoaderState
+import ru.radiationx.shared_app.controllers.loadersingle.mapData
 
 class SearchLoader<QUERY : SearchQuery, DATA>(
     private val coroutineScope: CoroutineScope,
@@ -35,6 +38,10 @@ class SearchLoader<QUERY : SearchQuery, DATA>(
 
     fun observeState(): StateFlow<SingleLoaderState<DATA>> {
         return loader.observeState()
+    }
+
+    fun <R> observeState(dataMapper: (DATA) -> R): Flow<SingleLoaderState<R>> {
+        return loader.observeState(dataMapper)
     }
 
     fun getQuery(): QUERY? {

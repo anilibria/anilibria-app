@@ -2,8 +2,10 @@ package ru.radiationx.shared_app.controllers.loaderpage
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.shared.ktx.coRunCatching
@@ -27,6 +29,12 @@ class PageLoader<T>(
 
     fun observeState(): StateFlow<PageLoaderState<T>> {
         return _state
+    }
+
+    fun <R> observeState(dataMapper: (T) -> R): Flow<PageLoaderState<R>> {
+        return observeState().map { state ->
+            state.mapData(dataMapper)
+        }
     }
 
     fun reset() {
@@ -107,6 +115,53 @@ class PageLoader<T>(
         _state.update {
             it.applyAction(action, params)
         }
+    }
+
+    private fun <T> PageLoaderState<T>.applyAction(
+        action: PageLoaderAction<T>,
+        params: PageLoaderParams<T>
+    ): PageLoaderState<T> {
+        return when (action) {
+            is PageLoaderAction.EmptyLoading -> copy(
+                emptyLoading = true,
+                error = null
+            )
+
+            is PageLoaderAction.MoreLoading -> copy(
+                moreLoading = true,
+                error = null
+            )
+
+            is PageLoaderAction.Refresh -> copy(
+                refreshLoading = true
+            )
+
+            is PageLoaderAction.Data -> copy(
+                emptyLoading = false,
+                refreshLoading = false,
+                moreLoading = false,
+                hasMoreData = action.hasMoreData ?: hasMoreData,
+                data = action.data,
+                error = null
+            )
+
+            is PageLoaderAction.ModifyData -> copy(
+                hasMoreData = action.hasMoreData ?: hasMoreData,
+                data = action.data,
+                error = null
+            )
+
+            is PageLoaderAction.Error -> copy(
+                emptyLoading = false,
+                refreshLoading = false,
+                moreLoading = false,
+                data = data.takeIf { !params.isFirstPage },
+                error = action.error
+            )
+        }.copy(
+            initialState = false,
+            isFirstPage = params.isFirstPage
+        )
     }
 
 }

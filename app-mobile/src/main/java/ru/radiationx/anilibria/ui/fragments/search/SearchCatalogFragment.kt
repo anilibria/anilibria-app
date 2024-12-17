@@ -69,7 +69,8 @@ class SearchCatalogFragment :
 
     private val fastSearchAdapter = FastSearchAdapter(
         clickListener = { searchViewModel.onItemClick(it) },
-        localClickListener = { searchViewModel.onLocalItemClick(it) }
+        localClickListener = { searchViewModel.onLocalItemClick(it) },
+        retryClickListener = { searchViewModel.refresh() }
     )
 
     private val searchViewModel by viewModel<FastSearchViewModel>()

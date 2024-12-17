@@ -7,5 +7,5 @@ data class VkCommentsScreenState(
     val pageState: WebPageViewState = WebPageViewState.Loading,
     val jsErrorVisible: Boolean = false,
     val vkBlockedVisible: Boolean = false,
-    val data: SingleLoaderState<VkCommentsState> = SingleLoaderState()
+    val data: SingleLoaderState<VkCommentsState> = SingleLoaderState.empty()
 )

@@ -37,6 +37,10 @@ class SearchLoader<QUERY : SearchQuery, DATA>(
         return loader.observeState()
     }
 
+    fun getQuery(): QUERY? {
+        return _queryState.value
+    }
+
     init {
         _queryState
             .drop(1)

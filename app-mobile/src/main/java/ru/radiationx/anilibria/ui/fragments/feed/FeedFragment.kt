@@ -82,7 +82,8 @@ class FeedFragment :
 
     private val searchAdapter = FastSearchAdapter(
         clickListener = { searchViewModel.onItemClick(it) },
-        localClickListener = { searchViewModel.onLocalItemClick(it) }
+        localClickListener = { searchViewModel.onLocalItemClick(it) },
+        retryClickListener = { searchViewModel.refresh() }
     )
 
     private val viewModel by viewModel<FeedViewModel>()

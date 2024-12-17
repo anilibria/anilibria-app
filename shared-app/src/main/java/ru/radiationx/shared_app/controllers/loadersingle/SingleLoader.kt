@@ -18,7 +18,7 @@ class SingleLoader<DATA>(
 
     private val loadingJob = SerialJob()
 
-    private val _state = MutableStateFlow(SingleLoaderState<DATA>())
+    private val _state = MutableStateFlow(SingleLoaderState.empty<DATA>())
 
     fun observeState(): StateFlow<SingleLoaderState<DATA>> {
         return _state
@@ -30,7 +30,7 @@ class SingleLoader<DATA>(
 
     fun reset() {
         loadingJob.cancel()
-        _state.value = SingleLoaderState()
+        _state.value = SingleLoaderState.empty()
     }
 
     fun modifyData(data: DATA?) {

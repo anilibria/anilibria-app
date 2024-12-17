@@ -2,7 +2,6 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.features.extensions.toErrorParam
 import ru.radiationx.data.analytics.features.extensions.toParam
 import ru.radiationx.data.analytics.features.extensions.toStateParam
 import ru.radiationx.data.analytics.features.extensions.toSuccessParam
@@ -119,4 +118,7 @@ class ConfiguringAnalytics @Inject constructor(
             state.toStateParam()
         )
     }
+
+    private fun Throwable?.toErrorParam(name: String = "error") =
+        Pair(name, this?.javaClass?.simpleName.toString())
 }

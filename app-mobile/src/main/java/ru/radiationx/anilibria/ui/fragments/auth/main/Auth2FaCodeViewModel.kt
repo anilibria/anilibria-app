@@ -58,7 +58,7 @@ class Auth2FaCodeViewModel @Inject constructor(
             }.onSuccess {
                 decideWhatToDo(it)
             }.onFailure {
-                authMainAnalytics.error(it)
+                authMainAnalytics.error()
                 errorHandler.handle(it)
                 if (it is WrongPasswordException) {
                     router.exit()

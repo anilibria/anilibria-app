@@ -119,7 +119,7 @@ class VkCommentsViewModel @Inject constructor(
     }
 
     fun onPageCommitError(error: Exception) {
-        commentsAnalytics.error(error)
+        commentsAnalytics.error()
     }
 
     fun notifyNewJsError() {
@@ -172,7 +172,6 @@ class VkCommentsViewModel @Inject constructor(
                 )
             }.first()
         }.onFailure {
-            commentsAnalytics.error(it)
             errorHandler.handle(it)
         }.getOrThrow()
     }

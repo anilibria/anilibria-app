@@ -31,6 +31,7 @@ import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
+import timber.log.Timber
 
 
 class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
@@ -111,7 +112,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
                 handler: SslErrorHandler,
                 error: SslError,
             ) {
-                webPlayerAnalytics.error(error.toException())
+                onPageError(error.toException())
             }
 
             override fun onReceivedHttpError(
@@ -120,7 +121,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
                 errorResponse: WebResourceResponse,
             ) {
                 if (view.url == request.url.toString()) {
-                    webPlayerAnalytics.error(errorResponse.toException(request))
+                    onPageError(errorResponse.toException(request))
                 }
             }
 
@@ -130,7 +131,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
                 error: WebResourceErrorCompat,
             ) {
                 if (view.url == request.url.toString()) {
-                    webPlayerAnalytics.error(error.toException(request))
+                    onPageError(error.toException(request))
                 }
             }
         }
@@ -154,5 +155,10 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
         template.setVariableOpt("iframe_url", argUrl)
 
         binding.webView.easyLoadData(releaseUrl, template.generateWithTheme(AppTheme.DARK))
+    }
+
+    private fun onPageError(error: Exception) {
+        Timber.e(error, "onPageError")
+        webPlayerAnalytics.error()
     }
 }

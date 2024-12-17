@@ -2,7 +2,6 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.features.extensions.toErrorParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toParam
 import ru.radiationx.data.analytics.features.extensions.toTimeParam
@@ -46,11 +45,8 @@ class AuthMainAnalytics @Inject constructor(
         sender.send(AnalyticsConstants.auth_main_login_click)
     }
 
-    fun error(error: Throwable) {
-        sender.send(
-            AnalyticsConstants.auth_main_error,
-            error.toErrorParam()
-        )
+    fun error() {
+        sender.send(AnalyticsConstants.auth_main_error)
     }
 
     fun success() {

@@ -188,6 +188,7 @@ object AnalyticsConstants {
     /* Auth Social */
     const val auth_social_open = "auth_social_open"
     const val auth_social_error = "auth_social_error"
+    const val auth_social_page_error = "auth_social_page_error"
     const val auth_social_success = "auth_social_success"
     const val auth_social_use_time = "auth_social_use_time"
 

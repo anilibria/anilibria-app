@@ -119,6 +119,8 @@ abstract class SearchLayout @JvmOverloads constructor(
 
         binding.filler.isVisible = false
 
+        binding.progress.isVisible = false
+
         isFocusable = true
         isFocusableInTouchMode = true
     }
@@ -172,6 +174,10 @@ abstract class SearchLayout @JvmOverloads constructor(
     // *********************************************************************************************
     fun setContentAdapter(adapter: RecyclerView.Adapter<*>?) {
         binding.content.adapter = adapter
+    }
+
+    fun setLoading(visible: Boolean) {
+        binding.progress.isVisible = visible
     }
 
     fun setFieldInsets(insets: Insets) {

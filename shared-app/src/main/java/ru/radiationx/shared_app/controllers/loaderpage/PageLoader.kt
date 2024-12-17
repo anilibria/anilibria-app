@@ -53,14 +53,10 @@ class PageLoader<T>(
         return _state.value.data
     }
 
-    fun modifyData(data: T?, hasMoreData: Boolean? = null) {
-        val action = PageLoaderAction.ModifyData(data, hasMoreData)
-        updateStateByAction(action, createPageLoadParams(_currentPage.value))
-    }
-
     fun modifyData(hasMoreData: Boolean? = null, block: (T) -> T) {
         val newData = _state.value.data?.let(block)
-        modifyData(newData, hasMoreData)
+        val action = PageLoaderAction.ModifyData(newData, hasMoreData)
+        updateStateByAction(action, createPageLoadParams(_currentPage.value))
     }
 
     private fun loadPage(page: Int) {

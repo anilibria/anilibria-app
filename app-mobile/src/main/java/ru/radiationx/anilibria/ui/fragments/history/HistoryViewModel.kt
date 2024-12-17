@@ -78,7 +78,7 @@ class HistoryViewModel @Inject constructor(
                 historyRepository.observeReleases(pageToCount(page))
             }
             .onEach { history ->
-                pageLoader.modifyData(history.items, history.hasMore)
+                pageLoader.modifyData(history.hasMore) { history.items }
             }
             .launchIn(viewModelScope)
 

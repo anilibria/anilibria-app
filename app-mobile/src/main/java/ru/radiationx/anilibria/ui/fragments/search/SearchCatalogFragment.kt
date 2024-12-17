@@ -181,6 +181,7 @@ class SearchCatalogFragment :
         }
 
         searchViewModel.state.onEach { state ->
+            searchView.setLoading(state.loaderState.loading)
             fastSearchAdapter.bindItems(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 

@@ -187,6 +187,7 @@ class FeedFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         searchViewModel.state.onEach { state ->
+            searchView.setLoading(state.loaderState.loading)
             searchAdapter.bindItems(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }

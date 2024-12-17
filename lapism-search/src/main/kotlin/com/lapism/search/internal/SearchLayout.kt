@@ -48,7 +48,6 @@ abstract class SearchLayout @JvmOverloads constructor(
     // *********************************************************************************************
     protected var mOnFocusChangeListener: OnFocusChangeListener? = null
 
-    private var mAnimationDuration: Long = 300L
     private var mOnQueryTextListener: OnQueryTextListener? = null
     private var mOnQuerySubmitListener: OnQuerySubmitListener? = null
     private var mOnNavigationClickListener: OnNavigationClickListener? = null
@@ -117,6 +116,8 @@ abstract class SearchLayout @JvmOverloads constructor(
 
         binding.shadow.isVisible = false
         binding.shadow.setBackgroundColor(ContextCompat.getColor(context, R.color.search_shadow))
+
+        binding.filler.isVisible = false
 
         isFocusable = true
         isFocusableInTouchMode = true
@@ -244,10 +245,6 @@ abstract class SearchLayout @JvmOverloads constructor(
     }
 
     // *********************************************************************************************
-    protected fun getAnimationDuration(): Long {
-        return mAnimationDuration
-    }
-
     protected fun setFieldHeight(newHeight: Int) {
         binding.field.updateLayoutParams {
             height = newHeight

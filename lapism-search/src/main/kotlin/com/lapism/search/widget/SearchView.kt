@@ -3,20 +3,17 @@ package com.lapism.search.widget
 import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.transition.ChangeBounds
-import androidx.transition.ChangeTransform
+import androidx.transition.Fade
+import androidx.transition.Transition
 import androidx.transition.TransitionManager
-import androidx.transition.TransitionSet
-import com.lapism.search.internal.animations.ChangeElevation
-import com.lapism.search.internal.animations.ChangeOutlineRadius
-import com.lapism.search.internal.MarginsType
 import com.lapism.search.R
-import com.lapism.search.internal.behavior.SearchBehavior
+import com.lapism.search.internal.MarginsType
 import com.lapism.search.internal.SearchLayout
+import com.lapism.search.internal.animations.SuperTransition
+import com.lapism.search.internal.behavior.SearchBehavior
 
 class SearchView @JvmOverloads constructor(
     context: Context,
@@ -33,26 +30,25 @@ class SearchView @JvmOverloads constructor(
         inflate(context, R.layout.search_view, this)
         init()
         setDefault()
-
-        val transition = LayoutTransition()
-        transition.enableTransitionType(LayoutTransition.CHANGING)
-        transition.setDuration(getAnimationDuration())
-
-        //this.layoutTransition = transition
     }
 
     // *********************************************************************************************
     private fun setDefault() {
         applyDefaultLayout()
         setFieldHeight(getDimensionPixelSize(R.dimen.search_layout_height))
+        binding.shadow.setOnClickListener {
+            binding.input.clearFocus()
+            binding.input.clearText()
+        }
         binding.shadow.isVisible = false
         binding.contentDivider.isVisible = false
+        fieldInsetsChanged()
     }
 
     // *********************************************************************************************
     override fun addFocus() {
         mOnFocusChangeListener?.onFocusChange(true)
-        TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
+        TransitionManager.beginDelayedTransition(binding.searchFrame, createTransition())
         applyFocusedLayout()
         binding.shadow.isVisible = true
         binding.contentDivider.isVisible = true
@@ -62,7 +58,7 @@ class SearchView @JvmOverloads constructor(
 
     override fun removeFocus() {
         mOnFocusChangeListener?.onFocusChange(false)
-        TransitionManager.beginDelayedTransition(binding.searchFrame, SuperTransition())
+        TransitionManager.beginDelayedTransition(binding.searchFrame, createTransition())
         applyDefaultLayout()
         binding.shadow.isVisible = false
         binding.contentDivider.isVisible = false
@@ -115,17 +111,13 @@ class SearchView @JvmOverloads constructor(
         }
     }
 
-    override fun getBehavior(): CoordinatorLayout.Behavior<*> {
-        return viewBehavior
+    private fun createTransition(): Transition = SuperTransition().apply {
+        addTransition(Fade().apply {
+            addTarget(binding.shadow)
+        })
     }
 
-    class SuperTransition : TransitionSet() {
-        init {
-            addTransition(ChangeBounds())
-            addTransition(ChangeTransform())
-            addTransition(ChangeElevation())
-            addTransition(ChangeOutlineRadius())
-            interpolator = AccelerateDecelerateInterpolator()
-        }
+    override fun getBehavior(): CoordinatorLayout.Behavior<*> {
+        return viewBehavior
     }
 }

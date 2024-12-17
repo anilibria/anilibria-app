@@ -15,9 +15,11 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.domain.search.SuggestionItem
+import ru.radiationx.data.entity.domain.search.Suggestions
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
+import ru.radiationx.shared_app.controllers.loadersearch.SearchLoader
+import ru.radiationx.shared_app.controllers.loadersearch.SearchQuery
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -27,56 +29,50 @@ class SuggestionsResultViewModel @Inject constructor(
     private val suggestionsController: SuggestionsController,
 ) : LifecycleViewModel() {
 
-    private var currentQuery = ""
-    private val queryRelay = MutableSharedFlow<String>()
+    private val searchLoader = SearchLoader<Query, Suggestions>(viewModelScope) {
+        searchRepository.fastSearch(it.query)
+    }
 
     val progressState = MutableStateFlow(false)
     val resultData = MutableStateFlow<List<LibriaCard>>(emptyList())
 
     init {
-        queryRelay
-            .debounce(350L)
-            .distinctUntilChanged()
-            .onEach {
-                if (it.length < 3) {
-                    showItems(emptyList(), it, false)
-                }
-            }
-            .filter { it.length >= 3 }
-            .onEach { progressState.value = true }
-            .mapLatest { query ->
-                coRunCatching {
-                    searchRepository.fastSearch(query)
-                }.getOrNull() ?: emptyList()
+        searchLoader
+            .observeState {
+                val query = Query(it.query)
+                SuggestionsController.SearchResult(it.items, query.query, !query.isEmpty())
             }
             .onEach {
-                showItems(it, currentQuery, true)
+                progressState.value = it.loading
+                val result = it.data ?: SuggestionsController.SearchResult(emptyList(), "", false)
+                showItems(result)
             }
             .launchIn(viewModelScope)
     }
 
     fun onQueryChange(query: String) {
-        viewModelScope.launch {
-            currentQuery = query
-            queryRelay.emit(currentQuery)
-        }
+        searchLoader.onNewQuery(Query(query))
     }
 
     fun onCardClick(item: LibriaCard) {
         cardRouter.navigate(item)
     }
 
-    private fun showItems(items: List<SuggestionItem>, query: String, validQuery: Boolean) {
-        val result = SuggestionsController.SearchResult(items, query, validQuery)
+    private fun showItems(result: SuggestionsController.SearchResult) {
         suggestionsController.resultEvent.emit(result)
-        progressState.value = false
-        resultData.value = items.map {
+        resultData.value = result.items.map {
             LibriaCard(
                 it.names.getOrNull(0).orEmpty(),
                 it.names.getOrNull(1).orEmpty(),
                 it.poster.orEmpty(),
                 LibriaCard.Type.Release(it.id)
             )
+        }
+    }
+
+    private data class Query(val query: String) : SearchQuery {
+        override fun isEmpty(): Boolean {
+            return query.length < 3
         }
     }
 }

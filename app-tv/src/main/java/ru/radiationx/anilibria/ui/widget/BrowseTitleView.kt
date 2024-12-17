@@ -30,7 +30,7 @@ import ru.radiationx.anilibria.databinding.ViewTitleviewBinding
 open class BrowseTitleView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.browseTitleViewStyle,
+    defStyleAttr: Int = androidx.leanback.R.attr.browseTitleViewStyle,
 ) : ConstraintLayout(context, attrs, defStyleAttr), TitleViewAdapter.Provider {
 
     private val binding by viewBinding<ViewTitleviewBinding>(attachToRoot = true)

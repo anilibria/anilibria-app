@@ -188,7 +188,7 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
                 val button = MaterialButton(
                     binding.yooMoneyAmounts.context,
                     null,
-                    R.attr.materialButtonOutlinedStyle
+                    com.google.android.material.R.attr.materialButtonOutlinedStyle
                 )
                 button.setPadding(0, 0, 0, 0)
                 val layoutParams = LinearLayout.LayoutParams(

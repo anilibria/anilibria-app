@@ -70,7 +70,7 @@ class ReleaseEpisodesHeadDelegate(
             val selectedState = tabs.find { it.tag == selectedTag }
             val selectedColor = selectedState?.textColor
                 ?.let { binding.tabLayout.getCompatColor(it) }
-                ?: binding.tabLayout.context.getColorFromAttr(R.attr.colorAccent)
+                ?: binding.tabLayout.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent)
             binding.tabLayout.setTabTextColors(
                 binding.tabLayout.context.getColorFromAttr(R.attr.textSecond),
                 selectedColor

@@ -69,6 +69,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         fun newIntent(context: Context, episodeId: EpisodeId) =
             Intent(context, VideoPlayerActivity::class.java).apply {
                 putExtra(ARG_EPISODE_ID, episodeId)
+                R.attr.bgDonationIconDa
             }
     }
 
@@ -76,31 +77,31 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
     private val playAction = PictureInPictureController.Action(
         code = 1,
         title = "Пуск",
-        icRes = R.drawable.ic_media_play_arrow_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_play_arrow_24
     )
 
     private val pauseAction = PictureInPictureController.Action(
         code = 2,
         title = "Пауза",
-        icRes = R.drawable.ic_media_pause_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_pause_24
     )
 
     private val replayAction = PictureInPictureController.Action(
         code = 3,
         title = "Реплей",
-        icRes = R.drawable.ic_media_replay_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_replay_24
     )
 
     private val prevAction = PictureInPictureController.Action(
         code = 4,
         title = "Предыдущая",
-        icRes = R.drawable.ic_media_skip_previous_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_skip_previous_24
     )
 
     private val nextAction = PictureInPictureController.Action(
         code = 5,
         title = "Слудующая",
-        icRes = R.drawable.ic_media_skip_next_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_skip_next_24
     )
 
     private val pipController by lazy { PictureInPictureController(this) }

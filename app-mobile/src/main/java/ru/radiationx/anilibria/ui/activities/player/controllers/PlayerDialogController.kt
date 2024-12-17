@@ -159,10 +159,10 @@ class PlayerDialogController(
     private fun BottomSheet.Builder.applyStyle(): BottomSheet.Builder {
         setDarkTheme(appThemeController.getTheme().isDark())
         setIconTintMode(PorterDuff.Mode.SRC_ATOP)
-        setIconColor(context.getColorFromAttr(R.attr.colorOnSurface))
-        setItemTextColor(context.getColorFromAttr(R.attr.colorOnSurface))
-        setTitleTextColor(context.getColorFromAttr(R.attr.colorOnSurface))
-        setBackgroundColor(context.getColorFromAttr(R.attr.colorSurface))
+        setIconColor(context.getColorFromAttr(com.google.android.material.R.attr.colorOnSurface))
+        setItemTextColor(context.getColorFromAttr(com.google.android.material.R.attr.colorOnSurface))
+        setTitleTextColor(context.getColorFromAttr(com.google.android.material.R.attr.colorOnSurface))
+        setBackgroundColor(context.getColorFromAttr(com.google.android.material.R.attr.colorSurface))
         return this
     }
 

@@ -21,7 +21,7 @@ fun BottomSheetDialog.fillNavigationBarColor() {
 
     val navigationBarDrawable = GradientDrawable()
     navigationBarDrawable.shape = GradientDrawable.RECTANGLE
-    navigationBarDrawable.setColor(context.getColorFromAttr(R.attr.colorSurface))
+    navigationBarDrawable.setColor(context.getColorFromAttr(com.google.android.material.R.attr.colorSurface))
 
     val layers = arrayOf<Drawable>(dimDrawable, navigationBarDrawable)
 

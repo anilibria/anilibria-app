@@ -4,5 +4,5 @@ import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderState
 
 data class YoutubeScreenState(
-    val data: PageLoaderState<List<YoutubeItemState>> = PageLoaderState()
+    val data: PageLoaderState<List<YoutubeItemState>> = PageLoaderState.empty()
 )

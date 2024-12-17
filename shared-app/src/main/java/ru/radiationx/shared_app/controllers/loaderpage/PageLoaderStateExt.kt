@@ -40,6 +40,7 @@ fun <T, R> PageLoaderState<T>.mapData(
     refreshLoading = refreshLoading,
     moreLoading = moreLoading,
     hasMoreData = hasMoreData,
+    isFirstPage = isFirstPage,
     error = error,
     data = data?.let(newDataMapper)
 )

@@ -7,5 +7,5 @@ import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderState
 data class FavoritesScreenState(
     val searchItems: List<ReleaseItemState> = emptyList(),
     val deletingItemIds: List<ReleaseId> = emptyList(),
-    val data: PageLoaderState<List<ReleaseItemState>> = PageLoaderState()
+    val data: PageLoaderState<List<ReleaseItemState>> = PageLoaderState.empty()
 )

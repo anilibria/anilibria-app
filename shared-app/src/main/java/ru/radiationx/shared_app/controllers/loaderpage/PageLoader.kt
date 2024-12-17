@@ -19,7 +19,7 @@ class PageLoader<T>(
 
     private var loadingJob: Job? = null
 
-    private val _state = MutableStateFlow(PageLoaderState<T>())
+    private val _state = MutableStateFlow(PageLoaderState.empty<T>())
 
     fun observePage(): StateFlow<Int> {
         return _currentPage
@@ -32,7 +32,7 @@ class PageLoader<T>(
     fun reset() {
         release()
         _currentPage.value = firstPage
-        _state.value = PageLoaderState()
+        _state.value = PageLoaderState.empty()
     }
 
     fun refresh() {

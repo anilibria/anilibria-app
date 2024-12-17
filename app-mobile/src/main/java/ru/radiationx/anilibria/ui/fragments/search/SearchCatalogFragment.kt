@@ -151,7 +151,7 @@ class SearchCatalogFragment :
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
                     viewModel.onFastSearchClick()
-                    searchView.requestFocus(it)
+                    searchView.show()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)

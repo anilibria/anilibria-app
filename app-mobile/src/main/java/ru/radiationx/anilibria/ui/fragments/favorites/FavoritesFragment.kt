@@ -125,7 +125,7 @@ class FavoritesFragment :
             add("Поиск")
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
-                    searchView.requestFocus(it)
+                    searchView.show()
                     viewModel.onSearchClick()
                     false
                 }

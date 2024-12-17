@@ -4,6 +4,7 @@ package ru.radiationx.data.analytics.profile
 
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsAuthState
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.datasource.holders.DownloadsHolder
@@ -26,6 +27,7 @@ class AnalyticsProfileDataSource @Inject constructor(
     private val migrationDataSource: MigrationDataSource,
     private val releaseUpdateHolder: ReleaseUpdateHolder,
     private val authRepository: AuthRepository,
+    private val sharedBuildConfig: SharedBuildConfig
 ) {
 
     suspend fun getAttributes(): List<ProfileAttribute> = coroutineScope {
@@ -68,6 +70,9 @@ class AnalyticsProfileDataSource @Inject constructor(
             },
             asyncAttr(ProfileConstants.app_versions) {
                 migrationDataSource.getHistory().joinToString().mapToAttr(it)
+            },
+            asyncAttr(ProfileConstants.has_ads) {
+                sharedBuildConfig.hasAds.mapToAttr(it)
             }
         )
         attributes.awaitAll()

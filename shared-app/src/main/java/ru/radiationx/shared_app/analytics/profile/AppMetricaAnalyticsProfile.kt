@@ -7,6 +7,7 @@ import io.appmetrica.analytics.profile.UserProfileUpdate
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import ru.radiationx.data.analytics.profile.AnalyticsInstallerDataSource
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
 import ru.radiationx.data.analytics.profile.ProfileAttribute
@@ -16,8 +17,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class AppMetricaAnalyticsProfile @Inject constructor(
-    private val dataSource: AnalyticsProfileDataSource,
-    private val codecs: CodecsProfileAnalytics
+    private val info: AnalyticsProfileDataSource,
+    private val codecs: CodecsProfileAnalytics,
+    private val installer: AnalyticsInstallerDataSource
 ) : AnalyticsProfile {
 
     override fun update() {
@@ -31,9 +33,10 @@ class AppMetricaAnalyticsProfile @Inject constructor(
     @OptIn(DelicateCoroutinesApi::class)
     private fun unsafeUpdate() {
         GlobalScope.launch {
-            val infoAttributes = dataSource.getAttributes()
+            val infoAttributes = info.getAttributes()
             val codecAttributes = codecs.getAttributes()
-            val allAttributes = infoAttributes + codecAttributes
+            val installerAttributes = installer.getAttributes()
+            val allAttributes = infoAttributes + codecAttributes + installerAttributes
             val yandexAttributes = allAttributes.mapNotNull { it.mapToYandex() }
             val errorAttributes = allAttributes.filterIsInstance<ProfileAttribute.Error>()
             val userProfile = UserProfile.newBuilder().run {

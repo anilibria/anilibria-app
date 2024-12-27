@@ -19,12 +19,13 @@ class YoutubeAdapter(
     loadMoreListener: () -> Unit,
     loadRetryListener: () -> Unit,
     clickListener: (YoutubeItemState) -> Unit,
+    longClickListener: (YoutubeItemState) -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem,
 ) : ListItemAdapter() {
 
     init {
-        addDelegate(YoutubeDelegate(clickListener))
+        addDelegate(YoutubeDelegate(clickListener, longClickListener))
         addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(PlaceholderDelegate())

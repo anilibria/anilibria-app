@@ -51,6 +51,7 @@ class FeedAdapter(
     releaseClickListener: (ReleaseItemState, View) -> Unit,
     releaseLongClickListener: (ReleaseItemState) -> Unit,
     youtubeClickListener: (YoutubeItemState) -> Unit,
+    youtubeLongClickListener: (YoutubeItemState) -> Unit,
     scheduleClickListener: (ScheduleItemState, View, Int) -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem,
@@ -82,7 +83,7 @@ class FeedAdapter(
             )
         )
         addDelegate(FeedReleaseDelegate(releaseClickListener, releaseLongClickListener))
-        addDelegate(FeedYoutubeDelegate(youtubeClickListener))
+        addDelegate(FeedYoutubeDelegate(youtubeClickListener, youtubeLongClickListener))
         addDelegate(FeedRandomBtnDelegate(randomClickListener))
         addDelegate(DividerShadowItemDelegate())
         addDelegate(PlaceholderDelegate())

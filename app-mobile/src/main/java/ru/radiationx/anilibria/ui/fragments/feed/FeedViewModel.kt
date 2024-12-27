@@ -324,20 +324,30 @@ class FeedViewModel @Inject constructor(
         }
     }
 
+    fun onCopyClick(item: YoutubeItemState) {
+        val releaseItem = findYoutube(item.id) ?: return
+        systemUtils.copyToClipBoard(releaseItem.link)
+    }
+
+    fun onShareClick(item: YoutubeItemState) {
+        val releaseItem = findYoutube(item.id) ?: return
+        systemUtils.shareText(releaseItem.link)
+    }
+
     fun onCopyClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
+        val releaseItem = findRelease(item.id) ?: findScheduleRelease(item.id) ?: return
         systemUtils.copyToClipBoard(releaseItem.link.orEmpty())
         releaseAnalytics.copyLink(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     fun onShareClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
+        val releaseItem = findRelease(item.id) ?: findScheduleRelease(item.id) ?: return
         systemUtils.shareText(releaseItem.link.orEmpty())
         releaseAnalytics.share(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     fun onShortcutClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
+        val releaseItem = findRelease(item.id) ?: findScheduleRelease(item.id) ?: return
         shortcutHelper.addShortcut(releaseItem)
         releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id.id)
     }
@@ -357,17 +367,11 @@ class FeedViewModel @Inject constructor(
     }
 
     private fun findRelease(id: ReleaseId): Release? {
-        val data = pageLoader.getData() ?: return null
-
-        val itemFromFeed = data.feedItems
+        val feedItems = pageLoader.getData()?.feedItems ?: return null
+        return feedItems
             .filterIsInstance<NativeAdItem.Data<FeedItem>>()
             .mapNotNull { it.data.release }
             .find { it.id == id }
-        if (itemFromFeed != null) {
-            return itemFromFeed
-        }
-
-        return data.schedule?.items?.find { it.releaseItem.id == id }?.releaseItem
     }
 
     private fun findYoutube(id: YoutubeId): YoutubeItem? {

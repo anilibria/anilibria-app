@@ -16,6 +16,7 @@ class PlayerSettingsController(
 
     private val qualityAnchor = TaiwaAnchor.Id("quality")
     private val speedAnchor = TaiwaAnchor.Id("speed")
+    private val skipsAnchor = TaiwaAnchor.Id("skips")
 
     var onQualitySelected: ((PlayerQuality) -> Unit)? = null
     var onSpeedSelected: ((Float) -> Unit)? = null
@@ -49,20 +50,15 @@ class PlayerSettingsController(
                     action(TaiwaAction.Anchor(speedAnchor))
                     forward()
                 }
-                switchItem {
-                    title(SettingItem.Skips.toTitle())
+                item {
+                    title("Опенинг и эндинг")
                     icon(R.drawable.ic_skip_forward)
-                    select(state.skipsEnabled)
-                    onClick { onSkipsSelected?.invoke(!state.skipsEnabled) }
-                }
-                switchItem {
-                    title(SettingItem.SkipsTimer.toTitle())
-                    icon(R.drawable.ic_av_timer)
-                    select(state.skipsTimerEnabled)
-                    onClick { onSkipsTimerSelected?.invoke(!state.skipsTimerEnabled) }
+                    action(TaiwaAction.Anchor(skipsAnchor))
+                    forward()
                 }
                 switchItem {
                     title(SettingItem.InactiveTimer.toTitle())
+                    subtitle("Отсчитывает 1 час")
                     icon(R.drawable.ic_timer_outline)
                     select(state.inactiveTimerEnabled)
                     onClick { onInactiveTimerSelected?.invoke(!state.inactiveTimerEnabled) }
@@ -111,14 +107,36 @@ class PlayerSettingsController(
                     }
                 }
             }
+
+            nestedContent(skipsAnchor) {
+                header {
+                    title("Опенинг и эндинг")
+                    backAction(TaiwaAction.Root)
+                    canClose()
+                }
+                items {
+                    switchItem {
+                        title(SettingItem.Skips.toTitle())
+                        icon(R.drawable.ic_skip_forward)
+                        select(state.skipsEnabled)
+                        onClick { onSkipsSelected?.invoke(!state.skipsEnabled) }
+                    }
+                    switchItem {
+                        title(SettingItem.SkipsTimer.toTitle())
+                        icon(R.drawable.ic_av_timer)
+                        select(state.skipsTimerEnabled)
+                        onClick { onSkipsTimerSelected?.invoke(!state.skipsTimerEnabled) }
+                    }
+                }
+            }
         }
     }
 
     private fun SettingItem.toTitle(): String = when (this) {
         SettingItem.Quality -> "Качество"
         SettingItem.PlaySpeed -> "Скорость"
-        SettingItem.Skips -> "Кнопки пропуска опенинга"
-        SettingItem.SkipsTimer -> "Автоматически пропускать опенинг"
+        SettingItem.Skips -> "Кнопки пропуска"
+        SettingItem.SkipsTimer -> "Автопропуск через 5 сек."
         SettingItem.InactiveTimer -> "Таймер на бездействие"
         SettingItem.Autoplay -> "Автовоспроизведение"
     }
@@ -136,7 +154,7 @@ class PlayerSettingsController(
     }
 
     private fun Float.toSpeedValue() = if (this == 1.0f) {
-        "Номальная"
+        "Нормальная"
     } else {
         "${"${this}".trimEnd('0').trimEnd('.').trimEnd(',')}x"
     }

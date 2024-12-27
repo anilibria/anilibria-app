@@ -26,6 +26,7 @@ import ru.radiationx.shared.ktx.android.inflate
  */
 class FeedSchedulesDelegate(
     private val clickListener: (ScheduleItemState, View, Int) -> Unit,
+    private val longClickListener: (ScheduleItemState) -> Unit,
     private val scrollListener: (Int) -> Unit,
 ) : AppAdapterDelegate<FeedSchedulesListItem, ListItem, FeedSchedulesDelegate.ViewHolder>(
     R.layout.item_feed_schedules,
@@ -42,6 +43,7 @@ class FeedSchedulesDelegate(
         return ViewHolder(
             parent.inflate(layoutRes!!, false),
             clickListener,
+            longClickListener,
             scrollListener,
             viewPool
         )
@@ -50,6 +52,7 @@ class FeedSchedulesDelegate(
     class ViewHolder(
         itemView: View,
         clickListener: (ScheduleItemState, View, Int) -> Unit,
+        longClickListener: (ScheduleItemState) -> Unit,
         private val scrollListener: (Int) -> Unit,
         private val viewPool: RecyclerView.RecycledViewPool? = null,
     ) : RecyclerView.ViewHolder(itemView), IBundledViewHolder {
@@ -59,7 +62,7 @@ class FeedSchedulesDelegate(
         private val dimensionsApplier by binding.itemFeedScheduleList.dimensionsApplier()
 
         private val currentItems = mutableListOf<ScheduleItemState>()
-        private val scheduleAdapter = FeedSchedulesAdapter(clickListener)
+        private val scheduleAdapter = FeedSchedulesAdapter(clickListener, longClickListener)
 
         init {
             binding.itemFeedScheduleList.apply {

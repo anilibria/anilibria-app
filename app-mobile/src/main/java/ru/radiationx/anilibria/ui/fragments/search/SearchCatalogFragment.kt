@@ -16,14 +16,12 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.common.releaseItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.quill.viewModel
@@ -36,7 +34,6 @@ import ru.radiationx.shared.ktx.android.putExtra
 class SearchCatalogFragment :
     BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
-    ReleasesAdapter.ItemListener,
     TopScroller {
 
     companion object {
@@ -51,7 +48,11 @@ class SearchCatalogFragment :
     private val adapter = SearchAdapter(
         loadMoreListener = { viewModel.loadMore() },
         loadRetryListener = { viewModel.loadMore() },
-        listener = this,
+        clickListener = { item, view ->
+            this.sharedViewLocal = view
+            viewModel.onItemClick(item)
+        },
+        longClickListener = { item -> releaseDialog.show(item) },
         remindCloseListener = { viewModel.onRemindClose() },
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,
@@ -229,19 +230,6 @@ class SearchCatalogFragment :
         binding.recyclerView.adapter = null
         searchView.setContentAdapter(null)
         _searchView = null
-    }
-
-    override fun onItemClick(position: Int, view: View) {
-        sharedViewLocal = view
-    }
-
-    override fun onItemClick(item: ReleaseItemState, position: Int) {
-        viewModel.onItemClick(item)
-    }
-
-    override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        releaseDialog.show(item)
-        return false
     }
 
     override fun scrollToTop() {

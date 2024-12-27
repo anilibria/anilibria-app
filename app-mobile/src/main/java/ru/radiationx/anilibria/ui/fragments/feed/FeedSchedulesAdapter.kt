@@ -7,11 +7,12 @@ import ru.radiationx.anilibria.ui.adapters.feed.FeedScheduleDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 
 class FeedSchedulesAdapter(
-    clickListener: (ScheduleItemState, View, Int) -> Unit
+    clickListener: (ScheduleItemState, View, Int) -> Unit,
+    longClickListener: (ScheduleItemState) -> Unit,
 ) : ListItemAdapter() {
 
     init {
-        addDelegate(FeedScheduleDelegate(clickListener))
+        addDelegate(FeedScheduleDelegate(clickListener, longClickListener))
     }
 
     fun bindItems(newItems: List<ScheduleItemState>) {

@@ -9,24 +9,29 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
+import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.analytics.features.ScheduleAnalytics
+import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.asDayName
 import ru.radiationx.shared.ktx.coRunCatching
+import ru.radiationx.shared_app.common.SystemUtils
 import java.util.Calendar
 import javax.inject.Inject
 
 data class ScheduleExtra(
-    val day: Int?
+    val day: Int?,
 ) : QuillExtra
 
 class ScheduleViewModel @Inject constructor(
@@ -35,7 +40,9 @@ class ScheduleViewModel @Inject constructor(
     private val router: Router,
     private val errorHandler: IErrorHandler,
     private val scheduleAnalytics: ScheduleAnalytics,
-    private val releaseAnalytics: ReleaseAnalytics
+    private val releaseAnalytics: ReleaseAnalytics,
+    private val systemUtils: SystemUtils,
+    private val shortcutHelper: ShortcutHelper
 ) : ViewModel() {
 
     private var firstData = true
@@ -81,13 +88,28 @@ class ScheduleViewModel @Inject constructor(
     }
 
     fun onItemClick(item: ScheduleItemState, position: Int) {
-        val releaseItem = currentDays
-            .flatMap { it.items }
-            .find { it.releaseItem.id == item.releaseId }
-            ?.releaseItem ?: return
+        val releaseItem = findRelease(item.release.id) ?: return
         scheduleAnalytics.releaseClick(position)
         releaseAnalytics.open(AnalyticsConstants.screen_schedule, releaseItem.id.id)
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, item = releaseItem))
+    }
+
+    fun onCopyClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        systemUtils.copyToClipBoard(releaseItem.link.orEmpty())
+        releaseAnalytics.copyLink(AnalyticsConstants.screen_schedule, item.id.id)
+    }
+
+    fun onShareClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        systemUtils.shareText(releaseItem.link.orEmpty())
+        releaseAnalytics.share(AnalyticsConstants.screen_schedule, item.id.id)
+    }
+
+    fun onShortcutClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        shortcutHelper.addShortcut(releaseItem)
+        releaseAnalytics.shortcut(AnalyticsConstants.screen_schedule, item.id.id)
     }
 
     fun refresh() {
@@ -100,6 +122,13 @@ class ScheduleViewModel @Inject constructor(
             }
             _state.update { it.copy(refreshing = false) }
         }
+    }
+
+    private fun findRelease(id: ReleaseId): Release? {
+        return currentDays
+            .flatMap { it.items }
+            .find { it.releaseItem.id == id }
+            ?.releaseItem
     }
 
     private fun handleFirstData() {

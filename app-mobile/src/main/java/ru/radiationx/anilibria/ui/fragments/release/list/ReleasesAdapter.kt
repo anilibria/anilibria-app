@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
+import android.view.View
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
@@ -26,7 +27,8 @@ class ReleasesAdapter(
     loadRetryListener: () -> Unit,
     importListener: (() -> Unit)? = null,
     exportListener: (() -> Unit)? = null,
-    listener: ItemListener,
+    clickListener: (ReleaseItemState, View) -> Unit,
+    longClickListener: (ReleaseItemState) -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem,
 ) : ListItemAdapter() {
@@ -37,7 +39,7 @@ class ReleasesAdapter(
     }
 
     init {
-        addDelegate(ReleaseItemDelegate(listener))
+        addDelegate(ReleaseItemDelegate(clickListener, longClickListener))
         addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(PlaceholderDelegate())
@@ -96,6 +98,4 @@ class ReleasesAdapter(
             else -> null
         }
     }
-
-    interface ItemListener : ReleaseItemDelegate.Listener
 }

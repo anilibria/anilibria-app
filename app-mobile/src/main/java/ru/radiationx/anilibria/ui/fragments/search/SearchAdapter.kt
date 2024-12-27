@@ -1,5 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
+import android.view.View
+import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
@@ -21,7 +23,8 @@ import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 class SearchAdapter(
     private val loadMoreListener: () -> Unit,
     private val loadRetryListener: () -> Unit,
-    private val listener: ReleasesAdapter.ItemListener,
+    private val clickListener: (ReleaseItemState, View) -> Unit,
+    private val longClickListener: (ReleaseItemState) -> Unit,
     private val remindCloseListener: () -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem
@@ -30,7 +33,7 @@ class SearchAdapter(
     init {
         delegatesManager.run {
             addDelegate(ReleaseRemindDelegate(remindCloseListener))
-            addDelegate(ReleaseItemDelegate(listener))
+            addDelegate(ReleaseItemDelegate(clickListener, longClickListener))
             addDelegate(LoadMoreDelegate(loadMoreListener))
             addDelegate(LoadErrorDelegate(loadRetryListener))
             addDelegate(PlaceholderDelegate())

@@ -1,0 +1,36 @@
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    id("kotlin-parcelize")
+}
+
+android {
+    namespace 'taiwa'
+
+    compileSdk app_compile_sdk_version
+
+    defaultConfig {
+        minSdk app_min_sdk_version
+        targetSdk app_target_sdk_version
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+kotlin {
+    jvmToolchain(jvm_toolchain_version)
+}
+
+dependencies {
+    implementation libs.kotlin.stdlib
+
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.recyclerview
+
+    implementation libs.google.material
+    implementation libs.google.flexbox
+
+    implementation libs.viewbindingpropertydelegate
+}

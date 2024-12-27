@@ -13,6 +13,7 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
+import ru.radiationx.data.entity.domain.types.YoutubeId
 import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.data.repository.YoutubeRepository
 import ru.radiationx.shared.ktx.coRunCatching
@@ -65,11 +66,25 @@ class YoutubeViewModel @Inject constructor(
         pageLoader.loadMore()
     }
 
+    fun onCopyClick(item: YoutubeItemState) {
+        val rawItem = findItem(item.id) ?: return
+        systemUtils.copyToClipBoard(rawItem.link)
+    }
+
+    fun onShareClick(item: YoutubeItemState) {
+        val rawItem = findItem(item.id) ?: return
+        systemUtils.shareText(rawItem.link)
+    }
+
     fun onItemClick(item: YoutubeItemState) {
-        val rawItem = pageLoader.getData()?.firstOrNull { it.id == item.id } ?: return
+        val rawItem = findItem(item.id) ?: return
         youtubeVideosAnalytics.videoClick()
         youtubeAnalytics.openVideo(AnalyticsConstants.screen_youtube, rawItem.id.id, rawItem.vid)
         systemUtils.externalLink(rawItem.link)
+    }
+
+    private fun findItem(id: YoutubeId): YoutubeItem? {
+        return pageLoader.getData()?.firstOrNull { it.id == id }
     }
 
     private fun submitPageAnalytics(page: Int) {

@@ -11,6 +11,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.common.youtubeItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
@@ -25,6 +26,7 @@ class YoutubeFragment :
             loadMoreListener = { viewModel.loadMore() },
             loadRetryListener = { viewModel.loadMore() },
             clickListener = { viewModel.onItemClick(it) },
+            longClickListener = { youtubeDialog.show(it) },
             emptyPlaceHolder = PlaceholderListItem(
                 R.drawable.ic_youtube,
                 R.string.placeholder_title_nodata_base,
@@ -39,6 +41,11 @@ class YoutubeFragment :
     }
 
     private val viewModel by viewModel<YoutubeViewModel>()
+
+    private val youtubeDialog by youtubeItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) }
+    )
 
     override val statusBarVisible: Boolean = true
 

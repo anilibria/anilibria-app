@@ -19,10 +19,11 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
  */
 class YoutubeDelegate(
     private val clickListener: (YoutubeItemState) -> Unit,
+    private val longClickListener: (YoutubeItemState) -> Unit,
 ) : AppAdapterDelegate<YoutubeListItem, ListItem, YoutubeDelegate.ViewHolder>(
     R.layout.item_feed_youtube,
     { it is YoutubeListItem },
-    { ViewHolder(it, clickListener) }
+    { ViewHolder(it, clickListener, longClickListener) }
 ), OptimizeDelegate {
 
     override fun getPoolSize(): Int = 10
@@ -32,6 +33,7 @@ class YoutubeDelegate(
     class ViewHolder(
         itemView: View,
         private val clickListener: (YoutubeItemState) -> Unit,
+        private val longClickListener: (YoutubeItemState) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemFeedYoutubeBinding>()
@@ -49,6 +51,10 @@ class YoutubeDelegate(
                 itemImage.showImageUrl(item.state.image)
                 root.setOnClickListener {
                     clickListener.invoke(item.state)
+                }
+                root.setOnLongClickListener {
+                    longClickListener.invoke(item.state)
+                    true
                 }
             }
         }

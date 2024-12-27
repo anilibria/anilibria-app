@@ -20,6 +20,7 @@ import ru.radiationx.media.mobile.utils.TimeFormatter
 internal class GestureController(
     private val playerFlow: PlayerFlow,
     private val coroutineScope: CoroutineScope,
+    private val fallbackTapView: View,
     private val gestureView: View,
     private val seekerTime: TextView,
     private val mediaAspectRatio: View,
@@ -74,6 +75,9 @@ internal class GestureController(
         gestureListener.singleTapListener = {
             singleTapListener?.invoke()
         }
+        fallbackTapView.setOnClickListener {
+            singleTapListener?.invoke()
+        }
         gestureListener.doubleTapListener = {
             doubleTapSeeker.onDoubleTap(it)
         }
@@ -99,7 +103,7 @@ internal class GestureController(
             when (event.action) {
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_CANCEL,
-                -> {
+                    -> {
                     scrollSeeker.onTouchEnd(event.downTime)
                     scrollSeeker.setIgnore(null)
                     longTapSeeker.onTouchEnd()

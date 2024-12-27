@@ -95,6 +95,7 @@ class PlayerView @JvmOverloads constructor(
     private val gestureController = GestureController(
         playerFlow = playerFlow,
         coroutineScope = coroutineScope,
+        fallbackTapView = binding.mediaScaleContainer,
         gestureView = binding.mediaGestures,
         seekerTime = binding.mediaSeekerTime,
         mediaAspectRatio = binding.mediaAspectRatio
@@ -343,7 +344,7 @@ class PlayerView @JvmOverloads constructor(
                 left = footerInsets.left,
                 top = footerInsets.top,
                 right = footerInsets.right,
-                bottom = footerInsets.bottom
+                bottom = maxOf(footerInsets.bottom, gesturesInsets.bottom)
             )
 
             binding.mediaLockContainer.updatePadding(

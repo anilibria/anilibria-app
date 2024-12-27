@@ -114,8 +114,6 @@ dependencies {
 
     implementation libs.materialprogressbar
 
-    implementation project(":bottomsheet")
-
     compileOnly libs.toothpick
     ksp libs.toothpick.compiler
 

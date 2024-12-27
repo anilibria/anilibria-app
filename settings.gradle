@@ -15,7 +15,7 @@ dependencyResolutionManagement {
     }
 }
 
-include ':app-mobile', ':bottomsheet', ':data', ':shared-ktx', ':shared-android-ktx', ':lapism-search', ':app-tv', ':shared-app'
+include ':app-mobile', ':data', ':shared-ktx', ':shared-android-ktx', ':lapism-search', ':app-tv', ':shared-app'
 include ':quill-di'
 include ':media-mobile'
 include ':taiwa'

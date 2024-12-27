@@ -277,6 +277,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         if (!isLaunchedFromHistory()) {
             player.getPlayer().removeAnalyticsListener(analyticsListener)
             binding.playerView.setPlayer(null)
+            binding.playerView.destroy()
             player.destroy()
         }
     }

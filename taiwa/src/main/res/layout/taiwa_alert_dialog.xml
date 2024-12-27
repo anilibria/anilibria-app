@@ -27,7 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="@dimen/taiwa_content_max_width">
+        app:layout_constraintWidth_max="@dimen/taiwa_dialog_content_max_width">
 
         <LinearLayout
             android:id="@+id/commonContainer"

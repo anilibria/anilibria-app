@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="taiwa_content_corner_radius">8dp</dimen>
-    <dimen name="taiwa_content_max_width">640dp</dimen>
+    <!-- 640 + 16 + 16-->
+    <dimen name="taiwa_dialog_content_max_width">672dp</dimen>
+    <!-- 640 + 8 + 8-->
+    <dimen name="taiwa_bottom_sheet_content_max_width">656dp</dimen>
     <dimen name="taiwa_content_elevation">16dp</dimen>
 </resources>

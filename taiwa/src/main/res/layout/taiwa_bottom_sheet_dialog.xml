@@ -26,7 +26,8 @@
         app:layout_constraintBottom_toTopOf="@id/footerWrapper"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="@dimen/taiwa_bottom_sheet_content_max_width">
 
         <FrameLayout
             android:id="@+id/contentWrapper"
@@ -35,7 +36,6 @@
             android:layout_gravity="center_horizontal|top"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:maxWidth="@dimen/taiwa_content_max_width"
             app:layout_behavior="@string/bottom_sheet_behavior">
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -76,7 +76,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_max="@dimen/taiwa_content_max_width"
+        app:layout_constraintWidth_max="@dimen/taiwa_bottom_sheet_content_max_width"
         tools:visibility="visible">
 
         <FrameLayout

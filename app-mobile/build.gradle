@@ -95,9 +95,7 @@ dependencies {
 
     implementation libs.cicerone
 
-    //implementation "com.lapism:searchview:4.0"
-    //implementation "com.lapism:search:1.0.0"
-    implementation project(":lapism-search")
+    implementation project(":searchbar")
 
     implementation libs.google.flexbox
 

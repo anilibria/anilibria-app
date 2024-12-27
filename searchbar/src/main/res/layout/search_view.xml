@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_frame"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -7,7 +8,8 @@
     <View
         android:id="@+id/shadow"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/search_shadow" />
 
     <View
         android:id="@+id/filler"
@@ -27,44 +29,67 @@
             <LinearLayout
                 android:id="@+id/field"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/search_layout_height"
+                android:layoutDirection="locale"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/navigation_button"
                     android:layout_width="@dimen/search_icon_56"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="center"
+                    app:tint="?attr/colorControlNormal"
+                    app:tintMode="src_in" />
 
-                <com.lapism.search.internal.SearchEditText
+                <searchbar.internal.SearchEditText
                     android:id="@+id/input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:ellipsize="end"
+                    android:gravity="start|center_vertical"
+                    android:imeOptions="actionSearch|flagNoExtractUi"
+                    android:inputType="text|textNoSuggestions"
+                    android:maxLines="1"
+                    android:privateImeOptions="nm"
+                    android:singleLine="true"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="@dimen/search_text_16"
+                    android:windowSoftInputMode="stateAlwaysHidden|adjustPan|adjustNothing" />
 
                 <ProgressBar
                     android:id="@+id/progress"
                     android:layout_width="24dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_height="24dp" />
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/clear_button"
                     android:layout_width="@dimen/search_icon_56"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="center"
+                    app:tint="?attr/colorControlNormal"
+                    app:tintMode="src_in" />
 
             </LinearLayout>
 
             <View
                 android:id="@+id/content_divider"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/search_divider" />
+                android:layout_height="@dimen/search_divider"
+                android:background="?android:attr/listDivider" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:overScrollMode="always" />
 
         </LinearLayout>
 

@@ -1,4 +1,4 @@
-package com.lapism.search.internal
+package searchbar.internal
 
 enum class MarginsType {
     NoneToolbar,

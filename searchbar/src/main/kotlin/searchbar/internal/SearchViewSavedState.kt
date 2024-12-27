@@ -1,4 +1,4 @@
-package com.lapism.search.internal
+package searchbar.internal
 
 import android.os.Parcel
 import android.os.Parcelable

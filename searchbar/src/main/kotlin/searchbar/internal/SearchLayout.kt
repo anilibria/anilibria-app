@@ -1,4 +1,4 @@
-package com.lapism.search.internal
+package searchbar.internal
 
 import android.content.Context
 import android.graphics.Rect
@@ -22,9 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.lapism.search.NavigationIcon
-import com.lapism.search.R
-import com.lapism.search.databinding.CommonHierarchyBinding
+import searchbar.NavigationIcon
+import searchbar.R
+import searchbar.databinding.CommonHierarchyBinding
 
 /**
  * @hide
@@ -115,7 +115,6 @@ abstract class SearchLayout @JvmOverloads constructor(
         binding.contentDivider.isVisible = false
 
         binding.shadow.isVisible = false
-        binding.shadow.setBackgroundColor(ContextCompat.getColor(context, R.color.search_shadow))
 
         binding.filler.isVisible = false
 
@@ -270,7 +269,7 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     protected fun applyMarginsType(
         type: MarginsType,
-        block: (MarginLayoutParams.() -> Unit)? = null
+        block: (MarginLayoutParams.() -> Unit)? = null,
     ) {
         val toolbarNone = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
         val menuItemNone = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)

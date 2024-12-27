@@ -1,4 +1,4 @@
-package com.lapism.search.internal.animations
+package searchbar.internal.animations
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
@@ -11,7 +11,6 @@ import android.view.ViewOutlineProvider
 import androidx.cardview.widget.CardView
 import androidx.transition.Transition
 import androidx.transition.TransitionValues
-import com.google.android.material.card.MaterialCardView
 
 /**
  * Transitions a view from [startRadius] to [endRadius] through a [ViewOutlineProvider].
@@ -19,39 +18,35 @@ import com.google.android.material.card.MaterialCardView
  *
  * @author Stefan de Bruijn
  */
-internal class ChangeOutlineRadius : Transition {
+internal class ChangeElevation : Transition {
 
     private companion object {
         /**
          * Unique key for our start and end values to be kept in [TransitionValues]
          */
-        private const val RADIUS = "ChangeOutlineRadius:radius"
+        private const val ELEVATION = "ChangeElevation:elevation"
 
         /**
          * The properties from [TransitionValues] we care about.
          * If the [TransitionValues] from [captureStartValues] and [captureEndValues] do not differ on this property,
          * this [Transition] will not run
          */
-        private val PROPERTIES = arrayOf(RADIUS)
+        private val PROPERTIES = arrayOf(ELEVATION)
 
         /**
          * Animator property which will set a rounded outline through a [ViewOutlineProvider]
          */
-        private object OutlineRadiusProperty :
-            Property<View, Float>(Float::class.java, "outlineRadius") {
+        private object ElevationProperty : Property<View, Float>(Float::class.java, "elevation") {
 
             override fun get(view: View): Float = when (view) {
-                is MaterialCardView -> view.radius
-                is CardView -> view.radius
+                is CardView -> view.cardElevation
                 else -> 0f
             }
 
             override fun set(view: View, value: Float) {
-                val radius = value.coerceAtLeast(0f)
-
+                val elevation = value.coerceAtLeast(0f)
                 when (view) {
-                    is MaterialCardView -> view.radius = radius
-                    is CardView -> view.radius = radius
+                    is CardView -> view.cardElevation = elevation
                 }
             }
         }
@@ -66,17 +61,17 @@ internal class ChangeOutlineRadius : Transition {
     }
 
     override fun captureStartValues(transitionValues: TransitionValues) {
-        // Here we get the radius our transition starts with.
+        // Here we get the elevation our transition starts with.
         // Note that this can be the starting value for both the original transition *and the reverse*
         val view = transitionValues.view
-        transitionValues.values[RADIUS] = OutlineRadiusProperty.get(view)
+        transitionValues.values[ELEVATION] = ElevationProperty.get(view)
     }
 
     override fun captureEndValues(transitionValues: TransitionValues) {
-        // Here we get the radius our transition ends with.
+        // Here we get the elevation our transition ends with.
         // Note that this can be the ending value for both the original transition *and the reverse*
         val view = transitionValues.view
-        transitionValues.values[RADIUS] = OutlineRadiusProperty.get(view)
+        transitionValues.values[ELEVATION] = ElevationProperty.get(view)
     }
 
     override fun createAnimator(
@@ -92,10 +87,10 @@ internal class ChangeOutlineRadius : Transition {
 
         // The startRadius/endRadius we are going to animate from/to.
         // Using the start/end value instead of the constructor params allows us to support reversing this animation too
-        val sR = startValues.values[RADIUS] as Float
-        val eR = endValues.values[RADIUS] as Float
+        val sR = startValues.values[ELEVATION] as Float
+        val eR = endValues.values[ELEVATION] as Float
 
         // Animator with Property allows us to adjust properties that aren't directly (available) on the View itself
-        return ObjectAnimator.ofFloat(view, OutlineRadiusProperty, sR, eR)
+        return ObjectAnimator.ofFloat(view, ElevationProperty, sR, eR)
     }
 }

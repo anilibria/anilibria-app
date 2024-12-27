@@ -7,7 +7,8 @@
     <View
         android:id="@+id/shadow"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/search_shadow" />
 
     <View
         android:id="@+id/filler"
@@ -44,10 +45,10 @@
                 <ProgressBar
                     android:id="@+id/progress"
                     android:layout_width="24dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_height="24dp" />
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/clear_button"

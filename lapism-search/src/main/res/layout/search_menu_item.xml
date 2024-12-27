@@ -37,7 +37,6 @@
                     android:layout_width="@dimen/search_icon_56"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/search_name"
                     android:scaleType="center"
                     app:tint="?attr/colorControlNormal" />
 
@@ -72,7 +71,6 @@
                     android:layout_width="@dimen/search_icon_56"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/search_name"
                     android:scaleType="center"
                     app:tint="?attr/colorControlNormal" />
 

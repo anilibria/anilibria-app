@@ -115,7 +115,6 @@ abstract class SearchLayout @JvmOverloads constructor(
         binding.contentDivider.isVisible = false
 
         binding.shadow.isVisible = false
-        binding.shadow.setBackgroundColor(ContextCompat.getColor(context, R.color.search_shadow))
 
         binding.filler.isVisible = false
 
@@ -270,7 +269,7 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     protected fun applyMarginsType(
         type: MarginsType,
-        block: (MarginLayoutParams.() -> Unit)? = null
+        block: (MarginLayoutParams.() -> Unit)? = null,
     ) {
         val toolbarNone = getDimensionPixelSize(R.dimen.search_margins_toolbar_none)
         val menuItemNone = getDimensionPixelSize(R.dimen.search_margins_menu_item_none)

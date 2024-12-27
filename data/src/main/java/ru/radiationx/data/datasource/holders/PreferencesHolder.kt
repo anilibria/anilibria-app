@@ -39,6 +39,8 @@ interface PreferencesHolder {
 
     val notificationsService: AppPreference<Boolean>
 
+    val availableSpeeds: StateFlow<List<Float>>
+
 }
 
 class AppPreference<T>(

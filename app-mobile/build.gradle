@@ -82,7 +82,9 @@ dependencies {
     implementation project(":shared-app")
     implementation project(":quill-di")
     implementation project(":media-mobile")
+    implementation project(":taiwa")
 
+    implementation libs.androidx.activity
     implementation libs.androidx.appcompat
     implementation libs.google.material
     implementation libs.androidx.cardview
@@ -111,8 +113,6 @@ dependencies {
     implementation libs.mintpermissions.flows
 
     implementation libs.materialprogressbar
-
-    implementation project(":bottomsheet")
 
     compileOnly libs.toothpick
     ksp libs.toothpick.compiler

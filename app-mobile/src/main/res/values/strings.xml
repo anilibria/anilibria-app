@@ -39,4 +39,6 @@
     <string name="pref_value_theme_mode_light">Светлая</string>
     <string name="pref_value_theme_mode_dark">Темная</string>
     <string name="pref_value_theme_mode_system">Системная</string>
+    <string name="pref_transport">Сетевой движок плеера</string>
+    <string name="pref_quality">Качество видео</string>
 </resources>

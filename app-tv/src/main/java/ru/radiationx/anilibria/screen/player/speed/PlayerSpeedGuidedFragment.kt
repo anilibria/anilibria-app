@@ -20,21 +20,26 @@ class PlayerSpeedGuidedFragment : BasePlayerGuidedFragment() {
 
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
-        subscribeTo(viewModel.speedData) {
-            actions = it.mapIndexed { index: Int, title: String ->
+        subscribeTo(viewModel.speedState) {
+            actions = it.speeds.mapIndexed { index: Int, speed: Float ->
                 GuidedAction.Builder(requireContext())
                     .id(index.toLong())
-                    .title(title)
+                    .title(speed.toTitle())
                     .build()
             }
-        }
-
-        subscribeTo(viewModel.selectedIndex.filterNotNull()) {
-            selectedActionPosition = it
+            selectedActionPosition = it.selectedIndex ?: -1
         }
     }
 
     override fun onGuidedActionClicked(action: GuidedAction) {
         viewModel.applySpeed(action.id.toInt())
+    }
+
+    private fun Float.toTitle(): String {
+        return if (this == 1.0f) {
+            "Нормальная"
+        } else {
+            "${this}x"
+        }
     }
 }

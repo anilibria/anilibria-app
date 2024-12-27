@@ -3,8 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.favorites
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
@@ -23,6 +21,7 @@ import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.anilibria.ui.common.releaseItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
@@ -31,7 +30,6 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
-import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.controllers.loaderpage.hasAnyLoading
 
 
@@ -69,6 +67,13 @@ class FavoritesFragment :
     private var _searchView: SearchMenuItem? = null
     private val searchView: SearchMenuItem
         get() = requireNotNull(_searchView)
+
+    private val releaseDialog by releaseItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) },
+        onShortcutClick = { viewModel.onShortcutClick(it) },
+        onDeleteClick = { viewModel.deleteFav(it.id) }
+    )
 
     override var sharedViewLocal: View? = null
 
@@ -171,23 +176,7 @@ class FavoritesFragment :
     }
 
     override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        val titles =
-            arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                when (which) {
-                    0 -> {
-                        viewModel.onCopyClick(item)
-                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-
-                    1 -> viewModel.onShareClick(item)
-                    2 -> viewModel.onShortcutClick(item)
-                    3 -> viewModel.deleteFav(item.id)
-                }
-            }
-            .showWithLifecycle(viewLifecycleOwner)
+        releaseDialog.show(item)
         return false
     }
 

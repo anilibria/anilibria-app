@@ -1,36 +1,37 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import android.content.Context
-import android.os.Build
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.CompoundButton
-import android.widget.FrameLayout
 import android.widget.RadioGroup
 import android.widget.TextView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogGenresBinding
-import ru.radiationx.anilibria.extension.fillNavigationBarColor
+import ru.radiationx.anilibria.databinding.PickerBottomActionButtonBinding
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.shared.ktx.android.getColorFromAttr
-import ru.radiationx.shared.ktx.android.showWithLifecycle
+import taiwa.common.DialogType
+import taiwa.common.DialogWrapper
 
 
 class CatalogFilterDialog(
     context: Context,
+    lifecycleOwner: LifecycleOwner,
     private val listener: ClickListener,
 ) {
 
-    private val dialog: BottomSheetDialog = BottomSheetDialog(context)
+    private val dialog = DialogWrapper(context, lifecycleOwner, DialogType.BottomSheet)
 
-    private val binding = DialogGenresBinding.inflate(LayoutInflater.from(context), null, false)
+    private val binding = dialog.setContentBinding {
+        DialogGenresBinding.inflate(it, null, false)
+    }
+
+    private val footerBinding = dialog.setFooterBinding {
+        PickerBottomActionButtonBinding.inflate(it, null, false)
+    }
 
     private val filterComplete = binding.filterComplete
 
@@ -50,9 +51,9 @@ class CatalogFilterDialog(
     private var updating = false
     private var currentState = CatalogFilterState()
 
-    private var actionButton: View
-    private var actionButtonText: TextView
-    private var actionButtonCount: TextView
+    private val actionButton: View = footerBinding.root
+    private val actionButtonText: TextView = footerBinding.pickerActionText
+    private val actionButtonCount: TextView = footerBinding.pickerActionCounter
 
     private val genresChipListener =
         CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
@@ -102,48 +103,16 @@ class CatalogFilterDialog(
     }
 
     init {
-        dialog.setContentView(binding.root)
-        val parentView = binding.root.parent as FrameLayout
-        val coordinatorLayout = parentView.parent as CoordinatorLayout
-        val bottomSheetView =
-            coordinatorLayout.findViewById<ViewGroup>(com.google.android.material.R.id.design_bottom_sheet)
-        bottomSheetView.apply {
-            setPadding(
-                paddingLeft,
-                paddingTop,
-                paddingRight,
-                (resources.displayMetrics.density * 40).toInt()
-            )
-        }
-
-        actionButton = LayoutInflater.from(context)
-            .inflate(R.layout.picker_bottom_action_button, coordinatorLayout, false)
-        actionButtonText = actionButton.findViewById(R.id.pickerActionText)
-        actionButtonCount = actionButton.findViewById(R.id.pickerActionCounter)
-
-        coordinatorLayout.addView(
-            actionButton,
-            (actionButton.layoutParams as CoordinatorLayout.LayoutParams).also {
-                it.gravity = Gravity.BOTTOM
-            })
-        actionButton.z = parentView.z
-
-        sortingGroup.setOnCheckedChangeListener(sortingListener)
-        filterComplete.setOnCheckedChangeListener(completeListener)
-
         actionButton.setOnClickListener {
-            dialog.dismiss()
+            dialog.close()
             listener.onAccept(currentState)
         }
         setState(currentState, true)
     }
 
-    fun showDialog(state: CatalogFilterState, lifecycleOwner: LifecycleOwner) {
+    fun showDialog(state: CatalogFilterState) {
         setState(state)
-        dialog.fillNavigationBarColor()
-        dialog.showWithLifecycle(lifecycleOwner) {
-            listener.onClose()
-        }
+        dialog.show()
     }
 
     private fun setState(state: CatalogFilterState, force: Boolean = false) {

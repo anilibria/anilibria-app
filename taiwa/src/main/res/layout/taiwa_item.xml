@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
+    android:minHeight="48dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="4dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="4dp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/itemIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:tint="?colorOnSurface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/baseline_close_24"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="8dp"
+        android:textAppearance="?textAppearanceListItem"
+        app:layout_constraintBottom_toTopOf="@id/itemSubtitle"
+        app:layout_constraintEnd_toStartOf="@id/textBarrier"
+        app:layout_constraintStart_toEndOf="@id/itemIcon"
+        app:layout_constraintTop_toTopOf="@id/guideTop"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_goneMarginStart="16dp"
+        tools:text="Title"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="8dp"
+        android:textAppearance="?textAppearanceListItemSecondary"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintBottom_toBottomOf="@id/guideBottom"
+        app:layout_constraintEnd_toStartOf="@id/textBarrier"
+        app:layout_constraintStart_toEndOf="@id/itemIcon"
+        app:layout_constraintTop_toBottomOf="@id/itemTitle"
+        app:layout_goneMarginStart="16dp"
+        tools:text="Subtitle"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/textBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="left"
+        app:constraint_referenced_ids="itemValue,itemNavIcon,itemSwitch,itemRadio,itemCheckbox" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/itemValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:includeFontPadding="false"
+        android:textAppearance="?textAppearanceListItemSecondary"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/itemNavIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginEnd="16dp"
+        tools:text="Value"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/itemNavIcon"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/baseline_chevron_right_24"
+        android:tint="?colorOnSurface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/itemSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:checked="true"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatRadioButton
+        android:id="@+id/itemRadio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/itemCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

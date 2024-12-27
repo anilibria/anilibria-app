@@ -1,0 +1,21 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="PreviewTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+
+    </style>
+
+    <style name="ThemeOverlay.Taiwa.Dialog" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="materialButtonStyle">
+            @style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush
+        </item>
+    </style>
+
+    <style name="ThemeOverlay.Taiwa.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="paddingBottomSystemWindowInsets">false</item>
+        <item name="paddingLeftSystemWindowInsets">false</item>
+        <item name="paddingRightSystemWindowInsets">false</item>
+        <item name="paddingTopSystemWindowInsets">false</item>
+    </style>
+</resources>

@@ -14,6 +14,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -150,6 +151,10 @@ class PlayerView @JvmOverloads constructor(
 
     fun setPlayer(player: Player?) {
         holder.setPlayer(player)
+    }
+
+    fun destroy() {
+        coroutineScope.cancel()
     }
 
     fun prepare(

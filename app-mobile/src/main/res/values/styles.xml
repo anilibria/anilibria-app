@@ -4,8 +4,8 @@
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="android:windowContentTransitions">true</item>
 
-        <item name="colorPrimary">@color/light_colorAccent</item>
-        <item name="colorSecondary">@color/light_colorAccent</item>
+        <item name="colorPrimary">@color/dark_colorAccent</item>
+        <item name="colorSecondary">@color/dark_colorAccent</item>
         <item name="colorSecondaryVariant">@color/dark_contrast_icon</item>
         <item name="android:colorBackground">@color/dark_windowBackground</item>
         <item name="colorSurface">@color/dark_cardBackground</item>

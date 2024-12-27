@@ -4,9 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
@@ -25,6 +23,7 @@ import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.anilibria.ui.common.releaseItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
@@ -36,7 +35,6 @@ import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.controllers.loaderpage.hasAnyLoading
 
 /**
@@ -102,6 +100,13 @@ class HistoryFragment :
             fileViewModel.onImportFileSelected(it)
         }
     }
+
+    private val releaseDialog by releaseItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) },
+        onShortcutClick = { viewModel.onShortcutClick(it) },
+        onDeleteClick = { viewModel.onDeleteClick(it) }
+    )
 
     override val statusBarVisible: Boolean = true
 
@@ -201,23 +206,7 @@ class HistoryFragment :
     }
 
     override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        val titles =
-            arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                when (which) {
-                    0 -> {
-                        viewModel.onCopyClick(item)
-                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-
-                    1 -> viewModel.onShareClick(item)
-                    2 -> viewModel.onShortcutClick(item)
-                    3 -> viewModel.onDeleteClick(item)
-                }
-            }
-            .showWithLifecycle(viewLifecycleOwner)
+        releaseDialog.show(item)
         return false
     }
 

@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/DayNightAppTheme"
         android:usesCleartextTraffic="true"
-        tools:replace="android:allowBackup">
+        tools:replace="android:allowBackup,android:theme">
         <activity
             android:name=".ui.activities.main.MainActivity"
             android:exported="true"

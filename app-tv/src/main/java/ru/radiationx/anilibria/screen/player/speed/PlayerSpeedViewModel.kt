@@ -1,6 +1,10 @@
 package ru.radiationx.anilibria.screen.player.speed
 
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.datasource.holders.PreferencesHolder
@@ -11,24 +15,30 @@ class PlayerSpeedViewModel @Inject constructor(
     private val guidedRouter: GuidedRouter,
 ) : LifecycleViewModel() {
 
-    private val speedList = listOf(0.25f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f)
-
-    val speedData = MutableStateFlow<List<String>>(emptyList())
-    val selectedIndex = MutableStateFlow<Int?>(null)
+    val speedState = MutableStateFlow(SpeedState())
 
     init {
-        speedData.value = speedList.map {
-            if (it == 1.0f) {
-                "Обычная"
-            } else {
-                "${it}x"
-            }
-        }
-        selectedIndex.value = speedList.indexOf(preferencesHolder.playSpeed.value)
+        combine(
+            preferencesHolder.availableSpeeds,
+            preferencesHolder.playSpeed
+        ) { speeds, speed ->
+            SpeedState(
+                speeds = speeds,
+                selectedIndex = speeds.indexOf(speed)
+            )
+        }.onEach {
+            speedState.value = it
+        }.launchIn(viewModelScope)
+
     }
 
     fun applySpeed(index: Int) {
         guidedRouter.close()
-        preferencesHolder.playSpeed.value = speedList[index]
+        preferencesHolder.playSpeed.value = speedState.value.speeds[index]
     }
+
+    data class SpeedState(
+        val speeds: List<Float> = emptyList(),
+        val selectedIndex: Int? = null,
+    )
 }

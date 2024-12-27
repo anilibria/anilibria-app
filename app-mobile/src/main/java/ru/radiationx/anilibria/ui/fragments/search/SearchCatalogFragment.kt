@@ -3,8 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.search
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
@@ -20,6 +18,7 @@ import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.common.releaseItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
@@ -32,7 +31,6 @@ import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 class SearchCatalogFragment :
@@ -83,6 +81,12 @@ class SearchCatalogFragment :
     private val searchView: SearchMenuItem
         get() = requireNotNull(_searchView)
 
+    private val releaseDialog by releaseItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) },
+        onShortcutClick = { viewModel.onShortcutClick(it) }
+    )
+
     override var sharedViewLocal: View? = null
 
     override fun getSharedView(): View? {
@@ -114,8 +118,10 @@ class SearchCatalogFragment :
         }
 
 
-        genresDialog =
-            CatalogFilterDialog(requireContext(), object : CatalogFilterDialog.ClickListener {
+        genresDialog = CatalogFilterDialog(
+            requireContext(),
+            viewLifecycleOwner,
+            object : CatalogFilterDialog.ClickListener {
                 override fun onAccept(state: CatalogFilterState) {
                     viewModel.onAcceptDialog(state)
                 }
@@ -123,7 +129,8 @@ class SearchCatalogFragment :
                 override fun onClose() {
                     viewModel.onCloseDialog()
                 }
-            })
+            }
+        )
 
         binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
 
@@ -205,7 +212,7 @@ class SearchCatalogFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.showFilterAction.observe().onEach { state ->
-            genresDialog.showDialog(state, viewLifecycleOwner)
+            genresDialog.showDialog(state)
         }.launchInResumed(viewLifecycleOwner)
     }
 
@@ -233,21 +240,7 @@ class SearchCatalogFragment :
     }
 
     override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                when (which) {
-                    0 -> {
-                        viewModel.onCopyClick(item)
-                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-
-                    1 -> viewModel.onShareClick(item)
-                    2 -> viewModel.onShortcutClick(item)
-                }
-            }
-            .showWithLifecycle(viewLifecycleOwner)
+        releaseDialog.show(item)
         return false
     }
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="taiwa_content_corner_radius">8dp</dimen>
+    <dimen name="taiwa_content_max_width">640dp</dimen>
+    <dimen name="taiwa_content_elevation">16dp</dimen>
+</resources>

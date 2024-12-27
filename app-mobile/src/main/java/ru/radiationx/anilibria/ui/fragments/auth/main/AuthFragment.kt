@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.auth.main
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -20,9 +19,10 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.launchInResumed
-import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
+import taiwa.TaiwaAction
+import taiwa.bottomsheet.bottomSheetTaiwa
 
 /**
  * Created by radiationx on 30.12.17.
@@ -43,6 +43,24 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
     private val apiConfig by inject<ApiConfig>()
 
     private val systemUtils by inject<SystemUtils>()
+
+    private val socialTaiwa by bottomSheetTaiwa()
+
+    private val registrationTaiwa by bottomSheetTaiwa {
+        message {
+            text("Зарегистрировать аккаунт можно только на сайте.")
+        }
+        buttons {
+            action(TaiwaAction.Close)
+            button {
+                text("Регистрация")
+                onClick { viewModel.registrationToSiteClick() }
+            }
+            button {
+                text("Отмена")
+            }
+        }
+    }
 
     override val statusBarVisible: Boolean = true
 
@@ -96,24 +114,26 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
     }
 
     private fun onSocialClick(item: SocialAuthItemState) {
-        AlertDialog.Builder(requireContext())
-            .setMessage("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
-            .setPositiveButton("Продолжить") { _, _ ->
-                viewModel.onSocialClick(item)
+        socialTaiwa.setContent {
+            message {
+                text("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
             }
-            .setNegativeButton("Личный кабинет") { _, _ ->
-                systemUtils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
+            buttons {
+                action(TaiwaAction.Close)
+                button {
+                    text("Продолжить")
+                    onClick { viewModel.onSocialClick(item) }
+                }
+                button {
+                    text("Личный кабинет")
+                    onClick { systemUtils.externalLink("${apiConfig.siteUrl}/pages/cp.php") }
+                }
             }
-            .showWithLifecycle(viewLifecycleOwner)
+        }
+        socialTaiwa.show()
     }
 
     private fun showRegistrationDialog() {
-        AlertDialog.Builder(requireContext())
-            .setMessage("Зарегистрировать аккаунт можно только на сайте.")
-            .setPositiveButton("Регистрация") { _, _ ->
-                viewModel.registrationToSiteClick()
-            }
-            .setNeutralButton("Отмена", null)
-            .showWithLifecycle(viewLifecycleOwner)
+        registrationTaiwa.show()
     }
 }

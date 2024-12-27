@@ -3,7 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.auth.social
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebSettings
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -25,9 +24,10 @@ import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.setWebViewClientCompat
-import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
+import taiwa.TaiwaAction
+import taiwa.bottomsheet.bottomSheetTaiwa
 
 
 /**
@@ -72,6 +72,24 @@ class AuthSocialFragment :
 
     private val viewModel by viewModel<AuthSocialViewModel> {
         AuthSocialExtra(key = getExtraNotNull(ARG_KEY))
+    }
+
+    private val errorTaiwa by bottomSheetTaiwa {
+        message {
+            text("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
+        }
+        buttons {
+            action(TaiwaAction.Close)
+            button {
+                text("Перейти")
+                onClick { }
+            }
+            button {
+                text("Отмена")
+                onClick { }
+            }
+        }
+        onClose { viewModel.onUserUnderstandWhatToDo() }
     }
 
     private val apiConfig by inject<ApiConfig>()
@@ -137,14 +155,6 @@ class AuthSocialFragment :
     }
 
     private fun showError() {
-        AlertDialog.Builder(requireContext())
-            .setMessage("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
-            .setPositiveButton("Перейти") { _, _ ->
-                systemUtils.externalLink("${apiConfig.siteUrl}/pages/cp.php")
-            }
-            .setNegativeButton("Отмена", null)
-            .showWithLifecycle(viewLifecycleOwner) {
-                viewModel.onUserUnderstandWhatToDo()
-            }
+        errorTaiwa.show()
     }
 }

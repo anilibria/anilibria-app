@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
@@ -22,6 +20,7 @@ import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.common.releaseItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
@@ -30,7 +29,6 @@ import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
-import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 /* Created by radiationx on 05.11.17. */
@@ -94,6 +92,12 @@ class FeedFragment :
     private val searchView: SearchView
         get() = requireNotNull(_searchView)
 
+    private val releaseDialog by releaseItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) },
+        onShortcutClick = { viewModel.onShortcutClick(it) }
+    )
+
     override var sharedViewLocal: View? = null
 
     override fun getSharedView(): View? {
@@ -111,7 +115,7 @@ class FeedFragment :
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
@@ -224,20 +228,6 @@ class FeedFragment :
     }
 
     private fun releaseOnLongClick(item: ReleaseItemState) {
-        val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                when (which) {
-                    0 -> {
-                        viewModel.onCopyClick(item)
-                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-
-                    1 -> viewModel.onShareClick(item)
-                    2 -> viewModel.onShortcutClick(item)
-                }
-            }
-            .showWithLifecycle(viewLifecycleOwner)
+        releaseDialog.show(item)
     }
 }

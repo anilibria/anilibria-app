@@ -50,15 +50,6 @@ class PlayerViewModel @Inject constructor(
         private val seekThreshold = TimeUnit.SECONDS.toMillis(10)
     }
 
-    val currentSpeed = preferencesHolder.playSpeed
-
-    val playerSkipsEnabled: StateFlow<Boolean> = preferencesHolder.playerSkips
-
-    val playerSkipsTimerEnabled: StateFlow<Boolean> = preferencesHolder.playerSkipsTimer
-
-    val inactiveTimerEnabled: StateFlow<Boolean> = preferencesHolder.playerInactiveTimer
-
-    val autoplayEnabled: StateFlow<Boolean> = preferencesHolder.playerAutoplay
 
     private val _episodeId = sharedPlayerData.episodeId
     val episodeId = _episodeId.asStateFlow()
@@ -115,51 +106,10 @@ class PlayerViewModel @Inject constructor(
         loadData(_episodeId.value)
     }
 
-    fun onSettingsClick() {
-        launchWithData { data ->
-            val episode = data.getEpisode(_episodeId.value) ?: return@launchWithData
-            val quality = preferencesHolder.playerQuality.value
-            val settingsState = PlayerSettingsState(
-                currentSpeed = preferencesHolder.playSpeed.value,
-                currentQuality = episode.qualityInfo.getActualFor(quality) ?: PlayerQuality.SD,
-                availableQualities = episode.qualityInfo.available,
-                skipsEnabled = preferencesHolder.playerSkips.value,
-                skipsTimerEnabled = preferencesHolder.playerSkipsTimer.value,
-                inactiveTimerEnabled = preferencesHolder.playerInactiveTimer.value,
-                autoplayEnabled = preferencesHolder.playerAutoplay.value
-            )
-            _actions.emit(PlayerAction.ShowSettings(settingsState))
-        }
-    }
-
     fun onPlaylistClick() {
         launchWithData {
             _actions.emit(PlayerAction.ShowPlaylist)
         }
-    }
-
-    fun onQualitySelected(quality: PlayerQuality) {
-        preferencesHolder.playerQuality.value = quality
-    }
-
-    fun onSpeedSelected(speed: Float) {
-        preferencesHolder.playSpeed.value = speed
-    }
-
-    fun onSkipsEnabledSelected(state: Boolean) {
-        preferencesHolder.playerSkips.value = state
-    }
-
-    fun onSkipsTimerEnabledChange(state: Boolean) {
-        preferencesHolder.playerSkipsTimer.value = state
-    }
-
-    fun onInactiveTimerEnabledChange(state: Boolean) {
-        preferencesHolder.playerInactiveTimer.value = state
-    }
-
-    fun onAutoplayEnabledChange(state: Boolean) {
-        preferencesHolder.playerAutoplay.value = state
     }
 
     @OptIn(DelicateCoroutinesApi::class)

@@ -16,14 +16,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogDonationYoomoneyBinding
-import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
 import ru.radiationx.shared.ktx.android.launchInResumed
+import taiwa.dialogs.TaiwaDialogFragment
 
-class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donation_yoomoney) {
+class DonationYooMoneyDialogFragment : TaiwaDialogFragment(R.layout.dialog_donation_yoomoney) {
 
     private val binding by viewBinding<DialogDonationYoomoneyBinding>()
 

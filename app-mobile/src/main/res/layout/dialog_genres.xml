@@ -1,143 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsvFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:overScrollMode="never">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/filtersTitle"
+        <LinearLayout
+            android:id="@+id/llFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp"
-            android:text="Фильтр"
-            android:textColor="?textSecond"
-            android:textSize="16sp" />
+            android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/filterComplete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:checked="true"
-            android:paddingStart="8dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="8dp"
-            android:text="Релиз завершен"
-            android:textColor="?textDefault"
-            android:textSize="16sp" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/typeTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp"
-            android:text="Сортировка"
-            android:textColor="?textSecond"
-            android:textSize="16sp" />
-
-        <RadioGroup
-            android:id="@+id/sortingRadioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:paddingStart="8dp">
-
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/sortingPopular"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/filtersTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="Фильтр"
+                android:textColor="?textSecond"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/filterComplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:checked="true"
                 android:paddingStart="8dp"
                 android:paddingTop="8dp"
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
-                android:text="По популярности"
+                android:text="Релиз завершен"
                 android:textColor="?textDefault"
                 android:textSize="16sp" />
 
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/sortingNew"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/typeTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="8dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
                 android:paddingBottom="8dp"
-                android:text="По новизне"
-                android:textColor="?textDefault"
+                android:text="Сортировка"
+                android:textColor="?textSecond"
                 android:textSize="16sp" />
-        </RadioGroup>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/yearsTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp"
-            android:text="Год"
-            android:textColor="?textSecond"
-            android:textSize="16sp" />
+            <RadioGroup
+                android:id="@+id/sortingRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingStart="8dp">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/yearsChips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:clipToPadding="false"
-            android:padding="8dp"
-            app:singleSelection="false" />
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/sortingPopular"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:paddingStart="8dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="По популярности"
+                    android:textColor="?textDefault"
+                    android:textSize="16sp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/seasonsTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp"
-            android:text="Сезон"
-            android:textColor="?textSecond"
-            android:textSize="16sp" />
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/sortingNew"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="По новизне"
+                    android:textColor="?textDefault"
+                    android:textSize="16sp" />
+            </RadioGroup>
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/seasonsChips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:clipToPadding="false"
-            android:padding="8dp"
-            app:singleSelection="false" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/yearsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="Год"
+                android:textColor="?textSecond"
+                android:textSize="16sp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/genresTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp"
-            android:text="Жанр"
-            android:textColor="?textSecond"
-            android:textSize="16sp" />
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/yearsChips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:clipToPadding="false"
+                android:padding="8dp"
+                app:singleSelection="false" />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/genresChips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:clipToPadding="false"
-            android:padding="8dp"
-            app:singleSelection="false" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/seasonsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="Сезон"
+                android:textColor="?textSecond"
+                android:textSize="16sp" />
 
-    </LinearLayout>
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/seasonsChips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:clipToPadding="false"
+                android:padding="8dp"
+                app:singleSelection="false" />
 
-</androidx.core.widget.NestedScrollView>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/genresTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="Жанр"
+                android:textColor="?textSecond"
+                android:textSize="16sp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/genresChips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:clipToPadding="false"
+                android:padding="8dp"
+                app:singleSelection="false" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</FrameLayout>

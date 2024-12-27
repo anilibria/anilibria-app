@@ -20,11 +20,11 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.PlaylistEpisodeListItem
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.launchInResumed
+import taiwa.dialogs.TaiwaDialogFragment
 
-class PlaylistDialogFragment : AlertDialogFragment(R.layout.fragment_player_playlist) {
+class PlaylistDialogFragment : TaiwaDialogFragment(R.layout.fragment_player_playlist) {
 
     private val binding by viewBinding<FragmentPlayerPlaylistBinding>()
 
@@ -77,14 +77,6 @@ class PlaylistDialogFragment : AlertDialogFragment(R.layout.fragment_player_play
                 binding.root.scrollToPosition(scrollPosition)
             }
         }.launchInResumed(viewLifecycleOwner)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val window = requireDialog().window ?: return
-        WindowCompat.getInsetsController(window, binding.root).apply {
-            hide(WindowInsetsCompat.Type.systemBars())
-        }
     }
 
     override fun onDestroyView() {

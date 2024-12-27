@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogDonationContentBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdapter
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
+import taiwa.dialogs.TaiwaDialogFragment
 
-class DonationDialogFragment : AlertDialogFragment(R.layout.dialog_donation_content) {
+class DonationDialogFragment : TaiwaDialogFragment(R.layout.dialog_donation_content) {
 
     companion object {
         private const val ARG_TAG = "arg_tag"

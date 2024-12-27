@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
@@ -39,13 +38,16 @@ import ru.radiationx.shared_app.controllers.loaderpage.hasAnyLoading
 class FavoritesFragment :
     BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
-    ReleasesAdapter.ItemListener,
     TopScroller {
 
     private val adapter: ReleasesAdapter = ReleasesAdapter(
         loadMoreListener = { viewModel.loadMore() },
         loadRetryListener = { viewModel.loadMore() },
-        listener = this,
+        clickListener = { item, view ->
+            this.sharedViewLocal = view
+            viewModel.onItemClick(item)
+        },
+        longClickListener = { item -> releaseDialog.show(item) },
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_fav_border,
             R.string.placeholder_title_nodata_base,
@@ -59,7 +61,15 @@ class FavoritesFragment :
     )
 
     private val searchAdapter = ListItemAdapter().apply {
-        addDelegate(ReleaseItemDelegate(this@FavoritesFragment))
+        addDelegate(
+            ReleaseItemDelegate(
+                clickListener = { item, view ->
+                    sharedViewLocal = view
+                    viewModel.onItemClick(item)
+                },
+                longClickListener = { item -> releaseDialog.show(item) }
+            )
+        )
     }
 
     private val viewModel by viewModel<FavoritesViewModel>()
@@ -165,19 +175,6 @@ class FavoritesFragment :
         binding.recyclerView.adapter = null
         searchView.setContentAdapter(null)
         _searchView = null
-    }
-
-    override fun onItemClick(position: Int, view: View) {
-        this.sharedViewLocal = view
-    }
-
-    override fun onItemClick(item: ReleaseItemState, position: Int) {
-        viewModel.onItemClick(item)
-    }
-
-    override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        releaseDialog.show(item)
-        return false
     }
 
     override fun scrollToTop() {

@@ -49,8 +49,8 @@ class FeedAdapter(
     scheduleScrollListener: (Int) -> Unit,
     randomClickListener: () -> Unit,
     releaseClickListener: (ReleaseItemState, View) -> Unit,
-    releaseLongClickListener: (ReleaseItemState, View) -> Unit,
-    youtubeClickListener: (YoutubeItemState, View) -> Unit,
+    releaseLongClickListener: (ReleaseItemState) -> Unit,
+    youtubeClickListener: (YoutubeItemState) -> Unit,
     scheduleClickListener: (ScheduleItemState, View, Int) -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem,
@@ -74,7 +74,13 @@ class FeedAdapter(
         addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(FeedSectionDelegate(sectionClickListener))
-        addDelegate(FeedSchedulesDelegate(scheduleClickListener, scheduleScrollListener))
+        addDelegate(
+            FeedSchedulesDelegate(
+                scheduleClickListener,
+                { releaseLongClickListener.invoke(it.release) },
+                scheduleScrollListener
+            )
+        )
         addDelegate(FeedReleaseDelegate(releaseClickListener, releaseLongClickListener))
         addDelegate(FeedYoutubeDelegate(youtubeClickListener))
         addDelegate(FeedRandomBtnDelegate(randomClickListener))

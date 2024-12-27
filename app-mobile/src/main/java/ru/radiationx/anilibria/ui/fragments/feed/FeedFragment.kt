@@ -60,9 +60,9 @@ class FeedFragment :
         }, releaseClickListener = { releaseItem, view ->
             this.sharedViewLocal = view
             viewModel.onItemClick(releaseItem)
-        }, releaseLongClickListener = { releaseItem, _ ->
+        }, releaseLongClickListener = { releaseItem ->
             releaseOnLongClick(releaseItem)
-        }, youtubeClickListener = { youtubeItem, _ ->
+        }, youtubeClickListener = { youtubeItem ->
             viewModel.onYoutubeClick(youtubeItem)
         }, scheduleClickListener = { feedScheduleItem, view, position ->
             this.sharedViewLocal = view

@@ -47,8 +47,7 @@ fun FeedItem.toState(updates: Map<ReleaseId, ReleaseUpdate>) = FeedItemState(
 )
 
 fun ScheduleItem.toState() = ScheduleItemState(
-    releaseId = releaseItem.id,
-    posterUrl = releaseItem.poster.orEmpty(),
+    release = releaseItem.toState(emptyMap()),
     isCompleted = completed
 )
 

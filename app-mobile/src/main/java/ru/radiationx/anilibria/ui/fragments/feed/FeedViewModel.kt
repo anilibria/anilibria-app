@@ -226,7 +226,7 @@ class FeedViewModel @Inject constructor(
     }
 
     fun onScheduleItemClick(item: ScheduleItemState, position: Int) {
-        val releaseItem = findScheduleRelease(item.releaseId) ?: return
+        val releaseItem = findScheduleRelease(item.release.id) ?: return
         feedAnalytics.scheduleReleaseClick(position)
         releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id.id)
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
@@ -357,11 +357,17 @@ class FeedViewModel @Inject constructor(
     }
 
     private fun findRelease(id: ReleaseId): Release? {
-        val feedItems = pageLoader.getData()?.feedItems ?: return null
-        return feedItems
+        val data = pageLoader.getData() ?: return null
+
+        val itemFromFeed = data.feedItems
             .filterIsInstance<NativeAdItem.Data<FeedItem>>()
             .mapNotNull { it.data.release }
             .find { it.id == id }
+        if (itemFromFeed != null) {
+            return itemFromFeed
+        }
+
+        return data.schedule?.items?.find { it.releaseItem.id == id }?.releaseItem
     }
 
     private fun findYoutube(id: YoutubeId): YoutubeItem? {

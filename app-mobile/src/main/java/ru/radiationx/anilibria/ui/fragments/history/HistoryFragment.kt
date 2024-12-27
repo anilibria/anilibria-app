@@ -43,7 +43,6 @@ import ru.radiationx.shared_app.controllers.loaderpage.hasAnyLoading
 class HistoryFragment :
     BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
-    ReleasesAdapter.ItemListener,
     TopScroller {
 
     companion object {
@@ -75,7 +74,11 @@ class HistoryFragment :
         exportListener = {
             fileViewModel.onExportClick()
         },
-        listener = this,
+        clickListener = { item, view ->
+            this.sharedViewLocal = view
+            viewModel.onItemClick(item)
+        },
+        longClickListener = { item -> releaseDialog.show(item) },
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_history,
             R.string.placeholder_title_nodata_base,
@@ -89,7 +92,15 @@ class HistoryFragment :
     )
 
     private val searchAdapter = ListItemAdapter().apply {
-        addDelegate(ReleaseItemDelegate(this@HistoryFragment))
+        addDelegate(
+            ReleaseItemDelegate(
+                clickListener = { item, view ->
+                    sharedViewLocal = view
+                    viewModel.onItemClick(item)
+                },
+                longClickListener = { item -> releaseDialog.show(item) }
+            )
+        )
     }
 
     private val viewModel by viewModel<HistoryViewModel>()
@@ -199,19 +210,6 @@ class HistoryFragment :
         binding.recyclerView.adapter = null
         searchView.setContentAdapter(null)
         _searchView = null
-    }
-
-    override fun onItemClick(item: ReleaseItemState, position: Int) {
-        viewModel.onItemClick(item)
-    }
-
-    override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        releaseDialog.show(item)
-        return false
-    }
-
-    override fun onItemClick(position: Int, view: View) {
-        this.sharedViewLocal = view
     }
 
     override fun scrollToTop() {

@@ -22,7 +22,7 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
  */
 class FeedReleaseDelegate(
     private val clickListener: (ReleaseItemState, View) -> Unit,
-    private val longClickListener: (ReleaseItemState, View) -> Unit
+    private val longClickListener: (ReleaseItemState) -> Unit
 ) : AppAdapterDelegate<FeedListItem, ListItem, FeedReleaseDelegate.ViewHolder>(
     R.layout.item_feed_release,
     { (it as? FeedListItem)?.item?.release != null },
@@ -36,7 +36,7 @@ class FeedReleaseDelegate(
     class ViewHolder(
         itemView: View,
         private val clickListener: (ReleaseItemState, View) -> Unit,
-        private val longClickListener: (ReleaseItemState, View) -> Unit
+        private val longClickListener: (ReleaseItemState) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemFeedReleaseBinding>()
@@ -60,7 +60,7 @@ class FeedReleaseDelegate(
                 clickListener.invoke(state, binding.itemImage)
             }
             binding.root.setOnLongClickListener {
-                longClickListener.invoke(state, binding.itemImage)
+                longClickListener.invoke(state)
                 return@setOnLongClickListener false
             }
         }

@@ -19,7 +19,7 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
  * Created by radiationx on 13.01.18.
  */
 class FeedYoutubeDelegate(
-    private val clickListener: (YoutubeItemState, View) -> Unit
+    private val clickListener: (YoutubeItemState) -> Unit
 ) : AppAdapterDelegate<FeedListItem, ListItem, FeedYoutubeDelegate.ViewHolder>(
     R.layout.item_feed_youtube,
     { (it as? FeedListItem)?.item?.youtube != null },
@@ -32,7 +32,7 @@ class FeedYoutubeDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val clickListener: (YoutubeItemState, View) -> Unit
+        private val clickListener: (YoutubeItemState) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemFeedYoutubeBinding>()
@@ -49,10 +49,9 @@ class FeedYoutubeDelegate(
                 itemCommentsCount.text = state.comments
 
                 itemImage.showImageUrl(state.image)
-                ViewCompat.setTransitionName(itemImage, "${item.javaClass.simpleName}_${state.id}")
             }
             binding.root.setOnClickListener {
-                clickListener.invoke(state, binding.itemImage)
+                clickListener.invoke(state)
             }
         }
     }

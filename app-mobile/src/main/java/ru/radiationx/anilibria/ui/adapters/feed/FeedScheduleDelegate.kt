@@ -21,10 +21,11 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
  */
 class FeedScheduleDelegate(
     private val clickListener: (ScheduleItemState, View, Int) -> Unit,
+    private val longClickListener: (ScheduleItemState) -> Unit,
 ) : AppAdapterDelegate<FeedScheduleListItem, ListItem, FeedScheduleDelegate.ViewHolder>(
     R.layout.item_feed_schedule,
     { it is FeedScheduleListItem },
-    { ViewHolder(it, clickListener) }
+    { ViewHolder(it, clickListener, longClickListener) }
 ) {
 
     override fun bindData(item: FeedScheduleListItem, holder: ViewHolder) =
@@ -33,6 +34,7 @@ class FeedScheduleDelegate(
     class ViewHolder(
         itemView: View,
         private val clickListener: (ScheduleItemState, View, Int) -> Unit,
+        private val longClickListener: (ScheduleItemState) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemFeedScheduleBinding>()
@@ -58,12 +60,16 @@ class FeedScheduleDelegate(
             binding.itemComplete.isVisible = state.isCompleted
             ViewCompat.setTransitionName(
                 binding.itemImage,
-                "${item.javaClass.simpleName}_${state.releaseId}"
+                "${item.javaClass.simpleName}_${state.release.id}"
             )
-            binding.itemImage.showImageUrl(state.posterUrl)
+            binding.itemImage.showImageUrl(state.release.posterUrl)
 
             binding.root.setOnClickListener {
                 clickListener.invoke(state, binding.itemImage, bindingAdapterPosition)
+            }
+            binding.root.setOnLongClickListener {
+                longClickListener.invoke(state)
+                true
             }
         }
     }

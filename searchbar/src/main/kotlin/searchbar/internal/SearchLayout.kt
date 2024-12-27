@@ -1,4 +1,4 @@
-package com.lapism.search.internal
+package searchbar.internal
 
 import android.content.Context
 import android.graphics.Rect
@@ -22,9 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.lapism.search.NavigationIcon
-import com.lapism.search.R
-import com.lapism.search.databinding.CommonHierarchyBinding
+import searchbar.NavigationIcon
+import searchbar.R
+import searchbar.databinding.CommonHierarchyBinding
 
 /**
  * @hide

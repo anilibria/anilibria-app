@@ -1,4 +1,4 @@
-package com.lapism.search.widget
+package searchbar.widget
 
 import android.content.Context
 import android.util.AttributeSet
@@ -11,10 +11,10 @@ import androidx.transition.TransitionListenerAdapter
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
 import com.google.android.material.transition.MaterialSharedAxis
-import com.lapism.search.NavigationIcon
-import com.lapism.search.R
-import com.lapism.search.internal.MarginsType
-import com.lapism.search.internal.SearchLayout
+import searchbar.NavigationIcon
+import searchbar.R
+import searchbar.internal.MarginsType
+import searchbar.internal.SearchLayout
 
 class SearchMenuItem @JvmOverloads constructor(
     context: Context,

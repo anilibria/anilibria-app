@@ -1,10 +1,10 @@
-package com.lapism.search.internal.behavior
+package searchbar.internal.behavior
 
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import com.google.android.material.appbar.AppBarLayout
-import com.lapism.search.internal.SearchLayout
+import searchbar.internal.SearchLayout
 
 
 internal class SearchBehavior<S : SearchLayout> : CoordinatorLayout.Behavior<S>() {

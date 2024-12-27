@@ -1,6 +1,5 @@
-package com.lapism.search.widget
+package searchbar.widget
 
-import android.animation.LayoutTransition
 import android.content.Context
 import android.util.AttributeSet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -9,11 +8,11 @@ import androidx.core.view.updateLayoutParams
 import androidx.transition.Fade
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
-import com.lapism.search.R
-import com.lapism.search.internal.MarginsType
-import com.lapism.search.internal.SearchLayout
-import com.lapism.search.internal.animations.SuperTransition
-import com.lapism.search.internal.behavior.SearchBehavior
+import searchbar.R
+import searchbar.internal.MarginsType
+import searchbar.internal.SearchLayout
+import searchbar.internal.animations.SuperTransition
+import searchbar.internal.behavior.SearchBehavior
 
 class SearchView @JvmOverloads constructor(
     context: Context,

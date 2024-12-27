@@ -1,4 +1,4 @@
-package com.lapism.search.internal
+package searchbar.internal
 
 import android.content.Context
 import android.text.TextUtils

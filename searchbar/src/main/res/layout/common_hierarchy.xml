@@ -7,8 +7,7 @@
     <View
         android:id="@+id/shadow"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/search_shadow" />
+        android:layout_height="match_parent" />
 
     <View
         android:id="@+id/filler"
@@ -36,7 +35,7 @@
                     android:layout_width="@dimen/search_icon_56"
                     android:layout_height="match_parent" />
 
-                <com.lapism.search.internal.SearchEditText
+                <searchbar.internal.SearchEditText
                     android:id="@+id/input"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"

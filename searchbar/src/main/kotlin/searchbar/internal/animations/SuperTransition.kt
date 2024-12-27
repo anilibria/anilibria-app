@@ -1,4 +1,4 @@
-package com.lapism.search.internal.animations
+package searchbar.internal.animations
 
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.transition.ChangeBounds

@@ -1,11 +1,10 @@
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
-    id("kotlin-parcelize")
 }
 
 android {
-    namespace "com.lapism.search"
+    namespace "searchbar"
 
     compileSdk app_compile_sdk_version
 

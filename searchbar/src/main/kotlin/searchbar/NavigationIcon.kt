@@ -1,4 +1,4 @@
-package com.lapism.search
+package searchbar
 
 enum class NavigationIcon {
     Arrow,

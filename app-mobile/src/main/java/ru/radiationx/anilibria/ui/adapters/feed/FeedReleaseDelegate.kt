@@ -61,7 +61,7 @@ class FeedReleaseDelegate(
             }
             binding.root.setOnLongClickListener {
                 longClickListener.invoke(state)
-                return@setOnLongClickListener false
+                true
             }
         }
     }

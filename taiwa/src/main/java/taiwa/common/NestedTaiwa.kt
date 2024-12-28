@@ -5,6 +5,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import envoy.Envoy
+import envoy.DiffItem
 import taiwa.TaiwaAnchor
 import taiwa.TaiwaEvent
 import taiwa.dsl.TaiwaRootContentScope
@@ -41,6 +43,10 @@ class NestedTaiwa(
 
     fun setContent(block: TaiwaRootContentScope.() -> Unit) {
         contentController.apply(buildRootTaiwa(block))
+    }
+
+    fun addDelegate(delegate: Envoy<DiffItem>) {
+        taiwa.addDelegate(delegate)
     }
 
     fun show() {

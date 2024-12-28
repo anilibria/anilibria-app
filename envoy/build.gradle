@@ -1,11 +1,10 @@
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
-    id("kotlin-parcelize")
 }
 
 android {
-    namespace 'taiwa'
+    namespace 'envoy'
 
     compileSdk app_compile_sdk_version
 
@@ -24,14 +23,8 @@ kotlin {
 }
 
 dependencies {
-    implementation project(":envoy")
     implementation libs.kotlin.stdlib
-
     implementation libs.androidx.appcompat
     implementation libs.androidx.recyclerview
-
-    implementation libs.google.material
-    implementation libs.google.flexbox
-
     implementation libs.viewbindingpropertydelegate
 }

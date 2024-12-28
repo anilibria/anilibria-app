@@ -2,6 +2,7 @@ package taiwa.internal.dsl
 
 import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
+import envoy.DiffItem
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
 import taiwa.dsl.TaiwaBaseItemScope
@@ -154,7 +155,7 @@ internal class TaiwaMessageScopeImpl : TaiwaMessageScope, ScopeBuilder<TaiwaMess
 internal class TaiwaItemsScopeImpl : TaiwaItemsScope, ScopeBuilder<TaiwaItemsState> {
 
     private var _action: TaiwaAction? = null
-    private val _items = mutableListOf<TaiwaItemState>()
+    private val _items = mutableListOf<DiffItem>()
 
     override fun action(action: TaiwaAction?) {
         _action = action
@@ -182,6 +183,10 @@ internal class TaiwaItemsScopeImpl : TaiwaItemsScope, ScopeBuilder<TaiwaItemsSta
         val scope = TaiwaCheckboxItemScopeImpl(createBaseItemScope(id))
         block.invoke(scope)
         _items.add(scope.build())
+    }
+
+    override fun custom(item: DiffItem) {
+        _items.add(item)
     }
 
     override fun build(): TaiwaItemsState {

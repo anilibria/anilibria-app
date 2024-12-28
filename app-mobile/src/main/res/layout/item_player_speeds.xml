@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="?textAppearanceBody1"
+        tools:text="1x" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:paddingHorizontal="8dp">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/minusSpeed"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_circle_button"
+            android:src="@drawable/ic_baseline_remove_24" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/seekbar"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            app:labelBehavior="gone"
+            app:tickVisible="false" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/plusSpeed"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_circle_button"
+            android:src="@drawable/ic_baseline_add_24" />
+    </LinearLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:paddingHorizontal="8dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chip1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_circle_button"
+            android:text="1.0"
+            android:textAlignment="center" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chip2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_circle_button"
+            android:text="1.25"
+            android:textAlignment="center" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chip3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_circle_button"
+            android:text="1.5"
+            android:textAlignment="center" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chip4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_circle_button"
+            android:text="1.75"
+            android:textAlignment="center" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/chip5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_circle_button"
+            android:text="2.0"
+            android:textAlignment="center" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</LinearLayout>

@@ -1,12 +1,21 @@
 package ru.radiationx.anilibria.ui.activities.player.controllers
 
 import androidx.activity.ComponentActivity
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.databinding.ItemPlayerSpeedsBinding
+import ru.radiationx.anilibria.utils.view.attachedCoroutineScope
 import ru.radiationx.data.entity.common.PlayerQuality
+import envoy.DiffItem
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
 import taiwa.bottomsheet.nestedBottomSheetTaiwa
-import taiwa.common.NestedTaiwa
+import envoy.ext.viewBindingEnvoy
+import java.math.BigDecimal
 
 class PlayerSettingsController(
     private val activity: ComponentActivity,
@@ -18,12 +27,19 @@ class PlayerSettingsController(
     private val speedAnchor = TaiwaAnchor.Id("speed")
     private val skipsAnchor = TaiwaAnchor.Id("skips")
 
+
     var onQualitySelected: ((PlayerQuality) -> Unit)? = null
     var onSpeedSelected: ((Float) -> Unit)? = null
     var onSkipsSelected: ((Boolean) -> Unit)? = null
     var onSkipsTimerSelected: ((Boolean) -> Unit)? = null
     var onInactiveTimerSelected: ((Boolean) -> Unit)? = null
     var onAutoplaySelected: ((Boolean) -> Unit)? = null
+
+    init {
+        taiwa.addDelegate(speedSelectorEnvoy {
+            onSpeedSelected?.invoke(it)
+        })
+    }
 
     fun show() {
         taiwa.show()
@@ -97,14 +113,7 @@ class PlayerSettingsController(
                     canClose()
                 }
                 items {
-                    action(TaiwaAction.Root)
-                    state.availableSpeeds.forEach { speed ->
-                        radioItem(speed) {
-                            title(speed.toSpeedValue())
-                            select(speed == state.currentSpeed)
-                            onClick { onSpeedSelected?.invoke(speed) }
-                        }
-                    }
+                    custom(SpeedSelector(state.currentSpeed))
                 }
             }
 
@@ -153,11 +162,6 @@ class PlayerSettingsController(
         PlayerQuality.FULLHD -> R.drawable.ic_quality_full_hd_base
     }
 
-    private fun Float.toSpeedValue() = if (this == 1.0f) {
-        "Нормальная"
-    } else {
-        "${"${this}".trimEnd('0').trimEnd('.').trimEnd(',')}x"
-    }
 
     private enum class SettingItem {
         Quality,
@@ -169,9 +173,83 @@ class PlayerSettingsController(
     }
 }
 
+private fun Float.toSpeedValue() = if (this == 1.0f) {
+    "Нормальная"
+} else {
+    "${"${this}".trimEnd('0').trimEnd('.').trimEnd(',')}x"
+}
+
+
+private data class SpeedSelector(val speed: Float) : DiffItem("speed")
+
+private fun speedSelectorEnvoy(
+    speedListener: (Float) -> Unit
+) = viewBindingEnvoy<SpeedSelector, ItemPlayerSpeedsBinding> {
+    val speedFlow = MutableSharedFlow<Float>()
+
+    fun Float.coerceSpeed() = coerceIn(0.25f, 2.0f)
+
+    fun updateValue(block: (BigDecimal) -> BigDecimal) {
+        val init = view.seekbar.value.toBigDecimal()
+        val result = block.invoke(init).toFloat().coerceSpeed()
+        view.seekbar.value = result
+    }
+
+    view.seekbar.apply {
+        valueFrom = 0.25f
+        valueTo = 2.0f
+        stepSize = 0.05f
+        addOnChangeListener { _, value, _ ->
+            view.title.text = value.toSpeedValue()
+            view.root.attachedCoroutineScope.launch {
+                speedFlow.emit(value)
+            }
+        }
+    }
+    view.minusSpeed.setOnClickListener {
+        updateValue { it - view.seekbar.stepSize.toBigDecimal() }
+    }
+
+    view.plusSpeed.setOnClickListener {
+        updateValue { it + view.seekbar.stepSize.toBigDecimal() }
+    }
+
+    view.chip1.setOnClickListener {
+        view.seekbar.value = 1f
+    }
+
+    view.chip2.setOnClickListener {
+        view.seekbar.value = 1.25f
+    }
+
+    view.chip3.setOnClickListener {
+        view.seekbar.value = 1.5f
+    }
+
+    view.chip4.setOnClickListener {
+        view.seekbar.value = 1.75f
+    }
+
+    view.chip5.setOnClickListener {
+        view.seekbar.value = 2.0f
+    }
+
+    attach {
+        speedFlow
+            .debounce(300)
+            .onEach { speedListener.invoke(it) }
+            .launchIn(view.root.attachedCoroutineScope)
+    }
+
+    bind {
+        val coercedSpeed = it.speed.coerceSpeed()
+        view.title.text = coercedSpeed.toSpeedValue()
+        view.seekbar.value = coercedSpeed
+    }
+}
+
 data class PlayerSettingsState(
     val currentSpeed: Float,
-    val availableSpeeds: List<Float>,
     val currentQuality: PlayerQuality,
     val availableQualities: Set<PlayerQuality>,
     val skipsEnabled: Boolean,

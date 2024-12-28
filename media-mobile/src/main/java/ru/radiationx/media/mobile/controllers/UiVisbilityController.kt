@@ -24,7 +24,7 @@ internal class UiVisbilityController(
 ) : PlayerAttachListener {
 
     companion object {
-        private const val CONTROLS_HIDE_DELAY = 2000L
+        private const val CONTROLS_HIDE_DELAY = 2500L
     }
 
     private var tapJob: Job? = null
@@ -82,6 +82,7 @@ internal class UiVisbilityController(
             }
             binding.mediaButtonsContainer.isVisible = it.controlsVisible
             binding.mediaFooter.isVisible = it.mainVisible
+            binding.mediaSeekBar.isEnabled = it.mainVisible
             binding.mediaLoading.isVisible = it.loadingVisible
             binding.mediaSeekerTime.isVisible = it.seekerVisible
             binding.mediaScrim.isVisible = it.mainVisible

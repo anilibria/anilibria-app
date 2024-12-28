@@ -20,9 +20,11 @@ import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.StyleRes
 import androidx.core.graphics.Insets
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.motion.MaterialBackOrchestrator
@@ -123,11 +125,17 @@ class TaiwaBottomSheetDialog @JvmOverloads constructor(
 
     override fun applyWrapperInsets(wrapperInsets: Insets) {
         binding.container.updatePadding(
-            left = wrapperInsets.left,
             top = wrapperInsets.top,
-            right = wrapperInsets.right,
             bottom = wrapperInsets.bottom
         )
+        binding.coordinator.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = wrapperInsets.left
+            rightMargin = wrapperInsets.right
+        }
+        binding.footerWrapper.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = wrapperInsets.left
+            rightMargin = wrapperInsets.right
+        }
     }
 
     private fun initPeekHeight() {

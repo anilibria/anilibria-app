@@ -9,8 +9,8 @@ import envoy.Envoy
 import envoy.DiffItem
 import taiwa.TaiwaAnchor
 import taiwa.TaiwaEvent
-import taiwa.dsl.TaiwaRootContentScope
-import taiwa.internal.buildRootTaiwa
+import taiwa.dsl.TaiwaNestingScope
+import taiwa.internal.buildNestingTaiwa
 import taiwa.internal.view.NestedContentController
 
 class NestedTaiwa(
@@ -41,8 +41,8 @@ class NestedTaiwa(
         }
     }
 
-    fun setContent(block: TaiwaRootContentScope.() -> Unit) {
-        contentController.apply(buildRootTaiwa(block))
+    fun setContent(block: TaiwaNestingScope.() -> Unit) {
+        contentController.apply(buildNestingTaiwa(block))
     }
 
     fun addDelegate(delegate: Envoy<DiffItem>) {

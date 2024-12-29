@@ -109,6 +109,8 @@ abstract class BaseTaiwaDialog @JvmOverloads constructor(
         return footerBinding
     }
 
+    abstract fun setFooterVisible(value: Boolean)
+
     protected abstract fun prepareContentView()
 
     protected abstract fun prepareFooterView()
@@ -200,6 +202,7 @@ abstract class BaseTaiwaDialog @JvmOverloads constructor(
         var isAnimationRunning = false
         ViewCompat.setOnApplyWindowInsetsListener(views.root) { _, insets ->
             if (!isAnimationRunning) {
+                TransitionManager.endTransitions(views.transitionRoot)
                 applyWrapperInsets(calculateWrapperInsets(insets))
             }
             insets
@@ -213,6 +216,7 @@ abstract class BaseTaiwaDialog @JvmOverloads constructor(
 
                 override fun onPrepare(animation: WindowInsetsAnimationCompat) {
                     super.onPrepare(animation)
+                    TransitionManager.endTransitions(views.transitionRoot)
                     isAnimationRunning = true
                 }
 

@@ -56,17 +56,18 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
 
 
     private val episodeMenuTaiwa by bottomSheetTaiwa {
-        items {
-            action(TaiwaAction.Close)
+        body {
             item {
                 icon(R.drawable.ic_baseline_done_all_24)
                 title("Отметить все как просмотренные")
+                action(TaiwaAction.Close)
                 onClick { viewModel.onCheckAllEpisodesHistoryClick() }
             }
             item {
                 icon(R.drawable.ic_baseline_remove_done_24)
                 title("Сбросить историю просмотров")
                 tint(androidx.appcompat.R.attr.colorError)
+                action(TaiwaAction.Close)
                 onClick { viewModel.onResetEpisodesHistoryClick() }
             }
         }
@@ -77,17 +78,19 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
     private val torrentTaiwa by bottomSheetTaiwa()
 
     private val favoriteTaiwa by bottomSheetTaiwa {
-        message {
-            text("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
-        }
-        buttons {
-            action(TaiwaAction.Close)
-            button {
-                text("Да")
-                onClick { viewModel.openAuth() }
+        body {
+            message {
+                text("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
             }
-            button {
-                text("Нет")
+            buttons {
+                action(TaiwaAction.Close)
+                button {
+                    text("Да")
+                    onClick { viewModel.openAuth() }
+                }
+                button {
+                    text("Нет")
+                }
             }
         }
     }
@@ -178,12 +181,12 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
 
     private fun showLongPressEpisodeDialog(episode: Episode) {
         episodeTaiwa.setContent {
-            items {
-                action(TaiwaAction.Close)
+            body {
                 item {
                     icon(R.drawable.ic_baseline_remove_done_24)
                     title("Отметить как непросмотренная")
                     tint(androidx.appcompat.R.attr.colorError)
+                    action(TaiwaAction.Close)
                     onClick { viewModel.markEpisodeUnviewed(episode) }
                 }
             }
@@ -193,26 +196,29 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
 
     private fun showTorrentDialog(id: TorrentId) {
         torrentTaiwa.setContent {
-            items {
-                action(TaiwaAction.Close)
+            body {
                 item {
                     icon(R.drawable.ic_outline_file_open_24)
                     title("Открыть файл")
+                    action(TaiwaAction.Close)
                     onClick { viewModel.onTorrentClick(id, TorrentAction.Open) }
                 }
                 item {
                     icon(R.drawable.ic_baseline_share_24)
                     title("Поделиться файлом")
+                    action(TaiwaAction.Close)
                     onClick { viewModel.onTorrentClick(id, TorrentAction.Share) }
                 }
                 item {
                     icon(R.drawable.ic_baseline_open_in_new_24)
                     title("Открыть ссылку на файл")
+                    action(TaiwaAction.Close)
                     onClick { viewModel.onTorrentClick(id, TorrentAction.OpenUrl) }
                 }
                 item {
                     icon(R.drawable.ic_baseline_share_24)
                     title("Поделиться ссылкой на файл")
+                    action(TaiwaAction.Close)
                     onClick { viewModel.onTorrentClick(id, TorrentAction.ShareUrl) }
                 }
             }

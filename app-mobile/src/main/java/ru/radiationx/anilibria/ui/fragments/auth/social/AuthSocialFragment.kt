@@ -75,18 +75,20 @@ class AuthSocialFragment :
     }
 
     private val errorTaiwa by bottomSheetTaiwa {
-        message {
-            text("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
-        }
-        buttons {
-            action(TaiwaAction.Close)
-            button {
-                text("Перейти")
-                onClick { }
+        body {
+            message {
+                text("Не найден связанный аккаунт.\n\nЕсли у вас уже есть аккаунт на сайте AniLibria.tv, то привяжите этот аккаунт в личном кабинете.\n\nЕсли аккаунта нет, то зарегистрируйте его на сайте.")
             }
-            button {
-                text("Отмена")
-                onClick { }
+            buttons {
+                action(TaiwaAction.Close)
+                button {
+                    text("Перейти")
+                    onClick { }
+                }
+                button {
+                    text("Отмена")
+                    onClick { }
+                }
             }
         }
         onClose { viewModel.onUserUnderstandWhatToDo() }

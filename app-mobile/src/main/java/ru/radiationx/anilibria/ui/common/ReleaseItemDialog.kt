@@ -39,11 +39,11 @@ class ReleaseItemDialog(
 
     fun show(item: ReleaseItemState) {
         dialog.setContent {
-            items {
-                action(TaiwaAction.Close)
+            body {
                 item {
                     icon(R.drawable.ic_baseline_content_copy_24)
                     title("Копировать ссылку")
+                    action(TaiwaAction.Close)
                     onClick {
                         onCopyClick.invoke(item)
                         Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT)
@@ -53,11 +53,13 @@ class ReleaseItemDialog(
                 item {
                     icon(R.drawable.ic_baseline_share_24)
                     title("Поделиться")
+                    action(TaiwaAction.Close)
                     onClick { onShareClick.invoke(item) }
                 }
                 item {
                     icon(R.drawable.ic_baseline_app_shortcut_24)
                     title("Добавить на главный экран")
+                    action(TaiwaAction.Close)
                     onClick { onShortcutClick.invoke(item) }
                 }
                 if (onDeleteClick != null) {
@@ -65,6 +67,7 @@ class ReleaseItemDialog(
                         icon(R.drawable.ic_baseline_delete_outline_24)
                         tint(androidx.appcompat.R.attr.colorError)
                         title("Удалить")
+                        action(TaiwaAction.Close)
                         onClick { onDeleteClick.invoke(item) }
                     }
                 }

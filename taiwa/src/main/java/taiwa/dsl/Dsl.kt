@@ -9,10 +9,13 @@ import taiwa.internal.models.ClickListener
 
 
 @DslMarker
+annotation class TaiwaScopeMarker
+
+@DslMarker
 annotation class ContentScopeMarker
 
 @DslMarker
-annotation class HeaderScopeMarker
+annotation class ToolbarScopeMarker
 
 @DslMarker
 annotation class MessageScopeMarker
@@ -29,53 +32,58 @@ annotation class ItemsScopeMarker
 @DslMarker
 annotation class ItemScopeMarker
 
-@ContentScopeMarker
-@HeaderScopeMarker
+@ItemScopeMarker
+@ToolbarScopeMarker
 @MessageScopeMarker
-@ItemsScopeMarker
 @ButtonScopeMarker
+@TaiwaScopeMarker
+@ContentScopeMarker
 interface TaiwaContentScope {
-    fun onClose(listener: ClickListener)
-    fun header(block: TaiwaHeaderScope.() -> Unit)
+    fun envoy(item: DiffItem)
+    fun toolbar(block: TaiwaToolbarScope.() -> Unit)
     fun message(block: TaiwaMessageScope.() -> Unit)
-    fun items(block: TaiwaItemsScope.() -> Unit)
+    fun item(id: Any? = null, block: TaiwaBasicItemScope.() -> Unit)
+    fun switchItem(id: Any? = null, block: TaiwaSwitchItemScope.() -> Unit)
+    fun radioItem(id: Any? = null, block: TaiwaRadioItemScope.() -> Unit)
+    fun checkboxItem(id: Any? = null, block: TaiwaCheckboxItemScope.() -> Unit)
     fun buttons(block: TaiwaButtonsScope.() -> Unit)
 }
 
-interface TaiwaRootContentScope : TaiwaContentScope {
-    fun nestedContent(anchor: TaiwaAnchor.Id, block: TaiwaContentScope.() -> Unit)
+@TaiwaScopeMarker
+@ToolbarScopeMarker
+@MessageScopeMarker
+@ItemsScopeMarker
+interface TaiwaScope {
+    fun backAction(action: TaiwaAction)
+    fun onClose(listener: ClickListener)
+    fun header(block: TaiwaContentScope.() -> Unit)
+    fun body(block: TaiwaContentScope.() -> Unit)
+    fun footer(block: TaiwaContentScope.() -> Unit)
 }
 
-@ContentScopeMarker
-@HeaderScopeMarker
-interface TaiwaHeaderScope {
+interface TaiwaNestingScope : TaiwaScope {
+    fun nested(anchor: TaiwaAnchor.Id, block: TaiwaScope.() -> Unit)
+}
+
+@TaiwaScopeMarker
+@ToolbarScopeMarker
+interface TaiwaToolbarScope {
     fun title(value: String)
     fun subtitle(value: String)
-    fun backAction(action: TaiwaAction?)
-    fun canClose()
+    fun withBack()
+    fun withClose()
 }
 
-@ContentScopeMarker
+@TaiwaScopeMarker
 @MessageScopeMarker
 interface TaiwaMessageScope {
     fun text(value: String)
 }
 
-@ContentScopeMarker
-@ItemsScopeMarker
-interface TaiwaItemsScope {
-    fun action(action: TaiwaAction?)
-    fun item(id: Any? = null, block: TaiwaBasicItemScope.() -> Unit)
-    fun switchItem(id: Any? = null, block: TaiwaSwitchItemScope.() -> Unit)
-    fun radioItem(id: Any? = null, block: TaiwaRadioItemScope.() -> Unit)
-    fun checkboxItem(id: Any? = null, block: TaiwaCheckboxItemScope.() -> Unit)
-    fun custom(item: DiffItem)
-}
-
-@ContentScopeMarker
+@TaiwaScopeMarker
 @ButtonsScopeMarker
 interface TaiwaButtonsScope {
-    fun action(action: TaiwaAction?)
+    fun action(action: TaiwaAction)
     fun button(id: Any? = null, block: TaiwaButtonScope.() -> Unit)
 }
 
@@ -87,7 +95,7 @@ interface TaiwaBaseItemScope {
     fun tint(@AttrRes attrRes: Int)
     fun title(value: String)
     fun subtitle(value: String)
-    fun action(action: TaiwaAction?)
+    fun action(action: TaiwaAction)
     fun onClick(listener: ClickListener)
 }
 
@@ -111,6 +119,6 @@ interface TaiwaCheckboxItemScope : TaiwaBaseItemScope, TaiwaSelectableItemScope
 @ButtonScopeMarker
 interface TaiwaButtonScope {
     fun text(value: String)
-    fun action(action: TaiwaAction?)
+    fun action(action: TaiwaAction)
     fun onClick(listener: ClickListener)
 }

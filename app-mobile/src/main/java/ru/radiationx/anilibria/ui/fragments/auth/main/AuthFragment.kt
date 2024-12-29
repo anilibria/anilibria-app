@@ -47,17 +47,19 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
     private val socialTaiwa by bottomSheetTaiwa()
 
     private val registrationTaiwa by bottomSheetTaiwa {
-        message {
-            text("Зарегистрировать аккаунт можно только на сайте.")
-        }
-        buttons {
-            action(TaiwaAction.Close)
-            button {
-                text("Регистрация")
-                onClick { viewModel.registrationToSiteClick() }
+        body {
+            message {
+                text("Зарегистрировать аккаунт можно только на сайте.")
             }
-            button {
-                text("Отмена")
+            buttons {
+                action(TaiwaAction.Close)
+                button {
+                    text("Регистрация")
+                    onClick { viewModel.registrationToSiteClick() }
+                }
+                button {
+                    text("Отмена")
+                }
             }
         }
     }
@@ -115,18 +117,20 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
 
     private fun onSocialClick(item: SocialAuthItemState) {
         socialTaiwa.setContent {
-            message {
-                text("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
-            }
-            buttons {
-                action(TaiwaAction.Close)
-                button {
-                    text("Продолжить")
-                    onClick { viewModel.onSocialClick(item) }
+            body {
+                message {
+                    text("Обратите внимание, что в приложении возможна только авторизация, без регистрации аккаунта.\n\nЕсли ваши аккаунты не привязаны друг к другу, то зайдите в личный кабинет на сайте и привяжите их. ")
                 }
-                button {
-                    text("Личный кабинет")
-                    onClick { systemUtils.externalLink("${apiConfig.siteUrl}/pages/cp.php") }
+                buttons {
+                    action(TaiwaAction.Close)
+                    button {
+                        text("Продолжить")
+                        onClick { viewModel.onSocialClick(item) }
+                    }
+                    button {
+                        text("Личный кабинет")
+                        onClick { systemUtils.externalLink("${apiConfig.siteUrl}/pages/cp.php") }
+                    }
                 }
             }
         }

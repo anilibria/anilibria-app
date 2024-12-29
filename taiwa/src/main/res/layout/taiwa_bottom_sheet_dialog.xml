@@ -71,13 +71,11 @@
         android:layout_height="wrap_content"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:visibility="gone"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_max="@dimen/taiwa_bottom_sheet_content_max_width"
-        tools:visibility="visible">
+        app:layout_constraintWidth_max="@dimen/taiwa_bottom_sheet_content_max_width">
 
         <FrameLayout
             android:id="@+id/footerContainer"
@@ -88,7 +86,9 @@
             android:background="@drawable/taiwa_bg_content_dialog"
             android:elevation="@dimen/taiwa_content_elevation"
             android:outlineProvider="background"
-            tools:layout_height="48dp">
+            android:visibility="gone"
+            tools:layout_height="48dp"
+            tools:visibility="visible">
 
         </FrameLayout>
 

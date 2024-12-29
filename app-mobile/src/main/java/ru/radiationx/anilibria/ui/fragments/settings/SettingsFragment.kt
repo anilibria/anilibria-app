@@ -135,13 +135,15 @@ class SettingsFragment : BaseSettingFragment() {
     private fun showThemeTaiwa() {
         val currentValue = appThemeController.getMode()
         themeTaiwa.setContent {
-            header { title(getString(R.string.pref_title_theme_mode)) }
-            items {
-                action(TaiwaAction.Close)
+            header {
+                toolbar { title(getString(R.string.pref_title_theme_mode)) }
+            }
+            body {
                 AppThemeMode.entries.forEach { mode ->
                     radioItem {
                         title(mode.getTitle())
                         select(mode == currentValue)
+                        action(TaiwaAction.Close)
                         onClick { appThemeController.setMode(mode) }
                     }
                 }
@@ -154,15 +156,17 @@ class SettingsFragment : BaseSettingFragment() {
         val currentValue = appPreferences.playerQuality.value
         qualityTaiwa.setContent {
             header {
-                title(getString(R.string.pref_quality))
+                toolbar {
+                    title(getString(R.string.pref_quality))
+                }
             }
-            items {
-                action(TaiwaAction.Close)
+            body {
                 PlayerQuality.entries.forEach { quality ->
                     radioItem {
                         icon(getQualityIconRes(quality))
                         title(getQualityTitle(quality))
                         select(quality == currentValue)
+                        action(TaiwaAction.Close)
                         onClick {
                             settingsAnalytics.qualityChange(quality.toAnalyticsQuality())
                             appPreferences.playerQuality.value = quality
@@ -178,14 +182,17 @@ class SettingsFragment : BaseSettingFragment() {
         val currentValue = appPreferences.playerTransport.value
         transportTaiwa.setContent {
             header {
-                title(getString(R.string.pref_transport))
+                toolbar {
+                    title(getString(R.string.pref_transport))
+                }
             }
-            items {
-                action(TaiwaAction.Close)
+            body {
+
                 PlayerTransport.entries.forEach { transport ->
                     radioItem {
                         title(getTransportTitle(transport))
                         select(transport == currentValue)
+                        action(TaiwaAction.Close)
                         onClick {
                             appPreferences.playerTransport.value = transport
                         }

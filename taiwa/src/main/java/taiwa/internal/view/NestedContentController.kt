@@ -5,21 +5,21 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import taiwa.TaiwaAnchor
-import taiwa.internal.models.TaiwaContentState
-import taiwa.internal.models.TaiwaRootContentState
+import taiwa.internal.models.TaiwaState
+import taiwa.internal.models.TaiwaNestingState
 
 internal class NestedContentController {
 
 
     private val anchorFlow = MutableStateFlow<TaiwaAnchor>(TaiwaAnchor.Root)
 
-    private val rootStateFlow = MutableStateFlow<TaiwaRootContentState?>(null)
+    private val rootStateFlow = MutableStateFlow<TaiwaNestingState?>(null)
 
     val currentStateFlow = combine(anchorFlow, rootStateFlow.filterNotNull()) { anchor, rootState ->
         transformState(anchor, rootState)
     }.distinctUntilChanged()
 
-    fun apply(state: TaiwaRootContentState) {
+    fun apply(state: TaiwaNestingState) {
         rootStateFlow.value = state
     }
 
@@ -30,19 +30,19 @@ internal class NestedContentController {
 
     private fun transformState(
         anchor: TaiwaAnchor,
-        root: TaiwaRootContentState,
-    ): TaiwaContentState {
+        root: TaiwaNestingState,
+    ): TaiwaState {
         val contentByAnchor = findContentByAnchor(anchor, root)
         return contentByAnchor ?: root.content
     }
 
     private fun findContentByAnchor(
         anchor: TaiwaAnchor,
-        root: TaiwaRootContentState,
-    ): TaiwaContentState? {
+        root: TaiwaNestingState,
+    ): TaiwaState? {
         return when (anchor) {
             TaiwaAnchor.Root -> root.content
-            is TaiwaAnchor.Id -> root.nestedContents[anchor]
+            is TaiwaAnchor.Id -> root.nested[anchor]
         }
     }
 }

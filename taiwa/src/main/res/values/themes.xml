@@ -7,6 +7,12 @@
     <style name="ThemeOverlay.Taiwa.Dialog" parent="ThemeOverlay.AppCompat.Dialog">
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="taiwaButtonsOverlay">
+            @style/ThemeOverlay.Taiwa.Buttons
+        </item>
+    </style>
+
+    <style name="ThemeOverlay.Taiwa.Buttons" parent="ThemeOverlay.AppCompat.Dialog">
         <item name="materialButtonStyle">
             @style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush
         </item>

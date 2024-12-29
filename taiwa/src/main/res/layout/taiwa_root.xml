@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,92 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="8dp" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="56dp">
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideTop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="0dp" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideBottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_end="0dp" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/headerBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?actionBarItemBackground"
-            android:scaleType="center"
-            android:src="@drawable/baseline_arrow_back_24"
-            android:tint="?colorOnSurface"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/headerTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAppearance="?textAppearanceHeadline6"
-            app:layout_constraintBottom_toTopOf="@id/headerSubtitle"
-            app:layout_constraintEnd_toStartOf="@id/headerClose"
-            app:layout_constraintStart_toEndOf="@id/headerBack"
-            app:layout_constraintTop_toTopOf="@id/guideTop"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_goneMarginEnd="16dp"
-            app:layout_goneMarginStart="16dp"
-            tools:text="Title" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/headerSubtitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAppearance="?textAppearanceListItemSecondary"
-            android:textColor="?android:textColorSecondary"
-            app:layout_constraintBottom_toBottomOf="@id/guideBottom"
-            app:layout_constraintEnd_toStartOf="@id/headerClose"
-            app:layout_constraintStart_toEndOf="@id/headerBack"
-            app:layout_constraintTop_toBottomOf="@id/headerTitle"
-            app:layout_goneMarginEnd="16dp"
-            app:layout_goneMarginStart="16dp"
-            tools:text="Subtitle" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/headerClose"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?actionBarItemBackground"
-            android:scaleType="center"
-            android:src="@drawable/baseline_close_24"
-            android:tint="?colorOnSurface"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="16dp"
-        android:textAppearance="?textAppearanceBody1"
-        tools:text="Message" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemsRecycler"
         android:layout_width="match_parent"
@@ -105,17 +18,6 @@
         android:overScrollMode="never"
         tools:itemCount="4"
         tools:listitem="@layout/taiwa_item" />
-
-    <com.google.android.flexbox.FlexboxLayout
-        android:id="@+id/buttonsContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:padding="8dp"
-        app:flexDirection="row_reverse"
-        app:flexWrap="wrap">
-
-    </com.google.android.flexbox.FlexboxLayout>
 
     <Space
         android:id="@+id/spaceBottom"

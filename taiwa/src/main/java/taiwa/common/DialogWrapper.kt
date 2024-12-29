@@ -4,11 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.addCallback
-import taiwa.dialogs.BaseTaiwaDialog
-import taiwa.dialogs.TaiwaDialog
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
+import taiwa.dialogs.BaseTaiwaDialog
 import taiwa.dialogs.TaiwaBottomSheetDialog
+import taiwa.dialogs.TaiwaDialog
 import taiwa.dialogs.ext.attachToLifecycle
 
 class DialogWrapper(
@@ -70,6 +70,10 @@ class DialogWrapper(
 
     fun <T : ViewBinding> setFooterBinding(block: ((inflater: LayoutInflater) -> T)): T {
         return dialog.setFooterBinding(block)
+    }
+
+    fun setFooterVisible(value: Boolean) {
+        dialog.setFooterVisible(value)
     }
 
     fun prepareTransition(): ViewTransition {

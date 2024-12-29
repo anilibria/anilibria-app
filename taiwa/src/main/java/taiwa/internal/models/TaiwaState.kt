@@ -2,6 +2,7 @@ package taiwa.internal.models
 
 import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
+import envoy.DiffItem
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
 
@@ -31,13 +32,13 @@ internal data class TaiwaMessageState(
 )
 
 internal data class TaiwaItemsState(
-    val items: List<TaiwaItemState>,
+    val items: List<DiffItem>,
 )
 
 internal data class TaiwaItemState(
     val base: TaiwaBaseItemState,
     val type: TaiwaItemTypeState,
-)
+) : DiffItem(base.id)
 
 internal sealed interface TaiwaItemTypeState {
 

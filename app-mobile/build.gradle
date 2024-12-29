@@ -83,6 +83,7 @@ dependencies {
     implementation project(":quill-di")
     implementation project(":media-mobile")
     implementation project(":taiwa")
+    implementation project(":envoy")
 
     implementation libs.androidx.activity
     implementation libs.androidx.appcompat

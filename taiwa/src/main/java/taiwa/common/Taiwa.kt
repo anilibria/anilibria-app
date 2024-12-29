@@ -2,6 +2,8 @@ package taiwa.common
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
+import envoy.Envoy
+import envoy.DiffItem
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
 import taiwa.TaiwaEvent
@@ -65,6 +67,10 @@ class Taiwa(
 
     fun setEventListener(listener: (TaiwaEvent) -> Unit) {
         eventListener = listener
+    }
+
+    fun addDelegate(delegate: Envoy<DiffItem>){
+        getContentView().addDelegate(delegate)
     }
 
     fun show() {

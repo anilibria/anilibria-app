@@ -19,3 +19,4 @@ include ':app-mobile', ':data', ':shared-ktx', ':shared-android-ktx', ':searchba
 include ':quill-di'
 include ':media-mobile'
 include ':taiwa'
+include ':envoy'

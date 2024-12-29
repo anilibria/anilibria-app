@@ -30,7 +30,6 @@ class PlayerSettingViewModel @Inject constructor(
             .distinctUntilChanged()
             .register()
         val playSpeed by preferencesHolder.playSpeed.register()
-        val availableSpeeds by preferencesHolder.availableSpeeds.register()
         val playerQuality by preferencesHolder.playerQuality.register()
         val playerSkips by preferencesHolder.playerSkips.register()
         val playerSkipsTimer by preferencesHolder.playerSkipsTimer.register()
@@ -41,7 +40,6 @@ class PlayerSettingViewModel @Inject constructor(
             val availableQualities = qualityInfo?.available ?: PlayerQuality.entries.toSet()
             PlayerSettingsState(
                 currentSpeed = playSpeed,
-                availableSpeeds = availableSpeeds,
                 currentQuality = currentQuality,
                 availableQualities = availableQualities,
                 skipsEnabled = playerSkips,

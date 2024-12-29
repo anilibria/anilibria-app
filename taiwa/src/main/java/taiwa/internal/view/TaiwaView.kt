@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.button.MaterialButton
+import envoy.Envoy
+import envoy.recycler.DiffItemEnvoyAdapter
+import envoy.DiffItem
 import taiwa.TaiwaAction
 import taiwa.common.ViewTransition
 import taiwa.databinding.TaiwaRootBinding
@@ -29,8 +32,10 @@ internal class TaiwaView @JvmOverloads constructor(
     private val binding by viewBinding<TaiwaRootBinding>(attachToRoot = true)
 
     private val itemsAdapter by lazy {
-        TaiwaItemsAdapter {
-            handleClick(it.base.action, it.base.clickListener)
+        DiffItemEnvoyAdapter().apply {
+            addEnvoy(taiwaItemEnvoy {
+                handleClick(it.base.action, it.base.clickListener)
+            })
         }
     }
 
@@ -59,6 +64,10 @@ internal class TaiwaView @JvmOverloads constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         binding.itemsRecycler.adapter = null
+    }
+
+    fun addDelegate(delegate: Envoy<DiffItem>) {
+        itemsAdapter.addEnvoy(delegate)
     }
 
     fun setState(

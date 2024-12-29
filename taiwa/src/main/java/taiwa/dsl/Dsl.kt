@@ -2,6 +2,7 @@ package taiwa.dsl
 
 import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
+import envoy.DiffItem
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
 import taiwa.internal.models.ClickListener
@@ -68,6 +69,7 @@ interface TaiwaItemsScope {
     fun switchItem(id: Any? = null, block: TaiwaSwitchItemScope.() -> Unit)
     fun radioItem(id: Any? = null, block: TaiwaRadioItemScope.() -> Unit)
     fun checkboxItem(id: Any? = null, block: TaiwaCheckboxItemScope.() -> Unit)
+    fun custom(item: DiffItem)
 }
 
 @ContentScopeMarker

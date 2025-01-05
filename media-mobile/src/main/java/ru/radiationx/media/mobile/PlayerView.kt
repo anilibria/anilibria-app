@@ -150,7 +150,7 @@ class PlayerView @JvmOverloads constructor(
         initInsets()
     }
 
-    fun setPlayer(player: Player?) {
+    fun setPlayer(player: PlayerProxy?) {
         holder.setPlayer(player)
     }
 

@@ -85,7 +85,7 @@ class PlayerFlow(
 
         override fun onEvents(player: Player, events: Player.Events) {
             super.onEvents(player, events)
-            updateTimeline(player)
+            updateTimeline()
         }
 
         private fun Throwable.findRootCause(): Throwable {
@@ -98,7 +98,7 @@ class PlayerFlow(
 
     }
 
-    private var _player: Player? = null
+    private var _player: PlayerProxy? = null
 
     private var timelineJob: Job? = null
 
@@ -114,7 +114,7 @@ class PlayerFlow(
     private val _mediaItemTransitionFlow = MutableSharedFlow<MediaItemTransition>()
     val mediaItemTransitionFlow = _mediaItemTransitionFlow.asSharedFlow()
 
-    override fun attachPlayer(player: Player) {
+    override fun attachPlayer(player: PlayerProxy) {
         _player = player
         _playerState.update {
             PlayerState(
@@ -126,18 +126,18 @@ class PlayerFlow(
                 commands = player.availableCommands.toState()
             )
         }
-        updateTimeline(player)
+        updateTimeline()
         player.addListener(playerListener)
         timelineJob?.cancel()
         timelineJob = coroutineScope.launch {
             while (true) {
-                updateTimeline(player)
+                updateTimeline()
                 delay(500)
             }
         }
     }
 
-    override fun detachPlayer(player: Player) {
+    override fun detachPlayer(player: PlayerProxy) {
         _player = null
         player.removeListener(playerListener)
         _playerState.value = PlayerState()
@@ -212,7 +212,7 @@ class PlayerFlow(
         }
     }
 
-    private fun withPlayer(block: (Player) -> Unit) {
+    private fun withPlayer(block: (PlayerProxy) -> Unit) {
         val player = _player ?: return
         if (player.playerError != null) {
             player.prepare()
@@ -220,12 +220,14 @@ class PlayerFlow(
         block.invoke(player)
     }
 
-    private fun updateTimeline(player: Player) {
-        _timelineState.value = TimelineState(
-            duration = player.duration.coerceAtLeast(0),
-            position = player.currentPosition.coerceAtLeast(0),
-            bufferPosition = player.bufferedPosition.coerceAtLeast(0)
-        )
+    private fun updateTimeline() {
+        withPlayer { player ->
+            _timelineState.value = TimelineState(
+                duration = player.duration.coerceAtLeast(0),
+                position = player.currentPosition.coerceAtLeast(0),
+                bufferPosition = player.bufferedPosition.coerceAtLeast(0)
+            )
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import ru.radiationx.data.entity.common.PlayerTransport
+import ru.radiationx.data.player.PlayerCacheDataSourceProvider
 import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.media.mobile.PlayerProxy
 import java.util.UUID
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 class PlayerHolder @Inject constructor(
     private val dataSourceProvider: PlayerDataSourceProvider,
+    private val cacheDataSourceProvider: PlayerCacheDataSourceProvider
 ) {
 
     private val playerProxy = PlayerProxy()
@@ -29,8 +31,9 @@ class PlayerHolder @Inject constructor(
         val dataSourceType = dataSourceProvider.get()
         selectedTransport = dataSourceType.transport
         val dataSourceFactory = DefaultDataSource.Factory(context, dataSourceType.factory)
+        val cacheFactory = cacheDataSourceProvider.createCacheFactory(dataSourceFactory)
         val mediaSourceFactory = DefaultMediaSourceFactory(context).apply {
-            setDataSourceFactory(dataSourceFactory)
+            setDataSourceFactory(cacheFactory)
         }
         val player = ExoPlayer.Builder(context.applicationContext)
             .setMediaSourceFactory(mediaSourceFactory)

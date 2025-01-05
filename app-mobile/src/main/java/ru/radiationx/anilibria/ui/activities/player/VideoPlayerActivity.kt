@@ -57,6 +57,7 @@ import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
+import ru.radiationx.shared.ktx.android.launchInStarted
 import ru.radiationx.shared.ktx.android.startMainActivity
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -147,10 +148,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         initFullscreenController()
         initPipController()
         initSettingsController()
-        player.init(this)
-        analyticsListener.transport = player.selectedTransport
-        player.getPlayer().addAnalyticsListener(analyticsListener)
-        binding.playerView.setPlayer(player.getPlayer())
+
 
         viewModel.actions.onEach { action ->
             when (action) {
@@ -202,8 +200,11 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             binding.playerView.setSpeed(it.currentSpeed)
             binding.playerView.setSkipsEnabled(it.skipsEnabled)
             binding.playerView.setSkipsTimerEnabled(it.skipsTimerEnabled)
-            player.getPlayer().pauseAtEndOfMediaItems = !it.autoplayEnabled
         }.launchIn(lifecycleScope)
+
+        settingsViewModel.settingsState.onEach {
+            player.getPlayer().pauseAtEndOfMediaItems = !it.autoplayEnabled
+        }.launchInStarted(this)
 
         binding.playerView.timelineState
             .sample(10000)
@@ -248,23 +249,31 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         }
     }
 
+    @UnstableApi
     override fun onStart() {
         super.onStart()
         analytics.screenStart()
-        player.startMediaSession(this)
+
+        player.attach(this)
+        analyticsListener.transport = player.selectedTransport
+        player.getPlayer().addAnalyticsListener(analyticsListener)
+        binding.playerView.setPlayer(player.getPlayer())
     }
 
     override fun onStop() {
         super.onStop()
         analytics.screenStop()
-        player.stopMediaSession()
-        binding.playerView.pause()
 
+        binding.playerView.pause()
         val timeline = binding.playerView.timelineState.value.takeIf { it.duration > 0 }
         val episode = binding.playerView.playlistState.value.currentItem?.getEpisode()
         if (timeline != null && episode != null) {
             viewModel.saveEpisodeSeek(episode.id, timeline.position)
         }
+
+        player.getPlayer().removeAnalyticsListener(analyticsListener)
+        binding.playerView.setPlayer(null)
+        player.detach()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -275,8 +284,6 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
     override fun onDestroy() {
         super.onDestroy()
         if (!isLaunchedFromHistory()) {
-            player.getPlayer().removeAnalyticsListener(analyticsListener)
-            binding.playerView.setPlayer(null)
             binding.playerView.destroy()
             player.destroy()
         }

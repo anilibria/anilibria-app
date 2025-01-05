@@ -115,6 +115,7 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.migration.MigrationDataSourceImpl
+import ru.radiationx.data.player.PlayerCacheDataSourceProvider
 import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.CheckerRepository
@@ -291,6 +292,7 @@ class DataModule(context: Context) : QuillModule() {
 
         /* Player */
         single<PlayerDataSourceProvider>()
+        single<PlayerCacheDataSourceProvider>()
     }
 
     class PreferencesProvider @Inject constructor(

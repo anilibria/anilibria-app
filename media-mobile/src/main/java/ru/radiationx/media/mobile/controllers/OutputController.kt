@@ -3,7 +3,6 @@ package ru.radiationx.media.mobile.controllers
 import android.graphics.Rect
 import android.view.TextureView
 import android.widget.FrameLayout
-import androidx.media3.common.Player
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import ru.radiationx.media.mobile.PlayerFlow
+import ru.radiationx.media.mobile.PlayerProxy
 import ru.radiationx.media.mobile.holder.PlayerAttachListener
 import ru.radiationx.media.mobile.models.VideoOutputState
 import ru.radiationx.media.mobile.views.AspectRatioFrameLayout
@@ -61,11 +61,11 @@ internal class OutputController(
         }.launchIn(coroutineScope)
     }
 
-    override fun attachPlayer(player: Player) {
+    override fun attachPlayer(player: PlayerProxy) {
         player.setVideoTextureView(mediaTextureView)
     }
 
-    override fun detachPlayer(player: Player) {
+    override fun detachPlayer(player: PlayerProxy) {
         player.clearVideoTextureView(mediaTextureView)
     }
 

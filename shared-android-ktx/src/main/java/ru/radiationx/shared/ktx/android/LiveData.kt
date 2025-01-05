@@ -34,3 +34,8 @@ fun <T> Flow<T>.launchInResumed(lifecycleOwner: LifecycleOwner): Job {
         .launchIn(lifecycleOwner.lifecycleScope)
 }
 
+fun <T> Flow<T>.launchInStarted(lifecycleOwner: LifecycleOwner): Job {
+    return flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+        .launchIn(lifecycleOwner.lifecycleScope)
+}
+

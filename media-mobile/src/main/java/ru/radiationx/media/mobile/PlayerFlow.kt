@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.media.mobile.holder.PlayerAttachListener
@@ -98,7 +100,7 @@ class PlayerFlow(
 
     }
 
-    private var _player: PlayerProxy? = null
+    private val _player = MutableStateFlow<PlayerProxy?>(null)
 
     private var timelineJob: Job? = null
 
@@ -115,7 +117,7 @@ class PlayerFlow(
     val mediaItemTransitionFlow = _mediaItemTransitionFlow.asSharedFlow()
 
     override fun attachPlayer(player: PlayerProxy) {
-        _player = player
+        _player.value = player
         _playerState.update {
             PlayerState(
                 playWhenReady = player.playWhenReady,
@@ -138,10 +140,11 @@ class PlayerFlow(
     }
 
     override fun detachPlayer(player: PlayerProxy) {
-        _player = null
+        timelineJob?.cancel()
         player.removeListener(playerListener)
         _playerState.value = PlayerState()
         _timelineState.value = TimelineState()
+        _player.value = null
     }
 
     fun prepare(
@@ -150,6 +153,7 @@ class PlayerFlow(
         startPosition: Long? = null,
     ) {
         withPlayer { player ->
+            player.resetError()
             val currentItem = startIndex?.let { playlist[it] }
             _playlistState.update { PlaylistState(items = playlist, currentItem = currentItem) }
             player.setMediaItems(
@@ -163,6 +167,7 @@ class PlayerFlow(
 
     fun changePlaylist(playlist: List<PlaylistItem>) {
         withPlayer { player ->
+            player.resetError()
             _playlistState.update {
                 PlaylistState(
                     items = playlist,
@@ -178,46 +183,60 @@ class PlayerFlow(
 
     fun play() {
         withPlayer {
+            it.resetError()
             it.play()
         }
     }
 
     fun pause() {
         withPlayer {
+            it.resetError()
             it.pause()
         }
     }
 
     fun prev() {
         withPlayer {
+            it.resetError()
             it.seekToPreviousMediaItem()
         }
     }
 
     fun next() {
         withPlayer {
+            it.resetError()
             it.seekToNextMediaItem()
         }
     }
 
     fun seekTo(position: Long) {
         withPlayer {
+            it.resetError()
             it.seekTo(position)
         }
     }
 
     fun setSpeed(speed: Float) {
         withPlayer {
+            it.resetError()
             it.setPlaybackSpeed(speed)
         }
     }
 
     private fun withPlayer(block: (PlayerProxy) -> Unit) {
-        val player = _player ?: return
-        if (player.playerError != null) {
-            player.prepare()
+        val player = _player.value
+        if (player != null) {
+            block.invoke(player)
+        } else {
+            withPlayerAsync(block)
         }
-        block.invoke(player)
+    }
+
+    private fun withPlayerAsync(block: (PlayerProxy) -> Unit) {
+        coroutineScope.launch {
+            val player = _player.filterNotNull().first()
+            block.invoke(player)
+        }
     }
 
     private fun updateTimeline() {
@@ -227,6 +246,12 @@ class PlayerFlow(
                 position = player.currentPosition.coerceAtLeast(0),
                 bufferPosition = player.bufferedPosition.coerceAtLeast(0)
             )
+        }
+    }
+
+    private fun PlayerProxy.resetError() {
+        if (playerError != null) {
+            prepare()
         }
     }
 }

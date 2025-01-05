@@ -7,7 +7,7 @@ buildscript {
         tv_min_sdk_version = 21
 
         mobile_version_code = 70
-        mobile_version_name = "2.14.0_RC1"
+        mobile_version_name = "2.14.0_RC2"
 
         tv_version_code = 5
         tv_version_name = "1.2.0"

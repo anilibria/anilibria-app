@@ -44,12 +44,15 @@ class TaiwaDialog @JvmOverloads constructor(
         }
     }
 
+    override fun setFooterVisible(value: Boolean) {
+        binding.footerContainer.isVisible = value
+    }
+
     override fun prepareContentView() {
         binding.contentContainer.removeAllViews()
     }
 
     override fun prepareFooterView() {
-        binding.footerContainer.isVisible = true
         binding.footerContainer.removeAllViews()
     }
 

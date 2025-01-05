@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.ui.activities.player.controllers
 
 import androidx.activity.ComponentActivity
+import envoy.DiffItem
+import envoy.ext.viewBindingEnvoy
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
@@ -10,11 +12,9 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemPlayerSpeedsBinding
 import ru.radiationx.anilibria.utils.view.attachedCoroutineScope
 import ru.radiationx.data.entity.common.PlayerQuality
-import envoy.DiffItem
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
 import taiwa.bottomsheet.nestedBottomSheetTaiwa
-import envoy.ext.viewBindingEnvoy
 import java.math.BigDecimal
 
 class PlayerSettingsController(
@@ -48,38 +48,40 @@ class PlayerSettingsController(
     fun setState(state: PlayerSettingsState) {
         taiwa.setContent {
             header {
-                title("Настройки плеера")
-                canClose()
+                toolbar {
+                    title("Настройки плеера")
+                    withClose()
+                }
             }
-            items {
-                item {
+            body {
+                item(SettingItem.Quality) {
                     title(SettingItem.Quality.toTitle())
                     icon(state.currentQuality.toIcRes())
                     value(state.currentQuality.toValue())
                     action(TaiwaAction.Anchor(qualityAnchor))
                     forward()
                 }
-                item {
+                item(SettingItem.PlaySpeed) {
                     title(SettingItem.PlaySpeed.toTitle())
                     icon(R.drawable.ic_play_speed)
                     value(state.currentSpeed.toSpeedValue())
                     action(TaiwaAction.Anchor(speedAnchor))
                     forward()
                 }
-                item {
+                item("opening") {
                     title("Опенинг и эндинг")
                     icon(R.drawable.ic_skip_forward)
                     action(TaiwaAction.Anchor(skipsAnchor))
                     forward()
                 }
-                switchItem {
+                switchItem(SettingItem.InactiveTimer) {
                     title(SettingItem.InactiveTimer.toTitle())
                     subtitle("Отсчитывает 1 час")
                     icon(R.drawable.ic_timer_outline)
                     select(state.inactiveTimerEnabled)
                     onClick { onInactiveTimerSelected?.invoke(!state.inactiveTimerEnabled) }
                 }
-                switchItem {
+                switchItem(SettingItem.Autoplay) {
                     title(SettingItem.Autoplay.toTitle())
                     icon(R.drawable.ic_play_circle_outline)
                     select(state.autoplayEnabled)
@@ -87,50 +89,59 @@ class PlayerSettingsController(
                 }
             }
 
-            nestedContent(qualityAnchor) {
+            nested(qualityAnchor) {
+                backAction(TaiwaAction.Root)
                 header {
-                    title(SettingItem.Quality.toTitle())
-                    backAction(TaiwaAction.Root)
-                    canClose()
+                    toolbar {
+                        title(SettingItem.Quality.toTitle())
+                        withBack()
+                        withClose()
+                    }
                 }
-                items {
-                    action(TaiwaAction.Root)
+                body {
                     state.availableQualities.forEach { quality ->
                         radioItem(quality) {
                             title(quality.toValue())
                             icon(quality.toIcRes())
                             select(quality == state.currentQuality)
+                            action(TaiwaAction.Root)
                             onClick { onQualitySelected?.invoke(quality) }
                         }
                     }
                 }
             }
 
-            nestedContent(speedAnchor) {
+            nested(speedAnchor) {
+                backAction(TaiwaAction.Root)
                 header {
-                    title(SettingItem.PlaySpeed.toTitle())
-                    backAction(TaiwaAction.Root)
-                    canClose()
+                    toolbar {
+                        title(SettingItem.PlaySpeed.toTitle())
+                        withBack()
+                        withClose()
+                    }
                 }
-                items {
-                    custom(SpeedSelector(state.currentSpeed))
+                body {
+                    envoy(SpeedSelector(state.currentSpeed))
                 }
             }
 
-            nestedContent(skipsAnchor) {
+            nested(skipsAnchor) {
+                backAction(TaiwaAction.Root)
                 header {
-                    title("Опенинг и эндинг")
-                    backAction(TaiwaAction.Root)
-                    canClose()
+                    toolbar {
+                        title("Опенинг и эндинг")
+                        withBack()
+                        withClose()
+                    }
                 }
-                items {
-                    switchItem {
+                body {
+                    switchItem(SettingItem.Skips) {
                         title(SettingItem.Skips.toTitle())
                         icon(R.drawable.ic_skip_forward)
                         select(state.skipsEnabled)
                         onClick { onSkipsSelected?.invoke(!state.skipsEnabled) }
                     }
-                    switchItem {
+                    switchItem(SettingItem.SkipsTimer) {
                         title(SettingItem.SkipsTimer.toTitle())
                         icon(R.drawable.ic_av_timer)
                         select(state.skipsTimerEnabled)

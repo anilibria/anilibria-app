@@ -8,12 +8,11 @@ import androidx.annotation.AttrRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
-import taiwa.databinding.TaiwaItemBinding
 import envoy.ext.viewBindingEnvoy
+import taiwa.databinding.TaiwaItemBinding
 import taiwa.internal.models.TaiwaItemState
-import taiwa.internal.models.TaiwaItemTypeState
 
-internal fun taiwaItemEnvoy(
+internal fun itemEnvoy(
     clickListener: (TaiwaItemState) -> Unit
 ) = viewBindingEnvoy<TaiwaItemState, TaiwaItemBinding> {
 
@@ -27,10 +26,10 @@ internal fun taiwaItemEnvoy(
 
     bind { item ->
         val base = item.base
-        val basicType = item.type as? TaiwaItemTypeState.Basic
-        val switchType = item.type as? TaiwaItemTypeState.Switch
-        val radioType = item.type as? TaiwaItemTypeState.Radio
-        val checkboxType = item.type as? TaiwaItemTypeState.Checkbox
+        val basicType = item.type as? TaiwaItemState.Type.Basic
+        val switchType = item.type as? TaiwaItemState.Type.Switch
+        val radioType = item.type as? TaiwaItemState.Type.Radio
+        val checkboxType = item.type as? TaiwaItemState.Type.Checkbox
 
         val itemTint = base.tintAttrRes?.let {
             view.root.context.getColorFromAttr(it)

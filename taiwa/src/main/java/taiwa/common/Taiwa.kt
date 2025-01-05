@@ -2,14 +2,15 @@ package taiwa.common
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
-import envoy.Envoy
 import envoy.DiffItem
+import envoy.Envoy
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
 import taiwa.TaiwaEvent
-import taiwa.dsl.TaiwaContentScope
+import taiwa.dsl.TaiwaScope
 import taiwa.internal.buildTaiwa
-import taiwa.internal.models.TaiwaContentState
+import taiwa.internal.models.TaiwaState
+import taiwa.internal.models.TaiwaToolbarState
 import taiwa.internal.view.TaiwaView
 import java.lang.ref.WeakReference
 
@@ -22,9 +23,10 @@ class Taiwa(
 
     private var eventListener: ((TaiwaEvent) -> Unit)? = null
 
-    private var currentView: WeakReference<TaiwaView>? = null
+    private var currentContentView: WeakReference<TaiwaView>? = null
+    private var currentFooterView: WeakReference<TaiwaView>? = null
 
-    private var currentContent: TaiwaContentState? = null
+    private var currentContent: TaiwaState? = null
 
     init {
         dialogWrapper.setCloseListener {
@@ -32,36 +34,54 @@ class Taiwa(
             eventListener?.invoke(TaiwaEvent.Close)
         }
         dialogWrapper.setBackListener {
-            currentContent?.header?.backAction?.also {
-                handleAction(it)
+            findBackAction()?.also { handleAction(it) }
+        }
+        getContentView().apply {
+            actionListener = { action ->
+                handleAction(action)
+            }
+            backListener = {
+                findBackAction()?.also { handleAction(it) }
             }
         }
-        getContentView().actionListener = { action ->
-            handleAction(action)
+        getFooterView().apply {
+            actionListener = { action ->
+                handleAction(action)
+            }
+            backListener = {
+                findBackAction()?.also { handleAction(it) }
+            }
         }
     }
 
     private fun getContentView(): TaiwaView {
-        val view = currentView?.get() ?: dialogWrapper.setContentView {
-            TaiwaView(it)
-        }
-        currentView = WeakReference(view)
+        val view = currentContentView?.get() ?: dialogWrapper.setContentView { TaiwaView(it) }
+        currentContentView = WeakReference(view)
         return view
     }
 
-    internal fun setContentState(content: TaiwaContentState) {
+    private fun getFooterView(): TaiwaView {
+        val view = currentFooterView?.get() ?: dialogWrapper.setFooterView { TaiwaView(it) }
+        currentFooterView = WeakReference(view)
+        return view
+    }
+
+    internal fun setContentState(content: TaiwaState) {
         if (currentContent == content) {
             return
         }
         currentContent = content
-        dialogWrapper.setBackListenerEnabled(content.header?.backAction != null)
-        val transition = dialogWrapper.prepareTransition()
-        getContentView().setState(content, transition) {
-            dialogWrapper.beginViewTransition(transition)
-        }
+        dialogWrapper.setBackListenerEnabled(findBackAction() != null)
+        val contentItems = (content.header?.items.orEmpty() + content.body?.items.orEmpty())
+        val footerItems = content.footer?.items.orEmpty()
+        val transitionContent = dialogWrapper.prepareTransition()
+        dialogWrapper.beginViewTransition(transitionContent)
+        dialogWrapper.setFooterVisible(footerItems.isNotEmpty())
+        getContentView().setItems(contentItems, transitionContent)
+        getFooterView().setItems(footerItems, transitionContent)
     }
 
-    fun setContent(block: TaiwaContentScope.() -> Unit) {
+    fun setContent(block: TaiwaScope.() -> Unit) {
         setContentState(buildTaiwa(block))
     }
 
@@ -69,8 +89,9 @@ class Taiwa(
         eventListener = listener
     }
 
-    fun addDelegate(delegate: Envoy<DiffItem>){
+    fun addDelegate(delegate: Envoy<DiffItem>) {
         getContentView().addDelegate(delegate)
+        getFooterView().addDelegate(delegate)
     }
 
     fun show() {
@@ -79,6 +100,10 @@ class Taiwa(
 
     fun close() {
         dialogWrapper.close()
+    }
+
+    private fun findBackAction(): TaiwaAction? {
+        return currentContent?.backAction
     }
 
     private fun handleAction(action: TaiwaAction) {

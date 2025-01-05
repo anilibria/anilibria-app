@@ -103,6 +103,7 @@ class CatalogFilterDialog(
     }
 
     init {
+        dialog.setFooterVisible(true)
         actionButton.setOnClickListener {
             dialog.close()
             listener.onAccept(currentState)

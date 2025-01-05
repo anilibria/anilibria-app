@@ -66,7 +66,7 @@ class TaiwaBottomSheetDialog @JvmOverloads constructor(
     override val views: Views by lazy {
         Views(
             root = binding.root,
-            transitionRoot = binding.coordinator,
+            transitionRoot = binding.container,
             contentContainer = binding.contentContainer,
             footerContainer = binding.footerContainer
         )
@@ -111,6 +111,10 @@ class TaiwaBottomSheetDialog @JvmOverloads constructor(
         backOrchestrator.stopListeningForBackCallbacks()
     }
 
+    override fun setFooterVisible(value: Boolean) {
+        binding.footerContainer.isVisible = value
+    }
+
     override fun prepareContentView() {
         val container = binding.contentContainer
         if (container.childCount > 1) {
@@ -119,14 +123,12 @@ class TaiwaBottomSheetDialog @JvmOverloads constructor(
     }
 
     override fun prepareFooterView() {
-        binding.footerWrapper.isVisible = true
         binding.footerContainer.removeAllViews()
     }
 
     override fun applyWrapperInsets(wrapperInsets: Insets) {
         binding.container.updatePadding(
             top = wrapperInsets.top,
-            bottom = wrapperInsets.bottom
         )
         binding.coordinator.updateLayoutParams<MarginLayoutParams> {
             leftMargin = wrapperInsets.left
@@ -135,6 +137,7 @@ class TaiwaBottomSheetDialog @JvmOverloads constructor(
         binding.footerWrapper.updateLayoutParams<MarginLayoutParams> {
             leftMargin = wrapperInsets.left
             rightMargin = wrapperInsets.right
+            bottomMargin = wrapperInsets.bottom
         }
     }
 

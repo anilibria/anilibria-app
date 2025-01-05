@@ -58,15 +58,17 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
     private val navigationQueue = mutableListOf<Runnable>()
 
     private val resetTabsTaiwa by bottomSheetTaiwa {
-        message { text("Закрыть все экраны во вкладке?") }
-        buttons {
-            action(TaiwaAction.Close)
-            button {
-                text("Да")
-                onClick { router.backTo(localScreen) }
-            }
-            button {
-                text("Нет")
+        body {
+            message { text("Закрыть все экраны во вкладке?") }
+            buttons {
+                action(TaiwaAction.Close)
+                button {
+                    text("Да")
+                    onClick { router.backTo(localScreen) }
+                }
+                button {
+                    text("Нет")
+                }
             }
         }
     }

@@ -7,20 +7,14 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.google.android.material.button.MaterialButton
+import envoy.DiffItem
 import envoy.Envoy
 import envoy.recycler.DiffItemEnvoyAdapter
-import envoy.DiffItem
 import taiwa.TaiwaAction
 import taiwa.common.ViewTransition
 import taiwa.databinding.TaiwaRootBinding
 import taiwa.internal.models.ClickListener
-import taiwa.internal.models.TaiwaButtonState
-import taiwa.internal.models.TaiwaButtonsState
-import taiwa.internal.models.TaiwaContentState
-import taiwa.internal.models.TaiwaHeaderState
-import taiwa.internal.models.TaiwaItemsState
-import taiwa.internal.models.TaiwaMessageState
+import taiwa.internal.models.TaiwaItem
 
 internal class TaiwaView @JvmOverloads constructor(
     context: Context,
@@ -33,8 +27,22 @@ internal class TaiwaView @JvmOverloads constructor(
 
     private val itemsAdapter by lazy {
         DiffItemEnvoyAdapter().apply {
-            addEnvoy(taiwaItemEnvoy {
+            addEnvoy(itemEnvoy {
                 handleClick(it.base.action, it.base.clickListener)
+            })
+            addEnvoy(
+                toolbarEnvoy(
+                    backClickListener = {
+                        backListener?.invoke()
+                    },
+                    closeClickListener = {
+                        handleClick(TaiwaAction.Close, null)
+                    }
+                )
+            )
+            addEnvoy(messageEnvoy())
+            addEnvoy(buttonsEnvoy {
+                handleClick(it.action, it.clickListener)
             })
         }
     }
@@ -45,14 +53,12 @@ internal class TaiwaView @JvmOverloads constructor(
 
     var actionListener: ((TaiwaAction) -> Unit)? = null
 
+    var backListener: (() -> Unit)? = null
+
     init {
         binding.itemsRecycler.apply {
             layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(false)
             itemAnimator = customAnimator
-        }
-        binding.headerClose.setOnClickListener {
-            handleClick(TaiwaAction.Close, null)
         }
     }
 
@@ -70,19 +76,18 @@ internal class TaiwaView @JvmOverloads constructor(
         itemsAdapter.addEnvoy(delegate)
     }
 
-    fun setState(
-        content: TaiwaContentState,
+    fun setItems(
+        items: List<DiffItem>,
         transition: ViewTransition,
-        onCommit: () -> Unit = {},
     ) {
         updateAnimator(transition)
-        setState(content.items) {
-            onCommit()
-            content.header.also(::setState)
-            content.message.also(::setState)
-            content.buttons.also(::setState)
-            updateSpaces()
-        }
+        updateSpaces(items)
+        setItems(items)
+    }
+
+    private fun setItems(items: List<DiffItem>) {
+        binding.itemsRecycler.isVisible = items.isNotEmpty()
+        itemsAdapter.setItems(items)
     }
 
     private fun updateAnimator(transition: ViewTransition) {
@@ -92,57 +97,9 @@ internal class TaiwaView @JvmOverloads constructor(
         binding.itemsRecycler.itemAnimator = selectedAnimator
     }
 
-    private fun updateSpaces() {
-        val hasHeader = binding.header.isVisible
-        val hasMessage = binding.message.isVisible
-        val hasItems = binding.itemsRecycler.isVisible
-        val hasButtons = binding.buttonsContainer.isVisible
-        binding.spaceTop.isVisible = hasItems && hasMessage.not() && hasHeader.not()
-        binding.spaceBottom.isVisible = hasItems && hasButtons.not()
-    }
-
-    private fun setState(header: TaiwaHeaderState?) {
-        binding.header.isVisible = header != null
-        if (header == null) return
-        binding.headerTitle.setStateText(header.title)
-        binding.headerSubtitle.setStateText(header.subtitle)
-        binding.headerBack.isVisible = header.backAction != null
-        binding.headerClose.isVisible = header.canClose
-        binding.headerBack.setOnClickListener {
-            handleClick(header.backAction, null)
-        }
-    }
-
-    private fun setState(message: TaiwaMessageState?) {
-        binding.message.setStateText(message?.text)
-    }
-
-    private fun setState(items: TaiwaItemsState?, callback: () -> Unit) {
-        binding.itemsRecycler.isVisible = items != null
-        if (items == null) {
-            callback.invoke()
-            return
-        }
-        itemsAdapter.submitList(items.items, callback)
-    }
-
-    private fun setState(buttons: TaiwaButtonsState?) {
-        binding.buttonsContainer.isVisible = buttons != null
-        if (buttons == null) return
-        binding.buttonsContainer.removeAllViews()
-        buttons.buttons.forEach { button ->
-            setState(button)
-        }
-    }
-
-    private fun setState(button: TaiwaButtonState) {
-        val buttonView = MaterialButton(binding.buttonsContainer.context)
-        buttonView.tag = button.id
-        buttonView.text = button.text
-        buttonView.setOnClickListener {
-            handleClick(button.action, button.clickListener)
-        }
-        binding.buttonsContainer.addView(buttonView)
+    private fun updateSpaces(items: List<DiffItem>) {
+        binding.spaceTop.isVisible = items.firstOrNull() is TaiwaItem
+        binding.spaceBottom.isVisible = items.lastOrNull() is TaiwaItem
     }
 
     private fun handleClick(action: TaiwaAction?, clickListener: ClickListener?) {

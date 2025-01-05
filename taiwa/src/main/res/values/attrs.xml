@@ -2,4 +2,5 @@
 <resources>
     <attr name="taiwaBottomSheetTheme" format="reference" />
     <attr name="taiwaAlertTheme" format="reference" />
+    <attr name="taiwaButtonsOverlay" format="reference" />
 </resources>

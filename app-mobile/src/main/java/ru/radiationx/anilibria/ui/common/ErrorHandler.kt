@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.common
 
 import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.JsonEncodingException
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.datasource.remote.ApiError
@@ -29,7 +28,7 @@ class ErrorHandler @Inject constructor(
 
     private fun getMessage(throwable: Throwable) = when (throwable) {
         is IOException -> "Нет соединения с интернетом"
-        is HttpException -> throwable.message
+        is HttpException -> "${throwable.code}: ${throwable.message.ifEmpty { "Empty message" }}"
         is ApiError -> throwable.userMessage()
         is JsonDataException -> "Неправильный формат данных"
         else -> throwable.message ?: "Неизвестная ошибка"

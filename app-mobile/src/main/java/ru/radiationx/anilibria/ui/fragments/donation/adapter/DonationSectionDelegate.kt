@@ -4,7 +4,7 @@ import android.view.View
 import androidx.core.text.parseAsHtml
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemDonationSectionBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem

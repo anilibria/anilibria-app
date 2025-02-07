@@ -10,7 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.viewbinding.ViewBinding
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentMainBaseBinding

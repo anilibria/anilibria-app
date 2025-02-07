@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.ui.adapters
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemPlaceholderBinding
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate

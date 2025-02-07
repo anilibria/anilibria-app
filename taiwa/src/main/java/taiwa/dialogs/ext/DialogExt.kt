@@ -5,8 +5,8 @@ import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
-import by.kirich1409.viewbindingdelegate.ViewBindingProperty
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.ViewBindingProperty
+import dev.androidbroadcast.vbpd.viewBinding
 import taiwa.dialogs.BaseTaiwaDialogFragment
 
 internal fun <T : Dialog> T.attachToLifecycle(
@@ -38,6 +38,5 @@ inline fun <VB : ViewBinding> BaseTaiwaDialogFragment.footerViewBinding(
     return viewBinding(
         vbFactory = vbFactory,
         viewProvider = { requireFooterView() },
-        onViewDestroyed = onViewDestroyed
     )
 }

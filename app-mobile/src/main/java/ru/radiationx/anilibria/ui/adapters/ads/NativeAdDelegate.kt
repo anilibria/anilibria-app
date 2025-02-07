@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import com.yandex.mobile.ads.nativeads.template.HorizontalOffset
 import com.yandex.mobile.ads.nativeads.template.NativeBannerView
 import com.yandex.mobile.ads.nativeads.template.appearance.BannerAppearance

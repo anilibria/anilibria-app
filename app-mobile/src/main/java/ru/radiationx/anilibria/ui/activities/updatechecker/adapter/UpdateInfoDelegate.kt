@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.ui.activities.updatechecker.adapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemUpdateInfoBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem

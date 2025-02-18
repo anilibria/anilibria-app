@@ -20,8 +20,8 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.CreateMethod
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.CreateMethod
+import dev.androidbroadcast.vbpd.viewBinding
 import searchbar.NavigationIcon
 import searchbar.R
 import searchbar.databinding.CommonHierarchyBinding

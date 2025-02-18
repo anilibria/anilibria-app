@@ -6,7 +6,7 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import envoy.DiffItem
 import envoy.Envoy
 import envoy.recycler.DiffItemEnvoyAdapter

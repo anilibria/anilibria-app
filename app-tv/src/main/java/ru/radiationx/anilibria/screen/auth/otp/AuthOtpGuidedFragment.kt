@@ -1,10 +1,18 @@
+// AuthOtpGuidedFragment.kt
 package ru.radiationx.anilibria.screen.auth.otp
 
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.set
 import androidx.leanback.widget.GuidanceStylist
 import androidx.leanback.widget.GuidedAction
 import androidx.leanback.widget.GuidedActionsStylist
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
 import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.auth.GuidedProgressAction
@@ -24,7 +32,8 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
         GuidedProgressAction.Builder(requireContext())
             .id(COMPLETE_ACTION_ID)
             .title("Готово")
-            .description("Нажмите, когда введёте код")
+            .multilineDescription(true)
+            .description("\nНажмите,\nкогда введёте код")
             .build()
     }
 
@@ -32,7 +41,7 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
         GuidedProgressAction.Builder(requireContext())
             .id(EXPIRED_ACTION_ID)
             .title("Показать новый код")
-            .description("Время действия текущего кода истекло")
+            .description("\nВремя действия текущего кода\n истекло")
             .build()
     }
 
@@ -40,56 +49,88 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
         GuidedProgressAction.Builder(requireContext())
             .id(REPEAT_ACTION_ID)
             .title("Повторить")
-            .description("Произошла ошибка")
+            .description("\nПроизошла ошибка")
             .build()
     }
 
     private val viewModel by viewModel<AuthOtpViewModel>()
 
+    // Сохраняем ссылку на наш кастомный стилист,
+    // чтобы потом обращаться к qrImageView, titleView, descriptionView и т.д.
+    private lateinit var myGuidanceStylist: MyGuidanceStylist
+
+    /**
+     * Подключаем кастомный стилист вместо дефолтного.
+     */
+    override fun onCreateGuidanceStylist(): GuidanceStylist {
+        // Возвращаем нашу кастомную реализацию
+        myGuidanceStylist = MyGuidanceStylist()
+        return myGuidanceStylist
+    }
+
+    /**
+     * Задаём заголовок/подзаголовок/breadcrumb.
+     * (Иконку можно тоже указать, если нужно.)
+     */
+    override fun onCreateGuidance(savedInstanceState: Bundle?): GuidanceStylist.Guidance {
+        return GuidanceStylist.Guidance(
+            "Запрашивается код",
+            "Ожидаем код подтверждения...",
+            "Авторизация",
+            /* icon = */ null
+        )
+    }
+
+    override fun onCreateActionsStylist(): GuidedActionsStylist {
+        return GuidedProgressActionsStylist()
+    }
+
+    override fun onCreateActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {
+        super.onCreateActions(actions, savedInstanceState)
+        // При старте добавляем кнопку COMPLETE
+        actions.add(completeAction)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        // Подключаем ViewModel
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
-        subscribeTo(viewModel.otpInfoData.filterNotNull()) {
-            guidanceStylist.apply {
-                titleView?.text = "Код: ${it.code}"
-                descriptionView?.text = it.description
-            }
+        // Подписка на данные (OTP-код и т.д.)
+        subscribeTo(viewModel.otpInfoData.filterNotNull()) { otpInfo ->
+            // Меняем title/description в кастомной шапке
+            myGuidanceStylist.titleView?.text = "Код: ${otpInfo.code}"
+            myGuidanceStylist.descriptionView?.text = otpInfo.description
+
+            // Генерируем QR и ставим в qrImageView
+            val qrBitmap = generateQrBitmap(otpInfo.code, 300)
+            myGuidanceStylist.qrImageView?.setImageBitmap(qrBitmap)
         }
 
-        subscribeTo(viewModel.state) {
-            val primaryAction = when (it.buttonState) {
+        // Подписка на состояние (кнопки, ошибки и т.д.)
+        subscribeTo(viewModel.state) { state ->
+            val primaryAction = when (state.buttonState) {
                 AuthOtpViewModel.ButtonState.COMPLETE -> completeAction
                 AuthOtpViewModel.ButtonState.EXPIRED -> expiredAction
                 AuthOtpViewModel.ButtonState.REPEAT -> repeatAction
             }
 
-            actions = if (it.error.isEmpty()) {
+            actions = if (state.error.isEmpty()) {
                 listOf(primaryAction)
             } else {
                 val errorAction = GuidedAction.Builder(requireContext())
                     .title("Ошибка")
                     .multilineDescription(true)
-                    .description(it.error)
+                    .description(state.error)
                     .infoOnly(true)
                     .focusable(false)
                     .build()
                 listOf(primaryAction, errorAction)
             }
-            primaryAction.updateProgress(it.progress)
+
+            primaryAction.updateProgress(state.progress)
         }
     }
-
-    override fun onCreateGuidance(savedInstanceState: Bundle?): GuidanceStylist.Guidance =
-        GuidanceStylist.Guidance(
-            "Запрашивается код",
-            "Запрашивается код",
-            "Авторизация",
-            null
-        )
-
-    override fun onCreateActionsStylist(): GuidedActionsStylist = GuidedProgressActionsStylist()
 
     override fun onGuidedActionClicked(action: GuidedAction) {
         when (action.id) {
@@ -97,12 +138,6 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
             EXPIRED_ACTION_ID -> viewModel.onExpiredClick()
             REPEAT_ACTION_ID -> viewModel.onRepeatClick()
         }
-    }
-
-
-    override fun onCreateActions(actions: MutableList<GuidedAction>, savedInstanceState: Bundle?) {
-        super.onCreateActions(actions, savedInstanceState)
-        actions.add(completeAction)
     }
 
     private fun GuidedProgressAction.updateProgress(progress: Boolean) {
@@ -113,6 +148,7 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
     }
 
     private fun <T : GuidedAction> T.updateAction(block: T.() -> Unit) {
+        // Чтобы корректно отобразилось на экране Leanback
         findButtonActionById(id)?.apply {
             block()
             notifyButtonActionChanged(findButtonActionPositionById(id))
@@ -121,5 +157,23 @@ class AuthOtpGuidedFragment : FakeGuidedStepFragment() {
             block()
             notifyActionChanged(findActionPositionById(id))
         }
+    }
+
+    /**
+     * Пример простой генерации QR через ZXing (3.5.1)
+     */
+    private fun generateQrBitmap(text: String, size: Int): Bitmap {
+        val bitMatrix: BitMatrix = MultiFormatWriter()
+            .encode(text, BarcodeFormat.QR_CODE, size, size)
+
+        val width = bitMatrix.width
+        val height = bitMatrix.height
+        val bmp = createBitmap(width, height, Bitmap.Config.RGB_565)
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                bmp[x, y] = if (bitMatrix[x, y]) Color.BLACK else Color.WHITE
+            }
+        }
+        return bmp
     }
 }

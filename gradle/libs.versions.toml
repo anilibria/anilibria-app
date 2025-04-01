@@ -5,7 +5,7 @@ androidx-appcompat = "1.7.0"
 androidx-cardview = "1.0.0"
 cicerone = "7.1"
 coil = "2.7.0"
-androidx-collection = "1.4.5"
+androidx-collection = "1.5.0"
 # do not update to 2.5.3, its a broken release
 conscrypt-android = "2.5.2"
 androidx-core = "1.15.0"
@@ -20,18 +20,18 @@ androidx-constraintlayout = "2.2.0"
 javax-inject = "1"
 toothpick = "3.1.0"
 toothpick-compiler = "1.1.0"
-androidx-leanback = "1.2.0-alpha04"
-androidx-leanback-preference = "1.2.0-alpha04"
+androidx-leanback = "1.2.0-beta01"
+androidx-leanback-preference = "1.2.0-beta01"
 materialprogressbar = "1.6.1"
 chucker = "4.1.0"
 androidx-lifecycle = "2.8.7"
 google-material = "1.12.0"
 # wait release 1.5.1+ to avoid aspect-ratio bug
-media3 = "1.5.1"
+media3 = "1.6.0"
 minitemplator = "1.4.1"
 mintpermissions = "1.1.2"
-yandex-mobileads = "7.9.0"
-yandex-appmetrica = "7.6.0"
+yandex-mobileads = "7.11.0"
+yandex-appmetrica = "7.7.0"
 moshi = "1.15.2"
 okhttp = "4.12.0"
 androidx-palette = "1.0.0"
@@ -39,11 +39,14 @@ androidx-preference = "1.2.1"
 androidx-recyclerview = "1.4.0"
 androidx-swiperefreshlayout = "1.1.0"
 timber = "5.0.1"
-viewbindingpropertydelegate = "2.0.2"
-android-plugin = "8.7.3"
+viewbindingpropertydelegate = "2.0.4"
+android-plugin = "8.9.0"
 kotlin-plugin = "2.1.10"
 ksp-plugin = "2.1.10-1.0.29"
 gms-plugin = "4.4.2"
+ben-plugin = "0.47.0"
+zxing-core = "3.5.2"
+
 
 
 [libraries]
@@ -101,6 +104,8 @@ androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "androidx-swiperefreshlayout" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 viewbindingpropertydelegate = { module = "dev.androidbroadcast.vbpd:vbpd-reflection", version.ref = "viewbindingpropertydelegate" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing-core" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-plugin" }
@@ -109,3 +114,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-pl
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-plugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-plugin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms-plugin" }
+benManesVersions = { id = "com.github.ben-manes.versions", version.ref = "ben-plugin" }

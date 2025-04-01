@@ -10,7 +10,7 @@
         android:layout_height="48dp"
         android:layout_gravity="center" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/loadingRefresh"
         android:layout_width="48dp"
         android:layout_height="48dp"

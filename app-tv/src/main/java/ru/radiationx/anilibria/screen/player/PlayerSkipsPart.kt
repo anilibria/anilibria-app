@@ -22,7 +22,7 @@ class PlayerSkipsPart(
     private var playerSkips: PlayerSkips? = null
     private val skippedList = mutableSetOf<PlayerSkips.Skip>()
     private var currentPosition = 0L
-    private var currentSkipShow = false
+    private var isSkipVisible = false
 
     init {
         binding.btSkipsCancel.setOnClickListener {
@@ -42,20 +42,32 @@ class PlayerSkipsPart(
         skippedList.clear()
     }
 
+    /**
+     * Вызывается периодически (например, playerGlue?.playbackListener?.onUpdateProgress())
+     */
     fun update(position: Long) {
         currentPosition = position
         autoCancel()
+
         val skip = getCurrentSkip()
         val hasSkip = skip != null
-        binding.apply {
-            if (hasSkip && (!btSkipsSkip.isFocused && !btSkipsCancel.isFocused)) {
-                btSkipsSkip.requestFocus()
-            }
+
+        // Если раньше skip отображался, а сейчас нет - значит перепрыгнули
+        if (skip == null && isSkipVisible) {
+            isSkipVisible = false
+            onSkipHide.invoke()
+            binding.root.isVisible = false
         }
-        if (hasSkip == currentSkipShow) {
+
+        // Если skip есть и кнопки не в фокусе — фокусируем по умолчанию на "Пропустить"
+        if (hasSkip && (!binding.btSkipsSkip.isFocused && !binding.btSkipsCancel.isFocused)) {
+            binding.btSkipsSkip.requestFocus()
+        }
+
+        if (hasSkip == isSkipVisible) {
             return
         }
-        currentSkipShow = hasSkip
+        isSkipVisible = hasSkip
         if (hasSkip) {
             onSkipShow.invoke()
         } else {
@@ -70,7 +82,9 @@ class PlayerSkipsPart(
     }
 
     private fun checkSkip(skip: PlayerSkips.Skip): Boolean {
-        return !skippedList.contains(skip) && currentPosition >= skip.start && currentPosition <= skip.end
+        return !skippedList.contains(skip) &&
+                currentPosition >= skip.start &&
+                currentPosition <= skip.end
     }
 
     private fun autoCancel() {
@@ -80,7 +94,6 @@ class PlayerSkipsPart(
         if (opening != null && opening !in skippedList && opening.end < currentPosition) {
             skippedList.add(opening)
         }
-
         if (ending != null && ending !in skippedList && ending.end < currentPosition) {
             skippedList.add(ending)
         }
@@ -89,5 +102,4 @@ class PlayerSkipsPart(
     private fun cancelSkip() {
         getCurrentSkip()?.also { skippedList.add(it) }
     }
-
 }

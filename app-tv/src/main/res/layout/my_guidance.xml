@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/guidance_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <!-- Вложенный FrameLayout, центрируется родительским FrameLayout -->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+        <!-- LinearLayout с текстами, который «зарезервирует» место справа под QR -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+        android:layout_marginRight="130dp"
+        android:layout_marginEnd="130dp"
+        >
+
+        <TextView
+            android:id="@+id/guidance_breadcrumb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Breadcrumb"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/guidance_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Title"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/guidance_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="10"
+            android:text="Description"
+            android:textSize="16sp" />
+
+        <!-- Если нужен guidance_icon, можно добавить здесь -->
+
+    </LinearLayout>
+
+    <!-- QR-картинка "приклеена" к правому верхнему углу вложенного FrameLayout -->
+    <ImageView
+        android:id="@+id/qr_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="end|top"
+        android:layout_margin="8dp"
+        android:contentDescription="QR Code" />
+
+</FrameLayout>
+    </FrameLayout>

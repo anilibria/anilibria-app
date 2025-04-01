@@ -52,7 +52,7 @@
         tools:text="Расписание"
         tools:visibility="visible" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/itemFeedScheduleIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -11,8 +11,7 @@ import ru.radiationx.shared.ktx.android.subscribeTo
 
 class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
 
-    companion object {
-    }
+    companion object;
 
     private val viewModel by viewModel<PlayerEpisodesViewModel> { argExtra }
 

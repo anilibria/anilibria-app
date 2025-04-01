@@ -71,7 +71,7 @@
             tools:text="Yandex.Direct"
             tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/feedback"
             android:layout_width="16dp"
             android:layout_height="16dp"

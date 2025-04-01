@@ -8,19 +8,19 @@
     tools:backgorund="#fff">
 
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/config_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@null"
-        android:tint="@color/alib_red"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_anilibria_splash" />
+        app:srcCompat="@drawable/ic_anilibria_splash"
+        app:tint="@color/alib_red" />
 
     <ProgressBar
         android:id="@+id/config_progress"

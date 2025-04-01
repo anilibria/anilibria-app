@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/favicon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -96,7 +96,7 @@
             tools:layout_height="200dp"
             tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/icon"
             android:layout_width="80dp"
             android:layout_height="80dp"

@@ -78,4 +78,5 @@ dependencies {
     implementation libs.mintpermissions.flows
 
     implementation libs.viewbindingpropertydelegate
+    implementation libs.zxing.core
 }

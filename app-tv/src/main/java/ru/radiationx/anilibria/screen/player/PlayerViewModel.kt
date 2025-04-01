@@ -16,6 +16,7 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared.ktx.EventFlow
@@ -230,4 +231,8 @@ class PlayerViewModel @Inject constructor(
             }
         }
     }
+    fun getCurrentReleaseId(): ReleaseId? {
+        return getCurrentRelease()?.id // getCurrentRelease() уже есть в коде
+    }
+
 }

@@ -29,8 +29,11 @@ class AppModule(context: Context) : QuillModule() {
 
 
     init {
-        instance { context }
+        // Сохраним applicationContext (из переданного context)
+        val appContext = context.applicationContext
 
+        // Базовые
+        instance { appContext } // если вдруг кому-то ещё нужен сам Context
         singleImpl<SharedBuildConfig, AppBuildConfig>()
         singleImpl<CheckerReserveSources, TvCheckerSources>()
         singleImpl<MigrationExecutor, AppMigrationExecutor>()
@@ -45,6 +48,7 @@ class AppModule(context: Context) : QuillModule() {
             MintPermissionsFlow.dialogFlow
         }
 
+        // Аналитика
         single<AppMetricaAnalyticsSender>()
         single<AppMetricaAnalyticsProfile>()
         single<AppMetricaErrorReporter>()
@@ -56,6 +60,6 @@ class AppModule(context: Context) : QuillModule() {
         singleImpl<AnalyticsSender, CombinedAnalyticsSender>()
         singleImpl<AnalyticsProfile, CombinedAnalyticsProfile>()
         singleImpl<AnalyticsErrorReporter, CombinedErrorReporter>()
-    }
 
+    }
 }

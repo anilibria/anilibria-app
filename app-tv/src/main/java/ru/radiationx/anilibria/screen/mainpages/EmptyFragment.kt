@@ -6,12 +6,11 @@ import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
-import ru.radiationx.quill.inject
 
 class EmptyFragment : Fragment(R.layout.fragment_empty),
     BrowseSupportFragment.MainFragmentAdapterProvider {
 
-    private val backgroundManager by inject<GradientBackgroundManager>()
+    private val backgroundManager by lazy { GradientBackgroundManager(requireActivity()) }
 
     private val selfMainFragmentAdapter by lazy { BrowseSupportFragment.MainFragmentAdapter(this) }
 
@@ -23,5 +22,4 @@ class EmptyFragment : Fragment(R.layout.fragment_empty),
         super.onViewCreated(view, savedInstanceState)
         backgroundManager.clearGradient()
     }
-
 }

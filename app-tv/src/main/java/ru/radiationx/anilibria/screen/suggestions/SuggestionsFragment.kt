@@ -23,7 +23,6 @@ import ru.radiationx.anilibria.common.LoadingCard
 import ru.radiationx.anilibria.common.RowDiffCallback
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.extension.createCardsRowBy
-import ru.radiationx.anilibria.screen.details.DetailsViewModel
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowViewHolder
@@ -43,13 +42,15 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
     private val progressManager by lazy { ExternalProgressManager() }
     private val emptyTextManager by lazy { ExternalTextManager() }
 
+    // РАНЬШЕ: private val backgroundManager by inject<GradientBackgroundManager>()
+    private val backgroundManager by lazy { GradientBackgroundManager(requireActivity()) }
+
     private val rowsViewModel by viewModel<SuggestionsRowsViewModel>()
     private val resultViewModel by viewModel<SuggestionsResultViewModel>()
     private val recommendsViewModel by viewModel<SuggestionsRecommendsViewModel>()
 
-    private val backgroundManager by inject<GradientBackgroundManager>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Если раньше стояла installModules(ActivityModule(this)) — убрали
         installModules(quillModule {
             single<SuggestionsController>()
         })
@@ -67,16 +68,18 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
 
         setSearchResultProvider(this)
         setOnItemViewSelectedListener(ItemViewSelectedListener())
-        setOnItemViewClickedListener { _, item, _, row ->
-            when (val viewModel = getViewModel((row as ListRow).id)) {
-                is BaseCardsViewModel -> when (item) {
-                    is LinkCard -> viewModel.onLinkCardClick()
-                    is LoadingCard -> viewModel.onLoadingCardClick()
-                    is LibriaCard -> viewModel.onLibriaCardClick(item)
+        setOnItemViewClickedListener { _, item, rowViewHolder, row ->
+            when (val vm = getViewModel((row as ListRow).id)) {
+                is BaseCardsViewModel -> {
+                    when (item) {
+                        is LinkCard -> vm.onLinkCardClick()
+                        is LoadingCard -> vm.onLoadingCardClick()
+                        is LibriaCard -> vm.onLibriaCardClick(item)
+                    }
                 }
 
-                is SuggestionsResultViewModel -> when (item) {
-                    is LibriaCard -> resultViewModel.onCardClick(item)
+                is SuggestionsResultViewModel -> {
+                    if (item is LibriaCard) vm.onCardClick(item)
                 }
             }
         }
@@ -88,9 +91,8 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
         emptyTextManager.initialDelay = 0L
         emptyTextManager.text = "Ничего не найдено"
 
-
-        subscribeTo(rowsViewModel.emptyResultState) {
-            if (it) {
+        subscribeTo(rowsViewModel.emptyResultState) { isEmpty ->
+            if (isEmpty) {
                 emptyTextManager.show()
                 backgroundManager.clearGradient()
             } else {
@@ -101,7 +103,7 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
         val rowMap = mutableMapOf<Long, Row>()
         subscribeTo(rowsViewModel.rowListData) { rowList ->
             val rows = rowList.map { rowId ->
-                val row = rowMap[rowId] ?: createRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
+                val row = rowMap[rowId] ?: createRowBy(rowId)
                 rowMap[rowId] = row
                 row
             }
@@ -114,87 +116,36 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
         super.onPause()
     }
 
-    // "destroy" may throw java.lang.IllegalArgumentException: Service not registered: android.speech.SpeechRecognizer$Connection@dabd9b8
-    // do all this mehod's work and wrap "destroy" to try catch
-    //    private void releaseRecognizer() {
-    //        if (null != mSpeechRecognizer) {
-    //            mSearchBar.setSpeechRecognizer(null);
-    //            mSpeechRecognizer.destroy();
-    //            mSpeechRecognizer = null;
-    //        }
-    //    }
-    private fun avoidSpeechRecognitinCrash() {
-        val mSpeechRecognizerField =
-            SearchSupportFragment::class.java.getDeclaredField("mSpeechRecognizer").apply {
-                isAccessible = true
-            }
-        val mSearchBarField =
-            SearchSupportFragment::class.java.getDeclaredField("mSearchBar").apply {
-                isAccessible = true
-            }
-        val currentSpeechRecognizer = mSpeechRecognizerField.get(this)
-        if (currentSpeechRecognizer != null) {
-            val mSearchBar = mSearchBarField.get(this)
-            val setSpeechRecognizerMethod = mSearchBar::class.java.getDeclaredMethod(
-                "setSpeechRecognizer",
-                SpeechRecognizer::class.java
-            ).apply {
-                isAccessible = true
-            }
-            setSpeechRecognizerMethod.invoke(mSearchBar, null)
-
-            val destroyMethod = currentSpeechRecognizer::class.java.getDeclaredMethod(
-                "destroy"
-            ).apply {
-                isAccessible = true
-            }
-            try {
-                destroyMethod.invoke(currentSpeechRecognizer)
-            } catch (ignore: IllegalArgumentException) {
-                // ignore
-            }
-
-            mSpeechRecognizerField.set(this, null)
-        }
-    }
-
-    private fun getViewModel(rowId: Long): ViewModel? = when (rowId) {
+    private fun getViewModel(rowId: Long): Any? = when (rowId) {
         SuggestionsRowsViewModel.RESULT_ROW_ID -> resultViewModel
         SuggestionsRowsViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
         else -> null
     }
 
-    private fun createRowBy(
-        rowId: Long,
-        rowsAdapter: ArrayObjectAdapter,
-        viewModel: ViewModel,
-    ): Row = when (rowId) {
-        DetailsViewModel.RELEASE_ROW_ID -> createHeaderRowBy(
-            rowId,
-            viewModel as SuggestionsResultViewModel
-        )
+    private fun createRowBy(rowId: Long): Row {
+        return when (rowId) {
+            SuggestionsRowsViewModel.RESULT_ROW_ID -> {
+                // Результат
+                val cardsPresenter = CardPresenterSelector(null)
+                val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
+                val row = ListRow(rowId, HeaderItem("Результат поиска"), cardsAdapter)
 
-        else -> createCardsRowBy(rowId, rowsAdapter, viewModel as BaseCardsViewModel)
-    }
-
-    private fun createHeaderRowBy(
-        rowId: Long,
-        viewModel: SuggestionsResultViewModel,
-    ): Row {
-        val cardsPresenter = CardPresenterSelector(null)
-        val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
-        val row = ListRow(rowId, HeaderItem("Результат поиска"), cardsAdapter)
-        subscribeTo(viewModel.resultData) {
-            cardsAdapter.setItems(it, CardDiffCallback)
-        }
-        subscribeTo(viewModel.progressState) {
-            if (it) {
-                progressManager.show()
-            } else {
-                progressManager.hide()
+                subscribeTo(resultViewModel.resultData) { list ->
+                    cardsAdapter.setItems(list, CardDiffCallback)
+                }
+                subscribeTo(resultViewModel.progressState) { loading ->
+                    if (loading) progressManager.show() else progressManager.hide()
+                }
+                row
             }
+
+            SuggestionsRowsViewModel.RECOMMENDS_ROW_ID -> {
+                // Рекомендации
+                createCardsRowBy(rowId, rowsAdapter, recommendsViewModel)
+            }
+
+            else -> ListRow(rowId, HeaderItem("???"), ArrayObjectAdapter())
         }
-        return row
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -213,30 +164,47 @@ class SuggestionsFragment : SearchSupportFragment(), SearchSupportFragment.Searc
 
     private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
         override fun onItemSelected(
-            itemViewHolder: Presenter.ViewHolder?, item: Any?,
-            rowViewHolder: RowPresenter.ViewHolder, row: Row,
+            itemViewHolder: Presenter.ViewHolder?,
+            item: Any?,
+            rowViewHolder: RowPresenter.ViewHolder,
+            row: Row,
         ) {
             if (rowViewHolder is CustomListRowViewHolder) {
                 backgroundManager.applyCard(item)
                 when (item) {
-                    is LibriaCard -> {
-                        rowViewHolder.setDescription(item.title, item.description)
-                    }
-
-                    is LinkCard -> {
-                        rowViewHolder.setDescription(item.title, "")
-                    }
-
-                    is LoadingCard -> {
-                        rowViewHolder.setDescription(item.title, item.description)
-                    }
-
-                    else -> {
-                        rowViewHolder.setDescription("", "")
-                    }
+                    is LibriaCard -> rowViewHolder.setDescription(item.title, item.description)
+                    is LinkCard -> rowViewHolder.setDescription(item.title, "")
+                    is LoadingCard -> rowViewHolder.setDescription(item.title, item.description)
+                    else -> rowViewHolder.setDescription("", "")
                 }
             }
+        }
+    }
 
+    private fun avoidSpeechRecognitinCrash() {
+        try {
+            val speechRecField =
+                SearchSupportFragment::class.java.getDeclaredField("mSpeechRecognizer")
+            val searchBarField = SearchSupportFragment::class.java.getDeclaredField("mSearchBar")
+            speechRecField.isAccessible = true
+            searchBarField.isAccessible = true
+
+            val sr = speechRecField.get(this) ?: return
+            val sb = searchBarField.get(this)
+            val setSpeechRecMethod = sb::class.java.getDeclaredMethod(
+                "setSpeechRecognizer",
+                SpeechRecognizer::class.java
+            )
+            setSpeechRecMethod.isAccessible = true
+            setSpeechRecMethod.invoke(sb, null)
+
+            val destroyMethod = sr::class.java.getDeclaredMethod("destroy")
+            destroyMethod.isAccessible = true
+            destroyMethod.invoke(sr)
+
+            speechRecField.set(this, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

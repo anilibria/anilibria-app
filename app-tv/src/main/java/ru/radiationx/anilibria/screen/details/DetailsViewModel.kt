@@ -4,9 +4,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.BaseRowsViewModel
 import ru.radiationx.data.interactors.ReleaseInteractor
@@ -16,6 +14,12 @@ import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject
 
+/**
+ * ViewModel, управляющий «списком строк» (ID=1,2,3), которые показываются в DetailFragment:
+ *  1) RELEASE_ROW_ID   — «шапка» (DetailHeaderViewModel)
+ *  2) RELATED_ROW_ID   — «связанные» релизы
+ *  3) RECOMMENDS_ROW_ID — «рекомендации»
+ */
 class DetailsViewModel @Inject constructor(
     argExtra: DetailExtra,
     private val releaseInteractor: ReleaseInteractor,
@@ -29,48 +33,57 @@ class DetailsViewModel @Inject constructor(
         const val RECOMMENDS_ROW_ID = 3L
     }
 
+    // Список потенциальных rowId
+    override val rowIds: List<Long> = listOf(
+        RELEASE_ROW_ID,
+        RELATED_ROW_ID,
+        RECOMMENDS_ROW_ID
+    )
+
+    // Доступные (актуальные) строки. В начале все включены.
+    override val availableRows: MutableSet<Long> = mutableSetOf(
+        RELEASE_ROW_ID, RELATED_ROW_ID, RECOMMENDS_ROW_ID
+    )
+
     private val releaseId = argExtra.id
 
-    override val rowIds: List<Long> = listOf(RELEASE_ROW_ID, RELATED_ROW_ID, RECOMMENDS_ROW_ID)
-
-    override val availableRows: MutableSet<Long> =
-        mutableSetOf(RELEASE_ROW_ID, RELATED_ROW_ID, RECOMMENDS_ROW_ID)
-
     init {
+        // Загрузим релиз (чтобы, например, не было пустых данных)
         loadRelease()
 
+        // Если статус авторизации меняется → тоже перегрузим
         authRepository
             .observeAuthState()
             .drop(1)
             .distinctUntilChanged()
-            .onEach { loadRelease() }
+            .onEach {
+                loadRelease()
+            }
             .launchIn(viewModelScope)
 
+        // Если у релиза появятся франшизы (или наоборот) → обновим строку RELATED
         releaseInteractor
             .observeFull(releaseId)
-            .onStart {
-                releaseInteractor.getItem(releaseId)?.also {
-                    emit(it)
-                }
-            }
-            .map { release ->
-                release.getFranchisesIds().filter { it != release.id }
-            }
-            .distinctUntilChanged()
-            .onEach {
-                updateAvailableRow(RELATED_ROW_ID, it.isNotEmpty())
+            .onEach { release ->
+                val hasFranchises = release.getFranchisesIds().any { it != release.id }
+                updateAvailableRow(RELATED_ROW_ID, hasFranchises)
             }
             .launchIn(viewModelScope)
     }
 
+    /**
+     * Метод для загрузки релиза из сети/кэша.
+     * Затем помещаем его в «историю» (HistoryRepository).
+     */
     private fun loadRelease() {
         viewModelScope.launch {
             coRunCatching {
                 releaseInteractor.loadRelease(releaseId)
-            }.onSuccess {
-                historyRepository.putRelease(it)
-            }.onFailure {
-                Timber.e(it)
+            }.onSuccess { release ->
+                // Положим в history (чтобы его учитывали в рекомендациях и т.д.)
+                historyRepository.putRelease(release)
+            }.onFailure { error ->
+                Timber.e(error)
             }
         }
     }

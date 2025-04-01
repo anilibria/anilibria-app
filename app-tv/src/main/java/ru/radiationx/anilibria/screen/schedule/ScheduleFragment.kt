@@ -16,7 +16,6 @@ import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowViewHolder
-import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
@@ -25,9 +24,9 @@ class ScheduleFragment : BrowseSupportFragment() {
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    private val viewModel by viewModel<ScheduleViewModel>()
+    private val backgroundManager by lazy { GradientBackgroundManager(requireActivity()) }
 
-    private val backgroundManager by inject<GradientBackgroundManager>()
+    private val viewModel by viewModel<ScheduleViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,28 +37,16 @@ class ScheduleFragment : BrowseSupportFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         setOnItemViewSelectedListener { _, item, rowViewHolder, _ ->
             backgroundManager.applyCard(item)
             if (rowViewHolder is CustomListRowViewHolder) {
                 when (item) {
-                    is LibriaCard -> {
-                        rowViewHolder.setDescription(item.title, item.description)
-                    }
-
-                    is LinkCard -> {
-                        rowViewHolder.setDescription(item.title, "")
-                    }
-
-                    is LoadingCard -> {
-                        rowViewHolder.setDescription(item.title, item.description)
-                    }
-
-                    else -> {
-                        rowViewHolder.setDescription("", "")
-                    }
+                    is LibriaCard -> rowViewHolder.setDescription(item.title, item.description)
+                    is LinkCard -> rowViewHolder.setDescription(item.title, "")
+                    is LoadingCard -> rowViewHolder.setDescription(item.title, item.description)
+                    else -> rowViewHolder.setDescription("", "")
                 }
             }
         }

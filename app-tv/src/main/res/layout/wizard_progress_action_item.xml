@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.leanback.widget.NonOverlappingLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="?attr/guidedActionItemContainerStyle"
     android:layout_width="match_parent"
@@ -12,11 +12,12 @@
         android:layout_weight="1"
         android:indeterminate="false" />
 
-    <androidx.leanback.widget.NonOverlappingLinearLayout
+    <LinearLayout
         android:id="@+id/guidedactions_item_content"
         style="?attr/guidedActionItemContentStyle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/guidedactions_item_title"
@@ -29,6 +30,6 @@
             android:id="@+id/guidedactions_item_description"
             style="?attr/guidedActionItemDescriptionStyle" />
 
-    </androidx.leanback.widget.NonOverlappingLinearLayout>
+    </LinearLayout>
 
-</androidx.leanback.widget.NonOverlappingLinearLayout>
+</LinearLayout>

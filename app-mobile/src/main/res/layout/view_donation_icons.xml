@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/icDonationalerts"
         android:layout_width="32dp"
         android:layout_height="32dp"
@@ -17,7 +17,7 @@
         app:srcCompat="@drawable/ic_logo_donationalerts"
         app:tint="@color/white" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/icYoomoney"
         android:layout_width="32dp"
         android:layout_height="32dp"
@@ -30,7 +30,7 @@
         app:srcCompat="@drawable/ic_logo_yoomoney"
         app:tint="@color/white" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/icPatreon"
         android:layout_width="32dp"
         android:layout_height="32dp"
@@ -44,7 +44,7 @@
         app:tint="@color/white" />
 
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/icBoosty"
         android:layout_width="32dp"
         android:layout_height="32dp"

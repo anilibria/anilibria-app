@@ -1,9 +1,15 @@
 package ru.radiationx.data.datasource.remote.address
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import ru.radiationx.data.datasource.remote.Api
+import ru.radiationx.data.datasource.remote.address.ApiConfigChanger
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.entity.mapper.toDomain
 import javax.inject.Inject
@@ -21,9 +27,10 @@ class ApiConfig @Inject constructor(
     private val needConfigRelay = MutableSharedFlow<Boolean>()
     var needConfig = true
 
+    // todo TR-274 make api config async
     init {
-        // todo TR-274 make api config async
-        runBlocking {
+        GlobalScope.launch(Dispatchers.IO) {
+            // Раньше здесь был runBlocking, теперь инициализация идёт асинхронно
             activeAddressTag = apiConfigStorage.getActive() ?: Api.DEFAULT_ADDRESS.tag
             val initAddresses =
                 apiConfigStorage.get()?.toDomain() ?: ApiConfigData(listOf(Api.DEFAULT_ADDRESS))

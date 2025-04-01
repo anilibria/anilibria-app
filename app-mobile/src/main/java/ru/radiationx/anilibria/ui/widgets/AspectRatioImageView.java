@@ -3,14 +3,14 @@ package ru.radiationx.anilibria.ui.widgets;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.widget.ImageView; // <-- вместо AppCompatImageView
 
 import ru.radiationx.anilibria.R;
 
 /**
  * Created by radiationx on 26.08.17.
  */
-
-public class AspectRatioImageView extends androidx.appcompat.widget.AppCompatImageView {
+public class AspectRatioImageView extends ImageView {
     private float aspectRatio = 1.0f;
     private boolean enabledAspectRation = true;
 
@@ -29,19 +29,28 @@ public class AspectRatioImageView extends androidx.appcompat.widget.AppCompatIma
     }
 
     private void init(AttributeSet attrs) {
-        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.AspectRatio);
-        aspectRatio = typedArray.getFloat(R.styleable.AspectRatio_aspectRatio, 1);
-        enabledAspectRation = typedArray.getBoolean(R.styleable.AspectRatio_enabledAspectRatio, true);
-        typedArray.recycle();
+        try (TypedArray typedArray = getContext().obtainStyledAttributes(attrs,
+                R.styleable.AspectRatioImageView)) {
+            aspectRatio = typedArray.getFloat(R.styleable.AspectRatioImageView_aspectRatio, 1f);
+            enabledAspectRation = typedArray.getBoolean(R.styleable.AspectRatioImageView_enabledAspectRatio, true);
+            typedArray.recycle();
+        }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (enabledAspectRation) {
-            float height = Math.min(getMeasuredWidth() * aspectRatio, getMaxHeight());
-            setMeasuredDimension(widthMeasureSpec, (int) (height));
+            float width = getMeasuredWidth();
+            float height = Math.min(width * aspectRatio, computeMaxHeight());
+            setMeasuredDimension((int) width, (int) height);
         }
+    }
+
+    private float computeMaxHeight() {
+        // если есть логика ограничения, можно оставить. Иначе можно убрать
+        // или возвратить просто getMeasuredHeight().
+        return Float.MAX_VALUE;
     }
 
     public void setAspectRatio(float aspectRatio) {

@@ -20,12 +20,17 @@ class WatchingViewModel @Inject constructor(
     companion object {
         const val HISTORY_ROW_ID = 1L
         const val CONTINUE_ROW_ID = 2L
-        const val FAVORITES_ROW_ID = 3L
+
+        //        const val FAVORITES_ROW_ID = 3L
         const val RECOMMENDS_ROW_ID = 4L
     }
 
     override val rowIds: List<Long> =
-        listOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, FAVORITES_ROW_ID, RECOMMENDS_ROW_ID)
+        listOf(
+            CONTINUE_ROW_ID, HISTORY_ROW_ID,
+//            FAVORITES_ROW_ID,
+            RECOMMENDS_ROW_ID
+        )
 
     override val availableRows: MutableSet<Long> =
         mutableSetOf(CONTINUE_ROW_ID, HISTORY_ROW_ID, RECOMMENDS_ROW_ID)
@@ -38,7 +43,7 @@ class WatchingViewModel @Inject constructor(
         ) { hasContinue, hasHistory, hasAuth ->
             updateAvailableRow(CONTINUE_ROW_ID, hasContinue)
             updateAvailableRow(HISTORY_ROW_ID, hasHistory)
-            updateAvailableRow(FAVORITES_ROW_ID, hasAuth)
+//            updateAvailableRow(FAVORITES_ROW_ID, hasAuth)
         }.launchIn(viewModelScope)
     }
 }

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     tools:background="@color/white">
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/dialogFileImage"
         android:layout_width="0dp"
         android:layout_height="200dp"

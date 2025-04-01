@@ -1,75 +1,76 @@
 package ru.radiationx.anilibria.screen.details
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.entity.domain.release.GenreItem
-import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.entity.domain.release.SeasonItem
+import ru.radiationx.data.entity.domain.release.YearItem
+import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.ReleaseRepository
 import ru.radiationx.data.repository.SearchRepository
 import javax.inject.Inject
 
+/**
+ * Локальные «рекомендации» для конкретного релиза:
+ * - Берём данные о годе/сезоне/жанрах релиза,
+ * - Находим похожие (исключая сам),
+ * - Подмешиваем пару случайных тайтлов.
+ */
 class DetailRecommendsViewModel @Inject constructor(
-    argExtra: DetailExtra,
-    private val releaseInteractor: ReleaseInteractor,
+    private val releaseRepository: ReleaseRepository,
     private val searchRepository: SearchRepository,
+    private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,
     private val cardRouter: LibriaCardRouter,
+    private val extra: DetailExtra,  // <-- Вместо 'releaseId' берём весь DetailExtra
 ) : BaseCardsViewModel() {
 
-    private val releaseId = argExtra.id
+    override val defaultTitle: String = "Похожие тайтлы"
 
-    override val loadOnCreate: Boolean = false
+    /**
+     * При «getLoader(page)» берём релиз из БД, собираем форму (год/сезон/жанры),
+     * потом делаем поиск (searchReleases), исключаем сам релиз, и
+     * подмешиваем 1-2 случайных из результата для разнообразия.
+     */
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> {
+        // 1) Загружаем релиз
+        val currentRelease = withContext(Dispatchers.IO) {
+            releaseRepository.getRelease(extra.id) // <-- 'extra.id' – тот самый ReleaseId
+        }
+        // 2) Формируем searchForm
+        val form = SearchForm(
+            years = currentRelease.year?.let { setOf(YearItem(it, it)) }.orEmpty(),
+            seasons = currentRelease.season?.let { setOf(SeasonItem(it, it)) }.orEmpty(),
+            genres = currentRelease.genres.map { g -> GenreItem(g, g) }.toSet(),
+            sort = SearchForm.Sort.RATING,
+            onlyCompleted = false
+        )
 
-    override val defaultTitle: String = "Рекомендации"
+        // 3) Поиск + исключаем сам релиз
+        val searchResult = withContext(Dispatchers.IO) {
+            searchRepository.searchReleases(form, requestPage)
+        }
+        // Обновляем кэш
+        releaseInteractor.updateItemsCache(searchResult.data)
+        val filteredList = searchResult.data.filterNot { it.id == extra.id }
 
-    init {
-        cardsData.value = listOf(loadingCard)
-        releaseInteractor
-            .observeFull(releaseId)
-            .map { it.genres }
-            .distinctUntilChanged()
-            .onEach {
-                onRefreshClick()
-            }
-            .launchIn(viewModelScope)
+        // 4) Подмешаем случайные 1-2
+        val randomPick = searchResult.data.shuffled().take(2)
+        val finalList = filteredList.union(randomPick).toList()
+
+        // Возвращаем как LibriaCard
+        return finalList.map { converter.toCard(it) }
     }
 
-    private suspend fun searchGenres(genresCount: Int, requestPage: Int): List<Release> {
-        return searchRepository
-            .searchReleases(
-                SearchForm(
-                    genres = getGenres(genresCount),
-                    sort = SearchForm.Sort.RATING
-                ), requestPage
-            )
-            .let { result -> result.data.filter { it.id != releaseId } }
-    }
-
-    override suspend fun getLoader(requestPage: Int): List<LibriaCard> =
-        searchGenres(3, requestPage)
-            .ifEmpty {
-                searchGenres(2, requestPage)
-            }
-            .also {
-                releaseInteractor.updateItemsCache(it)
-            }
-            .let { result ->
-                result.map { converter.toCard(it) }
-            }
-
-    private suspend fun getGenres(count: Int): Set<GenreItem> {
-        val release = releaseInteractor.getFull(releaseId) ?: return emptySet()
-        return release.genres.take(count).map { GenreItem(it, it) }.toSet()
-    }
-
+    /**
+     * При клике — переходим через [cardRouter].
+     */
     override fun onLibriaCardClick(card: LibriaCard) {
         cardRouter.navigate(card)
     }

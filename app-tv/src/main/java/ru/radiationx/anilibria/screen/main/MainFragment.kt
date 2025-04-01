@@ -23,16 +23,15 @@ import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.subscribeTo
 import ru.radiationx.shared_app.di.quillParentViewModel
 
-
 class MainFragment : RowsSupportFragment() {
 
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    private val backgroundManager by inject<GradientBackgroundManager>()
+    // РАНЬШЕ БЫЛО: private val backgroundManager by inject<GradientBackgroundManager>()
+    private val backgroundManager by lazy { GradientBackgroundManager(requireActivity()) }
 
     private val mainViewModel by quillParentViewModel<MainViewModel>()
-
     private val feedViewModel by quillParentViewModel<MainFeedViewModel>()
     private val scheduleViewModel by quillParentViewModel<MainScheduleViewModel>()
     private val favoritesViewModel by quillParentViewModel<MainFavoritesViewModel>()
@@ -60,23 +59,11 @@ class MainFragment : RowsSupportFragment() {
 
         setOnItemViewClickedListener { _, item, rowViewHolder, row ->
             if (rowViewHolder is CustomListRowViewHolder) {
-                val viewMode: BaseCardsViewModel? = getViewModel((row as ListRow).id)
+                val vm: BaseCardsViewModel? = getViewModel((row as ListRow).id)
                 when (item) {
-                    is LinkCard -> {
-                        viewMode?.onLinkCardClick()
-                    }
-
-                    is LoadingCard -> {
-                        viewMode?.onLoadingCardClick()
-                    }
-
-                    is LibriaCard -> {
-                        viewMode?.onLibriaCardClick(item)
-                    }
-
-                    else -> {
-                        // do nothing
-                    }
+                    is LinkCard -> vm?.onLinkCardClick()
+                    is LoadingCard -> vm?.onLoadingCardClick()
+                    is LibriaCard -> vm?.onLibriaCardClick(item)
                 }
             }
         }
@@ -84,8 +71,8 @@ class MainFragment : RowsSupportFragment() {
         val rowMap = mutableMapOf<Long, ListRow>()
         subscribeTo(mainViewModel.rowListData) { rowList ->
             val rows = rowList.map { rowId ->
-                val row =
-                    rowMap[rowId] ?: createCardsRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
+                val row = rowMap[rowId]
+                    ?: createCardsRowBy(rowId, rowsAdapter, getViewModel(rowId)!!)
                 rowMap[rowId] = row
                 row
             }
@@ -110,25 +97,12 @@ class MainFragment : RowsSupportFragment() {
             if (rowViewHolder is CustomListRowViewHolder) {
                 backgroundManager.applyCard(item)
                 when (item) {
-                    is LibriaCard -> {
-                        rowViewHolder.setDescription(item.title, item.description)
-                    }
-
-                    is LinkCard -> {
-                        rowViewHolder.setDescription(item.title, "")
-                    }
-
-                    is LoadingCard -> {
-                        rowViewHolder.setDescription(item.title, item.description)
-                    }
-
-                    else -> {
-                        rowViewHolder.setDescription("", "")
-                    }
+                    is LibriaCard -> rowViewHolder.setDescription(item.title, item.description)
+                    is LinkCard -> rowViewHolder.setDescription(item.title, "")
+                    is LoadingCard -> rowViewHolder.setDescription(item.title, item.description)
+                    else -> rowViewHolder.setDescription("", "")
                 }
             }
-
         }
     }
-
 }

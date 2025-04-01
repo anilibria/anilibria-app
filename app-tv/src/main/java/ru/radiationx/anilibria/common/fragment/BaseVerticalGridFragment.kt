@@ -22,19 +22,18 @@ open class BaseVerticalGridFragment : VerticalGridSupportFragment() {
         val gridView = view.findViewById<ViewGroup>(androidx.leanback.R.id.browse_grid)
         val shadowView = ShadowDescriptionView(dockView.context)
 
-        this.shadowDescriptionView = shadowView
-
+        shadowDescriptionView = shadowView
         shadowView.setBackgroundResource(R.drawable.bg_grid_description_shadow)
         shadowView.isInvisible = true
 
-        dockView.addView(
-            shadowView,
-            FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.BOTTOM
-            )
+        // Поднимаем на 0px от нижнего края
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            Gravity.BOTTOM
         )
+        params.bottomMargin = 0
+        dockView.addView(shadowView, params)
 
         gridView.addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
             val cardDescriptionView =

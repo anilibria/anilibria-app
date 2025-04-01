@@ -9,7 +9,6 @@ import ru.radiationx.anilibria.common.*
 import ru.radiationx.anilibria.common.fragment.GridFragment
 import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
-import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
@@ -21,39 +20,26 @@ class YoutubeFragment : GridFragment() {
         })
     }
 
-    private val backgroundManager by inject<GradientBackgroundManager>()
+    private val backgroundManager by lazy { GradientBackgroundManager(requireActivity()) }
 
     private val viewModel by viewModel<YouTubeViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         gridPresenter = VerticalGridPresenter().apply {
             numberOfColumns = 2
         }
-
-        backgroundManager.clearGradient()
-        onItemViewSelectedListener =
-            OnItemViewSelectedListener { _, item, _, _ ->
-                backgroundManager.applyCard(item)
-                when (item) {
-                    is LibriaCard -> {
-                        setDescription(item.title, item.description)
-                    }
-                    is LinkCard -> {
-                        setDescription(item.title, "")
-                    }
-                    is LoadingCard -> {
-                        setDescription(item.title, item.description)
-                    }
-                    else -> {
-                        setDescription("", "")
-                    }
-                }
+        onItemViewSelectedListener = OnItemViewSelectedListener { _, item, _, _ ->
+            backgroundManager.applyCard(item)
+            when (item) {
+                is LibriaCard -> setDescription(item.title, item.description)
+                is LinkCard -> setDescription(item.title, "")
+                is LoadingCard -> setDescription(item.title, item.description)
+                else -> setDescription("", "")
             }
-
+        }
 
         this.adapter = gridAdapter
 

@@ -24,7 +24,7 @@ class WatchingFragment : RowsSupportFragment() {
     private val rowsPresenter by lazy { CustomListRowPresenter() }
     private val rowsAdapter by lazy { ArrayObjectAdapter(rowsPresenter) }
 
-    private val backgroundManager by inject<GradientBackgroundManager>()
+    private val backgroundManager by lazy { GradientBackgroundManager(requireActivity()) }
 
     private val watchingViewModel by quillParentViewModel<WatchingViewModel>()
 
@@ -36,7 +36,7 @@ class WatchingFragment : RowsSupportFragment() {
     private fun getViewModel(rowId: Long): BaseCardsViewModel? = when (rowId) {
         WatchingViewModel.HISTORY_ROW_ID -> historyViewModel
         WatchingViewModel.CONTINUE_ROW_ID -> continueViewModel
-        WatchingViewModel.FAVORITES_ROW_ID -> favoritesViewModel
+//        WatchingViewModel.FAVORITES_ROW_ID -> favoritesViewModel
         WatchingViewModel.RECOMMENDS_ROW_ID -> recommendsViewModel
         else -> null
     }

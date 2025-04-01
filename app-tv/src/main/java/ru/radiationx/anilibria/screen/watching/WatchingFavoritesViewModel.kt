@@ -26,11 +26,14 @@ class WatchingFavoritesViewModel @Inject constructor(
 
     override val defaultTitle: String = "Избранное"
 
+    // При первом создании не грузим сразу, а дождёмся onResume()
     override val loadOnCreate: Boolean = false
 
     override val preventClearOnRefresh: Boolean = true
 
     init {
+        // Если пользователь вошёл в аккаунт (AuthState.AUTH),
+        // то перезагружаем список
         authRepository
             .observeAuthState()
             .drop(1)
@@ -42,17 +45,27 @@ class WatchingFavoritesViewModel @Inject constructor(
 
     override fun onResume() {
         super.onResume()
+        // Каждый раз при возврате на экран — обновляем данные
         onRefreshClick()
     }
 
-    override suspend fun getLoader(requestPage: Int): List<LibriaCard> = favoriteRepository
-        .getFavorites(requestPage)
-        .also {
-            releaseInteractor.updateItemsCache(it.data)
+    override suspend fun getLoader(requestPage: Int): List<LibriaCard> {
+        // Подтягиваем следующий "page" из избранного,
+        // одновременно обновляя кеш релизов
+        val response = favoriteRepository.getFavorites(requestPage)
+        releaseInteractor.updateItemsCache(response.data)
+        return response.data.map { release ->
+            converter.toCard(release)
         }
-        .let { favoriteItems ->
-            favoriteItems.data.map { converter.toCard(it) }
-        }
+    }
+
+    // ВАЖНО: теперь бесконечной прокрутки не будет
+    override fun hasMoreCards(
+        newCards: List<LibriaCard>,
+        allCards: List<LibriaCard>
+    ): Boolean {
+        return false
+    }
 
     override fun onLibriaCardClick(card: LibriaCard) {
         cardRouter.navigate(card)

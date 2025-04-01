@@ -17,7 +17,6 @@ import ru.radiationx.anilibria.extension.applyCard
 import ru.radiationx.anilibria.ui.presenter.CardPresenterSelector
 import ru.radiationx.anilibria.ui.widget.SearchTitleView
 import ru.radiationx.anilibria.ui.widget.manager.ExternalTextManager
-import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 
@@ -28,12 +27,11 @@ class SearchFragment : BaseVerticalGridFragment() {
     }
     private val cardsAdapter = ArrayObjectAdapter(cardsPresenter)
 
-    private val emptyTextManager by lazy { ExternalTextManager() }
-
-    private val backgroundManager by inject<GradientBackgroundManager>()
+    private val backgroundManager by lazy { GradientBackgroundManager(requireActivity()) }
 
     private val cardsViewModel by viewModel<SearchViewModel>()
     private val formViewModel by viewModel<SearchFormViewModel>()
+    private val emptyTextManager by lazy { ExternalTextManager() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,56 +44,35 @@ class SearchFragment : BaseVerticalGridFragment() {
     override fun onInflateTitleView(
         inflater: LayoutInflater,
         parent: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(R.layout.lb_search_titleview, parent, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewLifecycleOwner.lifecycle.addObserver(cardsViewModel)
         viewLifecycleOwner.lifecycle.addObserver(formViewModel)
 
         setOnSearchClickedListener {
             cardsViewModel.onSearchClick()
         }
-
         backgroundManager.clearGradient()
         setOnItemViewSelectedListener { _, item, _, _ ->
             backgroundManager.applyCard(item)
             when (item) {
-                is LibriaCard -> {
-                    setDescription(item.title, item.description)
-                }
-
-                is LinkCard -> {
-                    setDescription(item.title, "")
-                }
-
-                is LoadingCard -> {
-                    setDescription(item.title, item.description)
-                }
-
-                else -> {
-                    setDescription("", "")
-                }
+                is LibriaCard -> setDescription(item.title, item.description)
+                is LinkCard -> setDescription(item.title, "")
+                is LoadingCard -> setDescription(item.title, item.description)
+                else -> setDescription("", "")
             }
         }
 
         setOnItemViewClickedListener { _, item, _, _ ->
             when (item) {
-                is LinkCard -> {
-                    cardsViewModel.onLinkCardClick()
-                }
-
-                is LoadingCard -> {
-                    cardsViewModel.onLoadingCardClick()
-                }
-
-                is LibriaCard -> {
-                    cardsViewModel.onLibriaCardClick(item)
-                }
+                is LinkCard -> cardsViewModel.onLinkCardClick()
+                is LoadingCard -> cardsViewModel.onLoadingCardClick()
+                is LibriaCard -> cardsViewModel.onLibriaCardClick(item)
             }
         }
 
@@ -106,12 +83,12 @@ class SearchFragment : BaseVerticalGridFragment() {
         emptyTextManager.initialDelay = 0L
         emptyTextManager.text = "По данным параметрам ничего не найдено"
 
-        (titleView as? SearchTitleView?)?.apply {
-            setYearClickListener({ formViewModel.onYearClick() })
-            setSeasonClickListener({ formViewModel.onSeasonClick() })
-            setGenreClickListener({ formViewModel.onGenreClick() })
-            setSortClickListener({ formViewModel.onSortClick() })
-            setOnlyCompletedClickListener({ formViewModel.onOnlyCompletedClick() })
+        (titleView as? SearchTitleView)?.apply {
+            setYearClickListener { formViewModel.onYearClick() }
+            setSeasonClickListener { formViewModel.onSeasonClick() }
+            setGenreClickListener { formViewModel.onGenreClick() }
+            setSortClickListener { formViewModel.onSortClick() }
+            setOnlyCompletedClickListener { formViewModel.onOnlyCompletedClick() }
 
             subscribeTo(formViewModel.yearData) { year = it }
             subscribeTo(formViewModel.seasonData) { season = it }
@@ -121,17 +98,12 @@ class SearchFragment : BaseVerticalGridFragment() {
         }
 
         progressBarManager.initialDelay = 0
-
         subscribeTo(cardsViewModel.progressState) {
-            if (it) {
-                progressBarManager.show()
-            } else {
-                progressBarManager.hide()
-            }
+            if (it) progressBarManager.show() else progressBarManager.hide()
         }
 
-        subscribeTo(cardsViewModel.cardsData) {
-            if (it.isEmpty()) {
+        subscribeTo(cardsViewModel.cardsData) { list ->
+            if (list.isEmpty()) {
                 backgroundManager.clearGradient()
                 setDescriptionVisible(false)
                 emptyTextManager.show()
@@ -139,7 +111,7 @@ class SearchFragment : BaseVerticalGridFragment() {
                 emptyTextManager.hide()
                 setDescriptionVisible(true)
             }
-            cardsAdapter.setItems(it, CardDiffCallback)
+            cardsAdapter.setItems(list, CardDiffCallback)
             startEntranceTransition()
         }
     }

@@ -40,7 +40,7 @@
             android:textSize="14sp"
             tools:text="[BDRip 1080p-LQ HEVC]" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/itemTorrentPreffer"
             android:layout_width="16dp"
             android:layout_height="16dp"
@@ -59,7 +59,7 @@
             app:layout_wrapBefore="true"
             tools:text="430.1 MB" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginTop="2dp"
@@ -76,7 +76,7 @@
             android:textSize="12sp"
             tools:text="42" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginTop="2dp"
@@ -93,7 +93,7 @@
             android:textSize="12sp"
             tools:text="10" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginTop="2dp"

@@ -21,15 +21,16 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_end="4dp" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/itemIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginStart="16dp"
-        android:tint="?colorOnSurface"
+        android:contentDescription="TODO"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="?colorOnSurface"
         tools:src="@drawable/baseline_close_24"
         tools:visibility="visible" />
 
@@ -87,16 +88,16 @@
         tools:text="Value"
         tools:visibility="visible" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/itemNavIcon"
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:layout_marginEnd="12dp"
         android:src="@drawable/baseline_chevron_right_24"
-        android:tint="?colorOnSurface"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="?colorOnSurface"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.SwitchCompat

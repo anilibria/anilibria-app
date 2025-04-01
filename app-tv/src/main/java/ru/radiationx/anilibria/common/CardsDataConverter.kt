@@ -8,8 +8,9 @@ import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.capitalizeDefault
 import ru.radiationx.shared.ktx.decapitalizeDefault
 import java.util.Date
+import javax.inject.Inject
 
-class CardsDataConverter(
+class CardsDataConverter @Inject constructor(
     private val context: Context,
 ) {
 

@@ -6,44 +6,44 @@ import androidx.fragment.app.FragmentActivity
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.GuidedStepNavigator
 import ru.radiationx.anilibria.contentprovider.suggestions.SuggestionsContentProvider
-import ru.radiationx.anilibria.di.ActivityModule
-import ru.radiationx.anilibria.di.NavigationModule
-import ru.radiationx.anilibria.di.PlayerModule
-import ru.radiationx.anilibria.di.SearchModule
-import ru.radiationx.anilibria.di.UpdateModule
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 import com.github.terrakok.cicerone.NavigatorHolder
+import ru.radiationx.anilibria.di.AppModule
+import ru.radiationx.anilibria.di.NavigationModule
+import ru.radiationx.anilibria.di.PlayerModule
+import ru.radiationx.anilibria.di.SearchModule
+import ru.radiationx.anilibria.di.UpdateModule
+import ru.radiationx.quill.inject
 
 class MainActivity : FragmentActivity() {
 
     private val viewModel: AppLauncherViewModel by viewModel()
-
     private val navigator by lazy {
-        GuidedStepNavigator(
-            this,
-            R.id.fragmentContainer
-        )
+        GuidedStepNavigator(this, R.id.fragmentContainer)
     }
 
     private val navigatorHolder by inject<NavigatorHolder>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
+
+        // Удалили installModules(ActivityModule(this)).
+        // Вместо этого только app-level модули:
         installModules(
-            ActivityModule(this),
+            AppModule(this),
             NavigationModule(),
             PlayerModule(),
             UpdateModule(),
             SearchModule(),
         )
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragments)
-        lifecycle.addObserver(viewModel)
 
+        lifecycle.addObserver(viewModel)
         subscribeTo(viewModel.appReadyState) {
             handleIntent(intent)
         }

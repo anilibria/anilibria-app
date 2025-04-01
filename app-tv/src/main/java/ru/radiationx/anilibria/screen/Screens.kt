@@ -1,7 +1,9 @@
 package ru.radiationx.anilibria.screen
 
+import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
+import androidx.media3.common.util.UnstableApi
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.common.fragment.GuidedAppScreen
 import ru.radiationx.anilibria.screen.auth.credentials.AuthCredentialsGuidedFragment
@@ -148,6 +150,7 @@ class PlayerScreen(
     private val releaseId: ReleaseId,
     private val episodeId: EpisodeId?,
 ) : FragmentScreen {
+    @OptIn(UnstableApi::class)
     override fun createFragment(factory: FragmentFactory): Fragment {
         return PlayerFragment.newInstance(releaseId, episodeId)
     }

@@ -89,10 +89,10 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="@id/guideline_left"
         app:layout_constraintTop_toBottomOf="@id/rowReleaseTitleEn"
-        app:layout_constraintWidth_default="wrap"
+        app:layout_constrainedWidth="true"
         tools:text="2019 год, Экшен, ТВ (12эп.) 12 мин., Выходит по четвергам " />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/rowReleaseHQMarker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -254,7 +254,7 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/rowReleaseArrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

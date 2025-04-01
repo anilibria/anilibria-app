@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.GradientBackgroundManager
 import ru.radiationx.anilibria.databinding.FragmentProfileBinding
-import ru.radiationx.quill.inject
 import ru.radiationx.shared_app.di.quillParentViewModel
 import ru.radiationx.shared_app.imageloader.showImageUrl
 
@@ -22,7 +21,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
 
     private val binding by viewBinding<FragmentProfileBinding>()
 
-    private val backgroundManager by inject<GradientBackgroundManager>()
+    private val backgroundManager by lazy { GradientBackgroundManager(requireActivity()) }
 
     private val viewModel by quillParentViewModel<ProfileViewModel>()
 
@@ -34,16 +33,15 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        backgroundManager.clearGradient()
 
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
-
         viewModel.profileData.onEach {
             if (!it?.avatarUrl.isNullOrEmpty()) {
                 binding.profileAvatar.showImageUrl(it?.avatarUrl)
             }
             binding.profileNick.text = it?.nick
-
-            val hasAuth = it != null
+            val hasAuth = (it != null)
             binding.profileAvatar.isVisible = hasAuth
             binding.profileNick.isVisible = hasAuth
             binding.profileSignIn.isGone = hasAuth
@@ -53,9 +51,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
         binding.profileSignIn.setOnClickListener { viewModel.onSignInClick() }
         binding.profileSignOut.setOnClickListener { viewModel.onSignOutClick() }
 
-
         mainFragmentAdapter.fragmentHost.notifyViewCreated(selfMainFragmentAdapter)
         mainFragmentAdapter.fragmentHost.notifyDataReady(selfMainFragmentAdapter)
-        backgroundManager.clearGradient()
     }
 }

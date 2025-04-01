@@ -33,7 +33,7 @@
                 android:layoutDirection="locale"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/navigation_button"
                     android:layout_width="@dimen/search_icon_56"
                     android:layout_height="match_parent"
@@ -67,7 +67,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp" />
 
-                <androidx.appcompat.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/clear_button"
                     android:layout_width="@dimen/search_icon_56"
                     android:layout_height="match_parent"

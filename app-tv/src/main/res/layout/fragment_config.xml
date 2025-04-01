@@ -27,7 +27,7 @@
         android:layout_height="0dp"
         android:background="?android:colorBackground" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/configLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
             app:layout_constraintBottom_toBottomOf="@id/configActionsBarrier"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintWidth_default="wrap"
+            app:layout_constrainedWidth="true"
             tools:text="Описание ошибки" />
 
         <androidx.constraintlayout.widget.Barrier

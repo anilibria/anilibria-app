@@ -27,8 +27,10 @@ import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.imageloader.loadImageBitmap
 import timber.log.Timber
 import javax.inject.Inject
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColorInt
 
-class GradientBackgroundManager @Inject constructor(
+class GradientBackgroundManager(
     private val activity: FragmentActivity,
 ) {
 
@@ -39,20 +41,20 @@ class GradientBackgroundManager @Inject constructor(
     private val defaultColor = activity.getCompatColor(R.color.dark_colorAccent)
     private val foregroundColor = activity.getCompatColor(R.color.dark_windowBackground)
 
-    private val backgroundDrawable = ColorDrawable(defaultColor)
-    private val foregroundDrawable = ColorDrawable(foregroundColor)
+    private val backgroundDrawable = defaultColor.toDrawable()
+    private val foregroundDrawable = foregroundColor.toDrawable()
     private val classicGradientDrawable = GradientDrawable(
         GradientDrawable.Orientation.BL_TR,
         intArrayOf(
-            Color.parseColor("#ee000000"),
-            Color.parseColor("#55000000")
+            "#ee000000".toColorInt(),
+            "#55000000".toColorInt()
         )
     )
     private val customGradientDrawable = LinearGradientDrawable(
         190f,
         intArrayOf(
-            Color.parseColor("#ee000000"),
-            Color.parseColor("#55000000")
+            "#ee000000".toColorInt(),
+            "#55000000".toColorInt()
         )
     )
     private val layerDrawable = LayerDrawable(

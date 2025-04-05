@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rowReleaseRoot"
@@ -30,6 +31,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_end="?browsePaddingBottom" />
 
+    <!-- Изображение справа -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/rowReleaseImageCard"
         android:layout_width="0dp"
@@ -46,6 +48,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/AppTheme.RoundedImageView" />
 
+    <!-- Заголовок (RU) -->
     <TextView
         android:id="@+id/rowReleaseTitleRu"
         android:layout_width="0dp"
@@ -59,13 +62,13 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Фантазия Гранблю 2" />
 
+    <!-- Заголовок (ENG) -->
     <TextView
         android:id="@+id/rowReleaseTitleEn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="?browsePaddingEnd"
-        android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/dark_textDefault"
         android:textSize="16sp"
@@ -74,13 +77,13 @@
         app:layout_constraintTop_toBottomOf="@id/rowReleaseTitleRu"
         tools:text="Granblue Fantasy The Animation Season 2" />
 
+    <!-- Дополнительное (год, жанр...) -->
     <TextView
         android:id="@+id/rowReleaseExtra"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
-        android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/dark_textDefault"
         android:textSize="16sp"
@@ -148,44 +151,48 @@
         tools:text="Новая серия каждую субботу."
         tools:visibility="visible" />
 
-
+    <!-- Блок описания (растягивается от rowReleaseAnnounce до rowReleaseActions) -->
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/rowReleaseDescriptionCard"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="?browsePaddingEnd"
         android:layout_marginBottom="16dp"
         android:background="@drawable/bg_details_description"
+        android:orientation="vertical"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:nextFocusDown="@id/rowReleaseActions"
-        android:orientation="vertical"
-        app:layout_constrainedHeight="true"
+        app:layout_constraintTop_toBottomOf="@id/rowReleaseAnnounce"
         app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
-        app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
         app:layout_constraintStart_toStartOf="@id/guideline_left"
-        app:layout_constraintTop_toBottomOf="@id/rowReleaseAnnounce">
+        app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard">
 
-        <TextView
-            android:id="@+id/rowReleaseDescription"
+        <!-- ScrollView, чтобы текст прокручивался, а не уезжал -->
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:alpha="0.8"
-            android:ellipsize="end"
-            android:lineSpacingMultiplier="1.33"
-            android:maxLines="4"
-            android:textColor="@color/dark_textDefault"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rowReleaseExtra"
-            tools:text="@tools:sample/lorem/random" />
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="false"
+            android:layout_margin="8dp">
+
+            <TextView
+                android:id="@+id/rowReleaseDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.8"
+                android:lineSpacingMultiplier="1.33"
+                android:textColor="@color/dark_textDefault"
+                android:textSize="14sp"
+                tools:text="@tools:sample/lorem/random" />
+
+        </ScrollView>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-
+    <!-- Блок кнопок (play, favorite, etc.) -->
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/rowReleaseActions"
         android:layout_width="wrap_content"
@@ -235,14 +242,12 @@
             android:layout_marginEnd="16dp"
             android:minWidth="48dp"
             android:padding="12dp"
-            android:paddingStart="0dp"
-            android:paddingEnd="0dp"
-            android:text="Смотреть"
             app:srcCompat="@drawable/ic_more_vert"
             app:tint="@color/text_button_color" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <!-- Остальное: прогресс, стрелка и т.д. -->
     <ProgressBar
         android:id="@+id/rowReleaseUpdateProgress"
         style="?android:progressBarStyleSmall"

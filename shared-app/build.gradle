@@ -27,6 +27,7 @@ dependencies {
     implementation project(":quill-di")
     implementation libs.androidx.appcompat
     implementation libs.coil
+    implementation libs.coil.network.okhttp
 
     compileOnly libs.toothpick
     ksp libs.toothpick.compiler

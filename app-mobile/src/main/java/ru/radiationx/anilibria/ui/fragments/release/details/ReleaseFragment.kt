@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.WindowCompat
@@ -249,7 +248,11 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         } else {
             baseBinding.toolbarImage.showImageUrl(state.poster) {
                 onStart { baseBinding.toolbarImageProgress.isVisible = true }
-                onSuccess { updateToolbarColors(it) }
+                onSuccess {
+                    if (it != null) {
+                        updateToolbarColors(it)
+                    }
+                }
                 onComplete {
                     baseBinding.toolbarImageProgress.isGone = true
                     startPostponedEnterTransition()

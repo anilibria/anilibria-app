@@ -125,13 +125,17 @@ class GradientBackgroundManager @Inject constructor(
             coRunCatching {
                 val bitmap = withContext(Dispatchers.IO) {
                     activity.loadImageBitmap(url)
-                }
+                } ?: return@coRunCatching null
                 withContext(Dispatchers.Default) {
                     bitmap.asSoftware {
                         Palette.Builder(it).generate()
                     }
                 }
             }.onSuccess { palette ->
+                if (palette == null) {
+                    applyDefault()
+                    return@onSuccess
+                }
                 if (colorSelector == defaultColorSelector) {
                     urlColorMap[url] = colorSelector(palette) ?: defaultColorSelector(palette)
                 }

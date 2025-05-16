@@ -26,6 +26,13 @@ plugins {
     alias libs.plugins.gms apply false
 }
 
+// todo delete after fixes in conscrypt library
+allprojects {
+    if (libs.conscrypt.android.get().version == "2.5.3") {
+        throw new Exception("Do not use conscrypt version 2.5.3, it's broken")
+    }
+}
+
 tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+    delete rootProject.layout.buildDirectory
 }

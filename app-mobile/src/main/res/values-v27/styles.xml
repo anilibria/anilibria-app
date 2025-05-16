@@ -4,7 +4,6 @@
     <style name="Splash.DayNightAppTheme" parent="BaseSplash.DayNightAppTheme">
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
     </style>
 
 </resources>

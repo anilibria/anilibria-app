@@ -5,6 +5,7 @@ plugins {
     alias libs.plugins.android.application
     alias libs.plugins.kotlin.android
     alias libs.plugins.ksp
+    alias libs.plugins.appmetrica
 }
 
 static def getDateTime() {
@@ -67,6 +68,10 @@ android {
             outputFileName = "${appName}_v${versionName}.apk"
         }
     }
+}
+
+appmetrica {
+    offline = { true }
 }
 
 kotlin {

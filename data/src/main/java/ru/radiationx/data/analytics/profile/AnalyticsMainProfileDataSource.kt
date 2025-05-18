@@ -2,6 +2,7 @@
 
 package ru.radiationx.data.analytics.profile
 
+import android.os.Build
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import ru.radiationx.data.SharedBuildConfig
@@ -73,6 +74,12 @@ class AnalyticsMainProfileDataSource @Inject constructor(
             },
             asyncAttr(ProfileConstants.has_ads) {
                 sharedBuildConfig.hasAds.mapToAttr(it)
+            },
+            asyncAttr(ProfileConstants.arch) {
+                (System.getProperty("os.arch") ?: "unknown").mapToAttr(it)
+            },
+            asyncAttr(ProfileConstants.arch_support) {
+                Build.SUPPORTED_ABIS.joinToString().mapToAttr(it)
             }
         )
         attributes.awaitAll()

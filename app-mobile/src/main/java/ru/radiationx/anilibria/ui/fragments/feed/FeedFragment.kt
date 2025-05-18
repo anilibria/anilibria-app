@@ -1,9 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
@@ -11,8 +9,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import searchbar.NavigationIcon
-import searchbar.widget.SearchView
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
@@ -22,7 +18,7 @@ import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.common.releaseItemDialog
 import ru.radiationx.anilibria.ui.common.youtubeItemDialog
-import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
+import ru.radiationx.anilibria.ui.fragments.BaseSearchFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
@@ -30,12 +26,13 @@ import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
+import searchbar.NavigationIcon
 
 
 /* Created by radiationx on 05.11.17. */
 
 class FeedFragment :
-    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    BaseSearchFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
     TopScroller {
 
@@ -92,10 +89,6 @@ class FeedFragment :
 
     private val searchViewModel by viewModel<FastSearchViewModel>()
 
-    private var _searchView: SearchView? = null
-    private val searchView: SearchView
-        get() = requireNotNull(_searchView)
-
     private val releaseDialog by releaseItemDialog(
         onCopyClick = { viewModel.onCopyClick(it) },
         onShareClick = { viewModel.onShareClick(it) },
@@ -121,24 +114,7 @@ class FeedFragment :
         return FragmentListRefreshBinding.bind(view)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        _searchView = SearchView(baseBinding.coordinatorLayout.context).apply {
-            id = R.id.top_search_view
-        }
-        baseBinding.coordinatorLayout.addView(searchView)
-        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
-            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
-            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
-        }
-
         super.onViewCreated(view, savedInstanceState)
 
         postopneEnterTransitionWithTimout()
@@ -156,15 +132,6 @@ class FeedFragment :
         baseBinding.toolbar.apply {
             title = getString(R.string.fragment_title_releases)
             title = "Лента"
-            /*menu.add("Поиск")
-                    .setIcon(R.drawable.ic_toolbar_search)
-                    .setOnMenuItemClickListener {
-                        searchView?.open(true, it)
-                        false
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/
-
-
         }
 
         FeedToolbarShadowController(
@@ -174,7 +141,7 @@ class FeedFragment :
             updateToolbarShadow(it)
         }
 
-        searchView.apply {
+        baseBinding.searchView.apply {
             setHint("Поиск по названию")
             setNavigationIcon(NavigationIcon.Search)
             setOnFocusChangeListener { hasFocus ->
@@ -200,17 +167,17 @@ class FeedFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         searchViewModel.state.onEach { state ->
-            searchView.setLoading(state.loaderState.loading)
+            baseBinding.searchView.setLoading(state.loaderState.loading)
             searchAdapter.bindItems(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+        baseBinding.searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
             topMargin = dimensions.top
         }
-        searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
+        baseBinding.searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -227,8 +194,7 @@ class FeedFragment :
         super.onDestroyView()
         adapter.saveState(null)
         binding.recyclerView.adapter = null
-        searchView.setContentAdapter(null)
-        _searchView = null
+        baseBinding.searchView.setContentAdapter(null)
     }
 
     override fun scrollToTop() {

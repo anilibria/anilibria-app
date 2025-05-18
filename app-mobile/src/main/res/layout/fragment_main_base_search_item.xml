@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:transitionGroup="true">
+
+    <View
+        android:id="@+id/baseStatusBar"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="?colorSurface"
+        android:visibility="gone" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/coordinator_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stateListAnimator="@null"
+            android:theme="?app_bar_overlay">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/toolbarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:contentScrim="?colorSurface"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:scrimAnimationDuration="335"
+                app:scrimVisibleHeightTrigger="96dp"
+                app:statusBarScrim="@android:color/transparent"
+                app:titleEnabled="false">
+
+                <ru.radiationx.anilibria.ui.widgets.AspectRatioImageView
+                    android:id="@+id/toolbarImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="144dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    app:aspectRatio="1.456"
+                    app:layout_collapseMode="parallax" />
+
+                <ProgressBar
+                    android:id="@+id/toolbarImageProgress"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:indeterminateTint="?colorSecondary"
+                    android:visibility="gone"
+                    app:layout_collapseMode="parallax"
+                    tools:visibility="visible" />
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:subtitleTextAppearance="@style/ToolbarSubtitleAppearance">
+
+                    <FrameLayout
+                        android:id="@+id/spinnerContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="?attr/actionBarSize"
+                        android:visibility="gone">
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/spinner"
+                            style="@style/Widget.AppCompat.Spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            app:popupTheme="?popup_overlay" />
+                    </FrameLayout>
+
+
+                </androidx.appcompat.widget.Toolbar>
+
+                <View
+                    android:id="@+id/toolbarInsetShadow"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/toolbar_inset_shadow"
+                    android:visibility="gone" />
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:background="?gradientBackground"
+            android:visibility="visible"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <FrameLayout
+            android:id="@+id/fragment_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <View
+            android:id="@+id/toolbar_shadow_prelp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/toolbar_shadow_prelp"
+            android:visibility="gone"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <searchbar.widget.SearchMenuItem
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

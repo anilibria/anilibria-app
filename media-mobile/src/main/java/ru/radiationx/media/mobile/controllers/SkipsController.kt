@@ -41,12 +41,17 @@ internal class SkipsController(
     private val _currentSkip = MutableStateFlow<TimelineSkip?>(null)
     val currentSkip = _currentSkip.asStateFlow()
 
+    var onSkipClick: (() -> Unit)? = null
+    var onCancelSkipClick: (() -> Unit)? = null
+
     init {
         skipButtonCancel.setOnClickListener {
             cancelCurrentSkip()
+            onCancelSkipClick?.invoke()
         }
         skipButtonSkip.setOnClickListener {
             skip()
+            onSkipClick?.invoke()
         }
 
         combine(

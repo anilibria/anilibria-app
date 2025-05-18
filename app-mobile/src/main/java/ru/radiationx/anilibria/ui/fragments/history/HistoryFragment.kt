@@ -12,7 +12,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import searchbar.widget.SearchMenuItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
@@ -23,7 +22,7 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.common.releaseItemDialog
-import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
+import ru.radiationx.anilibria.ui.fragments.BaseSearchItemFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
@@ -40,7 +39,7 @@ import ru.radiationx.shared_app.controllers.loaderpage.hasAnyLoading
  * Created by radiationx on 18.02.18.
  */
 class HistoryFragment :
-    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    BaseSearchItemFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
     TopScroller {
 
@@ -59,10 +58,6 @@ class HistoryFragment :
         sharedViewLocal = null
         return sharedView
     }
-
-    private var _searchView: SearchMenuItem? = null
-    private val searchView: SearchMenuItem
-        get() = requireNotNull(_searchView)
 
     private val adapter = ReleasesAdapter(
         loadMoreListener = { viewModel.loadMore() },
@@ -125,14 +120,6 @@ class HistoryFragment :
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        _searchView = SearchMenuItem(baseBinding.coordinatorLayout.context).apply {
-            id = R.id.top_search_view
-        }
-        baseBinding.coordinatorLayout.addView(searchView)
-        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
-            width = CoordinatorLayout.LayoutParams.MATCH_PARENT
-            height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
-        }
         super.onViewCreated(view, savedInstanceState)
 
         postopneEnterTransitionWithTimout()
@@ -153,7 +140,7 @@ class HistoryFragment :
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
                     viewModel.onSearchClick()
-                    searchView.show()
+                    baseBinding.searchView.show()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -176,7 +163,7 @@ class HistoryFragment :
             viewModel.refresh()
         }
 
-        searchView.apply {
+        baseBinding.searchView.apply {
             setHint("Название релиза")
             setOnQueryTextListener { newText ->
                 viewModel.localSearch(newText)
@@ -198,17 +185,16 @@ class HistoryFragment :
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+        baseBinding.searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
             topMargin = dimensions.top
         }
-        searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
+        baseBinding.searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding.recyclerView.adapter = null
-        searchView.setContentAdapter(null)
-        _searchView = null
+        baseBinding.searchView.setContentAdapter(null)
     }
 
     override fun scrollToTop() {
@@ -219,7 +205,7 @@ class HistoryFragment :
     private fun showState(state: HistoryScreenState) {
         binding.progressBarList.isVisible = state.data.emptyLoading
         binding.refreshLayout.isRefreshing = state.data.refreshLoading
-        searchView.setLoading(state.data.hasAnyLoading())
+        baseBinding.searchView.setLoading(state.data.hasAnyLoading())
         adapter.bindState(state.data, withExport = true)
         searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }

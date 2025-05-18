@@ -3,19 +3,19 @@
     "appId": "ru.radiationx.anilibria.app",
     "mainBanner": {
       "enabled": false,
-      "unitId": "R-M-4562617-1",
+      "unitId": "R-M-15535019-1",
       "contextTags": []
     },
     "feedNative": {
       "enabled": false,
-      "unitId": "R-M-4562617-2",
+      "unitId": "R-M-15535019-2",
       "timeoutMillis": 2500,
       "contextTags": [],
       "listInsertPosition": 1
     },
     "releaseNative": {
       "enabled": true,
-      "unitId": "R-M-4562617-2",
+      "unitId": "R-M-15535019-2",
       "timeoutMillis": 2500,
       "contextTags": [],
       "listInsertPosition": 0

@@ -19,6 +19,8 @@ object ProfileConstants {
     const val app_versions = "app_versions"
     const val fail_attributes = "fail_attributes"
     const val has_ads = "has_ads"
+    const val arch = "arch"
+    const val arch_support = "arch_support"
 
     const val codec_audio_aac = "codec_audio_aac"
     const val codec_audio_opus = "codec_audio_opus"

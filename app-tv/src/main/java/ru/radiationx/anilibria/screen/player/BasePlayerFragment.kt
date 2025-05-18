@@ -11,6 +11,7 @@ import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -18,7 +19,9 @@ import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.leanback.LeanbackPlayerAdapter
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.quill.get
 
@@ -44,6 +47,9 @@ open class BasePlayerFragment : VideoSupportFragment() {
 
         skipsPart = PlayerSkipsPart(
             parent = view as FrameLayout,
+            skipButtonText = getString(R.string.player_skip),
+            coroutineScope = viewLifecycleOwner.lifecycleScope,
+            playerSkipsTimer = get<PreferencesHolder>().playerSkipsTimer,
             onSeek = {
                 player?.seekTo(it)
             },

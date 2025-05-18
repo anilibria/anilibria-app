@@ -10,4 +10,6 @@
     <string name="global_search_hint">Поиск аниме</string>
     <string name="global_search_label">AniLibria TV</string>
     <string name="global_search_settings_description">Аниме на AniLibria TV</string>
+
+    <string name="player_skip">Пропустить</string>
 </resources>

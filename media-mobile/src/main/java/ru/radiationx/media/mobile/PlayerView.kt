@@ -9,7 +9,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
 import androidx.core.view.updatePadding
-import androidx.media3.common.Player
 import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -137,6 +136,8 @@ class PlayerView @JvmOverloads constructor(
     var onPipClick: (() -> Unit)? = null
     var onSettingsClick: (() -> Unit)? = null
     var onFullscreenClick: (() -> Unit)? = null
+    var onSkipClick: (() -> Unit)? = null
+    var onCancelSkipClick: (() -> Unit)? = null
 
     init {
         attachControllers()
@@ -324,6 +325,14 @@ class PlayerView @JvmOverloads constructor(
         skipsController.currentSkip.onEach {
             uiVisbilityController.updateSkip(it != null)
         }.launchIn(coroutineScope)
+
+        skipsController.onSkipClick = {
+            onSkipClick?.invoke()
+        }
+
+        skipsController.onCancelSkipClick = {
+            onCancelSkipClick?.invoke()
+        }
     }
 
     private fun initOutput() {

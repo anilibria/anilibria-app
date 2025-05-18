@@ -335,6 +335,14 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         settingsController.onAutoplaySelected = {
             settingsViewModel.onAutoplayEnabledChange(it)
         }
+
+        binding.playerView.onSkipClick = {
+            settingsViewModel.onSkipsTimerEnabledChange(true)
+        }
+
+        binding.playerView.onCancelSkipClick = {
+            settingsViewModel.onSkipsTimerEnabledChange(false)
+        }
     }
 
     private fun initUiController() {

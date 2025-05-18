@@ -22,19 +22,19 @@ class AdsConfigRepository @Inject constructor(
         appId = "ru.radiationx.anilibria.app",
         mainBanner = BannerAdConfig(
             enabled = false,
-            unitId = "R-M-4562617-1",
+            unitId = "R-M-15535019-1",
             emptyList()
         ),
         feedNative = NativeAdConfig(
             enabled = false,
-            unitId = "R-M-4562617-2",
+            unitId = "R-M-15535019-2",
             timeoutMillis = 2500,
             contextTags = emptyList(),
             listInsertPosition = 1
         ),
         releaseNative = NativeAdConfig(
             enabled = false,
-            unitId = "R-M-4562617-2",
+            unitId = "R-M-15535019-2",
             timeoutMillis = 2500,
             contextTags = emptyList(),
             listInsertPosition = 0

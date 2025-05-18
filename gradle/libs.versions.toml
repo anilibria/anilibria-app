@@ -42,6 +42,7 @@ viewbindingpropertydelegate = "2.0.4"
 android-plugin = "8.10.0"
 ksp-plugin = "2.1.21-2.0.1"
 gms-plugin = "4.4.2"
+appmetrica-plugin = "1.0.1"
 
 
 [libraries]
@@ -108,3 +109,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-plugin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms-plugin" }
+appmetrica = { id = "io.appmetrica.analytics", version.ref = "appmetrica-plugin" }

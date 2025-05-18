@@ -1,12 +1,7 @@
 package ru.radiationx.anilibria.ui.activities.player.playlist
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.WindowManager
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.combine
@@ -14,6 +9,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentPlayerPlaylistBinding
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -73,9 +69,8 @@ class PlaylistDialogFragment : TaiwaDialogFragment(R.layout.fragment_player_play
             val scrollPosition = items.indexOfFirst {
                 it is PlaylistEpisodeListItem && it.episode.id == episodeId
             }
-            playlistAdapter.setItems(items) {
-                binding.root.scrollToPosition(scrollPosition)
-            }
+            playlistAdapter.setAndAwaitItems(items)
+            binding.root.scrollToPosition(scrollPosition)
         }.launchInResumed(viewLifecycleOwner)
     }
 

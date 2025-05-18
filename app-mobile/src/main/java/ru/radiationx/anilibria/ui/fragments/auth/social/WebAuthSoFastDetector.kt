@@ -1,10 +1,10 @@
 package ru.radiationx.anilibria.ui.fragments.auth.social
 
 import android.webkit.CookieManager
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class WebAuthSoFastDetector {
     private val threshold = TimeUnit.SECONDS.toMillis(15)
@@ -22,7 +22,7 @@ class WebAuthSoFastDetector {
     }
 
     suspend fun clearCookies(): Boolean {
-        return suspendCoroutine { continuation ->
+        return suspendCancellableCoroutine { continuation ->
             CookieManager.getInstance().removeAllCookies {
                 continuation.resume(it)
             }

@@ -70,12 +70,15 @@ android {
     }
 }
 
-appmetrica {
-    offline = { true }
-}
-
 kotlin {
     jvmToolchain(jvm_toolchain_version)
+}
+
+appmetrica {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    String propApiKey = properties.get("appmetrica_post_api_key", "")
+    setPostApiKey(propApiKey)
 }
 
 dependencies {

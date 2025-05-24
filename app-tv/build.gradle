@@ -5,6 +5,7 @@ plugins {
     alias libs.plugins.android.application
     alias libs.plugins.kotlin.android
     alias libs.plugins.ksp
+    alias libs.plugins.appmetrica
 }
 
 static def getDateTime() {
@@ -49,6 +50,13 @@ android {
 
 kotlin {
     jvmToolchain(jvm_toolchain_version)
+}
+
+appmetrica {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    String propApiKey = properties.get("appmetrica_post_api_key", "")
+    setPostApiKey(propApiKey)
 }
 
 dependencies {

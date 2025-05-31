@@ -15,7 +15,7 @@ data class Paginated<T>(
         return if (page != null && allPages != null) {
             page >= allPages
         } else {
-            false
+            data.isEmpty()
         }
     }
 }

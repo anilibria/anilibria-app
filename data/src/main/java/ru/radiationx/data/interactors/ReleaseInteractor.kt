@@ -17,6 +17,7 @@ import ru.radiationx.data.entity.domain.release.getAllReleases
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.domain.types.ReleaseIdentifier
 import ru.radiationx.data.repository.FranchisesRepository
 import ru.radiationx.data.repository.ReleaseRepository
 import javax.inject.Inject
@@ -38,12 +39,8 @@ class ReleaseInteractor @Inject constructor(
 
     suspend fun getRandomRelease(): Release = releaseRepository.getRandomRelease()
 
-    private suspend fun loadRelease(releaseId: ReleaseId): Release {
-        return releaseRepository.getRelease(releaseId).also(::updateFullCache)
-    }
-
-    private suspend fun loadRelease(releaseCode: ReleaseCode): Release {
-        return releaseRepository.getRelease(releaseCode).also(::updateFullCache)
+    private suspend fun loadReleaseByIdentifier(identifier: ReleaseIdentifier): Release {
+        return releaseRepository.getRelease(identifier).also(::updateFullCache)
     }
 
     suspend fun loadRelease(
@@ -53,8 +50,8 @@ class ReleaseInteractor @Inject constructor(
         val key = RequestKey(releaseId, releaseCode)
         return sharedRequests.request(key) {
             when {
-                releaseId != null -> loadRelease(releaseId)
-                releaseCode != null -> loadRelease(releaseCode)
+                releaseId != null -> loadReleaseByIdentifier(releaseId)
+                releaseCode != null -> loadReleaseByIdentifier(releaseCode)
                 else -> throw Exception("Unknown id=null or code=null")
             }
         }

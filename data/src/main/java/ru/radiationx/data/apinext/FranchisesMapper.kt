@@ -17,7 +17,7 @@ fun FranchiseResponse.toDomain(): Franchise {
         totalEpisodes = totalEpisodes,
         totalDuration = totalDuration,
         totalDurationInSeconds = totalDurationInSeconds,
-        image = image.src
+        image = image.preview?.toRelativeUrl()
     )
 }
 

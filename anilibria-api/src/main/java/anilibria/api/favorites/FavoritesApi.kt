@@ -1,14 +1,14 @@
 package anilibria.api.favorites
 
-import anilibria.api.shared.filter.FilterAgeRatingResponse
-import anilibria.api.shared.filter.FilterReleaseTypeResponse
-import anilibria.api.shared.filter.FilterGenreResponse
+import anilibria.api.favorites.models.FavoritesRequest
 import anilibria.api.shared.PaginationResponse
-import anilibria.api.shared.release.ReleaseResponse
 import anilibria.api.shared.ReleaseIdNetwork
+import anilibria.api.shared.filter.FilterAgeRatingResponse
+import anilibria.api.shared.filter.FilterGenreResponse
+import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterSortingResponse
+import anilibria.api.shared.release.ReleaseResponse
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.HTTP
 import retrofit2.http.POST
@@ -46,9 +46,8 @@ interface FavoritesApi {
         @Query("f[age_ratings]") ageRatings: String?
     ): PaginationResponse<ReleaseResponse>
 
-    // TODO implement from actual api
-    /*@POST("accounts/users/me/favorites/releases")
-    suspend fun getReleases(): Unit*/
+    @POST("accounts/users/me/favorites/releases")
+    suspend fun getReleases(@Body body: FavoritesRequest): PaginationResponse<ReleaseResponse>
 
     @POST("accounts/users/me/favorites")
     suspend fun addReleases(@Body body: List<ReleaseIdNetwork>)

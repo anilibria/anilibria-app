@@ -6,12 +6,12 @@ import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 
 fun List<ScheduleResponse>.toDomain(): List<ScheduleDay> {
     return map { it.release.toDomain() }
-        .sortedBy { it.publishDay }
+        .sortedBy { it.publishDay.raw }
         .groupBy { it.publishDay }
         .map { (publishDay, releases) ->
             ScheduleDay(
-                ScheduleDay.toCalendarDay(publishDay),
-                releases.map { ScheduleItem(it) }
+                day = publishDay,
+                items = releases.map { ScheduleItem(it) }
             )
         }
 }

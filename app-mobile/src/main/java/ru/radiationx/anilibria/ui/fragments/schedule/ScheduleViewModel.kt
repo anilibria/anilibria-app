@@ -18,20 +18,21 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.analytics.features.ScheduleAnalytics
+import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.apinext.models.enums.asDayName
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
-import ru.radiationx.shared.ktx.asDayName
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import java.util.Calendar
 import javax.inject.Inject
 
 data class ScheduleExtra(
-    val day: Int?,
+    val day: PublishDay?,
 ) : QuillExtra
 
 class ScheduleViewModel @Inject constructor(
@@ -64,7 +65,7 @@ class ScheduleViewModel @Inject constructor(
                 val dayStates = scheduleDays.map { scheduleDay ->
                     val calendarDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
                     var dayName = scheduleDay.day.asDayName()
-                    if (scheduleDay.day == calendarDay) {
+                    if (scheduleDay.day.calendarDay == calendarDay) {
                         dayName += " (сегодня)"
                     }
                     val items = scheduleDay.items.map { it.toState() }
@@ -134,7 +135,7 @@ class ScheduleViewModel @Inject constructor(
     private fun handleFirstData() {
         if (firstData) {
             firstData = false
-            val currentDay = argExtra.day ?: Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+            val currentDay = argExtra.day ?: PublishDay.ofCalendar(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))
             currentDays
                 .indexOfFirst { it.day == currentDay }
                 .let { _state.value.dayItems.getOrNull(it) }

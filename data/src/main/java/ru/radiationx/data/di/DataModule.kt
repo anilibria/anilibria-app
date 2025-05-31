@@ -78,6 +78,8 @@ import ru.radiationx.data.apinext.datasources.FranchisesApiDataSource
 import ru.radiationx.data.apinext.datasources.ProfileApiDataSource
 import ru.radiationx.data.apinext.datasources.ReleasesApiDataSource
 import ru.radiationx.data.apinext.datasources.ScheduleApiDataSource
+import ru.radiationx.data.apinext.datasources.TimeCodesApiDataSource
+import ru.radiationx.data.apinext.datasources.TorrentsApiDataSource
 import ru.radiationx.data.apinext.datasources.VideosApiDataSource
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.CookieHolder
@@ -342,6 +344,8 @@ class DataModule(context: Context) : QuillModule() {
         single<ReleasesApiDataSource>()
         single<ScheduleApiDataSource>()
         single<VideosApiDataSource>()
+        single<TimeCodesApiDataSource>()
+        single<TorrentsApiDataSource>()
 
         single<FranchisesRepository>()
         single<CatalogRepository>()

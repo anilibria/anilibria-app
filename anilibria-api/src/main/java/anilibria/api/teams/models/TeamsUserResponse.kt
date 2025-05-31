@@ -1,7 +1,6 @@
 package anilibria.api.teams.models
 
 
-import anilibria.api.shared.UserResponse
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -20,7 +19,7 @@ data class TeamsUserResponse(
     @Json(name = "team")
     val team: TeamsTeamResponse,
     @Json(name = "user")
-    val user: UserResponse,
+    val user: TeamsUserAccountResponse?,
     @Json(name = "roles")
     val roles: List<TeamsRoleResponse>
 )

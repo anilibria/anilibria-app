@@ -11,7 +11,7 @@ data class TeamsRoleResponse(
     @Json(name = "title")
     val title: String,
     @Json(name = "color")
-    val color: String,
+    val color: String?,
     @Json(name = "sort_order")
     val sortOrder: Int
 )

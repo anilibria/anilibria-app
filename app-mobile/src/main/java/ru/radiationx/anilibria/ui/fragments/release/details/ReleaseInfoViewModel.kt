@@ -37,6 +37,7 @@ import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.apinext.models.ReleaseSponsor
+import ru.radiationx.data.apinext.models.enums.PublishDay
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.downloader.LocalFile
 import ru.radiationx.data.downloader.RemoteFile
@@ -487,7 +488,7 @@ class ReleaseInfoViewModel @Inject constructor(
         }
     }
 
-    fun onScheduleClick(day: Int) {
+    fun onScheduleClick(day: PublishDay) {
         currentData?.also {
             releaseAnalytics.scheduleClick(it.id.id)
         }

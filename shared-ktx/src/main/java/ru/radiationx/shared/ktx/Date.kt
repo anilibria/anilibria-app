@@ -1,7 +1,10 @@
 package ru.radiationx.shared.ktx
 
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 private object DateFormats {
@@ -35,39 +38,6 @@ fun Long.asMsk() = this.asUtc() + TimeUnit.HOURS.toMillis(3)
 fun Long.getDayOfWeek() = Calendar.getInstance().also {
     it.timeInMillis = this
 }.get(Calendar.DAY_OF_WEEK)
-
-fun Int.asDayName() = when (this) {
-    Calendar.MONDAY -> "Понедельник"
-    Calendar.TUESDAY -> "Вторник"
-    Calendar.WEDNESDAY -> "Среда"
-    Calendar.THURSDAY -> "Четверг"
-    Calendar.FRIDAY -> "Пятница"
-    Calendar.SATURDAY -> "Суббота"
-    Calendar.SUNDAY -> "Воскресенье"
-    else -> throw Exception("Not found day by int $this")
-}
-
-fun Int.asDayNameDeclension() = when (this) {
-    Calendar.MONDAY -> "Понедельник"
-    Calendar.TUESDAY -> "Вторник"
-    Calendar.WEDNESDAY -> "Среду"
-    Calendar.THURSDAY -> "Четверг"
-    Calendar.FRIDAY -> "Пятницу"
-    Calendar.SATURDAY -> "Субботу"
-    Calendar.SUNDAY -> "Воскресенье"
-    else -> throw Exception("Not found day by int $this")
-}
-
-fun Int.asDayPretext() = when (this) {
-    Calendar.MONDAY -> "в"
-    Calendar.TUESDAY -> "во"
-    Calendar.WEDNESDAY -> "в"
-    Calendar.THURSDAY -> "в"
-    Calendar.FRIDAY -> "в"
-    Calendar.SATURDAY -> "в"
-    Calendar.SUNDAY -> "в"
-    else -> throw Exception("Not found day by int $this")
-}
 
 fun Date.isSameDay(date: Date): Boolean {
     val cal1: Calendar = Calendar.getInstance()

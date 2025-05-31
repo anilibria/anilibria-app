@@ -51,7 +51,7 @@ class HistoryRuntimeCache @Inject constructor(
         if (idsToLoad.isEmpty()) return
 
         val result = sharedRequests.request(idsToLoad) {
-            releaseApi.getReleasesByIds(idsToLoad.toList())
+            releaseApi.getReleases(idsToLoad.toList())
         }
 
         cachedData.update { cacheMap ->

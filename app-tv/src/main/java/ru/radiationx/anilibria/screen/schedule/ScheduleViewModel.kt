@@ -9,8 +9,8 @@ import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
+import ru.radiationx.data.apinext.models.enums.asDayName
 import ru.radiationx.data.repository.ScheduleRepository
-import ru.radiationx.shared.ktx.asDayName
 import javax.inject.Inject
 
 class ScheduleViewModel @Inject constructor(

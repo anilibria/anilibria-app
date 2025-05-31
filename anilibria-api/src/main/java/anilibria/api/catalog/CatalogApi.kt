@@ -1,5 +1,6 @@
 package anilibria.api.catalog
 
+import anilibria.api.catalog.models.CatalogRequest
 import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.filter.FilterAgeRatingResponse
 import anilibria.api.shared.filter.FilterGenreResponse
@@ -9,7 +10,9 @@ import anilibria.api.shared.filter.FilterReleaseTypeResponse
 import anilibria.api.shared.filter.FilterSeasonResponse
 import anilibria.api.shared.filter.FilterSortingResponse
 import anilibria.api.shared.release.ReleaseResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface CatalogApi {
@@ -54,7 +57,7 @@ interface CatalogApi {
         @Query("f[production_statuses]") productionStatuses: String?,
     ): PaginationResponse<ReleaseResponse>
 
-    // TODO implement from actual api
-    /*@POST("anime/catalog/releases")
-    suspend fun getReleases(): Unit*/
+
+    @POST("anime/catalog/releases")
+    suspend fun getReleases(@Body body: CatalogRequest): PaginationResponse<ReleaseResponse>
 }

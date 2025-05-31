@@ -5,8 +5,8 @@ import kotlinx.coroutines.withContext
 import ru.radiationx.data.apinext.datasources.ReleasesApiDataSource
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.search.Suggestions
-import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.entity.domain.types.ReleaseIdentifier
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import javax.inject.Inject
 
@@ -26,22 +26,16 @@ class ReleaseRepository @Inject constructor(
             .first()
     }
 
-    suspend fun getRelease(releaseId: ReleaseId): Release = withContext(Dispatchers.IO) {
+    suspend fun getRelease(identifier: ReleaseIdentifier): Release = withContext(Dispatchers.IO) {
         releaseApi
-            .getRelease(releaseId)
-            .also { updateMiddleware.handle(it) }
-    }
-
-    suspend fun getRelease(code: ReleaseCode): Release = withContext(Dispatchers.IO) {
-        releaseApi
-            .getRelease(code)
+            .getRelease(identifier)
             .also { updateMiddleware.handle(it) }
     }
 
     suspend fun getFullReleasesById(ids: List<ReleaseId>): List<Release> =
         withContext(Dispatchers.IO) {
             releaseApi
-                .getReleasesByIds(ids)
+                .getReleases(ids)
                 .also { updateMiddleware.handle(it) }
         }
 

@@ -2,6 +2,7 @@ package ru.radiationx.data.entity.domain.release
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.radiationx.data.apinext.models.RelativeUrl
 import ru.radiationx.data.entity.domain.types.FranchiseId
 
 @Parcelize
@@ -16,7 +17,7 @@ data class Franchise(
     val totalEpisodes: Int,
     val totalDuration: String,
     val totalDurationInSeconds: Int,
-    val image: String?,
+    val image: RelativeUrl?,
 ) : Parcelable
 
 @Parcelize

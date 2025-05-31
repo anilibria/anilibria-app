@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.utils.LinkMovementMethod
 import ru.radiationx.anilibria.utils.dimensions.Side
 import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
+import ru.radiationx.data.apinext.models.enums.PublishDay
 import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.android.setCompatDrawable
 
@@ -140,7 +141,7 @@ class ReleaseHeadDelegate(
 
         fun onClickFav()
 
-        fun onScheduleClick(day: Int)
+        fun onScheduleClick(day: PublishDay)
 
         fun onExpandClick()
     }

@@ -24,6 +24,7 @@ data class ReleaseEpisodeResponse(
     val hls720: String?,
     @Json(name = "hls_1080")
     val hls1080: String?,
+    // can be 0 on rutube and youtube
     @Json(name = "duration")
     val duration: Int,
     @Json(name = "rutube_id")

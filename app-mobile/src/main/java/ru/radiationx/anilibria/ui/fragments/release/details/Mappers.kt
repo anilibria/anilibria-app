@@ -67,10 +67,10 @@ fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {
         description = description.orEmpty(),
         freshAt = freshAt,
         info = infoStr,
-        publishDay = ScheduleDay.toCalendarDay(publishDay),
+        publishDay = publishDay,
         needShowDay = isInProduction,
         announce = announce,
-        favorite = ReleaseFavoriteState(favoritesCount.toString(), isInFavorites)
+        favorite = ReleaseFavoriteState(counters.favorites.toString(), isInFavorites)
     )
 }
 

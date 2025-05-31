@@ -34,7 +34,7 @@ class ScheduleRepository @Inject constructor(
                     val calendarDay = Calendar.getInstance().also {
                         it.timeInMillis = currentTime
                     }.get(Calendar.DAY_OF_WEEK)
-                    if (scheduleDay.day == calendarDay) {
+                    if (scheduleDay.day.calendarDay == calendarDay) {
 
                         val scheduleItems = scheduleDay.items.map {
                             val millisTime = (it.releaseItem.updatedAt.time).asMsk()

@@ -7,8 +7,7 @@ import ru.radiationx.data.apinext.models.filters.CatalogFilterData
 import ru.radiationx.data.apinext.models.filters.CatalogFilterForm
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.apinext.toDomainFilterYear
-import ru.radiationx.data.apinext.toListQuery
-import ru.radiationx.data.apinext.toQuery
+import ru.radiationx.data.apinext.toRequest
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.Release
 import toothpick.InjectConstructor
@@ -46,21 +45,9 @@ class CatalogApiDataSource(
         page: Int,
         form: CatalogFilterForm?
     ): Paginated<Release> {
+        val request = form.toRequest(page)
         return api
-            .getReleases(
-                page = page,
-                limit = null,
-                genres = form?.genres?.toListQuery(),
-                types = form?.types?.toListQuery(),
-                seasons = form?.seasons?.toListQuery(),
-                fromYear = form?.yearsRange?.first?.toQuery(),
-                toYear = form?.yearsRange?.second?.toQuery(),
-                search = form?.query,
-                sorting = form?.sorting?.toQuery(),
-                ageRatings = form?.ageRatings?.toListQuery(),
-                publishStatuses = form?.publishStatuses?.toListQuery(),
-                productionStatuses = form?.productionStatuses?.toListQuery()
-            )
+            .getReleases(request)
             .toDomain { it.toDomain() }
     }
 }

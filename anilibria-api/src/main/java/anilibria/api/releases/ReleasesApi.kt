@@ -1,5 +1,6 @@
 package anilibria.api.releases
 
+import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.release.ReleaseEpisodeResponse
 import anilibria.api.shared.release.ReleaseMemberResponse
 import anilibria.api.shared.release.ReleaseResponse
@@ -14,6 +15,14 @@ interface ReleasesApi {
 
     @GET("anime/releases/random")
     suspend fun getRandomReleases(@Query("limit") limit: Int?): List<ReleaseResponse>
+
+    @GET("anime/releases/list")
+    suspend fun getReleases(
+        @Path("ids") ids: String?,
+        @Path("aliases") aliases: String?,
+        @Query("page") page: Int?,
+        @Query("limit") limit: Int?,
+    ): PaginationResponse<ReleaseResponse>
 
     @GET("anime/releases/{aliasOrId}")
     suspend fun getRelease(@Path("aliasOrId") aliasOrId: String): ReleaseResponse

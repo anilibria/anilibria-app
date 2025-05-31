@@ -13,5 +13,5 @@ data class TeamsTeamResponse(
     @Json(name = "sort_order")
     val sortOrder: Int,
     @Json(name = "description")
-    val description: String
+    val description: String?
 )

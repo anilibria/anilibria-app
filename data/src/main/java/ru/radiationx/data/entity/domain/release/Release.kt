@@ -3,9 +3,12 @@ package ru.radiationx.data.entity.domain.release
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import ru.radiationx.data.apinext.models.Genre
+import ru.radiationx.data.apinext.models.RelativeUrl
+import ru.radiationx.data.apinext.models.ReleaseCounters
 import ru.radiationx.data.apinext.models.ReleaseMember
 import ru.radiationx.data.apinext.models.ReleaseName
 import ru.radiationx.data.apinext.models.ReleaseSponsor
+import ru.radiationx.data.apinext.models.enums.PublishDay
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import java.util.Date
@@ -18,9 +21,7 @@ data class Release(
     val id: ReleaseId,
     val code: ReleaseCode,
     val names: ReleaseName,
-    // todo API2 await analog
-    //val series: String?,
-    val poster: String?,
+    val poster: RelativeUrl?,
     val createdAt: Date,
     val freshAt: Date,
     val updatedAt: Date,
@@ -29,10 +30,10 @@ data class Release(
     val type: String?,
     val year: Int,
     val season: String?,
-    val publishDay: String,
+    val publishDay: PublishDay,
     val description: String?,
     val announce: String?,
-    val favoritesCount: Int,
+    val counters: ReleaseCounters,
     val ageRating: String,
     val episodesTotal: Int?,
     val averageEpisodeDuration: Int?,

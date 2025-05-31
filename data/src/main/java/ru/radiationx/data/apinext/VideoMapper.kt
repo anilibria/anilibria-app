@@ -8,7 +8,7 @@ fun VideoResponse.toDomain(): YoutubeItem {
     return YoutubeItem(
         id = YoutubeId(id = id),
         title = title,
-        image = image.src,
+        image = image.preview?.toRelativeUrl(),
         vid = videoId,
         link = url,
         views = views,

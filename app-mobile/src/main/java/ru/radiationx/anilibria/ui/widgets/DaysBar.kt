@@ -6,7 +6,7 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.databinding.MergeDaysBarBinding
-import java.util.Calendar
+import ru.radiationx.data.apinext.models.enums.PublishDay
 
 class DaysBar @JvmOverloads constructor(
     context: Context,
@@ -17,18 +17,18 @@ class DaysBar @JvmOverloads constructor(
 
     private val binding by viewBinding<MergeDaysBarBinding>(attachToRoot = true)
 
-    private val daysViews: Map<Int, View> = mapOf(
-        Calendar.MONDAY to binding.day1,
-        Calendar.TUESDAY to binding.day2,
-        Calendar.WEDNESDAY to binding.day3,
-        Calendar.THURSDAY to binding.day4,
-        Calendar.FRIDAY to binding.day5,
-        Calendar.SATURDAY to binding.day6,
-        Calendar.SUNDAY to binding.day7
+    private val daysViews: Map<PublishDay, View> = mapOf(
+        PublishDay.Monday to binding.day1,
+        PublishDay.Tuesday to binding.day2,
+        PublishDay.Wednesday to binding.day3,
+        PublishDay.Thursday to binding.day4,
+        PublishDay.Friday to binding.day5,
+        PublishDay.Saturday to binding.day6,
+        PublishDay.Sunday to binding.day7
     )
     private val buttons: List<View> = daysViews.values.toList()
 
-    var clickListener: ((day: Int) -> Unit)? = null
+    var clickListener: ((day: PublishDay) -> Unit)? = null
 
     init {
         buttons.forEach { view ->
@@ -41,7 +41,7 @@ class DaysBar @JvmOverloads constructor(
         }
     }
 
-    fun selectDay(day: Int) {
+    fun selectDay(day: PublishDay) {
         buttons.forEach { it.isSelected = false }
         daysViews[day]?.isSelected = true
     }

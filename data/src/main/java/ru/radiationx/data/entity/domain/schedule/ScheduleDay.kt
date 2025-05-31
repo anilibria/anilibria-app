@@ -1,10 +1,11 @@
 package ru.radiationx.data.entity.domain.schedule
 
+import ru.radiationx.data.apinext.models.enums.PublishDay
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
 import java.util.Calendar
 
 data class ScheduleDay(
-    val day: Int,
+    val day: PublishDay,
     val items: List<ScheduleItem>,
 ) {
     companion object {

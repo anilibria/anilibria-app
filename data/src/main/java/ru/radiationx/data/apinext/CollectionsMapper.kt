@@ -1,6 +1,41 @@
 package ru.radiationx.data.apinext
 
+import anilibria.api.collections.models.CollectionsFiltersRequest
+import anilibria.api.collections.models.CollectionsRequest
+import anilibria.api.shared.CollectionReleaseIdNetwork
+import ru.radiationx.data.apinext.models.CollectionReleaseId
 import ru.radiationx.data.apinext.models.enums.CollectionType
+import ru.radiationx.data.apinext.models.filters.CollectionsFilterForm
+import ru.radiationx.data.entity.domain.types.ReleaseId
+
+fun CollectionsFilterForm?.toRequest(
+    type: CollectionType,
+    page: Int,
+): CollectionsRequest {
+    return CollectionsRequest(
+        typeOfCollection = type.toRequest(),
+        page = page,
+        limit = null,
+        filters = this?.toFilterRequest()
+    )
+}
+
+fun CollectionsFilterForm.toFilterRequest(): CollectionsFiltersRequest {
+    return CollectionsFiltersRequest(
+        genres = genres.toStringRequest(),
+        types = types.toListRequest(),
+        years = years.toStringRequest(),
+        search = query,
+        ageRatings = ageRatings.toListRequest()
+    )
+}
+
+fun CollectionReleaseIdNetwork.toDomain(): CollectionReleaseId {
+    return CollectionReleaseId(
+        id = ReleaseId(releaseId),
+        type = typeOfCollection.toCollectionType()
+    )
+}
 
 fun String.toCollectionType(): CollectionType {
     return when (this) {
@@ -13,7 +48,7 @@ fun String.toCollectionType(): CollectionType {
     }
 }
 
-fun CollectionType.toListQuery(): String {
+fun CollectionType.toRequest(): String {
     return when (this) {
         CollectionType.Planned -> "PLANNED"
         CollectionType.Watched -> "WATCHED"

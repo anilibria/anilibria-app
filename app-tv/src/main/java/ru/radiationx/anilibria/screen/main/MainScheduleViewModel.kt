@@ -7,10 +7,11 @@ import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.screen.ScheduleScreen
+import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.apinext.models.enums.asDayNameDeclension
+import ru.radiationx.data.apinext.models.enums.asDayPretext
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.ScheduleRepository
-import ru.radiationx.shared.ktx.asDayNameDeclension
-import ru.radiationx.shared.ktx.asDayPretext
 import ru.radiationx.shared.ktx.asMsk
 import ru.radiationx.shared.ktx.getDayOfWeek
 import ru.radiationx.shared.ktx.isSameDay
@@ -47,8 +48,7 @@ class MainScheduleViewModel @Inject constructor(
             val currentTime = System.currentTimeMillis()
             val mskTime = System.currentTimeMillis().asMsk()
 
-            val mskDay = mskTime.getDayOfWeek()
-
+            val mskDay = PublishDay.ofCalendar(mskTime.getDayOfWeek())
 
             val dayTitle = if (Date(currentTime).isSameDay(Date(mskTime))) {
                 "Ожидается сегодня"

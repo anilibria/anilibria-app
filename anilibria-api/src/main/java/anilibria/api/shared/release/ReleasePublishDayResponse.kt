@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ReleasePublishDayResponse(
     @Json(name = "value")
-    val value: String,
+    val value: Int,
     @Json(name = "description")
     val description: String
 )

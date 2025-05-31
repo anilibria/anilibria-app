@@ -1,14 +1,14 @@
 package ru.radiationx.data.apinext.datasources
 
 import anilibria.api.favorites.FavoritesApi
-import anilibria.api.shared.ReleaseIdNetwork
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import ru.radiationx.data.apinext.models.filters.FavoritesFilterData
 import ru.radiationx.data.apinext.models.filters.FavoritesFilterForm
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.apinext.toDomainFilterYear
-import ru.radiationx.data.apinext.toListQuery
+import ru.radiationx.data.apinext.toNetwork
+import ru.radiationx.data.apinext.toRequest
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -41,17 +41,9 @@ class FavoritesApiDataSource(
         page: Int,
         form: FavoritesFilterForm?
     ): Paginated<Release> {
+        val request = form.toRequest(page)
         return api
-            .getReleases(
-                page = page,
-                limit = null,
-                years = form?.years?.toListQuery(),
-                types = form?.types?.toListQuery(),
-                genres = form?.genres?.toListQuery(),
-                search = form?.query,
-                sorting = form?.sorting?.value,
-                ageRatings = form?.ageRatings?.toListQuery()
-            )
+            .getReleases(request)
             .toDomain { it.toDomain() }
     }
 
@@ -60,10 +52,10 @@ class FavoritesApiDataSource(
     }
 
     suspend fun deleteRelease(releaseId: ReleaseId) {
-        api.deleteReleases(listOf(ReleaseIdNetwork(releaseId.id)))
+        api.deleteReleases(listOf(releaseId.toNetwork()))
     }
 
     suspend fun addRelease(releaseId: ReleaseId) {
-        api.addReleases(listOf(ReleaseIdNetwork(releaseId.id)))
+        api.addReleases(listOf(releaseId.toNetwork()))
     }
 }

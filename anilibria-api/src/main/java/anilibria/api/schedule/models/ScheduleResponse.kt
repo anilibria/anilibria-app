@@ -10,8 +10,10 @@ import com.squareup.moshi.JsonClass
 data class ScheduleResponse(
     @Json(name = "release")
     val release: ReleaseResponse,
-    @Json(name = "new_release_episode")
-    val newReleaseEpisode: ReleaseEpisodeResponse?,
-    @Json(name = "new_release_episode_ordinal")
-    val newReleaseEpisodeOrdinal: Int?
+    @Json(name = "full_season_is_released")
+    val fullSeasonIsReleased: Boolean,
+    @Json(name = "published_release_episode")
+    val publishedReleaseEpisode: ReleaseEpisodeResponse?,
+    @Json(name = "next_release_episode_number")
+    val nextReleaseEpisodeNumber: Int?
 )

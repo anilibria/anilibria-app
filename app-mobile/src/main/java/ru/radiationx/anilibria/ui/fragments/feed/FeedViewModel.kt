@@ -45,6 +45,9 @@ import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.analytics.features.ScheduleAnalytics
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
+import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.apinext.models.enums.asDayNameDeclension
+import ru.radiationx.data.apinext.models.enums.asDayPretext
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.entity.domain.feed.FeedItem
@@ -59,8 +62,6 @@ import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.data.repository.DonationRepository
 import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.ScheduleRepository
-import ru.radiationx.shared.ktx.asDayNameDeclension
-import ru.radiationx.shared.ktx.asDayPretext
 import ru.radiationx.shared.ktx.asMsk
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared.ktx.getDayOfWeek
@@ -397,7 +398,7 @@ class FeedViewModel @Inject constructor(
             val currentTime = System.currentTimeMillis()
             val mskTime = System.currentTimeMillis().asMsk()
 
-            val mskDay = mskTime.getDayOfWeek()
+            val mskDay = PublishDay.ofCalendar(mskTime.getDayOfWeek())
 
             val asSameDay = Date(currentTime).isSameDay(Date(mskTime))
             val dayTitle = if (asSameDay) {

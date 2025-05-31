@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.TopScroller
+import ru.radiationx.data.apinext.models.enums.PublishDay
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.types.EpisodeId
@@ -237,7 +238,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
             viewModel.onClickFav()
         }
 
-        override fun onScheduleClick(day: Int) {
+        override fun onScheduleClick(day: PublishDay) {
             viewModel.onScheduleClick(day)
         }
 

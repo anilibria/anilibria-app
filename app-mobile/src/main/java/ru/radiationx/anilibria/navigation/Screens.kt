@@ -29,6 +29,7 @@ import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
 import ru.radiationx.data.apinext.models.Genre
 import ru.radiationx.data.apinext.models.SocialType
+import ru.radiationx.data.apinext.models.enums.PublishDay
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
@@ -124,7 +125,7 @@ object Screens {
     }
 
     class Schedule(
-        val day: Int? = null
+        val day: PublishDay? = null
     ) : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory): Fragment =
             ScheduleFragment.newInstance(day)

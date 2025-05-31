@@ -1,18 +1,18 @@
 package ru.radiationx.data.apinext
 
 import anilibria.api.genres.models.GenreResponse
-import anilibria.api.shared.UserResponse
 import anilibria.api.shared.release.ReleaseEpisodeResponse
 import anilibria.api.shared.release.ReleaseMemberResponse
 import anilibria.api.shared.release.ReleaseNameResponse
 import anilibria.api.shared.release.ReleaseResponse
 import anilibria.api.shared.release.ReleaseSponsorResponse
-import anilibria.api.shared.release.ReleaseTorrentResponse
+import anilibria.api.torrent.models.TorrentResponse
 import ru.radiationx.data.apinext.models.Genre
+import ru.radiationx.data.apinext.models.ReleaseCounters
 import ru.radiationx.data.apinext.models.ReleaseMember
 import ru.radiationx.data.apinext.models.ReleaseName
 import ru.radiationx.data.apinext.models.ReleaseSponsor
-import ru.radiationx.data.apinext.models.User
+import ru.radiationx.data.apinext.models.enums.PublishDay
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.ExternalPlaylist
@@ -48,8 +48,8 @@ fun ReleaseMemberResponse.Role.toDomain(): ReleaseMember.Role {
     return ReleaseMember.Role(value = value, description = description)
 }
 
-fun UserResponse.toDomain(): User {
-    return User(id = UserId(id), nickname = nickname, avatar = avatar?.src)
+fun ReleaseMemberResponse.User.toDomain(): ReleaseMember.User {
+    return ReleaseMember.User(id = UserId(id), avatar = avatar?.preview?.toRelativeUrl())
 }
 
 fun ReleaseSponsorResponse.toDomain(): ReleaseSponsor {
@@ -137,7 +137,7 @@ private fun ReleaseEpisodeResponse.Skip.toDomain(): PlayerSkips.Skip? {
     return PlayerSkips.Skip(start = skipStart, end = skipEnd)
 }
 
-fun ReleaseTorrentResponse.toDomain(releaseId: ReleaseId): TorrentItem {
+fun TorrentResponse.toDomain(releaseId: ReleaseId): TorrentItem {
     return TorrentItem(
         id = TorrentId(
             id = id,
@@ -160,13 +160,24 @@ fun ReleaseTorrentResponse.toDomain(releaseId: ReleaseId): TorrentItem {
 
 fun GenreResponse.toDomain(): Genre = Genre(GenreId(id), name)
 
+fun ReleaseResponse.toDomainCounters(): ReleaseCounters {
+    return ReleaseCounters(
+        favorites = addedInUsersFavorites,
+        planned = addedInPlannedCollection,
+        watched = addedInWatchedCollection,
+        watching = addedInWatchingCollection,
+        postponed = addedInPostponedCollection,
+        abandoned = addedInAbandonedCollection
+    )
+}
+
 fun ReleaseResponse.toDomain(): Release {
     val releaseId = ReleaseId(id = id)
     return Release(
         id = releaseId,
         code = ReleaseCode(code = alias),
         names = name.toDomain(),
-        poster = poster.src,
+        poster = poster.preview?.toRelativeUrl(),
         createdAt = createdAt?.apiDateToDate() ?: Date(0),
         freshAt = freshAt?.apiDateToDate() ?: Date(0),
         updatedAt = updatedAt?.apiDateToDate() ?: Date(0),
@@ -175,10 +186,10 @@ fun ReleaseResponse.toDomain(): Release {
         type = type.description,
         year = year,
         season = season.description,
-        publishDay = publishDay.value,
+        publishDay = PublishDay.ofRaw(publishDay.value),
         description = description,
         announce = notification,
-        favoritesCount = addedInUsersFavorites,
+        counters = toDomainCounters(),
         ageRating = ageRating.label,
         episodesTotal = episodesTotal,
         averageEpisodeDuration = averageDurationOfEpisode,

@@ -1,5 +1,6 @@
 package anilibria.api.collections
 
+import anilibria.api.collections.models.CollectionsRequest
 import anilibria.api.shared.CollectionReleaseIdNetwork
 import anilibria.api.shared.PaginationResponse
 import anilibria.api.shared.ReleaseIdNetwork
@@ -27,10 +28,10 @@ interface CollectionsApi {
     @GET("accounts/users/me/collections/references/years")
     suspend fun getYears(): List<Int>
 
-    // todo API2 use this instead of fkkn arrays
-    @GET("accounts/users/me/collections/ids")
-    suspend fun getIds1(): List<CollectionReleaseIdNetwork>
-
+    /*
+    * [0] - release_id: Int
+    * [1] - type_of_collection: String
+    * */
     @GET("accounts/users/me/collections/ids")
     suspend fun getIds(): List<List<Any>>
 
@@ -46,9 +47,8 @@ interface CollectionsApi {
         @Query("f[age_ratings]") ageRatings: String?
     ): PaginationResponse<ReleaseResponse>
 
-    // TODO implement from actual api
-    /*@POST("accounts/users/me/collections/releases")
-    suspend fun getReleases(): Unit*/
+    @POST("accounts/users/me/collections/releases")
+    suspend fun getReleases(@Body body: CollectionsRequest): PaginationResponse<ReleaseResponse>
 
     @POST("accounts/users/me/collections")
     suspend fun addReleases(@Body body: List<CollectionReleaseIdNetwork>)

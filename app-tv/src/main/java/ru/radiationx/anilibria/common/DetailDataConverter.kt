@@ -1,12 +1,12 @@
 package ru.radiationx.anilibria.common
 
+import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.apinext.models.enums.asDayNameDeclension
+import ru.radiationx.data.apinext.models.enums.asDayPretext
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.schedule.ScheduleDay
-import ru.radiationx.shared.ktx.capitalizeDefault
 import java.text.NumberFormat
-import java.util.Calendar
 import javax.inject.Inject
 
 class DetailDataConverter @Inject constructor() {
@@ -35,7 +35,7 @@ class DetailDataConverter @Inject constructor() {
             description = description.orEmpty(),
             announce = getAnnounce(isFull),
             image = poster.orEmpty(),
-            favoriteCount = NumberFormat.getNumberInstance().format(favoritesCount),
+            favoriteCount = NumberFormat.getNumberInstance().format(counters.favorites),
             hasFullHd = episodes.any { PlayerQuality.FULLHD in it.qualityInfo },
             isFavorite = isInFavorites,
             hasEpisodes = episodes.isNotEmpty(),
@@ -46,7 +46,7 @@ class DetailDataConverter @Inject constructor() {
 
     private fun Release.getAnnounce(isFull: Boolean): String {
         if (!isFull) return ""
-        val status = if (isInProduction) publishDay.toAnnounce2() else "Релиз завершен"
+        val status = if (isInProduction) publishDay.toAnnouncePublishDay() else "Релиз завершен"
         val episodesWarning = if (episodes.isEmpty()) {
             "Нет доступных для просмотра серий"
         } else {
@@ -55,35 +55,7 @@ class DetailDataConverter @Inject constructor() {
         return listOfNotNull(status, announce, episodesWarning).joinToString(" • ")
     }
 
-    private fun String.toAnnounce2(): String {
-        val calendarDay = ScheduleDay.toCalendarDay(this)
-        val prefix = calendarDay.dayIterationPrefix2()
-        return "Серии выходят $prefix"
-    }
-
-    private fun Int.dayIterationPrefix(): String = when (this) {
-        Calendar.MONDAY,
-        Calendar.TUESDAY,
-        Calendar.THURSDAY,
-            -> "каждый"
-
-        Calendar.WEDNESDAY,
-        Calendar.FRIDAY,
-        Calendar.SATURDAY,
-            -> "каждую"
-
-        Calendar.SUNDAY -> "каждое"
-        else -> throw Exception("Not found day by $this")
-    }
-
-    private fun Int.dayIterationPrefix2(): String = when (this) {
-        Calendar.MONDAY -> "в понедельник"
-        Calendar.TUESDAY -> "во вторник"
-        Calendar.WEDNESDAY -> "в среду"
-        Calendar.THURSDAY -> "в четверг"
-        Calendar.FRIDAY -> "в пятницу"
-        Calendar.SATURDAY -> "в субботу"
-        Calendar.SUNDAY -> "в воскресенье"
-        else -> throw Exception("Not found day by $this")
+    private fun PublishDay.toAnnouncePublishDay(): String {
+        return "Серии выходят ${this.asDayPretext()}, ${this.asDayNameDeclension()}"
     }
 }

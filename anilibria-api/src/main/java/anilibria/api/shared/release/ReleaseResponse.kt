@@ -3,6 +3,7 @@ package anilibria.api.shared.release
 
 import anilibria.api.genres.models.GenreResponse
 import anilibria.api.shared.ImageResponse
+import anilibria.api.torrent.models.TorrentResponse
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -52,6 +53,16 @@ data class ReleaseResponse(
     val addedInUsersFavorites: Int,
     @Json(name = "average_duration_of_episode")
     val averageDurationOfEpisode: Int?,
+    @Json(name = "added_in_planned_collection")
+    val addedInPlannedCollection: Int,
+    @Json(name = "added_in_watched_collection")
+    val addedInWatchedCollection: Int,
+    @Json(name = "added_in_watching_collection")
+    val addedInWatchingCollection: Int,
+    @Json(name = "added_in_postponed_collection")
+    val addedInPostponedCollection: Int,
+    @Json(name = "added_in_abandoned_collection")
+    val addedInAbandonedCollection: Int,
 
     // semi-full
     @Json(name = "genres")
@@ -63,7 +74,7 @@ data class ReleaseResponse(
     @Json(name = "episodes")
     val episodes: List<ReleaseEpisodeResponse>?,
     @Json(name = "torrents")
-    val torrents: List<ReleaseTorrentResponse>?,
+    val torrents: List<TorrentResponse>?,
     @Json(name = "sponsor")
     val sponsor: ReleaseSponsorResponse?,
 

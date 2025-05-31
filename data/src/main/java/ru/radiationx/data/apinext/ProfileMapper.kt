@@ -19,11 +19,11 @@ fun ProfileResponse.toDomain(): Profile {
 }
 
 fun User.toDb(): UserDb {
-    return UserDb(id = id.id, nickname = nickname, avatar = avatar)
+    return UserDb(id = id.id, nickname = nickname, avatar = avatar?.url)
 }
 
 fun UserDb.toDomain(): User {
-    return User(id = UserId(id), nickname = nickname, avatar = avatar)
+    return User(id = UserId(id), nickname = nickname, avatar = avatar?.toRelativeUrl())
 }
 
 private fun ProfileResponse.Torrents.toDomain(): Profile.Torrents {
@@ -38,6 +38,6 @@ private fun ProfileResponse.toDomainUser(): User {
     return User(
         id = UserId(id),
         nickname = nickname,
-        avatar = avatar?.src
+        avatar = avatar?.preview?.toRelativeUrl()
     )
 }

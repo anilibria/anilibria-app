@@ -2,17 +2,16 @@ package ru.radiationx.data.apinext.datasources
 
 import anilibria.api.collections.CollectionsApi
 import anilibria.api.shared.CollectionReleaseIdNetwork
-import anilibria.api.shared.ReleaseIdNetwork
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import ru.radiationx.data.apinext.models.CollectionReleaseId
 import ru.radiationx.data.apinext.models.enums.CollectionType
 import ru.radiationx.data.apinext.models.filters.CollectionsFilterData
 import ru.radiationx.data.apinext.models.filters.CollectionsFilterForm
-import ru.radiationx.data.apinext.toCollectionType
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.apinext.toDomainFilterYear
-import ru.radiationx.data.apinext.toListQuery
+import ru.radiationx.data.apinext.toRequest
+import ru.radiationx.data.apinext.toNetwork
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -44,34 +43,23 @@ class CollectionsApiDataSource(
         page: Int,
         form: CollectionsFilterForm?
     ): Paginated<Release> {
+        val request = form.toRequest(type, page)
         return api
-            .getReleases(
-                collectionType = type.toListQuery(),
-                page = page,
-                limit = null,
-                years = form?.years?.toListQuery(),
-                types = form?.types?.toListQuery(),
-                genres = form?.genres?.toListQuery(),
-                search = form?.query,
-                ageRatings = form?.ageRatings?.toListQuery()
-            )
+            .getReleases(request)
             .toDomain { it.toDomain() }
     }
 
     suspend fun getReleaseIds(): Set<CollectionReleaseId> {
         return api.getIds().map {
-            CollectionReleaseId(
-                id = ReleaseId(it[0].toString().toFloat().toInt()),
-                type = it[1].toString().toCollectionType()
-            )
+            CollectionReleaseIdNetwork.ofList(it).toDomain()
         }.toSet()
     }
 
     suspend fun deleteRelease(releaseId: ReleaseId) {
-        api.deleteReleases(listOf(ReleaseIdNetwork(releaseId.id)))
+        api.deleteReleases(listOf(releaseId.toNetwork()))
     }
 
     suspend fun addRelease(releaseId: ReleaseId, type: CollectionType) {
-        api.addReleases(listOf(CollectionReleaseIdNetwork(releaseId.id, type.toListQuery())))
+        api.addReleases(listOf(CollectionReleaseIdNetwork(releaseId.id, type.toRequest())))
     }
 }

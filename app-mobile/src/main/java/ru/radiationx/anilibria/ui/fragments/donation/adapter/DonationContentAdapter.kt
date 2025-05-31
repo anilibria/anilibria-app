@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.donation.adapter
 
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationContentCaption
 import ru.radiationx.data.entity.domain.donation.DonationContentDivider
@@ -10,7 +11,7 @@ import ru.radiationx.data.entity.domain.donation.DonationContentSection
 
 class DonationContentAdapter(
     buttonClickListener: (DonationContentButton) -> Unit,
-    linkClickListener: (String) -> Unit,
+    linkClickListener: (Url.Absolute) -> Unit,
 ) : ListItemAdapter() {
 
     init {

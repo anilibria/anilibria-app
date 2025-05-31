@@ -107,7 +107,7 @@ class VkWebViewClient(
             viewModel.authRequest(url)
             return true
         }
-        systemUtils.externalLink(url)
+        systemUtils.open(url)
         return true
     }
 

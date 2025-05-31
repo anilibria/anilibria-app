@@ -4,6 +4,7 @@ import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
 import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.apinext.models.User
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.feed.FeedItem
 import ru.radiationx.data.entity.domain.feed.ScheduleItem
 import ru.radiationx.data.entity.domain.other.OtherMenuItem
@@ -21,7 +22,7 @@ fun Release.toState(updates: Map<ReleaseId, ReleaseUpdate>): ReleaseItemState {
         id = id,
         title = names.main,
         description = description.orEmpty(),
-        posterUrl = poster.orEmpty(),
+        posterUrl = poster,
         isNew = isNew
     )
 }
@@ -29,7 +30,7 @@ fun Release.toState(updates: Map<ReleaseId, ReleaseUpdate>): ReleaseItemState {
 fun YoutubeItem.toState() = YoutubeItemState(
     id = id,
     title = title.orEmpty(),
-    image = image.orEmpty(),
+    image = image,
     views = views.toString(),
     comments = comments.toString()
 )
@@ -54,9 +55,7 @@ fun User?.toState(): ProfileItemState {
     } else {
         "Авторизоваться"
     }
-    val avatar = this?.avatar
-        ?.takeIf { it.isNotEmpty() }
-        ?: "file:///android_asset/res/alib_new_or_b.png"
+    val avatar = this?.avatar ?: Url.absoluteOf("file:///android_asset/res/alib_new_or_b.png")
     return ProfileItemState(
         hasAuth = this != null,
         title = title,
@@ -98,7 +97,7 @@ fun Release.toSuggestionState(query: String): SuggestionItemState {
         id = id,
         code = code,
         title = itemTitle,
-        poster = poster.orEmpty(),
+        poster = poster,
         matchRanges = matchRanges
     )
 }

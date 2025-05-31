@@ -37,7 +37,7 @@ class UpdateSourceViewModel @Inject constructor(
             val link = sourcesData.value.getOrNull(index) ?: return@launch
             when (link.type) {
                 UpdateData.LinkType.FILE -> updateController.downloadAction.emit(link)
-                UpdateData.LinkType.SITE -> systemUtils.externalLink(link.url)
+                UpdateData.LinkType.SITE -> systemUtils.open(link.url)
             }
         }
     }

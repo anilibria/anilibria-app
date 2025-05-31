@@ -12,6 +12,7 @@ import ru.radiationx.anilibria.screen.UpdateSourceScreen
 import ru.radiationx.data.downloader.RemoteFile
 import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.toLocalFile
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
 import ru.radiationx.shared.ktx.coRunCatching
@@ -78,7 +79,7 @@ class UpdateViewModel @Inject constructor(
         downloadProgressShowState.value = false
     }
 
-    private fun startDownload(url: String) {
+    private fun startDownload(url: Url) {
         if (downloadJob?.isActive == true) {
             return
         }
@@ -91,7 +92,7 @@ class UpdateViewModel @Inject constructor(
                     downloadProgressData
                 )
             }.onSuccess {
-                systemUtils.openLocalFile(it.toLocalFile())
+                systemUtils.open(it.toLocalFile())
             }.onFailure {
                 Timber.e(it)
             }

@@ -22,8 +22,8 @@ class ReleaseRepository @Inject constructor(
 
     suspend fun getRandomRelease(): Release = withContext(Dispatchers.IO) {
         releaseApi
-            .getRandomReleases(1)
-            .first()
+            .getRandomReleases(5)
+            .random()
     }
 
     suspend fun getRelease(identifier: ReleaseIdentifier): Release = withContext(Dispatchers.IO) {

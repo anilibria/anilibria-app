@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.contentprovider.SystemSuggestionEntity
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.repository.ReleaseRepository
 import ru.radiationx.quill.Quill
@@ -33,6 +34,7 @@ class SuggestionsContentProvider : ContentProvider() {
     private val uriMatcher by lazy { buildUriMatcher() }
 
     private val releaseRepository by lazy { Quill.getRootScope().get(ReleaseRepository::class) }
+    private val apiConfig by lazy { Quill.getRootScope().get(ApiConfig::class) }
 
     override fun onCreate(): Boolean {
         return true
@@ -77,7 +79,7 @@ class SuggestionsContentProvider : ContentProvider() {
         val result = runBlocking { releaseRepository.search(query) }
         val matrixCursor = MatrixCursor(queryProjection)
         result.items.forEach {
-            val entity = it.convertToEntity()
+            val entity = it.convertToEntity(apiConfig)
             val columns = appendProjectionColumns(entity.id, entity.getRow())
             matrixCursor.addRow(columns)
         }
@@ -87,12 +89,12 @@ class SuggestionsContentProvider : ContentProvider() {
     private fun appendProjectionColumns(id: Int, columns: Array<Any?>): Array<Any?> =
         columns + INTENT_ACTION + id
 
-    private fun Release.convertToEntity() = SystemSuggestionEntity(
-        id.id,
-        listOf(names.main, names.english).joinToString(),
-        -1,
-        -1,
-        cardImage = poster
+    private fun Release.convertToEntity(apiConfig: ApiConfig) = SystemSuggestionEntity(
+        id = id.id,
+        title = listOf(names.main, names.english).joinToString(),
+        duration = -1,
+        productionYear = -1,
+        cardImage = poster?.absolute(apiConfig.baseImagesUrl)
     )
 
     private fun buildUriMatcher(): UriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {

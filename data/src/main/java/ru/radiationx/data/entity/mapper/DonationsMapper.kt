@@ -1,5 +1,6 @@
 package ru.radiationx.data.entity.mapper
 
+import ru.radiationx.data.entity.common.toAbsoluteUrl
 import ru.radiationx.data.entity.domain.donation.DonationCard
 import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationContentCaption
@@ -46,7 +47,7 @@ fun DonationContentItemResponse.toDomain(): DonationContentItem? = when (type) {
 fun DonationContentButtonResponse.toDomain() = DonationContentButton(
     tag = tag,
     text = text,
-    link = link,
+    link = link?.toAbsoluteUrl(),
     brand = brand,
     icon = icon
 )

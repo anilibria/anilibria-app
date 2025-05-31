@@ -160,13 +160,13 @@ class FilterViewModel(
 
     fun onCopyClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        systemUtils.copyToClipBoard(releaseItem.link.orEmpty())
+        systemUtils.copy(releaseItem.link)
         releaseAnalytics.copyLink(AnalyticsConstants.screen_catalog, releaseItem.id.id)
     }
 
     fun onShareClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        systemUtils.shareText(releaseItem.link.orEmpty())
+        systemUtils.share(releaseItem.link)
         releaseAnalytics.share(AnalyticsConstants.screen_catalog, releaseItem.id.id)
     }
 

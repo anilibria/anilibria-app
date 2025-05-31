@@ -23,7 +23,7 @@ class HistoryFileViewModel @Inject constructor(
             coRunCatching {
                 historyFileRepository.exportFile()
             }.onSuccess {
-                systemUtils.shareLocalFile(it)
+                systemUtils.share(it)
             }.onFailure {
                 errorHandler.handle(it)
             }

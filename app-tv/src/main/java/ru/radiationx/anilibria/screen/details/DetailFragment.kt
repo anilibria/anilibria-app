@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowViewHolder
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.quill.inject
@@ -104,7 +105,7 @@ class DetailFragment : RowsSupportFragment() {
             if (row is ListRow) {
                 backgroundManager.applyCard(item)
             } else if (row is LibriaDetailsRow) {
-                applyImage(row.details?.image.orEmpty())
+                applyImage(row.details?.image)
             }
             if (rowViewHolder is CustomListRowViewHolder) {
                 when (item) {
@@ -171,7 +172,7 @@ class DetailFragment : RowsSupportFragment() {
         return row
     }
 
-    private fun applyImage(image: String) {
+    private fun applyImage(image: Url?) {
         backgroundManager.applyImage(image, colorSelector = { null }) {
             val hslColor = FloatArray(3)
             ColorUtils.colorToHSL(it, hslColor)

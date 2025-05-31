@@ -209,11 +209,11 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.shareAction.observe().onEach {
-            systemUtils.shareText(it)
+            systemUtils.share(it)
         }.launchInResumed(viewLifecycleOwner)
 
         viewModel.copyAction.observe().onEach {
-            systemUtils.copyToClipBoard(it)
+            systemUtils.copy(it)
             Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT).show()
         }.launchInResumed(viewLifecycleOwner)
 

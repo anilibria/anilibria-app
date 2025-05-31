@@ -6,6 +6,7 @@ import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.api.PageApi
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.page.PageLibria
 import ru.radiationx.data.entity.domain.page.VkComments
 import ru.radiationx.data.entity.mapper.toDomain
@@ -22,7 +23,7 @@ class PageRepository @Inject constructor(
 
     private var currentComments: VkComments? = null
 
-    suspend fun getPage(pagePath: String): PageLibria = withContext(Dispatchers.IO) {
+    suspend fun getPage(pagePath: Url.Relative): PageLibria = withContext(Dispatchers.IO) {
         pageApi
             .getPage(pagePath)
     }

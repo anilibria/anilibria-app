@@ -81,7 +81,7 @@ class TeamsViewModel @Inject constructor(
 
     fun onHeaderActionClick() {
         analytics.joinClick()
-        systemUtils.externalLink("https://t.me/joinlibria_bot")
+        systemUtils.open("https://t.me/joinlibria_bot")
     }
 
     private fun Teams.toState(): TeamsState = TeamsState(

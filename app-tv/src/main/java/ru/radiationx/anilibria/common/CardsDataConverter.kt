@@ -7,8 +7,9 @@ import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.capitalizeDefault
 import ru.radiationx.shared.ktx.decapitalizeDefault
+import javax.inject.Inject
 
-class CardsDataConverter(
+class CardsDataConverter @Inject constructor(
     private val context: Context,
 ) {
 
@@ -18,19 +19,19 @@ class CardsDataConverter(
         val updateText = "Обновлен ${freshAt.relativeDate(context).decapitalizeDefault()}"
         val descItems = listOfNotNull(seasonText, genreText, updateText)
         LibriaCard(
-            names.main,
-            descItems.joinToString(" • "),
-            poster.orEmpty(),
-            LibriaCard.Type.Release(releaseItem.id)
+            title = names.main,
+            description = descItems.joinToString(" • "),
+            image = poster,
+            type = LibriaCard.Type.Release(releaseItem.id)
         )
     }
 
     fun toCard(youtubeItem: YoutubeItem) = youtubeItem.run {
         LibriaCard(
-            title.orEmpty(),
-            "Вышел ${createdAt.relativeDate(context).decapitalizeDefault()}",
-            image.orEmpty(),
-            LibriaCard.Type.Youtube(youtubeItem.link)
+            title = title.orEmpty(),
+            description = "Вышел ${createdAt.relativeDate(context).decapitalizeDefault()}",
+            image = image,
+            type = LibriaCard.Type.Youtube(youtubeItem.link)
         )
     }
 

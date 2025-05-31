@@ -22,6 +22,7 @@ import ru.radiationx.data.apinext.models.Credentials
 import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.entity.common.toRelativeUrl
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
@@ -128,7 +129,8 @@ class AuthViewModel @Inject constructor(
 
     fun registrationToSiteClick() {
         authMainAnalytics.regToSiteClick()
-        systemUtils.externalLink("${apiConfig.siteUrl}/pages/login.php")
+        // todo API2 change url
+        systemUtils.open("/pages/login.php".toRelativeUrl().absolute(apiConfig.siteUrl))
     }
 
     fun submitUseTime(time: Long) {

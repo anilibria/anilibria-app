@@ -1,7 +1,6 @@
 package ru.radiationx.data.apinext
 
 import anilibria.api.shared.ReleaseIdNetwork
-import ru.radiationx.data.apinext.models.RelativeUrl
 import ru.radiationx.data.apinext.models.filters.FormItem
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -36,11 +35,6 @@ fun ReleaseId.toNetwork(): ReleaseIdNetwork {
     )
 }
 
-fun String.toRelativeUrl(): RelativeUrl {
-    return RelativeUrl(
-        url = this
-    )
-}
 
 fun ReleaseIdentifier.toRequestIdentifier(): String {
     return when (this) {

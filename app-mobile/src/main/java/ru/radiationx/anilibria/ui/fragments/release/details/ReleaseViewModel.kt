@@ -14,6 +14,7 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
@@ -48,8 +49,8 @@ class ReleaseViewModel @Inject constructor(
     private val _state = MutableStateFlow(ReleasePagerState())
     val state = _state.asStateFlow()
 
-    val shareAction = EventFlow<String>()
-    val copyAction = EventFlow<String>()
+    val shareAction = EventFlow<Url>()
+    val copyAction = EventFlow<Url>()
     val shortcutAction = EventFlow<Release>()
     val openCommentsAction = commentsNotifier.observe()
 

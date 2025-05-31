@@ -6,6 +6,7 @@ import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchApiResponse
 import ru.radiationx.data.datasource.remote.parsers.PagesParser
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.page.PageLibria
 import ru.radiationx.data.entity.response.page.VkCommentsResponse
 import javax.inject.Inject
@@ -25,10 +26,10 @@ class PageApi @Inject constructor(
 
     }
 
-    suspend fun getPage(pagePath: String): PageLibria {
+    suspend fun getPage(pagePath: Url.Relative): PageLibria {
         val args: Map<String, String> = emptyMap()
         return client
-            .get("${apiConfig.baseUrl}/$pagePath", args)
+            .get(pagePath.absolute(apiConfig.baseUrl), args)
             .let { pagesParser.baseParse(it) }
     }
 

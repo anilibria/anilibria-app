@@ -1,6 +1,8 @@
 package ru.radiationx.data.apinext
 
 import anilibria.api.videos.models.VideoResponse
+import ru.radiationx.data.entity.common.toAbsoluteUrl
+import ru.radiationx.data.entity.common.toRelativeUrl
 import ru.radiationx.data.entity.domain.types.YoutubeId
 import ru.radiationx.data.entity.domain.youtube.YoutubeItem
 
@@ -10,7 +12,7 @@ fun VideoResponse.toDomain(): YoutubeItem {
         title = title,
         image = image.preview?.toRelativeUrl(),
         vid = videoId,
-        link = url,
+        link = url.toAbsoluteUrl(),
         views = views,
         comments = comments,
         createdAt = createdAt.apiDateToDate()

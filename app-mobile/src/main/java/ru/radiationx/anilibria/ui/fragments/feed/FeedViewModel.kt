@@ -248,7 +248,7 @@ class FeedViewModel @Inject constructor(
             youtubeItem.vid
         )
         feedAnalytics.youtubeClick()
-        systemUtils.externalLink(youtubeItem.link)
+        systemUtils.open(youtubeItem.link)
     }
 
     fun onSchedulesClick() {
@@ -327,23 +327,23 @@ class FeedViewModel @Inject constructor(
 
     fun onCopyClick(item: YoutubeItemState) {
         val releaseItem = findYoutube(item.id) ?: return
-        systemUtils.copyToClipBoard(releaseItem.link)
+        systemUtils.copy(releaseItem.link)
     }
 
     fun onShareClick(item: YoutubeItemState) {
         val releaseItem = findYoutube(item.id) ?: return
-        systemUtils.shareText(releaseItem.link)
+        systemUtils.share(releaseItem.link)
     }
 
     fun onCopyClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: findScheduleRelease(item.id) ?: return
-        systemUtils.copyToClipBoard(releaseItem.link.orEmpty())
+        systemUtils.copy(releaseItem.link)
         releaseAnalytics.copyLink(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     fun onShareClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: findScheduleRelease(item.id) ?: return
-        systemUtils.shareText(releaseItem.link.orEmpty())
+        systemUtils.share(releaseItem.link)
         releaseAnalytics.share(AnalyticsConstants.screen_feed, item.id.id)
     }
 

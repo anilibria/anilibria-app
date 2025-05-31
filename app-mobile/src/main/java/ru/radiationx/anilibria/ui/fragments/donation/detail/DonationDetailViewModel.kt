@@ -10,6 +10,7 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.DonationDetailAnalytics
 import ru.radiationx.data.analytics.features.DonationDialogAnalytics
 import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.donation.DonationContentButton
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.repository.DonationRepository
@@ -56,9 +57,9 @@ class DonationDetailViewModel @Inject constructor(
         router.exit()
     }
 
-    fun onLinkClick(url: String) {
-        detailAnalytics.linkClick(url)
-        systemUtils.externalLink(url)
+    fun onLinkClick(url: Url.Absolute) {
+        detailAnalytics.linkClick(url.raw)
+        systemUtils.open(url)
     }
 
     fun onButtonClick(button: DonationContentButton) {
@@ -84,7 +85,7 @@ class DonationDetailViewModel @Inject constructor(
             }
 
             buttonLink != null -> {
-                systemUtils.externalLink(buttonLink)
+                systemUtils.open(buttonLink)
             }
         }
     }

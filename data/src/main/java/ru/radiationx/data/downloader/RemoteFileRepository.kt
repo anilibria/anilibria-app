@@ -11,6 +11,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import ru.radiationx.data.SimpleClient
 import ru.radiationx.data.datasource.remote.IClient
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.entity.common.Url
 import timber.log.Timber
 import java.io.File
 import java.io.InputStream
@@ -21,23 +23,25 @@ class RemoteFileRepository @Inject constructor(
     private val context: Context,
     @SimpleClient private val client: IClient,
     private val holder: RemoteFileHolder,
+    private val apiConfig: ApiConfig
 ) {
 
     suspend fun loadFile(
-        url: String,
+        url: Url,
         bucket: RemoteFile.Bucket,
         progress: MutableStateFlow<Int>,
     ): DownloadedFile = withContext(Dispatchers.IO) {
+        val absoluteUrl = url.absolute(apiConfig.apiUrl)
         progress.value = 0
-        val existedFile = getDownloadedFile(url)
+        val existedFile = getDownloadedFile(absoluteUrl)
         if (existedFile != null) {
             return@withContext existedFile
         }
 
-        val loadingFileId = holder.get(url)?.id ?: holder.generateId()
+        val loadingFileId = holder.get(absoluteUrl)?.id ?: holder.generateId()
         val loadingFile = getFileById(loadingFileId)
         try {
-            val response = client.getRaw(url, emptyMap())
+            val response = client.getRaw(absoluteUrl, emptyMap())
 
             val responseBody = requireNotNull(response.body) {
                 "Response doesn't contain a body"
@@ -53,7 +57,7 @@ class RemoteFileRepository @Inject constructor(
             responseBody.copyToWithProgress(loadingFile).collect(progress)
             val saveData = RemoteFileSaveData(
                 id = loadingFileId,
-                url = url,
+                url = absoluteUrl,
                 bucket = bucket,
                 contentDisposition = response.header("Content-Disposition"),
                 contentType = response.header("Content-Type"),

@@ -2,6 +2,7 @@ package ru.radiationx.data.apinext.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.types.UserId
 
 @Parcelize
@@ -21,6 +22,6 @@ data class ReleaseMember(
     @Parcelize
     data class User(
         val id: UserId,
-        val avatar: RelativeUrl?
+        val avatar: Url.Relative?
     ) : Parcelable
 }

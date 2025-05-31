@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
@@ -37,6 +38,7 @@ class ReleaseSponsorDelegate(
             binding.itemSponsorDesc.text = item.description
             binding.itemSponsorAction.text = item.urlTitle
             binding.itemSponsorAction.setOnClickListener { clickListener.invoke(item) }
+            binding.itemSponsorAction.isVisible = item.urlTitle != null
         }
     }
 }

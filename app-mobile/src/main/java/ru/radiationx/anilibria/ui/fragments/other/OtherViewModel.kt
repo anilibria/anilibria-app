@@ -169,12 +169,12 @@ class OtherViewModel @Inject constructor(
             else -> {
                 linksMap[item.id]?.also { linkItem ->
                     otherAnalytics.linkClick(linkItem.title)
-                    val absoluteLink = linkItem.absoluteLink
-                    val pagePath = linkItem.sitePagePath
+                    val absoluteLink = linkItem.link
+                    val pagePath = linkItem.pagePath
                     when {
-                        absoluteLink != null -> systemUtils.externalLink(absoluteLink)
+                        absoluteLink != null -> systemUtils.open(absoluteLink)
                         pagePath != null -> {
-                            pageAnalytics.open(AnalyticsConstants.screen_other, pagePath)
+                            pageAnalytics.open(AnalyticsConstants.screen_other, pagePath.raw)
                             router.navigateTo(Screens.StaticPage(pagePath))
                         }
                     }

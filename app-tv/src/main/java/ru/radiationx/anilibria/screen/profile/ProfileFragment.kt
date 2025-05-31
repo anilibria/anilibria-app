@@ -38,9 +38,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         viewModel.profileData.onEach {
-            if (!it?.avatar.isNullOrEmpty()) {
-                binding.profileAvatar.showImageUrl(it?.avatar)
-            }
+            binding.profileAvatar.showImageUrl(it?.avatar)
             binding.profileNick.text = it?.nickname
 
             val hasAuth = it != null

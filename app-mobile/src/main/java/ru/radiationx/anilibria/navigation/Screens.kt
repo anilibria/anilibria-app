@@ -30,6 +30,7 @@ import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
 import ru.radiationx.data.apinext.models.Genre
 import ru.radiationx.data.apinext.models.SocialType
 import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseCode
@@ -111,7 +112,7 @@ object Screens {
     }
 
     class StaticPage(
-        private val pagePath: String,
+        private val pagePath: Url.Relative,
         val title: String? = null
     ) : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) = PageFragment.newInstance(pagePath)

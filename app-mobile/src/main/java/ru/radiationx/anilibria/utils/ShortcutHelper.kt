@@ -13,6 +13,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.navigation.Screens
+import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared.ktx.android.centerCrop
@@ -27,6 +29,7 @@ import kotlin.math.min
 
 class ShortcutHelper @Inject constructor(
     private val context: Context,
+    private val apiConfig: ApiConfig
 ) {
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -35,7 +38,7 @@ class ShortcutHelper @Inject constructor(
             coRunCatching {
                 val loadedImage = withContext(Dispatchers.IO) {
                     context.loadImageBitmap(data.poster)
-                }?: return@coRunCatching
+                } ?: return@coRunCatching
                 val minSize = min(loadedImage.width, loadedImage.height)
                 val desiredSize = Resources.getSystem().displayMetrics.density * 48
                 val scaleFactor = minSize / desiredSize
@@ -67,10 +70,11 @@ class ShortcutHelper @Inject constructor(
         id: String,
         shortLabel: String,
         longLabel: String,
-        url: String,
+        url: Url,
         bitmap: Bitmap,
     ) {
-        val intent = Screens.IntentHandler(url).createIntent(context)
+        val absoluteUrl = url.absolute(apiConfig.siteUrl)
+        val intent = Screens.IntentHandler(absoluteUrl).createIntent(context)
         val shortcut = ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(shortLabel)
             .setLongLabel(longLabel)

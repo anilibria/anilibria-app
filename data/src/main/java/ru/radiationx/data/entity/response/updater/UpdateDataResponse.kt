@@ -23,8 +23,8 @@ data class UpdateDataResponse(
 
     @JsonClass(generateAdapter = true)
     data class UpdateLink(
-        @Json(name = "name") val name: String?,
-        @Json(name = "url") val url: String?,
-        @Json(name = "type") val type: String?
+        @Json(name = "name") val name: String,
+        @Json(name = "url") val url: String,
+        @Json(name = "type") val type: String
     )
 }

@@ -17,7 +17,7 @@ class TorrentInfoDialogFragment : TaiwaDialogFragment(R.layout.dialog_torrents_i
         super.onViewCreated(view, savedInstanceState)
         binding.btSearch.setOnClickListener {
             get<SystemUtils>()
-                .externalLink("https://play.google.com/store/search?q=torrent&c=apps")
+                .open("https://play.google.com/store/search?q=torrent&c=apps")
         }
         binding.btCancel.setOnClickListener {
             dismiss()

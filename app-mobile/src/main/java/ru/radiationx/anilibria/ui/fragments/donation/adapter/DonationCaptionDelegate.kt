@@ -9,10 +9,12 @@ import ru.radiationx.anilibria.databinding.ItemDonationCaptionBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.LinkMovementMethod
+import ru.radiationx.data.entity.common.Url
+import ru.radiationx.data.entity.common.toAbsoluteUrl
 import ru.radiationx.data.entity.domain.donation.DonationContentCaption
 
 class DonationCaptionDelegate(
-    private val linkClickListener: (String) -> Unit,
+    private val linkClickListener: (Url.Absolute) -> Unit,
 ) : AppAdapterDelegate<DonationCaptionListItem, ListItem, DonationCaptionDelegate.ViewHolder>(
     R.layout.item_donation_caption,
     { it is DonationCaptionListItem },
@@ -24,14 +26,14 @@ class DonationCaptionDelegate(
 
     class ViewHolder(
         itemView: View,
-        private val linkClickListener: (String) -> Unit,
+        private val linkClickListener: (Url.Absolute) -> Unit,
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by viewBinding<ItemDonationCaptionBinding>()
 
         init {
             binding.tvText.movementMethod = LinkMovementMethod {
-                linkClickListener.invoke(it)
+                linkClickListener.invoke(it.toAbsoluteUrl())
                 true
             }
         }

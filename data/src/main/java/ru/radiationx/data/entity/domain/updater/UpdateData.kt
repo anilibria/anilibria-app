@@ -1,5 +1,7 @@
 package ru.radiationx.data.entity.domain.updater
 
+import ru.radiationx.data.entity.common.Url
+
 /**
  * Created by radiationx on 28.01.18.
  */
@@ -19,7 +21,7 @@ data class UpdateData(
 
     data class UpdateLink(
         val name: String,
-        val url: String,
+        val url: Url.Absolute,
         val type: LinkType,
     )
 

@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.update
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.model.SuggestionLocalItemState
-import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.model.toSuggestionState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.analytics.AnalyticsConstants
@@ -22,7 +21,6 @@ import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.entity.domain.search.Suggestions
 import ru.radiationx.data.repository.ReleaseRepository
-import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loadersearch.SearchLoader
 import ru.radiationx.shared_app.controllers.loadersearch.SearchQuery
@@ -94,7 +92,7 @@ class FastSearchViewModel @Inject constructor(
                 fastSearchAnalytics.searchGoogleClick()
                 val urlQuery =
                     URLEncoder.encode("anilibria ${searchLoader.getQuery()?.query}", "utf-8")
-                systemUtils.externalLink("https://www.google.com/search?q=$urlQuery")
+                systemUtils.open("https://www.google.com/search?q=$urlQuery")
             }
 
             ITEM_ID_SEARCH -> {

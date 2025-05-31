@@ -97,13 +97,13 @@ class ScheduleViewModel @Inject constructor(
 
     fun onCopyClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        systemUtils.copyToClipBoard(releaseItem.link.orEmpty())
+        systemUtils.copy(releaseItem.link)
         releaseAnalytics.copyLink(AnalyticsConstants.screen_schedule, item.id.id)
     }
 
     fun onShareClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        systemUtils.shareText(releaseItem.link.orEmpty())
+        systemUtils.share(releaseItem.link)
         releaseAnalytics.share(AnalyticsConstants.screen_schedule, item.id.id)
     }
 
@@ -135,7 +135,9 @@ class ScheduleViewModel @Inject constructor(
     private fun handleFirstData() {
         if (firstData) {
             firstData = false
-            val currentDay = argExtra.day ?: PublishDay.ofCalendar(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))
+            val currentDay = argExtra.day ?: PublishDay.ofCalendar(
+                Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+            )
             currentDays
                 .indexOfFirst { it.day == currentDay }
                 .let { _state.value.dayItems.getOrNull(it) }

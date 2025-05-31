@@ -13,6 +13,8 @@ import ru.radiationx.data.apinext.models.ReleaseMember
 import ru.radiationx.data.apinext.models.ReleaseName
 import ru.radiationx.data.apinext.models.ReleaseSponsor
 import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.entity.common.toAbsoluteUrl
+import ru.radiationx.data.entity.common.toRelativeUrl
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.ExternalEpisode
 import ru.radiationx.data.entity.domain.release.ExternalPlaylist
@@ -58,7 +60,7 @@ fun ReleaseSponsorResponse.toDomain(): ReleaseSponsor {
         title = title,
         description = description,
         urlTitle = urlTitle,
-        url = url
+        url = url.toAbsoluteUrl()
     )
 }
 
@@ -111,7 +113,7 @@ fun ReleaseEpisodeResponse.toYoutubeEpisode(releaseId: ReleaseId): ExternalEpiso
     return ExternalEpisode(
         id = episodeId,
         title = toEpisodeTitle(episodeId),
-        url = "https://www.youtube.com/watch?v=$safeYoutubeId"
+        url = "https://www.youtube.com/watch?v=$safeYoutubeId".toAbsoluteUrl()
     )
 }
 

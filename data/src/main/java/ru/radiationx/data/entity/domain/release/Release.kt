@@ -3,12 +3,12 @@ package ru.radiationx.data.entity.domain.release
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import ru.radiationx.data.apinext.models.Genre
-import ru.radiationx.data.apinext.models.RelativeUrl
 import ru.radiationx.data.apinext.models.ReleaseCounters
 import ru.radiationx.data.apinext.models.ReleaseMember
 import ru.radiationx.data.apinext.models.ReleaseName
 import ru.radiationx.data.apinext.models.ReleaseSponsor
 import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.types.ReleaseCode
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import java.util.Date
@@ -21,7 +21,7 @@ data class Release(
     val id: ReleaseId,
     val code: ReleaseCode,
     val names: ReleaseName,
-    val poster: RelativeUrl?,
+    val poster: Url.Relative?,
     val createdAt: Date,
     val freshAt: Date,
     val updatedAt: Date,
@@ -60,7 +60,6 @@ data class Release(
             else -> null
         }
 
-    //todo API2 use real url
-    val link: String
-        get() = "https://anilibria.top/anime/releases/release/${code.code}"
+    val link: Url.Relative
+        get() = Url.relativeOf("/anime/releases/release/${code.code}")
 }

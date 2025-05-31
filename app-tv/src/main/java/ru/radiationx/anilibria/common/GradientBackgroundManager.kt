@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.R
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.coRunCatching
@@ -67,7 +68,7 @@ class GradientBackgroundManager @Inject constructor(
     private var colorApplierJob: Job? = null
     private val colorApplier = MutableStateFlow(defaultColor)
     private val colorEvaluator = ArgbEvaluatorCompat()
-    private val urlColorMap = mutableMapOf<String, Int>()
+    private val urlColorMap = mutableMapOf<Url, Int>()
 
     private val defaultColorSelector = { palette: Palette ->
         palette.getMutedColor(defaultColor)
@@ -110,10 +111,14 @@ class GradientBackgroundManager @Inject constructor(
     }
 
     fun applyImage(
-        url: String,
+        url: Url?,
         colorSelector: (Palette) -> Int? = defaultColorSelector,
         colorModifier: (Int) -> Int = defaultColorModifier,
     ) {
+        if (url == null) {
+            applyDefault()
+            return
+        }
         val color = urlColorMap[url]
         if (colorSelector == defaultColorSelector && color != null) {
             applyColor(color, colorModifier)

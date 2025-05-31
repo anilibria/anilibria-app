@@ -34,7 +34,7 @@ class DetailDataConverter @Inject constructor() {
             ).joinToString(" • "),
             description = description.orEmpty(),
             announce = getAnnounce(isFull),
-            image = poster.orEmpty(),
+            image = poster,
             favoriteCount = NumberFormat.getNumberInstance().format(counters.favorites),
             hasFullHd = episodes.any { PlayerQuality.FULLHD in it.qualityInfo },
             isFavorite = isInFavorites,

@@ -1,6 +1,7 @@
 package ru.radiationx.data.apinext
 
 import anilibria.api.franchises.models.FranchiseResponse
+import ru.radiationx.data.entity.common.toRelativeUrl
 import ru.radiationx.data.entity.domain.release.Franchise
 import ru.radiationx.data.entity.domain.release.FranchiseFull
 import ru.radiationx.data.entity.domain.types.FranchiseId

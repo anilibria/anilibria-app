@@ -118,7 +118,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         }.launchIn(lifecycleScope)
 
         viewModel.openDownloadedFileAction.observe().onEach {
-            systemUtils.openLocalFile(it)
+            systemUtils.open(it)
         }.launchInResumed(this)
     }
 

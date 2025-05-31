@@ -1,5 +1,6 @@
 package ru.radiationx.data.entity.mapper
 
+import ru.radiationx.data.entity.common.toAbsoluteUrl
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.entity.response.updater.UpdateDataResponse
 
@@ -20,8 +21,8 @@ fun UpdateDataResponse.toDomain(currentCode: Int): UpdateData {
 }
 
 fun UpdateDataResponse.UpdateLink.toDomain() = UpdateData.UpdateLink(
-    name = name ?: "Unknown",
-    url = url.orEmpty(),
+    name = name,
+    url = url.toAbsoluteUrl(),
     type = when (type) {
         "file" -> UpdateData.LinkType.FILE
         "site" -> UpdateData.LinkType.SITE

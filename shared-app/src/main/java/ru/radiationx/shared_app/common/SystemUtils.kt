@@ -8,12 +8,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.downloader.LocalFile
+import ru.radiationx.data.entity.common.Url
 import java.io.File
 import javax.inject.Inject
 
 class SystemUtils @Inject constructor(
     private val context: Context,
+    private val apiConfig: ApiConfig
 ) {
 
     private fun getRemoteFileUri(file: File, name: String): Uri {
@@ -24,7 +28,7 @@ class SystemUtils @Inject constructor(
         }
     }
 
-    fun openLocalFile(file: LocalFile) {
+    fun open(file: LocalFile) {
         val data = getRemoteFileUri(file.file, file.name)
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(data, file.mimeType)
@@ -37,7 +41,7 @@ class SystemUtils @Inject constructor(
         context.startActivity(chooserIntent);
     }
 
-    fun shareLocalFile(file: LocalFile) {
+    fun share(file: LocalFile) {
         val data = getRemoteFileUri(file.file, file.name)
 
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
@@ -62,10 +66,15 @@ class SystemUtils @Inject constructor(
         context.startActivity(chooserIntent)
     }
 
-    fun copyToClipBoard(s: String) {
+    fun copy(text: String) {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("label", s)
+        val clip = ClipData.newPlainText("label", text)
         clipboard.setPrimaryClip(clip)
+    }
+
+    fun copy(url: Url) {
+        val absoluteUrl = url.absolute(apiConfig.siteUrl)
+        copy(absoluteUrl)
     }
 
     fun readFromClipboard(): String? {
@@ -79,7 +88,7 @@ class SystemUtils @Inject constructor(
         return null
     }
 
-    fun shareText(text: String) {
+    fun share(text: String) {
         val sendIntent = Intent()
         sendIntent.action = Intent.ACTION_SEND
         sendIntent.putExtra(Intent.EXTRA_TEXT, text)
@@ -90,9 +99,19 @@ class SystemUtils @Inject constructor(
         )
     }
 
-    fun externalLink(url: String) {
+    fun share(url: Url) {
+        val absoluteUrl = url.absolute(apiConfig.siteUrl)
+        share(absoluteUrl)
+    }
+
+    fun open(url: String) {
+        open(Url.absoluteOf(url))
+    }
+
+    fun open(url: Url) {
+        val absoluteUrl = url.absolute(apiConfig.siteUrl)
         val intent =
-            Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            Intent(Intent.ACTION_VIEW, absoluteUrl.toUri()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(
             Intent.createChooser(intent, "Открыть в").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         )

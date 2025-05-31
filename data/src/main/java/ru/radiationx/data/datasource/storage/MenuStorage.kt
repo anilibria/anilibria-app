@@ -9,6 +9,8 @@ import org.json.JSONObject
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.MenuHolder
+import ru.radiationx.data.entity.common.toAbsoluteUrl
+import ru.radiationx.data.entity.common.toRelativeUrl
 import ru.radiationx.data.entity.domain.other.DataIcons
 import ru.radiationx.data.entity.domain.other.LinkMenuItem
 import ru.radiationx.shared.ktx.android.nullString
@@ -24,33 +26,33 @@ class MenuStorage @Inject constructor(
 
     private val defaultLocalMenu = listOf(
         LinkMenuItem(
-            "Группа VK",
-            absoluteLink = "https://vk.com/anilibria",
+            title = "Группа VK",
+            link = "https://vk.com/anilibria".toAbsoluteUrl(),
             icon = DataIcons.VK
         ),
         LinkMenuItem(
-            "Канал YouTube",
-            absoluteLink = "https://youtube.com/channel/UCuF8ghQWaa7K-28llm-K3Zg",
+            title = "Канал YouTube",
+            link = "https://youtube.com/channel/UCuF8ghQWaa7K-28llm-K3Zg".toAbsoluteUrl(),
             icon = DataIcons.YOUTUBE
         ),
         LinkMenuItem(
-            "Patreon",
-            absoluteLink = "https://patreon.com/anilibria",
+            title = "Patreon",
+            link = "https://patreon.com/anilibria".toAbsoluteUrl(),
             icon = DataIcons.PATREON
         ),
         LinkMenuItem(
-            "Канал Telegram",
-            absoluteLink = "https://t.me/anilibria_tv",
+            title = "Канал Telegram",
+            link = "https://t.me/anilibria_tv".toAbsoluteUrl(),
             icon = DataIcons.TELEGRAM
         ),
         LinkMenuItem(
-            "Чат Discord",
-            absoluteLink = "https://discord.gg/Kdr5sNw",
+            title = "Чат Discord",
+            link = "https://discord.gg/Kdr5sNw".toAbsoluteUrl(),
             icon = DataIcons.DISCORD
         ),
         LinkMenuItem(
-            "Сайт AniLibria",
-            absoluteLink = "https://www.anilibria.tv/",
+            title = "Сайт AniLibria",
+            link = "https://www.anilibria.tv/".toAbsoluteUrl(),
             icon = DataIcons.ANILIBRIA
         )
     )
@@ -74,8 +76,8 @@ class MenuStorage @Inject constructor(
             localMenuRelay.getValue().forEach {
                 jsonMenu.put(JSONObject().apply {
                     put("title", it.title)
-                    put("absoluteLink", it.absoluteLink)
-                    put("sitePagePath", it.sitePagePath)
+                    put("absoluteLink", it.link?.raw)
+                    put("sitePagePath", it.pagePath?.raw)
                     put("icon", it.icon)
                 })
             }
@@ -97,8 +99,8 @@ class MenuStorage @Inject constructor(
                         result.add(
                             LinkMenuItem(
                                 it.getString("title"),
-                                it.nullString("absoluteLink"),
-                                it.nullString("sitePagePath"),
+                                it.nullString("absoluteLink")?.toAbsoluteUrl(),
+                                it.nullString("sitePagePath")?.toRelativeUrl(),
                                 it.nullString("icon")
                             )
                         )

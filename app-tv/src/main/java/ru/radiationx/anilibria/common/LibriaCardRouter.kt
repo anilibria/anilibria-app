@@ -17,7 +17,7 @@ class LibriaCardRouter @Inject constructor(
             }
 
             is LibriaCard.Type.Youtube -> {
-                systemUtils.externalLink(type.link)
+                systemUtils.open(type.link)
             }
         }
     }

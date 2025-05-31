@@ -91,7 +91,7 @@ class DonationYooMoneyViewModel @Inject constructor(
             coRunCatching {
                 donationRepository.createYooMoneyPayLink(amount, paymentTypeId, form)
             }.onSuccess {
-                systemUtils.externalLink(it)
+                systemUtils.open(it)
                 _closeEvent.set(Unit)
             }.onFailure {
                 errorHandler.handle(it)

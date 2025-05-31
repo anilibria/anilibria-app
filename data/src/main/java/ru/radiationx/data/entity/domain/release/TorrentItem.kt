@@ -2,6 +2,7 @@ package ru.radiationx.data.entity.domain.release
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.types.TorrentId
 import java.util.Date
 
@@ -22,7 +23,6 @@ data class TorrentItem(
     val magnet: String
 ) : Parcelable {
 
-    // todo API2 use real url
-    val url: String
-        get() = "https://anilibria.top/api/v1/anime/torrents/${id.id}/file"
+    val url: Url.Relative
+        get() = Url.relativeOf("/api/v1/anime/torrents/${id.id}/file")
 }

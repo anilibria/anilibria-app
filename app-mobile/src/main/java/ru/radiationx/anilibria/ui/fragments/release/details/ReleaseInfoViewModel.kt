@@ -257,8 +257,8 @@ class ReleaseInfoViewModel @Inject constructor(
         releaseAnalytics.torrentClick(isHevc, torrentItem.id.id)
         when (action) {
             TorrentAction.Open, TorrentAction.Share -> loadTorrent(torrentItem, action)
-            TorrentAction.OpenUrl -> systemUtils.externalLink(torrentItem.url)
-            TorrentAction.ShareUrl -> systemUtils.shareText(torrentItem.url)
+            TorrentAction.OpenUrl -> systemUtils.open(torrentItem.url)
+            TorrentAction.ShareUrl -> systemUtils.share(torrentItem.url)
         }
     }
 
@@ -369,7 +369,7 @@ class ReleaseInfoViewModel @Inject constructor(
         episode: ExternalEpisode,
     ) {
         releaseAnalytics.episodeExternalClick(release.id.id, episodeState.tag)
-        episode.url?.also { systemUtils.externalLink(it) }
+        episode.url?.also { systemUtils.open(it) }
     }
 
     private fun onOnlineEpisodeClick(
@@ -434,7 +434,7 @@ class ReleaseInfoViewModel @Inject constructor(
             releaseAnalytics.descriptionLinkClick(it.id.id)
             val handled = linkHandler.handle(url, router)
             if (!handled) {
-                systemUtils.externalLink(url)
+                systemUtils.open(url)
             }
         }
     }
@@ -442,7 +442,7 @@ class ReleaseInfoViewModel @Inject constructor(
     fun onSponsorClick(sponsor: ReleaseSponsor) {
         val data = currentData ?: return
         releaseAnalytics.sponsorClick(data.id.id, sponsor.title)
-        systemUtils.externalLink(sponsor.url)
+        sponsor.url?.also { systemUtils.open(it) }
     }
 
     fun onClickDonate() {

@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.common
 
 import androidx.leanback.widget.Row
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.domain.types.ReleaseId
 
 data class LibriaDetails(
@@ -10,7 +11,7 @@ data class LibriaDetails(
     val extra: String,
     val description: String,
     val announce: String,
-    val image: String,
+    val image: Url.Relative?,
     val favoriteCount: String,
     val hasFullHd: Boolean,
     val isFavorite: Boolean,

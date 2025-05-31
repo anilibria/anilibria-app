@@ -76,7 +76,7 @@ class CheckerViewModel @Inject constructor(
         updaterAnalytics.sourceDownload(link.name)
         when (link.type) {
             UpdateData.LinkType.FILE -> downloadFile(link)
-            UpdateData.LinkType.SITE -> systemUtils.externalLink(link.url)
+            UpdateData.LinkType.SITE -> systemUtils.open(link.url)
         }
     }
 

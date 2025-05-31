@@ -24,6 +24,7 @@ import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.api.PageApi
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
@@ -50,8 +51,8 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
         private const val ARG_TITLE: String = "page_title"
         private const val WEB_VIEW_SCROLL_Y = "wvsy"
 
-        fun newInstance(pageTitle: String, title: String? = null) = PageFragment().putExtra {
-            putString(ARG_PATH, pageTitle)
+        fun newInstance(pagePath: Url.Relative, title: String? = null) = PageFragment().putExtra {
+            putParcelable(ARG_PATH, pagePath)
             putString(ARG_TITLE, title)
         }
     }
@@ -60,7 +61,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
         LifecycleTimeCounter(pageAnalytics::useTime)
     }
 
-    private val argPath by lazy { getExtraNotNull<String>(ARG_PATH) }
+    private val argPath by lazy { getExtraNotNull<Url.Relative>(ARG_PATH) }
 
     private val viewModel by viewModel<PageViewModel> {
         PageExtra(path = argPath)
@@ -99,10 +100,12 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
         ToolbarHelper.marqueeTitle(baseBinding.toolbar)
 
         baseBinding.toolbar.apply {
-            title = when (argPath) {
-                PageApi.PAGE_PATH_TEAM -> "Команда проекта"
-                PageApi.PAGE_PATH_DONATE -> "Поддержать"
-                else -> pageTitle ?: "Статическая страница"
+            val rawPath = argPath.raw
+            title = when {
+                pageTitle != null -> pageTitle
+                rawPath.contains(PageApi.PAGE_PATH_TEAM) -> "Команда проекта"
+                rawPath.contains(PageApi.PAGE_PATH_DONATE) -> "Поддержать"
+                else -> "Статическая страница"
             }
             setNavigationOnClickListener { viewModel.onBackPressed() }
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)
@@ -116,7 +119,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
                 view: WebView,
                 request: WebResourceRequestCompat,
             ): Boolean {
-                systemUtils.externalLink(request.url.toString())
+                systemUtils.open(request.url.toString())
                 return true
             }
 
@@ -183,8 +186,8 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    private fun onPageError(error:Exception){
-        Timber.e(error,"onPageError")
+    private fun onPageError(error: Exception) {
+        Timber.e(error, "onPageError")
         pageAnalytics.error()
     }
 

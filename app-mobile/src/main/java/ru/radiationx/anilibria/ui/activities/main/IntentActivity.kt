@@ -37,7 +37,7 @@ class IntentActivity : BaseActivity() {
                 startActivity(intent)
             } else {
                 if (intentUri.scheme?.let { it.startsWith("https") || it.startsWith("http") } == true) {
-                    systemUtils.externalLink(intentUri.toString())
+                    systemUtils.open(intentUri.toString())
                 } else {
                     Toast.makeText(this, "Действие не поддерживается", Toast.LENGTH_SHORT).show()
                 }

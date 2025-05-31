@@ -16,7 +16,9 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.OkHttpClient
+import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.di.providers.ApiClientWrapper
+import ru.radiationx.data.entity.common.Url
 import ru.radiationx.shared_app.R
 import ru.radiationx.shared_app.imageloader.ImageLoaderScopeConfig
 import ru.radiationx.shared_app.imageloader.LibriaImageLoader
@@ -26,6 +28,7 @@ import javax.inject.Inject
 class CoilLibriaImageLoaderImpl @Inject constructor(
     private val context: Context,
     private val apiClientWrapper: ApiClientWrapper,
+    private val apiConfig: ApiConfig
 ) : LibriaImageLoader {
 
     private var _okHttpClient: OkHttpClient? = null
@@ -62,9 +65,10 @@ class CoilLibriaImageLoaderImpl @Inject constructor(
             .build()
     }
 
-    override fun showImage(imageView: ImageView, url: String?, config: ImageLoaderScopeConfig) {
-        imageView.load(url, getImageLoader()) {
-            val cacheKey = url.toCacheKey()
+    override fun showImage(imageView: ImageView, url: Url?, config: ImageLoaderScopeConfig) {
+        val cacheKey = url.toCacheKey()
+        val absoluteUrl = url?.absolute(apiConfig.baseImagesUrl)
+        imageView.load(absoluteUrl, getImageLoader()) {
             diskCacheKey(cacheKey)
             memoryCacheKey(cacheKey)
             placeholderMemoryCacheKey(cacheKey)
@@ -81,7 +85,7 @@ class CoilLibriaImageLoaderImpl @Inject constructor(
                     config.onComplete?.invoke()
                 },
                 onSuccess = { _: ImageRequest, successResult: SuccessResult ->
-                    imageView.successUrl = url
+                    imageView.successUrl = absoluteUrl
                     if (config.onSuccess != null) {
                         val bitmap = successResult.image.asBitmap(context)
                         config.onSuccess.invoke(bitmap)
@@ -92,11 +96,14 @@ class CoilLibriaImageLoaderImpl @Inject constructor(
         }
     }
 
-    override suspend fun loadImageBitmap(context: Context, url: String?): Bitmap? {
+    override suspend fun loadImageBitmap(context: Context, url: Url?): Bitmap? {
+        val cacheKey = url.toCacheKey()
+        val absoluteUrl = url?.absolute(apiConfig.baseImagesUrl)
         val request = ImageRequest.Builder(context)
-            .diskCacheKey(url.toCacheKey())
-            .memoryCacheKey(url.toCacheKey())
-            .data(url).build()
+            .diskCacheKey(cacheKey)
+            .memoryCacheKey(cacheKey)
+            .data(absoluteUrl)
+            .build()
         val result = getImageLoader().execute(request)
         return result.image?.asBitmap(context)
     }

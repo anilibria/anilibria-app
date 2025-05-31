@@ -68,19 +68,19 @@ class YoutubeViewModel @Inject constructor(
 
     fun onCopyClick(item: YoutubeItemState) {
         val rawItem = findItem(item.id) ?: return
-        systemUtils.copyToClipBoard(rawItem.link)
+        systemUtils.copy(rawItem.link)
     }
 
     fun onShareClick(item: YoutubeItemState) {
         val rawItem = findItem(item.id) ?: return
-        systemUtils.shareText(rawItem.link)
+        systemUtils.share(rawItem.link)
     }
 
     fun onItemClick(item: YoutubeItemState) {
         val rawItem = findItem(item.id) ?: return
         youtubeVideosAnalytics.videoClick()
         youtubeAnalytics.openVideo(AnalyticsConstants.screen_youtube, rawItem.id.id, rawItem.vid)
-        systemUtils.externalLink(rawItem.link)
+        systemUtils.open(rawItem.link)
     }
 
     private fun findItem(id: YoutubeId): YoutubeItem? {

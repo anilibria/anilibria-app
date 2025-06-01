@@ -9,7 +9,7 @@ import ru.radiationx.data.entity.response.donation.DonationInfoResponse
 import ru.radiationx.shared.ktx.sequentialFirstNotFailure
 import javax.inject.Inject
 
-class DonationApi @Inject constructor(
+class DonationApiDataSource @Inject constructor(
     @MainClient private val mainClient: IClient,
     private val moshi: Moshi
 ) {

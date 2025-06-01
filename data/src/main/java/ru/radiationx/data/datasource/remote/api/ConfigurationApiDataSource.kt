@@ -4,13 +4,12 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
-import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.fetchResponse
 import ru.radiationx.data.entity.response.config.ApiConfigResponse
 import ru.radiationx.shared.ktx.sequentialFirstNotFailure
 import javax.inject.Inject
 
-class ConfigurationApi @Inject constructor(
+class ConfigurationApiDataSource @Inject constructor(
     @MainClient private val mainClient: IClient,
     private val moshi: Moshi,
 ) {

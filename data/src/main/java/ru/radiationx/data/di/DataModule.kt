@@ -70,7 +70,6 @@ import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.analytics.profile.AnalyticsInstallerProfileDataSource
 import ru.radiationx.data.analytics.profile.AnalyticsMainProfileDataSource
 import ru.radiationx.data.apinext.AcceptInterceptor
-import ru.radiationx.data.apinext.ApiLoggingEventListener
 import ru.radiationx.data.apinext.AuthTokenInterceptor
 import ru.radiationx.data.apinext.AuthTokenStorage
 import ru.radiationx.data.apinext.datasources.AuthApiDataSource
@@ -101,10 +100,10 @@ import ru.radiationx.data.datasource.holders.YearsHolder
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.address.ApiConfigChanger
-import ru.radiationx.data.datasource.remote.api.CheckerApi
-import ru.radiationx.data.datasource.remote.api.ConfigurationApi
-import ru.radiationx.data.datasource.remote.api.DonationApi
-import ru.radiationx.data.datasource.remote.api.MenuApi
+import ru.radiationx.data.datasource.remote.api.CheckerApiDataSource
+import ru.radiationx.data.datasource.remote.api.ConfigurationApiDataSource
+import ru.radiationx.data.datasource.remote.api.DonationApiDataSource
+import ru.radiationx.data.datasource.remote.api.MenuApiDataSource
 import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.datasource.storage.AuthStorage
@@ -239,10 +238,10 @@ class DataModule(context: Context) : QuillModule() {
         singleImpl<IClient, MainNetworkClient>(MainClient::class)
         singleImpl<IClient, ApiNetworkClient>(ApiClient::class)
 
-        single<CheckerApi>()
-        single<ConfigurationApi>()
-        single<MenuApi>()
-        single<DonationApi>()
+        single<CheckerApiDataSource>()
+        single<ConfigurationApiDataSource>()
+        single<MenuApiDataSource>()
+        single<DonationApiDataSource>()
 
         single<AuthRepository>()
         single<ReleaseRepository>()

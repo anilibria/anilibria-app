@@ -9,14 +9,14 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.datasource.remote.address.ApiConfigData
-import ru.radiationx.data.datasource.remote.api.ConfigurationApi
+import ru.radiationx.data.datasource.remote.api.ConfigurationApiDataSource
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.entity.mapper.toDomain
 import java.net.InetAddress
 import javax.inject.Inject
 
 class ConfigurationRepository @Inject constructor(
-    private val configurationApi: ConfigurationApi,
+    private val configurationApi: ConfigurationApiDataSource,
     private val apiConfig: ApiConfig,
     private val apiConfigStorage: ApiConfigStorage,
 ) {

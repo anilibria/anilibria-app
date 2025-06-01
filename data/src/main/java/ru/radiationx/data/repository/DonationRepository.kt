@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.datasource.holders.DonationHolder
-import ru.radiationx.data.datasource.remote.api.DonationApi
+import ru.radiationx.data.datasource.remote.api.DonationApiDataSource
 import ru.radiationx.data.entity.common.Url
 import ru.radiationx.data.entity.common.toAbsoluteUrl
 import ru.radiationx.data.entity.domain.donation.DonationInfo
@@ -15,7 +15,7 @@ import ru.radiationx.data.entity.mapper.toDomain
 import javax.inject.Inject
 
 class DonationRepository @Inject constructor(
-    private val donationApi: DonationApi,
+    private val donationApi: DonationApiDataSource,
     private val donationHolder: DonationHolder,
 ) {
 

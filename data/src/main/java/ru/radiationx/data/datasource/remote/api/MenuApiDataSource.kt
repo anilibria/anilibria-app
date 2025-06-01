@@ -8,7 +8,7 @@ import ru.radiationx.data.entity.response.other.LinkMenuResponse
 import ru.radiationx.shared.ktx.sequentialFirstNotFailure
 import javax.inject.Inject
 
-class MenuApi @Inject constructor(
+class MenuApiDataSource @Inject constructor(
     @MainClient private val client: IClient,
     private val moshi: Moshi
 ) {

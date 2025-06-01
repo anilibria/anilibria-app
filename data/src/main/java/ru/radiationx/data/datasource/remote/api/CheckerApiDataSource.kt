@@ -12,7 +12,7 @@ import javax.inject.Inject
 /**
  * Created by radiationx on 28.01.18.
  */
-class CheckerApi @Inject constructor(
+class CheckerApiDataSource @Inject constructor(
     @MainClient private val mainClient: IClient,
     private val reserveSources: CheckerReserveSources,
     private val moshi: Moshi

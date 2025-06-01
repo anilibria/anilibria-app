@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.SharedBuildConfig
-import ru.radiationx.data.datasource.remote.api.CheckerApi
+import ru.radiationx.data.datasource.remote.api.CheckerApiDataSource
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.entity.mapper.toDomain
 import javax.inject.Inject
@@ -15,7 +15,7 @@ import javax.inject.Inject
  * Created by radiationx on 28.01.18.
  */
 class CheckerRepository @Inject constructor(
-    private val checkerApi: CheckerApi,
+    private val checkerApi: CheckerApiDataSource,
     private val sharedBuildConfig: SharedBuildConfig,
 ) {
 

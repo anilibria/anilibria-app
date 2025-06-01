@@ -18,8 +18,8 @@ interface ReleasesApi {
 
     @GET("anime/releases/list")
     suspend fun getReleases(
-        @Path("ids") ids: String?,
-        @Path("aliases") aliases: String?,
+        @Query("ids") ids: String?,
+        @Query("aliases") aliases: String?,
         @Query("page") page: Int?,
         @Query("limit") limit: Int?,
     ): PaginationResponse<ReleaseResponse>

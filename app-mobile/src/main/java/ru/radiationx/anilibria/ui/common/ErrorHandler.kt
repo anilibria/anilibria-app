@@ -1,12 +1,9 @@
 package ru.radiationx.anilibria.ui.common
 
-import com.squareup.moshi.JsonDataException
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import ru.radiationx.data.datasource.remote.ApiError
 import ru.radiationx.data.system.DataErrorMapper
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -27,8 +24,7 @@ class ErrorHandler @Inject constructor(
         }
     }
 
-    private fun getMessage(throwable: Throwable): String = when (throwable) {
-
-        else -> throwable.message ?: "Неизвестная ошибка"
+    private fun getMessage(throwable: Throwable): String {
+        return "Неизвестная ошибка: $throwable"
     }
 }

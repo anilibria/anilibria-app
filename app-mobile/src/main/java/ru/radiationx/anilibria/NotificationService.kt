@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.remote.fetchResponse
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.response.config.ApiConfigResponse
@@ -80,7 +79,11 @@ class NotificationService : FirebaseMessagingService() {
                     apiConfig.updateNeedConfig(true)
 
                     val payload = data.payload.orEmpty()
-                    val configResponse = payload.fetchResponse<ApiConfigResponse>(moshi)
+                    val adapter = moshi.adapter(ApiConfigResponse::class.java)
+                    val configResponse = adapter.fromJson(payload)
+                    requireNotNull(configResponse) {
+                        "Can't parse push payload config"
+                    }
                     apiConfigStorage.save(configResponse)
                     apiConfig.setConfig(configResponse.toDomain())
                 }.onFailure {

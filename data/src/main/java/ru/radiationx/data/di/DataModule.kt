@@ -14,6 +14,7 @@ import anilibria.api.genres.GenresApi
 import anilibria.api.profile.ProfileApi
 import anilibria.api.releases.ReleasesApi
 import anilibria.api.schedule.ScheduleApi
+import anilibria.api.shared.errors.ApiErrorParser
 import anilibria.api.teams.TeamsApi
 import anilibria.api.timecodes.TimeCodesApi
 import anilibria.api.torrent.TorrentsApi
@@ -297,6 +298,8 @@ class DataModule(context: Context) : QuillModule() {
         singleProvider<DirectApi, DirectApiProvider>()
 
         /* Api next */
+
+        single<ApiErrorParser>()
 
         singleProvider<OkHttpClient, ApiOkhttpProvider>(ApiClient::class)
         singleProvider<Retrofit, ApiRetrofitProvider>(ApiRetrofit::class)

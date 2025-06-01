@@ -1,7 +1,9 @@
-apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
-apply plugin: "kotlin-parcelize"
-apply plugin: "com.google.devtools.ksp"
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+    alias libs.plugins.ksp
+    id("kotlin-parcelize")
+}
 
 android {
     namespace "anilibria.api"
@@ -21,11 +23,15 @@ kotlin {
 dependencies {
     implementation fileTree(include: ["*.jar"], dir: "libs")
     implementation project(":shared-android-ktx")
-    
+
     implementation libs.kotlin.stdlib
     implementation libs.kotlin.coroutines.core
 
     implementation libs.retrofit
+
+    api libs.javax.inject
+    implementation libs.toothpick.runtime
+    ksp libs.toothpick.compiler
 
     api libs.moshi
     api libs.moshi.adapters

@@ -29,7 +29,7 @@ class CheckerRepository @Inject constructor(
                 currentDataRelay.value!!
             } else {
                 val currentCode = sharedBuildConfig.versionCode
-                checkerApi.checkUpdate(currentCode).update.toDomain(currentCode)
+                checkerApi.checkUpdate().update.toDomain(currentCode)
             }.also {
                 currentDataRelay.value = it
             }

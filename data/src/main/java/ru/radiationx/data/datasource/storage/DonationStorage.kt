@@ -2,13 +2,16 @@ package ru.radiationx.data.datasource.storage
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.source
 import ru.radiationx.data.DataPreferences
+import ru.radiationx.data.datasource.SuspendMutableStateFlow
 import ru.radiationx.data.datasource.holders.DonationHolder
 import ru.radiationx.data.entity.response.donation.DonationInfoResponse
 import timber.log.Timber
@@ -28,8 +31,8 @@ class DonationStorage @Inject constructor(
         moshi.adapter(DonationInfoResponse::class.java)
     }
 
-    private val dataRelay by lazy {
-        MutableStateFlow(getCurrentData())
+    private val dataRelay = SuspendMutableStateFlow {
+        loadData()
     }
 
     override fun observe(): Flow<DonationInfoResponse> {
@@ -37,42 +40,33 @@ class DonationStorage @Inject constructor(
     }
 
     override suspend fun get(): DonationInfoResponse {
-        return dataRelay.value
+        return dataRelay.getValue()
     }
 
     override suspend fun save(data: DonationInfoResponse) {
-        saveToPrefs(data)
-        updateCurrentData()
+        saveData(data)
+        dataRelay.setValue(loadData())
     }
 
-    override suspend fun delete() {
-        deleteFromPrefs()
-        updateCurrentData()
-    }
-
-    private fun updateCurrentData() {
-        dataRelay.value = getCurrentData()
-    }
-
-    private fun getCurrentData(): DonationInfoResponse {
-        val prefsData = try {
-            getFromPrefs()
-        } catch (ex: Exception) {
-            Timber.e(ex)
-            null
+    private suspend fun loadData(): DonationInfoResponse {
+        return withContext(Dispatchers.IO) {
+            val prefsData = try {
+                getFromPrefs()
+            } catch (ex: Exception) {
+                Timber.e(ex)
+                null
+            }
+            prefsData ?: getFromAssets()
         }
-        return prefsData ?: getFromAssets()
     }
 
-    private fun deleteFromPrefs() {
-        sharedPreferences.edit().remove(KEY_DONATION).apply()
-    }
-
-    private fun saveToPrefs(data: DonationInfoResponse) {
-        val json = dataAdapter.toJson(data)
-        sharedPreferences.edit()
-            .putString(KEY_DONATION, json)
-            .apply()
+    private suspend fun saveData(data: DonationInfoResponse) {
+        withContext(Dispatchers.IO) {
+            val json = dataAdapter.toJson(data)
+            sharedPreferences.edit {
+                putString(KEY_DONATION, json)
+            }
+        }
     }
 
     private fun getFromPrefs(): DonationInfoResponse? = sharedPreferences
@@ -80,7 +74,7 @@ class DonationStorage @Inject constructor(
         ?.let { dataAdapter.fromJson(it) }
 
     private fun getFromAssets(): DonationInfoResponse =
-        context.assets.open("donation_info.json").use { stream ->
+        context.assets.open("donations-config.json").use { stream ->
             stream.source().buffer().use { reader ->
                 requireNotNull(dataAdapter.fromJson(reader))
             }

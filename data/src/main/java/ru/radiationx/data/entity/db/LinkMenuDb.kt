@@ -1,10 +1,10 @@
-package ru.radiationx.data.entity.response.other
+package ru.radiationx.data.entity.db
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class LinkMenuResponse(
+data class LinkMenuDb(
     @Json(name = "title") val title: String,
     @Json(name = "absoluteLink") val link: String?,
     @Json(name = "sitePagePath") val pagePath: String?,

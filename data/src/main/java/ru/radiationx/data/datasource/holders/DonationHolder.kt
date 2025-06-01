@@ -7,5 +7,4 @@ interface DonationHolder {
     fun observe(): Flow<DonationInfoResponse>
     suspend fun get(): DonationInfoResponse
     suspend fun save(data: DonationInfoResponse)
-    suspend fun delete()
 }

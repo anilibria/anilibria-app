@@ -1,0 +1,56 @@
+[
+    {
+        "title": "Группа VK",
+        "absoluteLink": "https:\/\/vk.com\/anilibria",
+        "sitePagePath": null,
+        "icon": "vk"
+    },
+    {
+        "title": "Канал YouTube",
+        "absoluteLink": "https:\/\/youtube.com\/channel\/UCuF8ghQWaa7K-28llm-K3Zg",
+        "sitePagePath": null,
+        "icon": "yotube"
+    },
+    {
+        "title": "Patreon",
+        "absoluteLink": "https:\/\/patreon.com\/anilibria",
+        "sitePagePath": null,
+        "icon": "patreon"
+    },
+    {
+        "title": "Канал Telegram",
+        "absoluteLink": "https:\/\/t.me\/anilibria_tv",
+        "sitePagePath": null,
+        "icon": "telegram"
+    },
+    {
+        "title": "Чат Discord",
+        "absoluteLink": "https:\/\/discord.gg\/M6yCGeGN9B",
+        "sitePagePath": null,
+        "icon": "discord"
+    },
+    {
+        "title": "Сайт AniLibria",
+        "absoluteLink": "https:\/\/www.anilibria.tv\/",
+        "sitePagePath": null,
+        "icon": "anilibria"
+    },
+    {
+        "title": "Наши приложения",
+        "absoluteLink": "https:\/\/anilibria.app\/",
+        "sitePagePath": null,
+        "icon": "anilibria"
+    },
+    {
+        "title": "RuStore: мобильное приложение",
+        "absoluteLink": "https:\/\/apps.rustore.ru\/app\/ru.radiationx.anilibria.app",
+        "sitePagePath": null,
+        "icon": "rustore"
+    },
+    {
+        "title": "RuStore: AndroidTV приложение",
+        "absoluteLink": "https:\/\/apps.rustore.ru\/app\/ru.radiationx.anilibria.app.tv",
+        "sitePagePath": null,
+        "icon": "rustore"
+    }
+]

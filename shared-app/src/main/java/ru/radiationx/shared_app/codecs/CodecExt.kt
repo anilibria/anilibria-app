@@ -1,6 +1,10 @@
 package ru.radiationx.shared_app.codecs
 
-import ru.radiationx.shared_app.codecs.types.*
+import ru.radiationx.shared_app.codecs.types.Codec
+import ru.radiationx.shared_app.codecs.types.CodecOutputType
+import ru.radiationx.shared_app.codecs.types.CodecProcessingType
+import ru.radiationx.shared_app.codecs.types.CodecType
+import ru.radiationx.shared_app.codecs.types.KnownCodec
 
 fun Codec.isSoftware() = processingType == CodecProcessingType.SOFTWARE
 fun Codec.isHardware() = processingType == CodecProcessingType.HARDWARE

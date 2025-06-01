@@ -3,10 +3,13 @@ package ru.radiationx.shared.ktx.android
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import androidx.annotation.*
-import androidx.core.content.ContextCompat
 import android.util.TypedValue
 import android.view.View
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 
 @DrawableRes
 fun Context.getDrawableResAttr(@AttrRes attr: Int): Int {

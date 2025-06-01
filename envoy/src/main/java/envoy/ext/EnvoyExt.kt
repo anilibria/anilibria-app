@@ -3,10 +3,10 @@ package envoy.ext
 import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.viewbinding.ViewBinding
-import envoy.dsl.impl.DslViewBindingEnvoy
-import envoy.dsl.impl.DslViewEnvoy
 import envoy.Envoy
 import envoy.dsl.EnvoyPresenterScope
+import envoy.dsl.impl.DslViewBindingEnvoy
+import envoy.dsl.impl.DslViewEnvoy
 
 inline fun <reified T : Any, reified VB : ViewBinding> viewBindingEnvoy(
     noinline block: EnvoyPresenterScope<T, VB>.() -> Unit

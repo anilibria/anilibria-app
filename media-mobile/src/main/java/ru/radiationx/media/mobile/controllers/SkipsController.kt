@@ -1,6 +1,5 @@
 package ru.radiationx.media.mobile.controllers
 
-import android.util.Log
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

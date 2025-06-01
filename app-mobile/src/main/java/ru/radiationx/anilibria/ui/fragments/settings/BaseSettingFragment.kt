@@ -14,8 +14,8 @@ import androidx.preference.PreferenceViewHolder
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.anilibria.utils.dimensions.DimensionsApplier
+import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.anilibria.utils.dimensions.Side
 import ru.radiationx.quill.inject
 import java.util.WeakHashMap

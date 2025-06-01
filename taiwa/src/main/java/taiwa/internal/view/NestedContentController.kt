@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import taiwa.TaiwaAnchor
-import taiwa.internal.models.TaiwaState
 import taiwa.internal.models.TaiwaNestingState
+import taiwa.internal.models.TaiwaState
 
 internal class NestedContentController {
 

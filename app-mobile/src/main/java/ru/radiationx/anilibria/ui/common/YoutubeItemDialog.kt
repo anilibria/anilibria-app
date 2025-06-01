@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
 import taiwa.TaiwaAction
 import taiwa.common.DialogType

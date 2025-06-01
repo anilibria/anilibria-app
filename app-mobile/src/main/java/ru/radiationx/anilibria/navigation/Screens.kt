@@ -17,7 +17,6 @@ import ru.radiationx.anilibria.ui.fragments.auth.main.AuthFragment
 import ru.radiationx.anilibria.ui.fragments.auth.social.AuthSocialFragment
 import ru.radiationx.anilibria.ui.fragments.auth.vk.AuthVkFragment
 import ru.radiationx.anilibria.ui.fragments.donation.detail.DonationDetailFragment
-import ru.radiationx.anilibria.ui.fragments.favorites.FavoritesFragment
 import ru.radiationx.anilibria.ui.fragments.feed.FeedFragment
 import ru.radiationx.anilibria.ui.fragments.history.HistoryFragment
 import ru.radiationx.anilibria.ui.fragments.other.OtherFragment

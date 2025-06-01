@@ -2,7 +2,7 @@ package ru.radiationx.shared.ktx.android
 
 import android.content.Context
 import android.text.format.DateUtils
-import java.util.*
+import java.util.Date
 
 
 fun Date.relativeDate(context: Context) = DateUtils.getRelativeDateTimeString(

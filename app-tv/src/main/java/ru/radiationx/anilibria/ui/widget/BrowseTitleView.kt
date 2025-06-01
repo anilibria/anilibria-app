@@ -24,7 +24,6 @@ import androidx.core.view.isVisible
 import androidx.leanback.widget.SearchOrbView
 import androidx.leanback.widget.TitleViewAdapter
 import dev.androidbroadcast.vbpd.viewBinding
-import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ViewTitleviewBinding
 
 open class BrowseTitleView @JvmOverloads constructor(

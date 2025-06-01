@@ -1,12 +1,12 @@
 package taiwa.internal
 
 import taiwa.TaiwaAnchor
-import taiwa.dsl.TaiwaScope
 import taiwa.dsl.TaiwaNestingScope
-import taiwa.internal.dsl.TaiwaScopeImpl
+import taiwa.dsl.TaiwaScope
 import taiwa.internal.dsl.TaiwaNestingScopeImpl
-import taiwa.internal.models.TaiwaState
+import taiwa.internal.dsl.TaiwaScopeImpl
 import taiwa.internal.models.TaiwaNestingState
+import taiwa.internal.models.TaiwaState
 
 internal fun buildTaiwa(block: TaiwaScope.() -> Unit): TaiwaState {
     val scope = TaiwaScopeImpl(TaiwaAnchor.Root)

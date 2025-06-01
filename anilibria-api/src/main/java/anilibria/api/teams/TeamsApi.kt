@@ -1,7 +1,7 @@
 package anilibria.api.teams
 
-import anilibria.api.teams.models.TeamsTeamResponse
 import anilibria.api.teams.models.TeamsRoleResponse
+import anilibria.api.teams.models.TeamsTeamResponse
 import anilibria.api.teams.models.TeamsUserResponse
 import retrofit2.http.GET
 

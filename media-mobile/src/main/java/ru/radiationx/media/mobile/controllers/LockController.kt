@@ -1,6 +1,5 @@
 package ru.radiationx.media.mobile.controllers
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.transition.AutoTransition

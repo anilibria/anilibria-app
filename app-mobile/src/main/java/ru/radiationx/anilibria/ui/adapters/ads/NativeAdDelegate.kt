@@ -4,13 +4,13 @@ import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dev.androidbroadcast.vbpd.viewBinding
 import com.yandex.mobile.ads.nativeads.template.HorizontalOffset
 import com.yandex.mobile.ads.nativeads.template.NativeBannerView
 import com.yandex.mobile.ads.nativeads.template.appearance.BannerAppearance
 import com.yandex.mobile.ads.nativeads.template.appearance.ButtonAppearance
 import com.yandex.mobile.ads.nativeads.template.appearance.NativeTemplateAppearance
 import com.yandex.mobile.ads.nativeads.template.appearance.TextAppearance
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemNativeAdBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem

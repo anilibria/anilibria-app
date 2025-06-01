@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.isVisible
-import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ViewSearchControlsBinding
 
 class SearchTitleView @JvmOverloads constructor(

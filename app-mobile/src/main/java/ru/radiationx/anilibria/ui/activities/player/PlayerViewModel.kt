@@ -8,7 +8,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerSettingsState
 import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.anilibria.ui.activities.player.mappers.toDataState
 import ru.radiationx.anilibria.ui.activities.player.mappers.toPlayerRelease
@@ -30,7 +28,6 @@ import ru.radiationx.anilibria.ui.activities.player.models.PlayerData
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerDataState
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.HistoryRepository

@@ -6,8 +6,8 @@ import taiwa.common.DialogType
 import taiwa.common.DialogWrapper
 import taiwa.common.NestedTaiwa
 import taiwa.common.Taiwa
-import taiwa.dsl.TaiwaScope
 import taiwa.dsl.TaiwaNestingScope
+import taiwa.dsl.TaiwaScope
 
 fun Fragment.bottomSheet(): Lazy<DialogWrapper> = lazy {
     DialogWrapper(requireContext(), viewLifecycleOwner, DialogType.BottomSheet)

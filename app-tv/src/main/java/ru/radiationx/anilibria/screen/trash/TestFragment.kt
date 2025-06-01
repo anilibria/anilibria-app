@@ -5,8 +5,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
-import dev.androidbroadcast.vbpd.viewBinding
 import com.github.terrakok.cicerone.Router
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.databinding.TestFragmentBinding

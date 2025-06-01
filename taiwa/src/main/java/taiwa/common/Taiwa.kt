@@ -10,7 +10,6 @@ import taiwa.TaiwaEvent
 import taiwa.dsl.TaiwaScope
 import taiwa.internal.buildTaiwa
 import taiwa.internal.models.TaiwaState
-import taiwa.internal.models.TaiwaToolbarState
 import taiwa.internal.view.TaiwaView
 import java.lang.ref.WeakReference
 

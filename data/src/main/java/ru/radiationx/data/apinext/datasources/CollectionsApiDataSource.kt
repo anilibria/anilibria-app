@@ -10,8 +10,8 @@ import ru.radiationx.data.apinext.models.filters.CollectionsFilterData
 import ru.radiationx.data.apinext.models.filters.CollectionsFilterForm
 import ru.radiationx.data.apinext.toDomain
 import ru.radiationx.data.apinext.toDomainFilterYear
-import ru.radiationx.data.apinext.toRequest
 import ru.radiationx.data.apinext.toNetwork
+import ru.radiationx.data.apinext.toRequest
 import ru.radiationx.data.entity.domain.Paginated
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.ReleaseId

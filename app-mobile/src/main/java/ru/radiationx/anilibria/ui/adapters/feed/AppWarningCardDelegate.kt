@@ -4,7 +4,6 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.databinding.ItemAppInfoCardBinding
 import ru.radiationx.anilibria.databinding.ItemAppWarningCardBinding
 import ru.radiationx.anilibria.ui.adapters.AppWarningCardListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem

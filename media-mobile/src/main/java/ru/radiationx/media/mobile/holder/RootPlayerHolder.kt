@@ -1,6 +1,5 @@
 package ru.radiationx.media.mobile.holder
 
-import androidx.media3.common.Player
 import ru.radiationx.media.mobile.PlayerProxy
 
 internal class RootPlayerHolder {

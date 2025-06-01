@@ -2,8 +2,8 @@ package ru.radiationx.anilibria.ui.adapters.release.detail
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import dev.androidbroadcast.vbpd.viewBinding
 import com.google.android.material.tabs.TabLayout
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseHeadEpisodesBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem

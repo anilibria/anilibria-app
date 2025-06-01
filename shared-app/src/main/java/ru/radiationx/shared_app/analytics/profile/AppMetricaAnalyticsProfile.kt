@@ -8,8 +8,8 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.radiationx.data.analytics.profile.AnalyticsInstallerProfileDataSource
-import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsMainProfileDataSource
+import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.ProfileAttribute
 import ru.radiationx.data.analytics.profile.ProfileConstants
 import ru.radiationx.shared_app.analytics.AnalyticsCodecsProfileDataSource

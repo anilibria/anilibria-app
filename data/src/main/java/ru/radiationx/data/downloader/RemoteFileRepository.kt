@@ -9,9 +9,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
-import ru.radiationx.data.SimpleClient
-import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.api.DirectApi
 import ru.radiationx.data.entity.common.Url
 import timber.log.Timber
 import java.io.File
@@ -21,7 +20,7 @@ import javax.inject.Inject
 
 class RemoteFileRepository @Inject constructor(
     private val context: Context,
-    @SimpleClient private val client: IClient,
+    private val api: DirectApi,
     private val holder: RemoteFileHolder,
     private val apiConfig: ApiConfig
 ) {
@@ -41,7 +40,7 @@ class RemoteFileRepository @Inject constructor(
         val loadingFileId = holder.get(absoluteUrl)?.id ?: holder.generateId()
         val loadingFile = getFileById(loadingFileId)
         try {
-            val response = client.getRaw(absoluteUrl, emptyMap())
+            val response = api.getFile(absoluteUrl).raw()
 
             val responseBody = requireNotNull(response.body) {
                 "Response doesn't contain a body"

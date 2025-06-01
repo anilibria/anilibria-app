@@ -3,8 +3,7 @@ package ru.radiationx.data.repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import ru.radiationx.data.MainClient
-import ru.radiationx.data.datasource.remote.IClient
+import ru.radiationx.data.datasource.remote.api.DirectApi
 import ru.radiationx.data.entity.domain.page.VkComments
 import java.net.UnknownHostException
 import javax.inject.Inject
@@ -13,7 +12,7 @@ import javax.inject.Inject
  * Created by radiationx on 13.01.18.
  */
 class VkCommentsRepository @Inject constructor(
-    @MainClient private val mainClient: IClient,
+    private val api: DirectApi
 ) {
 
     suspend fun getComments(): VkComments {
@@ -29,9 +28,8 @@ class VkCommentsRepository @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 withTimeout(15_000) {
-                    mainClient
-                        .get("https://vk.com/", emptyMap())
-                        .let { false }
+                    api.checkUrl("https://vk.com/")
+                    false
                 }
             } catch (ex: Throwable) {
                 ex !is UnknownHostException

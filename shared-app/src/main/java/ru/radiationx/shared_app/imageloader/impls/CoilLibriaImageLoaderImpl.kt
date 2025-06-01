@@ -12,12 +12,9 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import okhttp3.OkHttpClient
+import ru.radiationx.data.ApiClient
 import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.di.providers.ApiClientWrapper
 import ru.radiationx.data.entity.common.Url
 import ru.radiationx.shared_app.R
 import ru.radiationx.shared_app.imageloader.ImageLoaderScopeConfig
@@ -27,38 +24,12 @@ import javax.inject.Inject
 
 class CoilLibriaImageLoaderImpl @Inject constructor(
     private val context: Context,
-    private val apiClientWrapper: ApiClientWrapper,
+    @ApiClient private val okHttpClient: OkHttpClient,
     private val apiConfig: ApiConfig
 ) : LibriaImageLoader {
 
-    private var _okHttpClient: OkHttpClient? = null
-
-    private var _imageLoader: ImageLoader? = null
-
-    private val loaderMutex = Mutex()
-
-    private fun getImageLoader(): ImageLoader {
-        val result = runBlocking {
-            loaderMutex.withLock {
-                val actualOkHttpClient = apiClientWrapper.get()
-                val okHttpClient = _okHttpClient
-                val imageLoader = _imageLoader
-                if (imageLoader == null || okHttpClient != actualOkHttpClient) {
-                    _imageLoader?.shutdown()
-                    val newImageLoader = createImageLoader(actualOkHttpClient)
-                    _okHttpClient = actualOkHttpClient
-                    _imageLoader = newImageLoader
-                    newImageLoader
-                } else {
-                    imageLoader
-                }
-            }
-        }
-        return result
-    }
-
-    private fun createImageLoader(okHttpClient: OkHttpClient): ImageLoader {
-        return ImageLoader.Builder(context)
+    private val imageLoader by lazy {
+        ImageLoader.Builder(context)
             .components {
                 add(OkHttpNetworkFetcherFactory(okHttpClient))
             }
@@ -68,7 +39,7 @@ class CoilLibriaImageLoaderImpl @Inject constructor(
     override fun showImage(imageView: ImageView, url: Url?, config: ImageLoaderScopeConfig) {
         val cacheKey = url.toCacheKey()
         val absoluteUrl = url?.absolute(apiConfig.baseImagesUrl)
-        imageView.load(absoluteUrl, getImageLoader()) {
+        imageView.load(absoluteUrl, imageLoader) {
             diskCacheKey(cacheKey)
             memoryCacheKey(cacheKey)
             placeholderMemoryCacheKey(cacheKey)
@@ -104,7 +75,7 @@ class CoilLibriaImageLoaderImpl @Inject constructor(
             .memoryCacheKey(cacheKey)
             .data(absoluteUrl)
             .build()
-        val result = getImageLoader().execute(request)
+        val result = imageLoader.execute(request)
         return result.image?.asBitmap(context)
     }
 

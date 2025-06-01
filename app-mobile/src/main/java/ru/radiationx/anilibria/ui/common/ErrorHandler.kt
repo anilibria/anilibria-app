@@ -4,7 +4,7 @@ import com.squareup.moshi.JsonDataException
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.datasource.remote.ApiError
-import ru.radiationx.data.system.HttpException
+import ru.radiationx.data.system.DataErrorMapper
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
@@ -14,11 +14,12 @@ import javax.inject.Inject
  */
 class ErrorHandler @Inject constructor(
     private val systemMessenger: SystemMessenger,
+    private val dataErrorMapper: DataErrorMapper
 ) : IErrorHandler {
 
     override fun handle(throwable: Throwable, messageListener: ((Throwable, String?) -> Unit)?) {
         Timber.e(throwable)
-        val message = getMessage(throwable)
+        val message = dataErrorMapper.handle(throwable) ?: getMessage(throwable)
         if (messageListener != null) {
             messageListener.invoke(throwable, message)
         } else {
@@ -26,17 +27,8 @@ class ErrorHandler @Inject constructor(
         }
     }
 
-    private fun getMessage(throwable: Throwable) = when (throwable) {
-        is IOException -> "Нет соединения с интернетом"
-        is HttpException -> "${throwable.code}: ${throwable.message.ifEmpty { "Empty message" }}"
-        is ApiError -> throwable.userMessage()
-        is JsonDataException -> "Неправильный формат данных"
-        else -> throwable.message ?: "Неизвестная ошибка"
-    }
+    private fun getMessage(throwable: Throwable): String = when (throwable) {
 
-    private fun ApiError.userMessage() = when {
-        !message.isNullOrBlank() -> message.orEmpty()
-        !description.isNullOrBlank() -> description.orEmpty()
-        else -> "Неизвестная ошибка"
+        else -> throwable.message ?: "Неизвестная ошибка"
     }
 }

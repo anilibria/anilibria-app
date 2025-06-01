@@ -1,17 +1,14 @@
 package ru.radiationx.data.datasource.remote.api
 
-import com.squareup.moshi.Moshi
-import ru.radiationx.data.MainClient
-import ru.radiationx.data.datasource.remote.IClient
-import ru.radiationx.data.datasource.remote.fetchApiResponse
+import okhttp3.FormBody
+import retrofit2.HttpException
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.data.entity.response.donation.DonationInfoResponse
 import ru.radiationx.shared.ktx.sequentialFirstNotFailure
 import javax.inject.Inject
 
 class DonationApiDataSource @Inject constructor(
-    @MainClient private val mainClient: IClient,
-    private val moshi: Moshi
+    private val api: DirectApi
 ) {
 
     private val urls = listOf(
@@ -21,9 +18,7 @@ class DonationApiDataSource @Inject constructor(
 
     suspend fun getDonationDetail(): DonationInfoResponse {
         return urls.sequentialFirstNotFailure { url ->
-            mainClient
-                .get(url, emptyMap())
-                .fetchApiResponse(moshi)
+            api.getDonationConfig(url)
         }
     }
 
@@ -50,8 +45,19 @@ class DonationApiDataSource @Inject constructor(
             "label" to form.label.orEmpty()
         )
 
-        return mainClient
-            .postFull("https://yoomoney.ru/quickpay/confirm.xml", params)
-            .redirect
+        val body = FormBody.Builder().apply {
+            params.forEach {
+                add(it.key, it.value)
+            }
+        }.build()
+
+        val response = api.getYooMoney("https://yoomoney.ru/quickpay/confirm.xml", body)
+
+        if (!response.isSuccessful) {
+            throw HttpException(response)
+        }
+
+        // redirect
+        return response.raw().request.url.toString()
     }
 }

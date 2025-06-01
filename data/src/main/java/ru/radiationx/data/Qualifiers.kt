@@ -2,14 +2,23 @@ package ru.radiationx.data
 
 import javax.inject.Qualifier
 
+/* Preferences*/
 @Qualifier
 annotation class DataPreferences
 
+/* OkHttpClient */
 @Qualifier
 annotation class ApiClient
 
 @Qualifier
-annotation class MainClient
+annotation class DirectClient
 
 @Qualifier
-annotation class SimpleClient
+annotation class PlayerClient
+
+/* Retrofit */
+@Qualifier
+annotation class ApiRetrofit
+
+@Qualifier
+annotation class DirectRetrofit

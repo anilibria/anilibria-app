@@ -28,8 +28,7 @@ import ru.radiationx.anilibria.ui.fragments.comments.webview.VkWebChromeClient
 import ru.radiationx.anilibria.ui.fragments.comments.webview.VkWebViewClient
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
-import ru.radiationx.data.MainClient
-import ru.radiationx.data.datasource.remote.IClient
+import ru.radiationx.data.datasource.remote.api.DirectApi
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
@@ -89,7 +88,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
         val webViewClient = composite(
             viewModel = viewModel,
             systemUtils = systemUtils,
-            networkClient = get(MainClient::class),
+            directApi = get(),
             commentsCss = get(),
             appThemeController = appThemeController
         )
@@ -205,13 +204,13 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
     private fun composite(
         viewModel: VkCommentsViewModel,
         systemUtils: SystemUtils,
-        networkClient: IClient,
+        directApi: DirectApi,
         commentsCss: VkCommentsCss,
         appThemeController: AppThemeController,
     ) = compositeWebViewClientOf(
         WebPageStateWebViewClient {
             viewModel.onNewPageState(it)
         },
-        VkWebViewClient(viewModel, systemUtils, networkClient, commentsCss, appThemeController)
+        VkWebViewClient(viewModel, systemUtils, directApi, commentsCss, appThemeController)
     )
 }

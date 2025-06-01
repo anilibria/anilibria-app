@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsCss
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsViewModel
-import ru.radiationx.data.datasource.remote.IClient
+import ru.radiationx.data.datasource.remote.api.DirectApi
 import ru.radiationx.shared.ktx.android.WebResourceErrorCompat
 import ru.radiationx.shared.ktx.android.WebResourceRequestCompat
 import ru.radiationx.shared.ktx.android.WebViewClientCompat
@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets
 class VkWebViewClient(
     private val viewModel: VkCommentsViewModel,
     private val systemUtils: SystemUtils,
-    private val networkClient: IClient,
+    private val directApi: DirectApi,
     private val commentsCss: VkCommentsCss,
     private val appThemeController: AppThemeController,
 ) : WebViewClientCompat() {
@@ -64,7 +64,7 @@ class VkWebViewClient(
         val needIntercept = commentsRegex.containsMatchIn(url.orEmpty())
         return if (needIntercept) {
             val cssSrc = try {
-                runBlocking { networkClient.get(url.orEmpty(), emptyMap()) }
+                runBlocking { directApi.getStringBody(url.orEmpty()) }
             } catch (ex: Throwable) {
                 Timber.e(ex)
                 return WebResourceResponse(

@@ -7,28 +7,41 @@ import okhttp3.brotli.BrotliInterceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.SslCompatAnalytics
+import ru.radiationx.data.apinext.AcceptJsonInterceptor
+import ru.radiationx.data.apinext.AuthTokenInterceptor
+import ru.radiationx.data.datasource.remote.interceptors.AppInfoInterceptor
+import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.sslcompat.SslCompat
 import ru.radiationx.data.sslcompat.appendSslCompat
 import ru.radiationx.data.system.appendSslCompatAnalytics
+import ru.radiationx.data.system.appendTimeouts
 import javax.inject.Inject
 import javax.inject.Provider
 
-
-class SimpleOkHttpProvider @Inject constructor(
+class ApiOkhttpProvider @Inject constructor(
+    private val unauthorizedInterceptor: UnauthorizedInterceptor,
+    private val authTokenInterceptor: AuthTokenInterceptor,
+    private val appInfoInterceptor: AppInfoInterceptor,
     private val context: Context,
     private val sharedBuildConfig: SharedBuildConfig,
     private val sslCompat: SslCompat,
-    private val sslCompatAnalytics: SslCompatAnalytics,
+    private val sslCompatAnalytics: SslCompatAnalytics
 ) : Provider<OkHttpClient> {
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
         .appendSslCompatAnalytics(sslCompat, sslCompatAnalytics)
         .appendSslCompat(sslCompat)
+        .appendTimeouts()
         .addInterceptor(BrotliInterceptor)
+        .addInterceptor(AcceptJsonInterceptor())
+        .addInterceptor(appInfoInterceptor)
+        .addInterceptor(unauthorizedInterceptor)
+        .addInterceptor(authTokenInterceptor)
         .apply {
             if (sharedBuildConfig.debug) {
                 addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
                 addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())
+                //eventListenerFactory(ApiLoggingEventListener.Factory())
             }
         }
         .build()

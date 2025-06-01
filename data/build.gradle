@@ -45,6 +45,7 @@ dependencies {
 
     implementation libs.retrofit
     implementation libs.retrofit.moshi
+    implementation libs.retrofit.scalars
 
     api libs.moshi
     api libs.moshi.adapters

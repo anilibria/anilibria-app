@@ -3,7 +3,7 @@ package ru.radiationx.data.apinext
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class AcceptInterceptor : Interceptor {
+class AcceptJsonInterceptor : Interceptor {
 
     companion object {
         const val HEADER_ACCEPT = "Accept"

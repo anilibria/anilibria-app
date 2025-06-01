@@ -104,9 +104,7 @@ import ru.radiationx.data.datasource.remote.api.CheckerApi
 import ru.radiationx.data.datasource.remote.api.ConfigurationApi
 import ru.radiationx.data.datasource.remote.api.DonationApi
 import ru.radiationx.data.datasource.remote.api.MenuApi
-import ru.radiationx.data.datasource.remote.api.PageApi
 import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
-import ru.radiationx.data.datasource.remote.parsers.PagesParser
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
 import ru.radiationx.data.datasource.storage.AuthStorage
 import ru.radiationx.data.datasource.storage.CookiesStorage
@@ -155,7 +153,7 @@ import ru.radiationx.data.repository.FeedRepository
 import ru.radiationx.data.repository.FranchisesRepository
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.data.repository.MenuRepository
-import ru.radiationx.data.repository.PageRepository
+import ru.radiationx.data.repository.VkCommentsRepository
 import ru.radiationx.data.repository.ReleaseRepository
 import ru.radiationx.data.repository.ScheduleRepository
 import ru.radiationx.data.repository.SearchRepository
@@ -240,11 +238,8 @@ class DataModule(context: Context) : QuillModule() {
         singleImpl<IClient, MainNetworkClient>(MainClient::class)
         singleImpl<IClient, ApiNetworkClient>(ApiClient::class)
 
-        single<PagesParser>()
-
         single<CheckerApi>()
         single<ConfigurationApi>()
-        single<PageApi>()
         single<MenuApi>()
         single<DonationApi>()
 
@@ -252,7 +247,7 @@ class DataModule(context: Context) : QuillModule() {
         single<ReleaseRepository>()
         single<ConfigurationRepository>()
         single<SearchRepository>()
-        single<PageRepository>()
+        single<VkCommentsRepository>()
         single<CheckerRepository>()
         single<HistoryRepository>()
         single<FavoriteRepository>()

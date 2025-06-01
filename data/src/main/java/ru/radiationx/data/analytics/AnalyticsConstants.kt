@@ -221,9 +221,6 @@ object AnalyticsConstants {
 
     /* Static Page */
     const val page_open = "page_open"
-    const val page_loaded = "page_loaded"
-    const val page_error = "page_error"
-    const val page_use_time = "page_use_time"
 
     /* Donation */
     const val donation_detail_open = "donation_detail_open"

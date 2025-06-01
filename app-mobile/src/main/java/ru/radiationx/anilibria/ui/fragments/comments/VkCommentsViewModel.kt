@@ -23,7 +23,7 @@ import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.repository.PageRepository
+import ru.radiationx.data.repository.VkCommentsRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
@@ -33,7 +33,7 @@ import javax.inject.Inject
 class VkCommentsViewModel @Inject constructor(
     private val argExtra: ReleaseExtra,
     authRepository: AuthRepository,
-    private val pageRepository: PageRepository,
+    private val vkCommentsRepository: VkCommentsRepository,
     private val releaseInteractor: ReleaseInteractor,
     authHolder: AuthHolder,
     private val router: Router,
@@ -82,7 +82,7 @@ class VkCommentsViewModel @Inject constructor(
 
         viewModelScope.launch {
             coRunCatching {
-                pageRepository
+                vkCommentsRepository
                     .checkVkBlocked()
             }.onSuccess {
                 hasVkBlockedError = it
@@ -162,7 +162,7 @@ class VkCommentsViewModel @Inject constructor(
     }
 
     private suspend fun getDataSource(): VkCommentsState {
-        val commentsSource = flow { emit(pageRepository.getComments()) }
+        val commentsSource = flow { emit(vkCommentsRepository.getComments()) }
         val releaseSource = releaseInteractor.observeFull(argExtra.id, argExtra.code)
         return coRunCatching {
             combine(releaseSource, commentsSource) { release, comments ->

@@ -11,8 +11,6 @@ class Templates @Inject constructor(
     private val context: Context,
 ) {
 
-    val staticPageTemplate by lazy { findTemplate("static_page") }
-
     val vkCommentsTemplate by lazy { findTemplate("vk_comments") }
 
     val videoPageTemplate by lazy { findTemplate("video_page") }

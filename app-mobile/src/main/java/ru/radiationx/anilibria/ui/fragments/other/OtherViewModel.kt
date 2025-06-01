@@ -175,7 +175,7 @@ class OtherViewModel @Inject constructor(
                         absoluteLink != null -> systemUtils.open(absoluteLink)
                         pagePath != null -> {
                             pageAnalytics.open(AnalyticsConstants.screen_other, pagePath.raw)
-                            router.navigateTo(Screens.StaticPage(pagePath))
+                            systemUtils.open(pagePath)
                         }
                     }
                 }

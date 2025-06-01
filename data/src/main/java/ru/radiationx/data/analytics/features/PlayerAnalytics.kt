@@ -10,7 +10,7 @@ import ru.radiationx.data.analytics.features.extensions.toQualityParam
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsTransport
-import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.shared.ktx.asTimeSecString
 import timber.log.Timber
 import java.net.SocketTimeoutException

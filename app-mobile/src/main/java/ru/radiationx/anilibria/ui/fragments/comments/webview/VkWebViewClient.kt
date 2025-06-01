@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.extension.isDark
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsCss
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsViewModel
-import ru.radiationx.data.datasource.remote.api.DirectApi
+import ru.radiationx.data.app.DirectApi
 import ru.radiationx.shared.ktx.android.WebResourceErrorCompat
 import ru.radiationx.shared.ktx.android.WebResourceRequestCompat
 import ru.radiationx.shared.ktx.android.WebViewClientCompat

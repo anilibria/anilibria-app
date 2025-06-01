@@ -21,16 +21,16 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.apinext.models.Genre
-import ru.radiationx.data.apinext.models.enums.CollectionType
-import ru.radiationx.data.apinext.models.filters.FormItem
-import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.data.interactors.CollectionsInteractor
-import ru.radiationx.data.interactors.FilterForm
-import ru.radiationx.data.interactors.FilterInteractor
-import ru.radiationx.data.interactors.FilterType
+import ru.radiationx.data.api.collections.CollectionsInteractor
+import ru.radiationx.data.api.collections.models.CollectionType
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.api.releases.models.ReleaseGenre
+import ru.radiationx.data.api.shared.filter.FilterForm
+import ru.radiationx.data.api.shared.filter.FilterInteractor
+import ru.radiationx.data.api.shared.filter.FilterType
+import ru.radiationx.data.api.shared.filter.FormItem
+import ru.radiationx.data.app.releaseupdate.ReleaseUpdateHolder
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
@@ -41,7 +41,7 @@ import toothpick.InjectConstructor
 
 data class FilterExtra(
     val type: FilterType,
-    val genre: Genre?
+    val genre: ReleaseGenre?
 ) : QuillExtra
 
 @InjectConstructor

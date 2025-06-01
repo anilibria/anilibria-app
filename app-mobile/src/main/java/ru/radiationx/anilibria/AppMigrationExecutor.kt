@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria
 
 import android.content.Context
-import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.app.preferences.PreferencesHolder
 import ru.radiationx.data.migration.MigrationExecutor
 import java.io.File
 import javax.inject.Inject

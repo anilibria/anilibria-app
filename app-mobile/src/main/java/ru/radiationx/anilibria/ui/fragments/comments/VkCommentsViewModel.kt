@@ -20,10 +20,10 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseExtra
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthVkAnalytics
 import ru.radiationx.data.analytics.features.CommentsAnalytics
-import ru.radiationx.data.datasource.holders.AuthHolder
-import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.repository.VkCommentsRepository
+import ru.radiationx.data.api.auth.AuthHolder
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.releases.ReleaseInteractor
+import ru.radiationx.data.app.vkcomments.VkCommentsRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader

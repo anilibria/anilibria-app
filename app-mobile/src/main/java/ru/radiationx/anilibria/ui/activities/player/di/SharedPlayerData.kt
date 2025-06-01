@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.ui.activities.player.di
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.ui.activities.player.models.LoadingState
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerData
-import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.shared.ktx.EventFlow
 
 class SharedPlayerData(episodeId: EpisodeId) {

@@ -6,7 +6,7 @@ import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.details.DetailExtra
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra

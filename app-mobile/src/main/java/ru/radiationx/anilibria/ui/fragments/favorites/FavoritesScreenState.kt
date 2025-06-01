@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.favorites
 
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderState
 
 data class FavoritesScreenState(

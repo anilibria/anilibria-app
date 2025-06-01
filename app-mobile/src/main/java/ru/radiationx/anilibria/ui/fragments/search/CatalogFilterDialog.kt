@@ -11,7 +11,7 @@ import com.google.android.material.chip.Chip
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogGenresBinding
 import ru.radiationx.anilibria.databinding.PickerBottomActionButtonBinding
-import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.data.api.shared.filter.legacy.SearchForm
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import taiwa.common.DialogType
 import taiwa.common.DialogWrapper

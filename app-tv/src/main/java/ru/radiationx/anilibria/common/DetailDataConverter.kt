@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.common
 
-import ru.radiationx.data.apinext.models.enums.PublishDay
-import ru.radiationx.data.apinext.models.enums.asDayNameDeclension
-import ru.radiationx.data.apinext.models.enums.asDayPretext
-import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.domain.release.EpisodeAccess
-import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.api.releases.models.PlayerQuality
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.api.schedule.models.PublishDay
+import ru.radiationx.data.api.schedule.models.asDayNameDeclension
+import ru.radiationx.data.api.schedule.models.asDayPretext
+import ru.radiationx.data.app.episodeaccess.models.EpisodeAccess
 import java.text.NumberFormat
 import javax.inject.Inject
 

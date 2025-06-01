@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.databinding.ItemReleaseSponsorBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseSponsorListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.apinext.models.ReleaseSponsor
+import ru.radiationx.data.api.releases.models.ReleaseSponsor
 
 /**
  * Created by radiationx on 21.01.18.

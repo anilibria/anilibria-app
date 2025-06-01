@@ -61,7 +61,7 @@ import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
-import ru.radiationx.data.entity.common.AuthState
+import ru.radiationx.data.api.auth.models.AuthState
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules

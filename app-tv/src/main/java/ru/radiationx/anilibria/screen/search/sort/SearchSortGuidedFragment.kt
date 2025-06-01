@@ -6,7 +6,7 @@ import androidx.leanback.widget.GuidedAction
 import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
-import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.data.api.shared.filter.legacy.SearchForm
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull

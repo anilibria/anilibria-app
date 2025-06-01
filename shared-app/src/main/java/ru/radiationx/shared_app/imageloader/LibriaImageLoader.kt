@@ -3,7 +3,7 @@ package ru.radiationx.shared_app.imageloader
 import android.content.Context
 import android.graphics.Bitmap
 import android.widget.ImageView
-import ru.radiationx.data.entity.common.Url
+import ru.radiationx.data.common.Url
 
 interface LibriaImageLoader {
 

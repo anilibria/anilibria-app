@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemState
 import ru.radiationx.anilibria.utils.dimensions.Side
 import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
-import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.api.releases.models.PlayerQuality
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.getCompatDrawable

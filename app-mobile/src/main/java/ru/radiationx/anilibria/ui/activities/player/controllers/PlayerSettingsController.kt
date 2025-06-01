@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemPlayerSpeedsBinding
 import ru.radiationx.anilibria.utils.view.attachedCoroutineScope
-import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.api.releases.models.PlayerQuality
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
 import taiwa.bottomsheet.nestedBottomSheetTaiwa

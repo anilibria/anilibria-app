@@ -50,8 +50,8 @@ interface FavoritesApi {
     suspend fun getReleases(@Body body: FavoritesRequest): PaginationResponse<ReleaseResponse>
 
     @POST("accounts/users/me/favorites")
-    suspend fun addReleases(@Body body: List<ReleaseIdNetwork>)
+    suspend fun addReleases(@Body body: List<ReleaseIdNetwork>): List<Int>
 
     @HTTP(method = "DELETE", path = "accounts/users/me/favorites", hasBody = true)
-    suspend fun deleteReleases(@Body body: List<ReleaseIdNetwork>)
+    suspend fun deleteReleases(@Body body: List<ReleaseIdNetwork>): List<Int>
 }

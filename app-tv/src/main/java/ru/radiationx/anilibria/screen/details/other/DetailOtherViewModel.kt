@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.details.DetailExtra
-import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.api.releases.ReleaseInteractor
 import javax.inject.Inject
 
 class DetailOtherViewModel @Inject constructor(

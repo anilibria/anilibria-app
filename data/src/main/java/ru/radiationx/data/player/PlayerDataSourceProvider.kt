@@ -8,11 +8,10 @@ import androidx.media3.datasource.cronet.CronetDataSource
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import okhttp3.OkHttpClient
 import org.chromium.net.CronetEngine
-import ru.radiationx.data.PlayerClient
 import ru.radiationx.data.SharedBuildConfig
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.common.PlayerTransport
-import ru.radiationx.data.system.UserAgentGenerator
+import ru.radiationx.data.app.preferences.PreferencesHolder
+import ru.radiationx.data.di.PlayerClient
+import ru.radiationx.data.network.UserAgentGenerator
 import timber.log.Timber
 import java.util.concurrent.Executors
 import javax.inject.Inject

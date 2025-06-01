@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.databinding.ItemPlaylistEpisodeBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.PlaylistEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.common.EpisodeId
 
 class PlaylistEpisodeDelegate(
     private val clickListener: (EpisodeId) -> Unit,

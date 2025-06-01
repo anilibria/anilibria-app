@@ -26,12 +26,11 @@ import ru.radiationx.data.analytics.features.OtherAnalytics
 import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.analytics.features.SettingsAnalytics
 import ru.radiationx.data.analytics.features.TeamsAnalytics
-import ru.radiationx.data.apinext.models.User
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.entity.domain.other.LinkMenuItem
-import ru.radiationx.data.entity.domain.other.OtherMenuItem
-import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.repository.MenuRepository
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.auth.models.AuthState
+import ru.radiationx.data.api.profile.models.User
+import ru.radiationx.data.app.menu.MenuRepository
+import ru.radiationx.data.app.menu.models.LinkMenuItem
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils

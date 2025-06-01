@@ -1,13 +1,13 @@
 package ru.radiationx.anilibria.ui.fragments.donation.adapter
 
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.domain.donation.DonationContentButton
-import ru.radiationx.data.entity.domain.donation.DonationContentCaption
-import ru.radiationx.data.entity.domain.donation.DonationContentDivider
-import ru.radiationx.data.entity.domain.donation.DonationContentHeader
-import ru.radiationx.data.entity.domain.donation.DonationContentItem
-import ru.radiationx.data.entity.domain.donation.DonationContentSection
+import ru.radiationx.data.app.donation.models.DonationContentButton
+import ru.radiationx.data.app.donation.models.DonationContentCaption
+import ru.radiationx.data.app.donation.models.DonationContentDivider
+import ru.radiationx.data.app.donation.models.DonationContentHeader
+import ru.radiationx.data.app.donation.models.DonationContentItem
+import ru.radiationx.data.app.donation.models.DonationContentSection
+import ru.radiationx.data.common.Url
 
 class DonationContentAdapter(
     buttonClickListener: (DonationContentButton) -> Unit,

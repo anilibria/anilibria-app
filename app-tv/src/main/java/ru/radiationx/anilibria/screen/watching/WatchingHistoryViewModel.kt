@@ -4,7 +4,7 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
-import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.data.app.history.HistoryRepository
 import javax.inject.Inject
 
 class WatchingHistoryViewModel @Inject constructor(

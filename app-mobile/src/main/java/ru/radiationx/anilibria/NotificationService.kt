@@ -16,10 +16,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.datasource.storage.ApiConfigStorage
-import ru.radiationx.data.entity.mapper.toDomain
-import ru.radiationx.data.entity.response.config.ApiConfigResponse
+import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.ApiConfigStorage
+import ru.radiationx.data.app.config.mapper.toDomain
+import ru.radiationx.data.app.config.remote.ApiConfigResponse
 import ru.radiationx.quill.get
 import ru.radiationx.shared.ktx.android.asMutableFlag
 import ru.radiationx.shared.ktx.android.getCompatColor

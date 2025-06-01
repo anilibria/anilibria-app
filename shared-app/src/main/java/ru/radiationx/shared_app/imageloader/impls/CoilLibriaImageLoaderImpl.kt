@@ -13,9 +13,9 @@ import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import okhttp3.OkHttpClient
-import ru.radiationx.data.ApiClient
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.common.Url
+import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.common.Url
+import ru.radiationx.data.di.ApiClient
 import ru.radiationx.shared_app.R
 import ru.radiationx.shared_app.imageloader.ImageLoaderScopeConfig
 import ru.radiationx.shared_app.imageloader.LibriaImageLoader

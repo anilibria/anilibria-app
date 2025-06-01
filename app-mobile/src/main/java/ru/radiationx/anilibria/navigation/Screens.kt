@@ -25,14 +25,14 @@ import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
 import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
-import ru.radiationx.data.apinext.models.Genre
-import ru.radiationx.data.apinext.models.SocialType
-import ru.radiationx.data.apinext.models.enums.PublishDay
-import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseCode
-import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.data.interactors.FilterType
+import ru.radiationx.data.api.auth.models.SocialType
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.api.releases.models.ReleaseGenre
+import ru.radiationx.data.api.schedule.models.PublishDay
+import ru.radiationx.data.api.shared.filter.FilterType
+import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseId
 
 /**
  * Created by radiationx on 17.11.17.
@@ -138,7 +138,7 @@ object Screens {
     }
 
     class Catalog(
-        private val genre: Genre? = null,
+        private val genre: ReleaseGenre? = null,
     ) : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) =
             SearchCatalogFragment.newInstance(FilterType.Catalog, genre)

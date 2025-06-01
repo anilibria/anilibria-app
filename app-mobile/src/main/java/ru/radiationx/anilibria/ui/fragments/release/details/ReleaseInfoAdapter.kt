@@ -35,8 +35,8 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseSponsorDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseTorrentDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.data.apinext.models.ReleaseSponsor
-import ru.radiationx.data.entity.domain.types.TorrentId
+import ru.radiationx.data.api.releases.models.ReleaseSponsor
+import ru.radiationx.data.common.TorrentId
 
 class ReleaseInfoAdapter(
     headListener: ReleaseHeadDelegate.Listener,

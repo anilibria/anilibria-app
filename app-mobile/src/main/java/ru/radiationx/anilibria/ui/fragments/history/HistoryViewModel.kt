@@ -20,10 +20,10 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.HistoryAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.release.ReleaseUpdate
-import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.app.history.HistoryRepository
+import ru.radiationx.data.app.releaseupdate.models.ReleaseUpdate
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
 import ru.radiationx.shared_app.controllers.loaderpage.mapData

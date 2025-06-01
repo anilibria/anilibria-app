@@ -21,8 +21,8 @@ import ru.radiationx.anilibria.extension.createCardsRowBy
 import ru.radiationx.anilibria.ui.presenter.ReleaseDetailsPresenter
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowViewHolder
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.common.ReleaseId
+import ru.radiationx.data.common.Url
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel

@@ -13,8 +13,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.databinding.ViewPlayerSkipsBinding
-import ru.radiationx.data.datasource.holders.AppPreference
-import ru.radiationx.data.entity.domain.release.PlayerSkips
+import ru.radiationx.data.api.releases.models.PlayerSkips
+import ru.radiationx.shared.ktx.android.PreferenceFlow
 
 /**
  * Обработчик пропуска опенингов
@@ -31,7 +31,7 @@ class PlayerSkipsPart(
     private val parent: FrameLayout,
     private val skipButtonText: String,
     private val coroutineScope: CoroutineScope,
-    private val playerSkipsTimer: AppPreference<Boolean>,
+    private val playerSkipsTimer: PreferenceFlow<Boolean>,
     private val onSeek: (Long) -> Unit,
     private val onSkipShow: () -> Unit,
     private val onSkipHide: () -> Unit,

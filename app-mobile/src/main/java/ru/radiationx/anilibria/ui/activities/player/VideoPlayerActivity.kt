@@ -47,7 +47,7 @@ import ru.radiationx.anilibria.ui.activities.player.models.PlayerAction
 import ru.radiationx.anilibria.ui.activities.player.playlist.PlaylistDialogFragment
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.PlayerAnalytics
-import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.media.mobile.models.PlayButtonState
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject

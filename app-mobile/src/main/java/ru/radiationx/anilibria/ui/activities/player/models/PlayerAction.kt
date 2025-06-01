@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.player.models
 
-import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.common.EpisodeId
 
 sealed class PlayerAction {
     data class PlayEpisode(

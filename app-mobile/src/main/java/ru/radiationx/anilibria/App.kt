@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
 import ru.mintrocket.lib.mintpermissions.flows.ext.initMintPermissionsFlow
 import ru.radiationx.anilibria.di.AppModule
-import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.app.preferences.PreferencesHolder
 import ru.radiationx.data.di.DataModule
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.quill.Quill

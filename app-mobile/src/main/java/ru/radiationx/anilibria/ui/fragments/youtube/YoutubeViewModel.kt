@@ -13,9 +13,9 @@ import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
-import ru.radiationx.data.entity.domain.types.YoutubeId
-import ru.radiationx.data.entity.domain.youtube.YoutubeItem
-import ru.radiationx.data.repository.YoutubeRepository
+import ru.radiationx.data.api.videos.YoutubeRepository
+import ru.radiationx.data.api.videos.models.YoutubeItem
+import ru.radiationx.data.common.YoutubeId
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loaderpage.PageLoader

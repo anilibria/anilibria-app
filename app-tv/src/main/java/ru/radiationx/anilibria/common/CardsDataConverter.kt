@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.common
 
 import android.content.Context
-import ru.radiationx.data.entity.domain.feed.FeedItem
-import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.youtube.YoutubeItem
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.api.videos.models.YoutubeItem
+import ru.radiationx.data.app.feed.models.FeedItem
 import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.capitalizeDefault
 import ru.radiationx.shared.ktx.decapitalizeDefault

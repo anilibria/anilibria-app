@@ -11,7 +11,7 @@ import ru.radiationx.anilibria.screen.SearchGenreGuidedScreen
 import ru.radiationx.anilibria.screen.SearchSeasonGuidedScreen
 import ru.radiationx.anilibria.screen.SearchSortGuidedScreen
 import ru.radiationx.anilibria.screen.SearchYearGuidedScreen
-import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.data.api.shared.filter.legacy.SearchForm
 import javax.inject.Inject
 
 class SearchFormViewModel @Inject constructor(

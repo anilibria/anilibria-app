@@ -1,17 +1,17 @@
 package ru.radiationx.anilibria.model
 
+import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItem
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
 import ru.radiationx.anilibria.ui.fragments.other.ProfileItemState
-import ru.radiationx.data.apinext.models.SocialType
-import ru.radiationx.data.apinext.models.User
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.domain.feed.FeedItem
-import ru.radiationx.data.entity.domain.feed.ScheduleItem
-import ru.radiationx.data.entity.domain.other.OtherMenuItem
-import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.release.ReleaseUpdate
-import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.data.entity.domain.youtube.YoutubeItem
+import ru.radiationx.data.api.auth.models.SocialType
+import ru.radiationx.data.api.profile.models.User
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.api.schedule.models.ScheduleItem
+import ru.radiationx.data.api.videos.models.YoutubeItem
+import ru.radiationx.data.app.feed.models.FeedItem
+import ru.radiationx.data.app.releaseupdate.models.ReleaseUpdate
+import ru.radiationx.data.common.ReleaseId
+import ru.radiationx.data.common.Url
 
 fun Release.toState(updates: Map<ReleaseId, ReleaseUpdate>): ReleaseItemState {
     val update = updates[id]

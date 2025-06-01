@@ -1,7 +1,6 @@
 package anilibria.api.shared.release
 
 
-import anilibria.api.genres.models.GenreResponse
 import anilibria.api.shared.ImageResponse
 import anilibria.api.torrent.models.TorrentResponse
 import com.squareup.moshi.Json
@@ -66,7 +65,7 @@ data class ReleaseResponse(
 
     // semi-full
     @Json(name = "genres")
-    val genres: List<GenreResponse>?,
+    val genres: List<ReleaseGenreResponse>?,
 
     // full
     @Json(name = "members")

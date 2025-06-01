@@ -19,8 +19,8 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.FastSearchAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.domain.search.Suggestions
-import ru.radiationx.data.repository.ReleaseRepository
+import ru.radiationx.data.api.releases.ReleaseRepository
+import ru.radiationx.data.api.releases.models.Suggestions
 import ru.radiationx.shared_app.common.SystemUtils
 import ru.radiationx.shared_app.controllers.loadersearch.SearchLoader
 import ru.radiationx.shared_app.controllers.loadersearch.SearchQuery

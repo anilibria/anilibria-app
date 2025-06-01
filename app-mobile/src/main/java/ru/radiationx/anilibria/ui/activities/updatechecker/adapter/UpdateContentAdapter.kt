@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.ui.activities.updatechecker.adapter
 
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.data.app.updater.models.UpdateData
 
 class UpdateContentAdapter(
     private val actionClickListener: (UpdateData.UpdateLink) -> Unit,

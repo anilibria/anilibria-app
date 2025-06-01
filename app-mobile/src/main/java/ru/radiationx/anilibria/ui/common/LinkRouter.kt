@@ -7,7 +7,7 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.entity.domain.types.ReleaseCode
+import ru.radiationx.data.common.ReleaseCode
 import java.util.regex.Pattern
 import javax.inject.Inject
 

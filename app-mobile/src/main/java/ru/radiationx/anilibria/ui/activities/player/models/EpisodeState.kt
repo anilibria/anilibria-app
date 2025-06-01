@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.activities.player.models
 
-import ru.radiationx.data.entity.domain.release.PlayerSkips
-import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.api.releases.models.PlayerSkips
+import ru.radiationx.data.common.EpisodeId
 
 data class EpisodeState(
     val id: EpisodeId,

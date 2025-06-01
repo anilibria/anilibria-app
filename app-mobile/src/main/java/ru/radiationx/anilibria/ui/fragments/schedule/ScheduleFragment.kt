@@ -16,7 +16,7 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.api.schedule.models.PublishDay
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.launchInResumed

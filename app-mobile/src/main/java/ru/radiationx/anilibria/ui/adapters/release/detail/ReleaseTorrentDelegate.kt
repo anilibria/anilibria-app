@@ -13,7 +13,7 @@ import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseTorrentItemState
 import ru.radiationx.anilibria.utils.dimensions.Side
 import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
-import ru.radiationx.data.entity.domain.types.TorrentId
+import ru.radiationx.data.common.TorrentId
 import ru.radiationx.shared.ktx.android.relativeDate
 
 /**

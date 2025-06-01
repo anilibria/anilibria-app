@@ -8,7 +8,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemDonationDividerBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.entity.domain.donation.DonationContentDivider
+import ru.radiationx.data.app.donation.models.DonationContentDivider
 import kotlin.math.roundToInt
 
 class DonationDividerDelegate :

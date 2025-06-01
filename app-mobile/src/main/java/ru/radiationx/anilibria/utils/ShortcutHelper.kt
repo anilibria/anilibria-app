@@ -13,9 +13,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.common.Url
 import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared.ktx.android.centerCrop
 import ru.radiationx.shared.ktx.android.createAvatar

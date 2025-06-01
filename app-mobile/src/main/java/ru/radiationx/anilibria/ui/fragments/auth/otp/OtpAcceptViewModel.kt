@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.AuthDeviceAnalytics
-import ru.radiationx.data.apinext.models.OtpCode
-import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.auth.models.OtpCode
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import javax.inject.Inject

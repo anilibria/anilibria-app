@@ -13,8 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ru.radiationx.anilibria.navigation.Screens
-import ru.radiationx.data.ads.AdsConfigRepository
-import ru.radiationx.data.ads.domain.AdsConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.AuthMainAnalytics
 import ru.radiationx.data.analytics.features.CatalogAnalytics
@@ -23,11 +21,13 @@ import ru.radiationx.data.analytics.features.FeedAnalytics
 import ru.radiationx.data.analytics.features.OtherAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.repository.ConfigurationRepository
-import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.auth.models.AuthState
+import ru.radiationx.data.app.ads.AdsConfigRepository
+import ru.radiationx.data.app.ads.models.AdsConfig
+import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.ConfigurationRepository
+import ru.radiationx.data.app.donation.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber

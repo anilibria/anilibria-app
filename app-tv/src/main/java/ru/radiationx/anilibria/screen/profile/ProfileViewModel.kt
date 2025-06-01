@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.apinext.models.User
-import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.profile.models.User
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject

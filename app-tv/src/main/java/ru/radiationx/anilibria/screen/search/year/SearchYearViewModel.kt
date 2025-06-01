@@ -8,8 +8,8 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.search.BaseSearchValuesViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
 import ru.radiationx.anilibria.screen.search.SearchValuesExtra
-import ru.radiationx.data.entity.domain.release.YearItem
-import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.data.api.shared.filter.legacy.SearchRepository
+import ru.radiationx.data.api.shared.filter.legacy.YearItem
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject

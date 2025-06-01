@@ -9,9 +9,9 @@ import ru.radiationx.anilibria.databinding.ItemDonationCaptionBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.LinkMovementMethod
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.common.toAbsoluteUrl
-import ru.radiationx.data.entity.domain.donation.DonationContentCaption
+import ru.radiationx.data.app.donation.models.DonationContentCaption
+import ru.radiationx.data.common.Url
+import ru.radiationx.data.common.toAbsoluteUrl
 
 class DonationCaptionDelegate(
     private val linkClickListener: (Url.Absolute) -> Unit,

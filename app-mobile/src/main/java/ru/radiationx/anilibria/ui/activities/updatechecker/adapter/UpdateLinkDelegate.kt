@@ -8,7 +8,7 @@ import ru.radiationx.anilibria.databinding.ItemUpdateLinkBinding
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateLinkState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.data.app.updater.models.UpdateData
 
 class UpdateLinkDelegate(
     private val actionClickListener: (UpdateData.UpdateLink) -> Unit,

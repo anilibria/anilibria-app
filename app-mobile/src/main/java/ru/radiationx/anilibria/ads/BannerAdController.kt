@@ -12,7 +12,7 @@ import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.AdTheme
 import com.yandex.mobile.ads.common.ImpressionData
 import ru.radiationx.anilibria.apptheme.AppTheme
-import ru.radiationx.data.ads.domain.BannerAdConfig
+import ru.radiationx.data.app.ads.models.BannerAdConfig
 import kotlin.math.roundToInt
 
 class BannerAdController(

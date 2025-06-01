@@ -10,8 +10,8 @@ import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.domain.search.Suggestions
-import ru.radiationx.data.repository.ReleaseRepository
+import ru.radiationx.data.api.releases.ReleaseRepository
+import ru.radiationx.data.api.releases.models.Suggestions
 import ru.radiationx.shared_app.controllers.loadersearch.SearchLoader
 import ru.radiationx.shared_app.controllers.loadersearch.SearchQuery
 import ru.radiationx.shared_app.controllers.loadersingle.mapData

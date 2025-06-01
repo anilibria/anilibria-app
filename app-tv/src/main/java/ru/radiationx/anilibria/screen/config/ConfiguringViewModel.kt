@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.common.ConfigScreenState
-import ru.radiationx.data.interactors.ConfiguringInteractor
+import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.ConfiguringInteractor
+import ru.radiationx.data.app.config.models.ConfigScreenState
 import ru.radiationx.shared.ktx.EventFlow
 import javax.inject.Inject
 

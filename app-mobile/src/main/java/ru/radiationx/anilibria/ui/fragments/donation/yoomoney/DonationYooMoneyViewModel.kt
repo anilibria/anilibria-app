@@ -12,8 +12,8 @@ import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationAmountType
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationPaymentType
-import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
-import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.data.app.donation.DonationRepository
+import ru.radiationx.data.app.donation.models.YooMoneyDialog
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils

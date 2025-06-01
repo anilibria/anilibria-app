@@ -9,10 +9,10 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.anilibria.screen.player.PlayerExtra
-import ru.radiationx.data.entity.domain.release.EpisodeAccess
-import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.api.releases.ReleaseInteractor
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.app.episodeaccess.models.EpisodeAccess
+import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.shared.ktx.asTimeSecString
 import java.util.Date
 import javax.inject.Inject

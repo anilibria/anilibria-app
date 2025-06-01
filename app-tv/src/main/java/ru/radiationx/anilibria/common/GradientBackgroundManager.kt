@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.entity.common.Url
+import ru.radiationx.data.common.Url
 import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.coRunCatching

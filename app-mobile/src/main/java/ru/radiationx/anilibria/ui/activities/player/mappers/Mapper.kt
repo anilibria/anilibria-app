@@ -6,10 +6,10 @@ import ru.radiationx.anilibria.ui.activities.player.models.EpisodeState
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerData
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerDataState
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerRelease
-import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.api.releases.models.Episode
+import ru.radiationx.data.api.releases.models.PlayerQuality
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.media.mobile.models.PlaylistItem
 import ru.radiationx.media.mobile.models.TimelineSkip
 

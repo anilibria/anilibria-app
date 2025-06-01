@@ -32,9 +32,9 @@ import ru.radiationx.anilibria.ui.fragments.comments.LazyVkCommentsFragment
 import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
-import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.entity.domain.types.ReleaseCode
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel

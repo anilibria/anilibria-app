@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.model
 
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.domain.types.YoutubeId
+import ru.radiationx.data.common.Url
+import ru.radiationx.data.common.YoutubeId
 
 data class YoutubeItemState(
     val id: YoutubeId,

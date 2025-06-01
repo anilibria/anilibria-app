@@ -10,8 +10,8 @@ import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.screen.SuggestionsScreen
-import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.data.api.shared.filter.legacy.SearchForm
+import ru.radiationx.data.api.shared.filter.legacy.SearchRepository
 import javax.inject.Inject
 
 class SearchViewModel @Inject constructor(

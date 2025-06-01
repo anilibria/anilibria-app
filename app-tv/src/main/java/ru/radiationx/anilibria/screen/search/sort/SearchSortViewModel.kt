@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.search.SearchController
-import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.data.api.shared.filter.legacy.SearchForm
 import javax.inject.Inject
 
 class SearchSortViewModel @Inject constructor(

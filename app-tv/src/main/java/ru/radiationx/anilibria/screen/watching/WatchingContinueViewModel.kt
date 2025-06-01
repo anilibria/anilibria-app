@@ -4,9 +4,9 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
-import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.data.api.releases.ReleaseInteractor
+import ru.radiationx.data.app.episodeaccess.EpisodesCheckerHolder
+import ru.radiationx.data.app.history.HistoryRepository
 import javax.inject.Inject
 
 class WatchingContinueViewModel @Inject constructor(

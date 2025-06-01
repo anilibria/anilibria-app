@@ -14,8 +14,8 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.entity.common.toRelativeUrl
+import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.common.toRelativeUrl
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener

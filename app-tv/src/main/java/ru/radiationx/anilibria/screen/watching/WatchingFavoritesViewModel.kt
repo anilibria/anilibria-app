@@ -10,10 +10,10 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.repository.FavoriteRepository
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.auth.models.AuthState
+import ru.radiationx.data.api.favorites.FavoriteRepository
+import ru.radiationx.data.api.releases.ReleaseInteractor
 import javax.inject.Inject
 
 class WatchingFavoritesViewModel @Inject constructor(

@@ -6,7 +6,7 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.databinding.MergeDaysBarBinding
-import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.api.schedule.models.PublishDay
 
 class DaysBar @JvmOverloads constructor(
     context: Context,

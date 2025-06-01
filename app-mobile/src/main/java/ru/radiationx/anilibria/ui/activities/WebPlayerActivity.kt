@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
-import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.app.config.ApiConfig
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.WebResourceErrorCompat

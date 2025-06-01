@@ -5,10 +5,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import ru.radiationx.anilibria.common.BaseRowsViewModel
-import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.auth.models.AuthState
+import ru.radiationx.data.app.episodeaccess.EpisodesCheckerHolder
+import ru.radiationx.data.app.history.HistoryRepository
 import javax.inject.Inject
 
 class WatchingViewModel @Inject constructor(

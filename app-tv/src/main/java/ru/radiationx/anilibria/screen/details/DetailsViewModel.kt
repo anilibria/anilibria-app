@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.BaseRowsViewModel
-import ru.radiationx.data.entity.domain.release.getAllReleases
-import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.AuthRepository
-import ru.radiationx.data.repository.FranchisesRepository
-import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.franchises.FranchisesRepository
+import ru.radiationx.data.api.franchises.models.getAllReleases
+import ru.radiationx.data.api.releases.ReleaseInteractor
+import ru.radiationx.data.app.history.HistoryRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject

@@ -17,11 +17,11 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.TopScroller
-import ru.radiationx.data.apinext.models.enums.PublishDay
-import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.TorrentId
+import ru.radiationx.data.api.releases.models.Episode
+import ru.radiationx.data.api.releases.models.PlayerQuality
+import ru.radiationx.data.api.schedule.models.PublishDay
+import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.TorrentId
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.launchInResumed

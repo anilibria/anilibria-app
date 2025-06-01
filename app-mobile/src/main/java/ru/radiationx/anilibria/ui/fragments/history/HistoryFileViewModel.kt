@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import ru.radiationx.data.historyfile.HistoryFileRepository
+import ru.radiationx.data.app.historyfile.HistoryFileRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import javax.inject.Inject

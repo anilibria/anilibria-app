@@ -1,9 +1,9 @@
 package ru.radiationx.anilibria.screen.search
 
-import ru.radiationx.data.entity.domain.release.GenreItem
-import ru.radiationx.data.entity.domain.release.SeasonItem
-import ru.radiationx.data.entity.domain.release.YearItem
-import ru.radiationx.data.entity.domain.search.SearchForm
+import ru.radiationx.data.api.shared.filter.legacy.GenreItem
+import ru.radiationx.data.api.shared.filter.legacy.SearchForm
+import ru.radiationx.data.api.shared.filter.legacy.SeasonItem
+import ru.radiationx.data.api.shared.filter.legacy.YearItem
 import ru.radiationx.shared.ktx.EventFlow
 import javax.inject.Inject
 

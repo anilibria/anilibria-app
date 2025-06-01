@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.configuring
 
 import androidx.lifecycle.ViewModel
-import ru.radiationx.data.interactors.ConfiguringInteractor
+import ru.radiationx.data.app.config.ConfiguringInteractor
 import javax.inject.Inject
 
 class ConfiguringViewModel @Inject constructor(

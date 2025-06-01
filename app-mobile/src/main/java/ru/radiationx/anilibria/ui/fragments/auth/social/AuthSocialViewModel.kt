@@ -10,9 +10,9 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.data.analytics.features.AuthSocialAnalytics
-import ru.radiationx.data.apinext.models.SocialType
-import ru.radiationx.data.entity.domain.auth.SocialAuthException
-import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.auth.models.SocialAuthException
+import ru.radiationx.data.api.auth.models.SocialType
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching

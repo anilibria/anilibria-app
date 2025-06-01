@@ -10,7 +10,7 @@ import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.entity.domain.donation.DonationContentButton
+import ru.radiationx.data.app.donation.models.DonationContentButton
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.getCompatDrawable

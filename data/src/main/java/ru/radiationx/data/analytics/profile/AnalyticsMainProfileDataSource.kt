@@ -8,14 +8,14 @@ import kotlinx.coroutines.coroutineScope
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsAuthState
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
-import ru.radiationx.data.datasource.holders.DownloadsHolder
-import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.data.datasource.holders.HistoryHolder
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
-import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.downloader.RemoteFileHolder
+import ru.radiationx.data.app.episodeaccess.EpisodesCheckerHolder
+import ru.radiationx.data.app.history.HistoryHolder
+import ru.radiationx.data.app.preferences.PreferencesHolder
+import ru.radiationx.data.app.releaseupdate.ReleaseUpdateHolder
 import ru.radiationx.data.migration.MigrationDataSource
-import ru.radiationx.data.repository.AuthRepository
 import javax.inject.Inject
 
 class AnalyticsMainProfileDataSource @Inject constructor(
@@ -24,7 +24,7 @@ class AnalyticsMainProfileDataSource @Inject constructor(
     private val apiConfig: ApiConfig,
     private val historyHolder: HistoryHolder,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
-    private val downloadsHolder: DownloadsHolder,
+    private val remoteFileHolder: RemoteFileHolder,
     private val migrationDataSource: MigrationDataSource,
     private val releaseUpdateHolder: ReleaseUpdateHolder,
     private val authRepository: AuthRepository,
@@ -67,7 +67,7 @@ class AnalyticsMainProfileDataSource @Inject constructor(
                 releaseUpdateHolder.getReleases().size.mapToAttr(it)
             },
             asyncAttr(ProfileConstants.downloads_count) {
-                downloadsHolder.getDownloads().size.mapToAttr(it)
+                remoteFileHolder.getSize().mapToAttr(it)
             },
             asyncAttr(ProfileConstants.app_versions) {
                 migrationDataSource.getHistory().joinToString().mapToAttr(it)

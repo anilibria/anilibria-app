@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.entity.domain.auth.OtpInfo
-import ru.radiationx.data.entity.domain.auth.OtpNotCreatedException
-import ru.radiationx.data.entity.domain.auth.OtpNotFoundException
-import ru.radiationx.data.entity.domain.auth.OtpWrongUserException
-import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.api.auth.AuthRepository
+import ru.radiationx.data.api.auth.models.OtpInfo
+import ru.radiationx.data.api.auth.models.OtpNotCreatedException
+import ru.radiationx.data.api.auth.models.OtpNotFoundException
+import ru.radiationx.data.api.auth.models.OtpWrongUserException
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject

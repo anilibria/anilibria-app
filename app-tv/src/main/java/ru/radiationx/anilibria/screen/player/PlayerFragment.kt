@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.media3.common.PlaybackParameters
 import kotlinx.coroutines.flow.filterNotNull
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull

@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.launchIn
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerExtra
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.domain.release.Release
-import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.api.releases.ReleaseInteractor
+import ru.radiationx.data.api.releases.models.PlayerQuality
+import ru.radiationx.data.api.releases.models.Release
+import ru.radiationx.data.app.preferences.PreferencesHolder
 import javax.inject.Inject
 
 class PlayerQualityViewModel @Inject constructor(

@@ -7,10 +7,10 @@ import okhttp3.brotli.BrotliInterceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.SslCompatAnalytics
-import ru.radiationx.data.datasource.remote.interceptors.AppInfoInterceptor
-import ru.radiationx.data.sslcompat.SslCompat
-import ru.radiationx.data.sslcompat.appendSslCompat
-import ru.radiationx.data.system.appendSslCompatAnalytics
+import ru.radiationx.data.network.appendSslCompatAnalytics
+import ru.radiationx.data.network.interceptors.AppInfoInterceptor
+import ru.radiationx.data.network.sslcompat.SslCompat
+import ru.radiationx.data.network.sslcompat.appendSslCompat
 import javax.inject.Inject
 import javax.inject.Provider
 

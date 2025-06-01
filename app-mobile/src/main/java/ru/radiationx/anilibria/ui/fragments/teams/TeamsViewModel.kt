@@ -11,12 +11,11 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.data.analytics.features.TeamsAnalytics
-import ru.radiationx.data.entity.domain.team.Team
-import ru.radiationx.data.repository.TeamsRepository
+import ru.radiationx.data.api.teams.TeamsRepository
+import ru.radiationx.data.api.teams.models.Team
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
 import timber.log.Timber

@@ -8,7 +8,7 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.SearchScreen
 import ru.radiationx.anilibria.screen.SuggestionsScreen
 import ru.radiationx.anilibria.screen.UpdateScreen
-import ru.radiationx.data.repository.CheckerRepository
+import ru.radiationx.data.app.updater.CheckerRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject

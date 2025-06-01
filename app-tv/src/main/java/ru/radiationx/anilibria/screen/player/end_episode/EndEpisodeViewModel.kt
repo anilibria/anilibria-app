@@ -8,8 +8,8 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
 import ru.radiationx.anilibria.screen.player.PlayerExtra
-import ru.radiationx.data.entity.domain.release.Episode
-import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.api.releases.ReleaseInteractor
+import ru.radiationx.data.api.releases.models.Episode
 import javax.inject.Inject
 
 class EndEpisodeViewModel @Inject constructor(

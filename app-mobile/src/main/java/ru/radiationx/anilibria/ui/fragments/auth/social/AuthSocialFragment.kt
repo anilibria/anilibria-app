@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.ui.common.webpage.compositeWebViewClientOf
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.auth.AnalyticsWebViewClient
 import ru.radiationx.anilibria.ui.fragments.auth.AuthPatternWebViewClient
-import ru.radiationx.data.apinext.models.SocialType
+import ru.radiationx.data.api.auth.models.SocialType
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.launchInResumed

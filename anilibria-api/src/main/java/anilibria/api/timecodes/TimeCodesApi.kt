@@ -17,9 +17,19 @@ interface TimeCodesApi {
     @GET("accounts/users/me/views/timecodes")
     suspend fun get(): List<List<Any>>
 
+    /*
+    * [0] - release_episode_id: String
+    * [1] - time: Double
+    * [2] - is_watched: Boolean
+    * */
     @POST("accounts/users/me/views/timecodes")
-    suspend fun update(@Body body: List<TimeCodeNetwork>)
+    suspend fun update(@Body body: List<TimeCodeNetwork>): List<List<Any>>
 
+    /*
+    * [0] - release_episode_id: String
+    * [1] - time: Double
+    * [2] - is_watched: Boolean
+    * */
     @HTTP(method = "DELETE", path = "accounts/users/me/views/timecodes", hasBody = true)
-    suspend fun delete(@Body body: List<TimeCodeDeleteRequest>)
+    suspend fun delete(@Body body: List<TimeCodeDeleteRequest>): List<List<Any>>
 }

@@ -12,7 +12,7 @@ import ru.radiationx.anilibria.di.NavigationModule
 import ru.radiationx.anilibria.di.PlayerModule
 import ru.radiationx.anilibria.di.SearchModule
 import ru.radiationx.anilibria.di.UpdateModule
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel

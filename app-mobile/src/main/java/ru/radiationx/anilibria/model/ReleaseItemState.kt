@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.model
 
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.common.ReleaseId
+import ru.radiationx.data.common.Url
 
 data class ReleaseItemState(
     val id: ReleaseId,

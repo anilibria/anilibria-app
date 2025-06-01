@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.other
 
-import ru.radiationx.data.entity.common.Url
+import ru.radiationx.data.common.Url
 
 data class ProfileScreenState(
     val profile: ProfileItemState = ProfileItemState(false, "", null, null),

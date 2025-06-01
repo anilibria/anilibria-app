@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.common
 
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.common.ReleaseId
+import ru.radiationx.data.common.Url
 
 data class LibriaCard(
     val title: String,

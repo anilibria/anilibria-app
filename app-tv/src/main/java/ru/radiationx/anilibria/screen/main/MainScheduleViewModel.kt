@@ -7,11 +7,11 @@ import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.anilibria.common.LinkCard
 import ru.radiationx.anilibria.screen.ScheduleScreen
-import ru.radiationx.data.apinext.models.enums.PublishDay
-import ru.radiationx.data.apinext.models.enums.asDayNameDeclension
-import ru.radiationx.data.apinext.models.enums.asDayPretext
-import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.ScheduleRepository
+import ru.radiationx.data.api.releases.ReleaseInteractor
+import ru.radiationx.data.api.schedule.ScheduleRepository
+import ru.radiationx.data.api.schedule.models.PublishDay
+import ru.radiationx.data.api.schedule.models.asDayNameDeclension
+import ru.radiationx.data.api.schedule.models.asDayPretext
 import ru.radiationx.shared.ktx.asMsk
 import ru.radiationx.shared.ktx.getDayOfWeek
 import ru.radiationx.shared.ktx.isSameDay

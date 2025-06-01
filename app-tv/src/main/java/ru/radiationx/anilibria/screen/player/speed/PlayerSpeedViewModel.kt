@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.app.preferences.PreferencesHolder
 import javax.inject.Inject
 
 class PlayerSpeedViewModel @Inject constructor(

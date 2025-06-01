@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.screen.player
 
-import ru.radiationx.data.entity.domain.release.PlayerSkips
+import ru.radiationx.data.api.releases.models.PlayerSkips
 
 data class Video(
     val url: String,

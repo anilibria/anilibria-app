@@ -8,8 +8,8 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.update.UpdateController
-import ru.radiationx.data.entity.domain.updater.UpdateData
-import ru.radiationx.data.repository.CheckerRepository
+import ru.radiationx.data.app.updater.CheckerRepository
+import ru.radiationx.data.app.updater.models.UpdateData
 import ru.radiationx.shared_app.common.SystemUtils
 import javax.inject.Inject
 

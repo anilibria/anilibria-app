@@ -21,7 +21,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.leanback.LeanbackPlayerAdapter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
-import ru.radiationx.data.datasource.holders.PreferencesHolder
+import ru.radiationx.data.app.preferences.PreferencesHolder
 import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.quill.get
 

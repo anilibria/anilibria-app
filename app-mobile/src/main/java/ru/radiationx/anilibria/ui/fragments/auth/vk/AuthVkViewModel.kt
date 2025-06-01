@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
 import ru.radiationx.anilibria.ui.fragments.auth.social.WebAuthSoFastDetector
 import ru.radiationx.data.analytics.features.AuthVkAnalytics
-import ru.radiationx.data.datasource.holders.AuthHolder
+import ru.radiationx.data.api.auth.AuthHolder
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import javax.inject.Inject

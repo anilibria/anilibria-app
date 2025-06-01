@@ -7,7 +7,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemDonationHeaderBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.entity.domain.donation.DonationContentHeader
+import ru.radiationx.data.app.donation.models.DonationContentHeader
 
 class DonationHeaderDelegate :
     AppAdapterDelegate<DonationHeaderListItem, ListItem, DonationHeaderDelegate.ViewHolder>(

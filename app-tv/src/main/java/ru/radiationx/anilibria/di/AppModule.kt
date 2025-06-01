@@ -10,7 +10,7 @@ import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
-import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
+import ru.radiationx.data.app.updater.CheckerReserveSources
 import ru.radiationx.data.migration.MigrationExecutor
 import ru.radiationx.quill.QuillModule
 import ru.radiationx.shared_app.analytics.errors.AppMetricaErrorReporter

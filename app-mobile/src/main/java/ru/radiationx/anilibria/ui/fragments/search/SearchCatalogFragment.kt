@@ -25,9 +25,9 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
-import ru.radiationx.data.apinext.models.Genre
-import ru.radiationx.data.apinext.models.enums.CollectionType
-import ru.radiationx.data.interactors.FilterType
+import ru.radiationx.data.api.collections.models.CollectionType
+import ru.radiationx.data.api.releases.models.ReleaseGenre
+import ru.radiationx.data.api.shared.filter.FilterType
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull
@@ -46,7 +46,7 @@ class SearchCatalogFragment :
 
         fun newInstance(
             filterType: FilterType,
-            genre: Genre? = null
+            genre: ReleaseGenre? = null
         ) = SearchCatalogFragment().putExtra {
             putSerializable(ARG_TYPE, filterType)
             putParcelable(ARG_GENRE, genre)

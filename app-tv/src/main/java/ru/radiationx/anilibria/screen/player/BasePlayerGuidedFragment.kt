@@ -3,8 +3,8 @@ package ru.radiationx.anilibria.screen.player
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment.Companion.ARG_EPISODE_ID
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment.Companion.ARG_RELEASE_ID
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
+import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull

@@ -1,9 +1,8 @@
 package ru.radiationx.shared.ktx.android
 
-import android.graphics.Color
 import android.util.Base64
-import java.nio.charset.StandardCharsets
 import androidx.core.graphics.toColorInt
+import java.nio.charset.StandardCharsets
 
 fun String?.toBase64(): String? {
     return this?.let {

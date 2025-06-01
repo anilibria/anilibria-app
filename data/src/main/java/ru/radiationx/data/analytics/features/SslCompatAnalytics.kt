@@ -1,7 +1,7 @@
 package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.sslcompat.SslCompat
+import ru.radiationx.data.network.sslcompat.SslCompat
 import javax.inject.Inject
 
 class SslCompatAnalytics @Inject constructor(

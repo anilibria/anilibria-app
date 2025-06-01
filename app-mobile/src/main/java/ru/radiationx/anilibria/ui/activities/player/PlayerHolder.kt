@@ -6,9 +6,9 @@ import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
-import ru.radiationx.data.entity.common.PlayerTransport
 import ru.radiationx.data.player.PlayerCacheDataSourceProvider
 import ru.radiationx.data.player.PlayerDataSourceProvider
+import ru.radiationx.data.player.PlayerTransport
 import ru.radiationx.media.mobile.PlayerProxy
 import java.util.UUID
 import javax.inject.Inject

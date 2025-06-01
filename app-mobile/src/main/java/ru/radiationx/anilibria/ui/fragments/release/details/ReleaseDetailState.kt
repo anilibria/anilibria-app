@@ -3,11 +3,11 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import com.yandex.mobile.ads.nativeads.NativeAd
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.DonationCardItemState
-import ru.radiationx.data.apinext.models.ReleaseSponsor
-import ru.radiationx.data.apinext.models.enums.PublishDay
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.entity.domain.types.ReleaseId
-import ru.radiationx.data.entity.domain.types.TorrentId
+import ru.radiationx.data.api.releases.models.ReleaseSponsor
+import ru.radiationx.data.api.schedule.models.PublishDay
+import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.ReleaseId
+import ru.radiationx.data.common.TorrentId
 import java.util.Date
 
 data class ReleaseDetailScreenState(

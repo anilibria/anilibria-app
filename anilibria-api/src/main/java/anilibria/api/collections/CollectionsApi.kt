@@ -50,9 +50,17 @@ interface CollectionsApi {
     @POST("accounts/users/me/collections/releases")
     suspend fun getReleases(@Body body: CollectionsRequest): PaginationResponse<ReleaseResponse>
 
+    /*
+    * [0] - release_id: Int
+    * [1] - type_of_collection: String
+    * */
     @POST("accounts/users/me/collections")
-    suspend fun addReleases(@Body body: List<CollectionReleaseIdNetwork>)
+    suspend fun addReleases(@Body body: List<CollectionReleaseIdNetwork>): List<List<Any>>
 
+    /*
+    * [0] - release_id: Int
+    * [1] - type_of_collection: String
+    * */
     @HTTP(method = "DELETE", path = "accounts/users/me/collections", hasBody = true)
-    suspend fun deleteReleases(@Body body: List<ReleaseIdNetwork>)
+    suspend fun deleteReleases(@Body body: List<ReleaseIdNetwork>): List<List<Any>>
 }

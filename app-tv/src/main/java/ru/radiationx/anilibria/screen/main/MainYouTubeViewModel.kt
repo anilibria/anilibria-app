@@ -4,7 +4,7 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
-import ru.radiationx.data.repository.YoutubeRepository
+import ru.radiationx.data.api.videos.YoutubeRepository
 import javax.inject.Inject
 
 class MainYouTubeViewModel @Inject constructor(

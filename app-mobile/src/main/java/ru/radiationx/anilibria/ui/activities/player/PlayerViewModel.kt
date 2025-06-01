@@ -26,11 +26,11 @@ import ru.radiationx.anilibria.ui.activities.player.models.LoadingState
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerAction
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerData
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerDataState
-import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.domain.types.EpisodeId
-import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.HistoryRepository
+import ru.radiationx.data.api.releases.ReleaseInteractor
+import ru.radiationx.data.app.episodeaccess.EpisodesCheckerHolder
+import ru.radiationx.data.app.history.HistoryRepository
+import ru.radiationx.data.app.preferences.PreferencesHolder
+import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import java.util.concurrent.TimeUnit

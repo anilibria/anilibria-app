@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria
 
-import ru.radiationx.data.datasource.remote.common.CheckerReserveSources
+import ru.radiationx.data.app.updater.CheckerReserveSources
 import javax.inject.Inject
 
 class MobileCheckerSources @Inject constructor() : CheckerReserveSources {

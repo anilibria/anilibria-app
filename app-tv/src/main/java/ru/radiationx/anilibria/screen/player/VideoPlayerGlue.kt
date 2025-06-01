@@ -29,7 +29,7 @@ import androidx.leanback.widget.PlaybackControlsRow.SkipNextAction
 import androidx.leanback.widget.PlaybackControlsRow.SkipPreviousAction
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.leanback.LeanbackPlayerAdapter
-import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.api.releases.models.PlayerQuality
 import java.util.concurrent.TimeUnit
 
 /**

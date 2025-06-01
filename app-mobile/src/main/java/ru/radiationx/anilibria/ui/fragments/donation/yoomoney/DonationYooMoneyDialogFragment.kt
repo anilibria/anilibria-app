@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogDonationYoomoneyBinding
-import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
+import ru.radiationx.data.app.donation.models.YooMoneyDialog
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews

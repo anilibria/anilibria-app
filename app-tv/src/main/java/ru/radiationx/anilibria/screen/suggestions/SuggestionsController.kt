@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.screen.suggestions
 
-import ru.radiationx.data.entity.domain.release.Release
+import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.shared.ktx.EventFlow
 import javax.inject.Inject
 

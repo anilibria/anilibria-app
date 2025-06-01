@@ -17,7 +17,7 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.utils.LinkMovementMethod
 import ru.radiationx.anilibria.utils.dimensions.Side
 import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
-import ru.radiationx.data.apinext.models.enums.PublishDay
+import ru.radiationx.data.api.schedule.models.PublishDay
 import ru.radiationx.shared.ktx.android.relativeDate
 import ru.radiationx.shared.ktx.android.setCompatDrawable
 

@@ -6,7 +6,7 @@ import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.AuthCredentialsGuidedScreen
 import ru.radiationx.anilibria.screen.AuthOtpGuidedScreen
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.api.auth.AuthRepository
 import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(

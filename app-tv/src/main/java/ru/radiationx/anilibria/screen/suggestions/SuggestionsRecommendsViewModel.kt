@@ -4,9 +4,9 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
-import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.SearchRepository
+import ru.radiationx.data.api.releases.ReleaseInteractor
+import ru.radiationx.data.api.shared.filter.legacy.SearchForm
+import ru.radiationx.data.api.shared.filter.legacy.SearchRepository
 import javax.inject.Inject
 
 class SuggestionsRecommendsViewModel @Inject constructor(

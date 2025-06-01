@@ -10,10 +10,10 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.DonationDetailAnalytics
 import ru.radiationx.data.analytics.features.DonationDialogAnalytics
 import ru.radiationx.data.analytics.features.DonationYooMoneyAnalytics
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.domain.donation.DonationContentButton
-import ru.radiationx.data.entity.domain.donation.DonationInfo
-import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.data.app.donation.DonationRepository
+import ru.radiationx.data.app.donation.models.DonationContentButton
+import ru.radiationx.data.app.donation.models.DonationInfo
+import ru.radiationx.data.common.Url
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils

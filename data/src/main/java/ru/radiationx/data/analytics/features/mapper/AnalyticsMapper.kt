@@ -3,9 +3,9 @@ package ru.radiationx.data.analytics.features.mapper
 import ru.radiationx.data.analytics.features.model.AnalyticsAuthState
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsTransport
-import ru.radiationx.data.entity.common.AuthState
-import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.common.PlayerTransport
+import ru.radiationx.data.api.auth.models.AuthState
+import ru.radiationx.data.api.releases.models.PlayerQuality
+import ru.radiationx.data.player.PlayerTransport
 
 fun AuthState.toAnalyticsAuthState(): AnalyticsAuthState = when (this) {
     AuthState.NO_AUTH -> AnalyticsAuthState.NO

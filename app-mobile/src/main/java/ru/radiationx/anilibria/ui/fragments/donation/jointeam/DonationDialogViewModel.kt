@@ -3,9 +3,9 @@ package ru.radiationx.anilibria.ui.fragments.donation.jointeam
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.mapNotNull
 import ru.radiationx.data.analytics.features.DonationDialogAnalytics
-import ru.radiationx.data.entity.common.Url
-import ru.radiationx.data.entity.domain.donation.DonationContentButton
-import ru.radiationx.data.repository.DonationRepository
+import ru.radiationx.data.app.donation.DonationRepository
+import ru.radiationx.data.app.donation.models.DonationContentButton
+import ru.radiationx.data.common.Url
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared_app.common.SystemUtils
 import javax.inject.Inject

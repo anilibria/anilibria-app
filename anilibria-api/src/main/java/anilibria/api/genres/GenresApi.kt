@@ -13,14 +13,14 @@ interface GenresApi {
     suspend fun getGenres(): List<GenreResponse>
 
     @GET("anime/genres/{genreId}")
-    suspend fun getGenre(@Path("genreId") genreId: String): GenreResponse
+    suspend fun getGenre(@Path("genreId") genreId: Int): GenreResponse
 
     @GET("anime/genres/random")
     suspend fun getRandomGenres(@Query("limit") limit: Int?): List<GenreResponse>
 
     @GET("anime/genres/{genreId}/releases")
     suspend fun getGenreReleases(
-        @Path("genreId") genreId: String,
+        @Path("genreId") genreId: Int,
         @Query("page") page: Int?,
         @Query("limit") limit: Int?
     ): PaginationResponse<ReleaseResponse>

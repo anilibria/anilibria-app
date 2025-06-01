@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerSettingsState
 import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.combineflow.buildCombineFlow
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.api.releases.models.PlayerQuality
+import ru.radiationx.data.app.preferences.PreferencesHolder
 import javax.inject.Inject
 
 class PlayerSettingViewModel @Inject constructor(

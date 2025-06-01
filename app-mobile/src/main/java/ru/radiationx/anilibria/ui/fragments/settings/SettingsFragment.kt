@@ -17,9 +17,9 @@ import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.SettingsAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.common.PlayerQuality
-import ru.radiationx.data.entity.common.PlayerTransport
+import ru.radiationx.data.api.releases.models.PlayerQuality
+import ru.radiationx.data.app.preferences.PreferencesHolder
+import ru.radiationx.data.player.PlayerTransport
 import ru.radiationx.quill.inject
 import taiwa.TaiwaAction
 import taiwa.bottomsheet.bottomSheetTaiwa

@@ -9,9 +9,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import ru.radiationx.data.datasource.remote.address.ApiConfig
-import ru.radiationx.data.downloader.LocalFile
-import ru.radiationx.data.entity.common.Url
+import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.downloader.models.LocalFile
+import ru.radiationx.data.common.Url
 import java.io.File
 import javax.inject.Inject
 

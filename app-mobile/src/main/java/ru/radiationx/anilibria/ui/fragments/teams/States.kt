@@ -1,7 +1,5 @@
 package ru.radiationx.anilibria.ui.fragments.teams
 
-import ru.radiationx.data.entity.domain.team.TeamRole
-
 data class TeamsState(
     val hasQuery: Boolean = false,
     val teams: List<TeamState>

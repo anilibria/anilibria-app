@@ -14,9 +14,9 @@ import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsTransport
-import ru.radiationx.data.datasource.holders.PreferencesHolder
-import ru.radiationx.data.entity.common.PlayerTransport
-import ru.radiationx.data.entity.domain.types.EpisodeId
+import ru.radiationx.data.app.preferences.PreferencesHolder
+import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.player.PlayerTransport
 import timber.log.Timber
 import java.io.IOException
 import java.util.LinkedList

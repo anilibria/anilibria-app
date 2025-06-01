@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.fragments.teams.adapter
 
 import android.view.View
 import androidx.core.text.buildSpannedString
-import androidx.core.text.color
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import dev.androidbroadcast.vbpd.viewBinding
@@ -30,15 +29,11 @@ class TeamUserDelegate :
 
         fun bind(data: TeamUserState) {
             binding.tvTeamUser.text = buildSpannedString {
-                if (data.color != null) {
-                    color(data.color) {
-                        append(data.nickname)
-                    }
-                } else {
-                    append(data.nickname)
+                append(data.nickname)
+                if (data.roles.isNotEmpty()) {
+                    append(" – ")
+                    append(data.roles.joinToString())
                 }
-                append(" – ")
-                append(data.roles.joinToString())
             }
             binding.tvTeamUserInfo.text = data.tags.joinToString()
             binding.tvTeamUserInfo.isVisible = data.tags.isNotEmpty()

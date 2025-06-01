@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.data.analytics.features.TeamsAnalytics
 import ru.radiationx.data.entity.domain.team.Team
-import ru.radiationx.data.entity.domain.team.Teams
 import ru.radiationx.data.repository.TeamsRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
@@ -31,7 +30,7 @@ class TeamsViewModel @Inject constructor(
     private val analytics: TeamsAnalytics
 ) : ViewModel() {
 
-    private val currentDataRelay = MutableStateFlow<Teams?>(null)
+    private val currentDataRelay = MutableStateFlow<List<Team>?>(null)
 
     private val queryRelay = MutableStateFlow(Query())
 
@@ -40,26 +39,20 @@ class TeamsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            _state.update { it.copy(loading = true) }
             coRunCatching {
-                repository.requestUpdate()
+                repository.getTeams()
+            }.onSuccess {
+                currentDataRelay.value = it
             }.onFailure {
                 Timber.e(it)
             }
+            _state.update { it.copy(loading = false) }
         }
-        repository
-            .observeTeams()
-            .onStart {
-                _state.update { it.copy(loading = true) }
-            }
-            .onEach { data ->
-                _state.update { it.copy(loading = false) }
-                currentDataRelay.value = data
-            }
-            .launchIn(viewModelScope)
 
         currentDataRelay
             .filterNotNull()
-            .map { it.toState() }
+            .map { it.toTeamsState() }
             .flatMapLatest { teamStates ->
                 queryRelay.map { query ->
                     teamStates.filterBy(query)
@@ -84,10 +77,9 @@ class TeamsViewModel @Inject constructor(
         systemUtils.open("https://t.me/joinlibria_bot")
     }
 
-    private fun Teams.toState(): TeamsState = TeamsState(
-        false,
-        headerRoles,
-        teams.toState()
+    private fun List<Team>.toTeamsState(): TeamsState = TeamsState(
+        hasQuery = false,
+        teams = this.toState()
     )
 
     private fun List<Team>.toState(): List<TeamState> = map { team ->
@@ -102,10 +94,9 @@ class TeamsViewModel @Inject constructor(
                 }
             }
             TeamUserState(
-                user.nickname,
-                user.roles.find { it.color != null }?.color,
-                user.roles.map { it.title },
-                tags
+                nickname = user.nickname,
+                roles = user.roles.map { it.title },
+                tags = tags
             )
         }
         TeamState(section, users)

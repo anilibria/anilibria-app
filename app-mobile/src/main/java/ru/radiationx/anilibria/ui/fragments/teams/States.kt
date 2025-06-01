@@ -4,7 +4,6 @@ import ru.radiationx.data.entity.domain.team.TeamRole
 
 data class TeamsState(
     val hasQuery: Boolean = false,
-    val headerRoles: List<TeamRole>,
     val teams: List<TeamState>
 )
 
@@ -20,7 +19,6 @@ data class TeamSectionState(
 
 data class TeamUserState(
     val nickname: String,
-    val color: Int?,
     val roles: List<String>,
     val tags: List<String>,
 )

@@ -9,7 +9,7 @@ data class TeamsUserAccountResponse(
     @Json(name = "id")
     val id: Int,
     @Json(name = "nickname")
-    val nickname: String,
+    val nickname: String?,
     @Json(name = "avatar")
     val avatar: ImageResponse?
 )

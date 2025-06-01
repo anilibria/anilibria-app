@@ -3,6 +3,7 @@ package ru.radiationx.shared.ktx.android
 import android.graphics.Color
 import android.util.Base64
 import java.nio.charset.StandardCharsets
+import androidx.core.graphics.toColorInt
 
 fun String?.toBase64(): String? {
     return this?.let {
@@ -12,7 +13,7 @@ fun String?.toBase64(): String? {
 
 fun String.parseColorOrNull(): Int? {
     return try {
-        Color.parseColor(this)
+        this.toColorInt()
     } catch (ignore: Exception) {
         null
     }

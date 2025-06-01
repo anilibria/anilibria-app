@@ -17,7 +17,7 @@ class TeamsAdapter(
     fun bindState(data: TeamsState) {
         val newItems = mutableListOf<ListItem>()
         if (!data.hasQuery) {
-            newItems.add(TeamsHeaderListItem(data.headerRoles))
+            newItems.add(TeamsHeaderListItem())
         }
         data.teams.forEach { team ->
             newItems.add(TeamSectionListItem(team.section))

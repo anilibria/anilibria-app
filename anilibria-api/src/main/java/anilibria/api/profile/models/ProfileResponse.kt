@@ -14,7 +14,7 @@ data class ProfileResponse(
     @Json(name = "email")
     val email: String,
     @Json(name = "nickname")
-    val nickname: String,
+    val nickname: String?,
     @Json(name = "avatar")
     val avatar: ImageResponse?,
     @Json(name = "torrents")

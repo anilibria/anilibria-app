@@ -1,15 +1,12 @@
 package ru.radiationx.anilibria.ui.fragments.teams.adapter
 
 import android.view.View
-import androidx.core.text.buildSpannedString
-import androidx.core.text.color
 import androidx.recyclerview.widget.RecyclerView
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemTeamsHeaderBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
-import ru.radiationx.data.entity.domain.team.TeamRole
 
 class TeamsHeaderDelegate(
     private val actionClickListener: () -> Unit
@@ -20,7 +17,7 @@ class TeamsHeaderDelegate(
 ) {
 
     override fun bindData(item: TeamsHeaderListItem, holder: ViewHolder) =
-        holder.bind(item.data)
+        holder.bind()
 
     class ViewHolder(
         itemView: View,
@@ -29,22 +26,7 @@ class TeamsHeaderDelegate(
 
         private val binding by viewBinding<ItemTeamsHeaderBinding>()
 
-        fun bind(data: List<TeamRole>) {
-            binding.tvHeaderRoles.text = buildSpannedString {
-                data.mapIndexed { index, role ->
-                    val color = role.color
-                    if (color != null) {
-                        color(color) {
-                            append(role.title)
-                        }
-                    } else {
-                        append(role.title)
-                    }
-                    if (index != data.lastIndex) {
-                        append(", ")
-                    }
-                }
-            }
+        fun bind() {
             binding.btAction.setOnClickListener { actionClickListener.invoke() }
         }
     }

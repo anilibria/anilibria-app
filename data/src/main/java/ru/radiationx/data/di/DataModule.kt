@@ -14,7 +14,9 @@ import anilibria.api.genres.GenresApi
 import anilibria.api.profile.ProfileApi
 import anilibria.api.releases.ReleasesApi
 import anilibria.api.schedule.ScheduleApi
+import anilibria.api.teams.TeamsApi
 import anilibria.api.timecodes.TimeCodesApi
+import anilibria.api.torrent.TorrentsApi
 import anilibria.api.videos.VideosApi
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.squareup.moshi.Moshi
@@ -78,6 +80,7 @@ import ru.radiationx.data.apinext.datasources.FranchisesApiDataSource
 import ru.radiationx.data.apinext.datasources.ProfileApiDataSource
 import ru.radiationx.data.apinext.datasources.ReleasesApiDataSource
 import ru.radiationx.data.apinext.datasources.ScheduleApiDataSource
+import ru.radiationx.data.apinext.datasources.TeamsApiDataSource
 import ru.radiationx.data.apinext.datasources.TimeCodesApiDataSource
 import ru.radiationx.data.apinext.datasources.TorrentsApiDataSource
 import ru.radiationx.data.apinext.datasources.VideosApiDataSource
@@ -92,7 +95,6 @@ import ru.radiationx.data.datasource.holders.MenuHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.datasource.holders.ReleaseUpdateHolder
 import ru.radiationx.data.datasource.holders.SocialAuthHolder
-import ru.radiationx.data.datasource.holders.TeamsHolder
 import ru.radiationx.data.datasource.holders.UserHolder
 import ru.radiationx.data.datasource.holders.YearsHolder
 import ru.radiationx.data.datasource.remote.IClient
@@ -103,7 +105,6 @@ import ru.radiationx.data.datasource.remote.api.ConfigurationApi
 import ru.radiationx.data.datasource.remote.api.DonationApi
 import ru.radiationx.data.datasource.remote.api.MenuApi
 import ru.radiationx.data.datasource.remote.api.PageApi
-import ru.radiationx.data.datasource.remote.api.TeamsApi
 import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.datasource.remote.parsers.PagesParser
 import ru.radiationx.data.datasource.storage.ApiConfigStorage
@@ -118,7 +119,6 @@ import ru.radiationx.data.datasource.storage.MenuStorage
 import ru.radiationx.data.datasource.storage.PreferencesStorage
 import ru.radiationx.data.datasource.storage.ReleaseUpdateStorage
 import ru.radiationx.data.datasource.storage.SocialAuthStorage
-import ru.radiationx.data.datasource.storage.TeamsStorage
 import ru.radiationx.data.datasource.storage.UserStorage
 import ru.radiationx.data.datasource.storage.YearsStorage
 import ru.radiationx.data.di.providers.ApiClientWrapper
@@ -213,7 +213,6 @@ class DataModule(context: Context) : QuillModule() {
         singleImpl<MenuHolder, MenuStorage>()
         singleImpl<DownloadsHolder, DownloadsStorage>()
         singleImpl<DonationHolder, DonationStorage>()
-        singleImpl<TeamsHolder, TeamsStorage>()
         singleImpl<RemoteFileHolder, RemoteFileStorage>()
 
         singleImpl<CookieHolder, CookiesStorage>()
@@ -248,7 +247,6 @@ class DataModule(context: Context) : QuillModule() {
         single<PageApi>()
         single<MenuApi>()
         single<DonationApi>()
-        single<TeamsApi>()
 
         single<AuthRepository>()
         single<ReleaseRepository>()
@@ -331,9 +329,10 @@ class DataModule(context: Context) : QuillModule() {
         singleProvider<ProfileApi, ProfileApiProvider>()
         singleProvider<ReleasesApi, ReleasesApiProvider>()
         singleProvider<ScheduleApi, ScheduleApiProvider>()
-        //singleProvider<TeamsApi, TeamsApiProvider>()
+        singleProvider<TeamsApi, TeamsApiProvider>()
         singleProvider<TimeCodesApi, TimeCodesApiProvider>()
         singleProvider<VideosApi, VideosApiProvider>()
+        singleProvider<TorrentsApi, TorrentsApiProvider>()
 
         single<AuthApiDataSource>()
         single<ProfileApiDataSource>()
@@ -343,8 +342,9 @@ class DataModule(context: Context) : QuillModule() {
         single<FranchisesApiDataSource>()
         single<ReleasesApiDataSource>()
         single<ScheduleApiDataSource>()
-        single<VideosApiDataSource>()
+        single<TeamsApiDataSource>()
         single<TimeCodesApiDataSource>()
+        single<VideosApiDataSource>()
         single<TorrentsApiDataSource>()
 
         single<FranchisesRepository>()
@@ -400,48 +400,64 @@ class DataModule(context: Context) : QuillModule() {
         override fun get(): AuthApi = retrofit.create()
     }
 
-    class CatalogApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<CatalogApi> {
+    class CatalogApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<CatalogApi> {
         override fun get(): CatalogApi = retrofit.create()
     }
 
-    class CollectionsApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<CollectionsApi> {
+    class CollectionsApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<CollectionsApi> {
         override fun get(): CollectionsApi = retrofit.create()
     }
 
-    class FavoritesApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<FavoritesApi> {
+    class FavoritesApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<FavoritesApi> {
         override fun get(): FavoritesApi = retrofit.create()
     }
 
-    class FranchisesApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<FranchisesApi> {
+    class FranchisesApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<FranchisesApi> {
         override fun get(): FranchisesApi = retrofit.create()
     }
 
-    class GenresApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<GenresApi> {
+    class GenresApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<GenresApi> {
         override fun get(): GenresApi = retrofit.create()
     }
 
-    class ProfileApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<ProfileApi> {
+    class ProfileApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<ProfileApi> {
         override fun get(): ProfileApi = retrofit.create()
     }
 
-    class ReleasesApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<ReleasesApi> {
+    class ReleasesApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<ReleasesApi> {
         override fun get(): ReleasesApi = retrofit.create()
     }
 
-    class ScheduleApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<ScheduleApi> {
+    class ScheduleApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<ScheduleApi> {
         override fun get(): ScheduleApi = retrofit.create()
     }
 
-    class TeamsApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<TeamsApi> {
+    class TeamsApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<TeamsApi> {
         override fun get(): TeamsApi = retrofit.create()
     }
 
-    class TimeCodesApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<TimeCodesApi> {
+    class TimeCodesApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<TimeCodesApi> {
         override fun get(): TimeCodesApi = retrofit.create()
     }
 
-    class VideosApiProvider @Inject constructor(private val retrofit: Retrofit) : Provider<VideosApi> {
+    class VideosApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<VideosApi> {
         override fun get(): VideosApi = retrofit.create()
+    }
+
+    class TorrentsApiProvider @Inject constructor(private val retrofit: Retrofit) :
+        Provider<TorrentsApi> {
+        override fun get(): TorrentsApi = retrofit.create()
     }
 
     class PreferencesProvider @Inject constructor(

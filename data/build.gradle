@@ -29,6 +29,7 @@ dependencies {
     api(libs.okhttp)
     api(libs.okhttp.logging.interceptor)
     api(libs.okhttp.urlconnection)
+    api(libs.okhttp.brotli)
 
     implementation libs.chucker
 

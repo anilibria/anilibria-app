@@ -3,6 +3,7 @@ package ru.radiationx.data.di.providers
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import okhttp3.OkHttpClient
+import okhttp3.brotli.BrotliInterceptor
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.SslCompatAnalytics
 import ru.radiationx.data.sslcompat.SslCompat
@@ -21,6 +22,7 @@ class PlayerOkHttpProvider @Inject constructor(
     override fun get(): OkHttpClient = OkHttpClient.Builder()
         .appendSslCompatAnalytics(sslCompat, sslCompatAnalytics)
         .appendSslCompat(sslCompat)
+        .addInterceptor(BrotliInterceptor)
         .apply {
             if (sharedBuildConfig.debug) {
                 addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())

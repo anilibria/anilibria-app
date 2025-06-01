@@ -25,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
+import okhttp3.brotli.BrotliInterceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -365,14 +366,15 @@ class DataModule(context: Context) : QuillModule() {
             .appendSslCompatAnalytics(sslCompat, sslCompatAnalytics)
             .appendSslCompat(sslCompat)
             .appendTimeouts()
+            .addInterceptor(BrotliInterceptor)
             .addInterceptor(AcceptInterceptor())
             .addInterceptor(unauthorizedInterceptor)
             .addInterceptor(authTokenInterceptor)
             .apply {
                 if (sharedBuildConfig.debug) {
-                    addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                    addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
                     addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())
-                    eventListenerFactory(ApiLoggingEventListener.Factory())
+                    //eventListenerFactory(ApiLoggingEventListener.Factory())
                 }
             }
             .build()

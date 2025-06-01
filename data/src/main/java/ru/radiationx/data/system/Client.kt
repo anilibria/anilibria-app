@@ -11,12 +11,12 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
+import okhttp3.internal.closeQuietly
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.data.datasource.remote.NetworkResponse
 import java.io.IOException
 import javax.inject.Inject
-import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 
@@ -140,7 +140,9 @@ open class Client @Inject constructor(
             }
             enqueue(object : Callback {
                 override fun onResponse(call: Call, response: Response) {
-                    continuation.resume(response)
+                    continuation.resume(response) { _, _, _ ->
+                        response.closeQuietly()
+                    }
                 }
 
                 override fun onFailure(call: Call, e: IOException) {

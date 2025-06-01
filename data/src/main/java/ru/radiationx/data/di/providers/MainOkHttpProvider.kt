@@ -3,6 +3,7 @@ package ru.radiationx.data.di.providers
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import okhttp3.OkHttpClient
+import okhttp3.brotli.BrotliInterceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.SslCompatAnalytics
@@ -25,6 +26,7 @@ class MainOkHttpProvider @Inject constructor(
         .appendSslCompatAnalytics(sslCompat, sslCompatAnalytics)
         .appendSslCompat(sslCompat)
         .appendTimeouts()
+        .addInterceptor(BrotliInterceptor)
         .addNetworkInterceptor {
             val hostAddress =
                 it.connection()?.route()?.socketAddress?.address?.hostAddress.orEmpty()
@@ -34,7 +36,7 @@ class MainOkHttpProvider @Inject constructor(
         }
         .apply {
             if (sharedBuildConfig.debug) {
-                addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
                 addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())
             }
         }

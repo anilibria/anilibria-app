@@ -94,7 +94,7 @@ class SuggestionsContentProvider : ContentProvider() {
         title = listOf(names.main, names.english).joinToString(),
         duration = -1,
         productionYear = -1,
-        cardImage = poster?.absolute(apiConfig.baseImagesUrl)
+        cardImage = poster?.withBase(apiConfig.baseImagesUrl)
     )
 
     private fun buildUriMatcher(): UriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {

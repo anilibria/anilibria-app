@@ -16,6 +16,7 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.app.config.ApiConfig
 import ru.radiationx.data.common.Url
+import ru.radiationx.data.common.withBase
 import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared.ktx.android.centerCrop
 import ru.radiationx.shared.ktx.android.createAvatar
@@ -73,7 +74,7 @@ class ShortcutHelper @Inject constructor(
         url: Url,
         bitmap: Bitmap,
     ) {
-        val absoluteUrl = url.absolute(apiConfig.siteUrl)
+        val absoluteUrl = url.withBase(apiConfig.siteUrl)
         val intent = Screens.IntentHandler(absoluteUrl).createIntent(context)
         val shortcut = ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(shortLabel)

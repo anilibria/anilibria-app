@@ -153,7 +153,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
         // todo API2 use actual url
         val releaseUrl = "/release/$argReleaseCode.html"
             .toPathUrl()
-            .absolute(apiConfig.widgetsSiteUrl)
+            .withBase(apiConfig.widgetsSiteUrl)
 
         val template = get<Templates>().videoPageTemplate
         template.setVariableOpt("iframe_url", argUrl)

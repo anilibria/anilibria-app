@@ -12,6 +12,7 @@ import androidx.core.net.toUri
 import ru.radiationx.data.app.config.ApiConfig
 import ru.radiationx.data.app.downloader.models.LocalFile
 import ru.radiationx.data.common.Url
+import ru.radiationx.data.common.withBase
 import java.io.File
 import javax.inject.Inject
 
@@ -73,7 +74,7 @@ class SystemUtils @Inject constructor(
     }
 
     fun copy(url: Url) {
-        val absoluteUrl = url.absolute(apiConfig.siteUrl)
+        val absoluteUrl = url.withBase(apiConfig.siteUrl)
         copy(absoluteUrl)
     }
 
@@ -100,7 +101,7 @@ class SystemUtils @Inject constructor(
     }
 
     fun share(url: Url) {
-        val absoluteUrl = url.absolute(apiConfig.siteUrl)
+        val absoluteUrl = url.withBase(apiConfig.siteUrl)
         share(absoluteUrl)
     }
 
@@ -109,7 +110,7 @@ class SystemUtils @Inject constructor(
     }
 
     fun open(url: Url) {
-        val absoluteUrl = url.absolute(apiConfig.siteUrl)
+        val absoluteUrl = url.withBase(apiConfig.siteUrl)
         val intent =
             Intent(Intent.ACTION_VIEW, absoluteUrl.toUri()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(

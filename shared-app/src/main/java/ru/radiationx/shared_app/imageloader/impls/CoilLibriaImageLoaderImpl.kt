@@ -15,6 +15,7 @@ import coil3.request.SuccessResult
 import okhttp3.OkHttpClient
 import ru.radiationx.data.app.config.ApiConfig
 import ru.radiationx.data.common.Url
+import ru.radiationx.data.common.withBase
 import ru.radiationx.data.di.ApiClient
 import ru.radiationx.shared_app.R
 import ru.radiationx.shared_app.imageloader.ImageLoaderScopeConfig
@@ -38,7 +39,7 @@ class CoilLibriaImageLoaderImpl @Inject constructor(
 
     override fun showImage(imageView: ImageView, url: Url?, config: ImageLoaderScopeConfig) {
         val cacheKey = url.toCacheKey()
-        val absoluteUrl = url?.absolute(apiConfig.baseImagesUrl)
+        val absoluteUrl = url?.withBase(apiConfig.baseImagesUrl)
         imageView.load(absoluteUrl, imageLoader) {
             diskCacheKey(cacheKey)
             memoryCacheKey(cacheKey)
@@ -69,7 +70,7 @@ class CoilLibriaImageLoaderImpl @Inject constructor(
 
     override suspend fun loadImageBitmap(context: Context, url: Url?): Bitmap? {
         val cacheKey = url.toCacheKey()
-        val absoluteUrl = url?.absolute(apiConfig.baseImagesUrl)
+        val absoluteUrl = url?.withBase(apiConfig.baseImagesUrl)
         val request = ImageRequest.Builder(context)
             .diskCacheKey(cacheKey)
             .memoryCacheKey(cacheKey)

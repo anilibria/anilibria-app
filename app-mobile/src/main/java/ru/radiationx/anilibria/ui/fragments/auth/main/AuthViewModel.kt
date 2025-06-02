@@ -130,7 +130,7 @@ class AuthViewModel @Inject constructor(
     fun registrationToSiteClick() {
         authMainAnalytics.regToSiteClick()
         // todo API2 change url
-        systemUtils.open("/pages/login.php".toPathUrl().absolute(apiConfig.siteUrl))
+        systemUtils.open("/pages/login.php".toPathUrl().withBase(apiConfig.siteUrl))
     }
 
     fun submitUseTime(time: Long) {

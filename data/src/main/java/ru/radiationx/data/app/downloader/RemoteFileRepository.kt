@@ -16,6 +16,7 @@ import ru.radiationx.data.app.downloader.models.RemoteFile
 import ru.radiationx.data.app.downloader.models.RemoteFileId
 import ru.radiationx.data.app.downloader.models.RemoteFileSaveData
 import ru.radiationx.data.common.Url
+import ru.radiationx.data.common.withBase
 import timber.log.Timber
 import java.io.File
 import java.io.InputStream
@@ -34,7 +35,7 @@ class RemoteFileRepository @Inject constructor(
         bucket: RemoteFile.Bucket,
         progress: MutableStateFlow<Int>,
     ): DownloadedFile = withContext(Dispatchers.IO) {
-        val absoluteUrl = url.absolute(apiConfig.apiUrl)
+        val absoluteUrl = url.withBase(apiConfig.apiUrl)
         progress.value = 0
         val existedFile = getDownloadedFile(absoluteUrl)
         if (existedFile != null) {

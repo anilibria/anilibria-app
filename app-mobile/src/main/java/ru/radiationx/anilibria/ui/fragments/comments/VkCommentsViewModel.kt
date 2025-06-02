@@ -170,7 +170,7 @@ class VkCommentsViewModel @Inject constructor(
                 VkCommentsState(
                     url = "release/${release.code.code}.html"
                         .toPathUrl()
-                        .absolute(comments.baseUrl),
+                        .withBase(comments.baseUrl),
                     script = comments.script
                 )
             }.first()

@@ -22,7 +22,7 @@ class DynamicApiUrlInterceptor @Inject constructor(
             return chain.proceed(request)
         }
         val endpoint = url.removePrefix(BASE_URL.value).toPathUrl()
-        val newUrl = endpoint.absolute(apiConfig.apiUrl)
+        val newUrl = endpoint.withBase(apiConfig.apiUrl)
         val newRequest = request.newBuilder().url(newUrl).build()
         return chain.proceed(newRequest)
     }

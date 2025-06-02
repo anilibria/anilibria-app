@@ -15,7 +15,7 @@ import ru.radiationx.data.app.episodeaccess.EpisodesCheckerHolder
 import ru.radiationx.data.app.history.HistoryHolder
 import ru.radiationx.data.app.preferences.PreferencesHolder
 import ru.radiationx.data.app.releaseupdate.ReleaseUpdateHolder
-import ru.radiationx.data.migration.MigrationDataSource
+import ru.radiationx.data.app.versions.AppVersionsDataSource
 import javax.inject.Inject
 
 class AnalyticsMainProfileDataSource @Inject constructor(
@@ -25,7 +25,7 @@ class AnalyticsMainProfileDataSource @Inject constructor(
     private val historyHolder: HistoryHolder,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
     private val remoteFileHolder: RemoteFileHolder,
-    private val migrationDataSource: MigrationDataSource,
+    private val appVersionsDataSource: AppVersionsDataSource,
     private val releaseUpdateHolder: ReleaseUpdateHolder,
     private val authRepository: AuthRepository,
     private val sharedBuildConfig: SharedBuildConfig
@@ -70,7 +70,7 @@ class AnalyticsMainProfileDataSource @Inject constructor(
                 remoteFileHolder.getSize().mapToAttr(it)
             },
             asyncAttr(ProfileConstants.app_versions) {
-                migrationDataSource.getHistory().joinToString().mapToAttr(it)
+                appVersionsDataSource.getHistory().joinToString().mapToAttr(it)
             },
             asyncAttr(ProfileConstants.has_ads) {
                 sharedBuildConfig.hasAds.mapToAttr(it)

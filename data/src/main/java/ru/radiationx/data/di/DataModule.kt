@@ -142,8 +142,8 @@ import ru.radiationx.data.di.providers.TeamsApiProvider
 import ru.radiationx.data.di.providers.TimeCodesApiProvider
 import ru.radiationx.data.di.providers.TorrentsApiProvider
 import ru.radiationx.data.di.providers.VideosApiProvider
-import ru.radiationx.data.migration.MigrationDataSource
-import ru.radiationx.data.migration.MigrationDataSourceImpl
+import ru.radiationx.data.app.versions.AppVersionsDataSource
+import ru.radiationx.data.app.versions.AppVersionsDataSourceImpl
 import ru.radiationx.data.network.DataErrorMapper
 import ru.radiationx.data.network.UserAgentGenerator
 import ru.radiationx.data.network.interceptors.AppInfoInterceptor
@@ -185,7 +185,7 @@ class DataModule(context: Context) : QuillModule() {
         singleProvider<SharedPreferences, PreferencesProvider>()
         singleProvider<SharedPreferences, DataPreferencesProvider>(DataPreferences::class)
 
-        singleImpl<MigrationDataSource, MigrationDataSourceImpl>()
+        singleImpl<AppVersionsDataSource, AppVersionsDataSourceImpl>()
 
         single<PreferencesStorage>()
 

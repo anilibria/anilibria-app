@@ -5,7 +5,6 @@ import android.content.Context
 import ru.mintrocket.lib.mintpermissions.MintPermissions
 import ru.mintrocket.lib.mintpermissions.flows.MintPermissionsFlow
 import ru.radiationx.anilibria.AppBuildConfig
-import ru.radiationx.anilibria.AppMigrationExecutor
 import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.MobileCheckerSources
 import ru.radiationx.anilibria.ads.NativeAdsRepository
@@ -27,7 +26,6 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
 import ru.radiationx.data.analytics.profile.AnalyticsThemeProvider
 import ru.radiationx.data.app.updater.CheckerReserveSources
-import ru.radiationx.data.migration.MigrationExecutor
 import ru.radiationx.quill.QuillModule
 import ru.radiationx.shared_app.analytics.AnalyticsCodecsProfileDataSource
 import ru.radiationx.shared_app.analytics.errors.AppMetricaErrorReporter
@@ -55,7 +53,6 @@ class AppModule(application: Application) : QuillModule() {
 
         singleImpl<SharedBuildConfig, AppBuildConfig>()
         singleImpl<CheckerReserveSources, MobileCheckerSources>()
-        singleImpl<MigrationExecutor, AppMigrationExecutor>()
 
         single<SystemMessenger>()
 

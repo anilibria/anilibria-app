@@ -15,7 +15,7 @@ import ru.mintrocket.lib.mintpermissions.flows.ext.initMintPermissionsFlow
 import ru.radiationx.anilibria.di.AppModule
 import ru.radiationx.data.app.preferences.PreferencesHolder
 import ru.radiationx.data.di.DataModule
-import ru.radiationx.data.migration.MigrationDataSource
+import ru.radiationx.data.app.versions.AppVersionsDataSource
 import ru.radiationx.quill.Quill
 import ru.radiationx.quill.get
 import timber.log.Timber
@@ -104,8 +104,8 @@ class App : Application() {
     }
 
     private fun appVersionCheck() {
-        val migrationDataSource = get<MigrationDataSource>()
-        migrationDataSource.update()
+        val appVersionsDataSource = get<AppVersionsDataSource>()
+        appVersionsDataSource.update()
     }
 
     private fun isMainProcess() = packageName == getCurrentProcessName()

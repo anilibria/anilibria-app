@@ -148,6 +148,7 @@ import ru.radiationx.data.network.DataErrorMapper
 import ru.radiationx.data.network.UserAgentGenerator
 import ru.radiationx.data.network.interceptors.AppInfoInterceptor
 import ru.radiationx.data.network.interceptors.AuthTokenInterceptor
+import ru.radiationx.data.network.interceptors.DynamicApiUrlInterceptor
 import ru.radiationx.data.network.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.network.sslcompat.SslCompat
 import ru.radiationx.data.player.PlayerCacheDataSourceProvider
@@ -295,6 +296,7 @@ class DataModule(context: Context) : QuillModule() {
 
         single<AuthTokenStorage>()
         single<AuthTokenInterceptor>()
+        single<DynamicApiUrlInterceptor>()
 
 
         singleProvider<AuthApi, AuthApiProvider>()

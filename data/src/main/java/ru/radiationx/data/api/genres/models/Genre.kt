@@ -10,5 +10,5 @@ data class Genre(
     val id: GenreId,
     val name: String,
     val totalReleases: Int,
-    val image: Url.Relative?
+    val image: Url.Path?
 ) : Parcelable

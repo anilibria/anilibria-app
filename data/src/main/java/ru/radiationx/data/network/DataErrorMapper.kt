@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonEncodingException
 import retrofit2.HttpException
 import java.io.IOException
+import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -20,7 +21,8 @@ class DataErrorMapper @Inject constructor(
     fun handle(throwable: Throwable): String? {
         return when (throwable) {
             is HttpException -> userMessage(throwable)
-            is UnknownHostException -> "Нет соединения с интернетом"
+            is UnknownHostException,
+            is ConnectException -> "Нет соединения с сервером"
 
             is JsonDataException,
             is JsonEncodingException -> "${throwable.extractExceptionName()}: ${throwable.localizedMessage}"
@@ -38,7 +40,7 @@ class DataErrorMapper @Inject constructor(
     }
 
     private inline fun <reified T : Throwable> T.extractExceptionName(): String? {
-        return this::class.simpleName?.removeSuffix("Exception")
+        return this::class.simpleName
     }
 
     private fun userMessage(exception: HttpException): String? {

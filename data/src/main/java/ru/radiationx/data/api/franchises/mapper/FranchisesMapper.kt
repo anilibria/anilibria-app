@@ -5,7 +5,7 @@ import ru.radiationx.data.api.franchises.models.Franchise
 import ru.radiationx.data.api.franchises.models.FranchiseFull
 import ru.radiationx.data.api.releases.mapper.toDomain
 import ru.radiationx.data.common.FranchiseId
-import ru.radiationx.data.common.toRelativeUrl
+import ru.radiationx.data.common.toPathUrl
 
 fun FranchiseResponse.toDomain(): Franchise {
     return Franchise(
@@ -19,7 +19,7 @@ fun FranchiseResponse.toDomain(): Franchise {
         totalEpisodes = totalEpisodes,
         totalDuration = totalDuration,
         totalDurationInSeconds = totalDurationInSeconds,
-        image = image.preview?.toRelativeUrl()
+        image = image.preview?.toPathUrl()
     )
 }
 

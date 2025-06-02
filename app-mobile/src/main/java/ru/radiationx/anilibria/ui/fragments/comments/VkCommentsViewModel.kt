@@ -24,6 +24,7 @@ import ru.radiationx.data.api.auth.AuthHolder
 import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.releases.ReleaseInteractor
 import ru.radiationx.data.app.vkcomments.VkCommentsRepository
+import ru.radiationx.data.common.toPathUrl
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
@@ -167,7 +168,9 @@ class VkCommentsViewModel @Inject constructor(
         return coRunCatching {
             combine(releaseSource, commentsSource) { release, comments ->
                 VkCommentsState(
-                    url = "${comments.baseUrl}release/${release.code.code}.html",
+                    url = "release/${release.code.code}.html"
+                        .toPathUrl()
+                        .absolute(comments.baseUrl),
                     script = comments.script
                 )
             }.first()

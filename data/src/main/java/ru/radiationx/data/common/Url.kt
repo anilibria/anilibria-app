@@ -6,8 +6,8 @@ import kotlinx.parcelize.Parcelize
 sealed interface Url : Parcelable {
 
     companion object {
-        fun relativeOf(raw: String): Relative {
-            return Relative(raw)
+        fun pathOf(raw: String): Path {
+            return Path(raw)
         }
 
         fun absoluteOf(raw: String): Absolute {
@@ -15,31 +15,43 @@ sealed interface Url : Parcelable {
         }
     }
 
-    val raw: String
+    val value: String
 
-    fun absolute(baseUrl: String): String
+    fun absolute(baseUrl: BaseUrl): String
 
     @Parcelize
-    data class Relative(override val raw: String) : Url {
+    data class Path(private val path: String) : Url {
 
-        override fun absolute(baseUrl: String): String {
-            val trimmedBase = baseUrl.trimEnd('/')
-            val trimmedRaw = raw.trimStart('/')
-            return "${trimmedBase}/${trimmedRaw}"
+        override val value: String
+            get() = path.trimStart('/')
+
+        override fun absolute(baseUrl: BaseUrl): String {
+            return "${baseUrl.value}${value}"
+        }
+
+        override fun toString(): String {
+            return value
         }
     }
 
     @Parcelize
-    data class Absolute(override val raw: String) : Url {
+    data class Absolute(private val url: String) : Url {
 
-        override fun absolute(baseUrl: String): String {
-            return raw
+        override val value: String
+            get() = url
+
+        override fun absolute(baseUrl: BaseUrl): String {
+            return value
+        }
+
+        override fun toString(): String {
+            return value
         }
     }
 }
 
-fun String.toRelativeUrl(): Url.Relative {
-    return Url.relativeOf(this)
+fun String.toPathUrl(): Url.Path {
+    return Url.pathOf(this)
 }
 
 fun String.toAbsoluteUrl(): Url.Absolute {

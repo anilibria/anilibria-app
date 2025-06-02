@@ -23,6 +23,6 @@ data class TorrentItem(
     val magnet: String
 ) : Parcelable {
 
-    val url: Url.Relative
-        get() = Url.relativeOf("/api/v1/anime/torrents/${id.id}/file")
+    val url: Url.Path
+        get() = Url.pathOf("/api/v1/anime/torrents/${id.id}/file")
 }

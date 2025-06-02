@@ -58,7 +58,7 @@ class DonationDetailViewModel @Inject constructor(
     }
 
     fun onLinkClick(url: Url.Absolute) {
-        detailAnalytics.linkClick(url.raw)
+        detailAnalytics.linkClick(url.value)
         systemUtils.open(url)
     }
 

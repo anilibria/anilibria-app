@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.app.DirectApi
 import ru.radiationx.data.app.vkcomments.models.VkComments
+import ru.radiationx.data.common.toBaseUrl
 import java.net.UnknownHostException
 import javax.inject.Inject
 
@@ -18,7 +19,7 @@ class VkCommentsRepository @Inject constructor(
     suspend fun getComments(): VkComments {
         return withContext(Dispatchers.IO) {
             VkComments(
-                baseUrl = "https://www.anilibria.tv/",
+                baseUrl = "https://www.anilibria.tv/".toBaseUrl(),
                 script = "<div id=\"vk_comments\"></div><script type=\"text/javascript\" src=\"https://vk.com/js/api/openapi.js?160\" async onload=\"VK.init({apiId: 5315207, onlyWidgets: true}); VK.Widgets.Comments('vk_comments', {limit: 8, attach: false});\" ></script>"
             )
         }

@@ -22,6 +22,6 @@ data class ReleaseMember(
     @Parcelize
     data class User(
         val id: UserId,
-        val avatar: Url.Relative?
+        val avatar: Url.Path?
     ) : Parcelable
 }

@@ -20,6 +20,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.create
 import ru.radiationx.data.di.ApiClient
 import ru.radiationx.data.di.ApiRetrofit
+import ru.radiationx.data.network.interceptors.DynamicApiUrlInterceptor
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -29,7 +30,7 @@ class ApiRetrofitProvider @Inject constructor(
 ) : Provider<Retrofit> {
     override fun get(): Retrofit {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://anilibria.top/api/v1/")
+            .baseUrl(DynamicApiUrlInterceptor.BASE_URL.value)
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create())
             .addConverterFactory(ScalarsConverterFactory.create())

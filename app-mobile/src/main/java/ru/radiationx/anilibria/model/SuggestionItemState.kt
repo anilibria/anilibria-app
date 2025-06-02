@@ -8,6 +8,6 @@ data class SuggestionItemState(
     val id: ReleaseId,
     val code: ReleaseCode,
     val title: String,
-    val poster: Url.Relative?,
+    val poster: Url.Path?,
     val matchRanges: List<IntRange>
 )

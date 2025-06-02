@@ -15,7 +15,7 @@ import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.data.app.config.ApiConfig
-import ru.radiationx.data.common.toRelativeUrl
+import ru.radiationx.data.common.toPathUrl
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
@@ -131,7 +131,7 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
                     button {
                         text("Личный кабинет")
                         // todo API2 change url
-                        onClick { systemUtils.open("/pages/cp.php".toRelativeUrl().absolute(apiConfig.siteUrl)) }
+                        onClick { systemUtils.open("/pages/cp.php".toPathUrl().absolute(apiConfig.siteUrl)) }
                     }
                 }
             }

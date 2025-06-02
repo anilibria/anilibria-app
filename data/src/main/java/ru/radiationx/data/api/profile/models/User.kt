@@ -9,5 +9,5 @@ import ru.radiationx.data.common.UserId
 data class User(
     val id: UserId,
     val nickname: String?,
-    val avatar: Url.Relative?
+    val avatar: Url.Path?
 ) : Parcelable

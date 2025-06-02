@@ -6,7 +6,7 @@ import ru.radiationx.data.common.Url
 data class LibriaCard(
     val title: String,
     val description: String,
-    val image: Url.Relative?,
+    val image: Url.Path?,
     val type: Type
 ) : CardItem {
 

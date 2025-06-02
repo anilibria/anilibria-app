@@ -7,6 +7,6 @@ data class ReleaseItemState(
     val id: ReleaseId,
     val title: String,
     val description: String,
-    val posterUrl: Url.Relative?,
+    val posterUrl: Url.Path?,
     val isNew: Boolean
 )

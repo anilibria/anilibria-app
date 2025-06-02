@@ -11,7 +11,7 @@ data class LibriaDetails(
     val extra: String,
     val description: String,
     val announce: String,
-    val image: Url.Relative?,
+    val image: Url.Path?,
     val favoriteCount: String,
     val hasFullHd: Boolean,
     val isFavorite: Boolean,

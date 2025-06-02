@@ -7,6 +7,8 @@ import ru.radiationx.data.app.config.mapper.toDomain
 import ru.radiationx.data.app.config.models.ApiAddress
 import ru.radiationx.data.app.config.models.ApiConfigData
 import ru.radiationx.data.app.config.models.ApiProxy
+import ru.radiationx.data.common.BaseUrl
+import ru.radiationx.data.common.toBaseUrl
 import javax.inject.Inject
 
 class ApiConfig @Inject constructor(
@@ -96,20 +98,20 @@ class ApiConfig @Inject constructor(
     val desc: String?
         get() = active.desc
 
-    val widgetsSiteUrl: String
-        get() = active.widgetsSite
+    val widgetsSiteUrl: BaseUrl
+        get() = active.widgetsSite.toBaseUrl()
 
-    val siteUrl: String
-        get() = active.site
+    val siteUrl: BaseUrl
+        get() = active.site.toBaseUrl()
 
-    val baseImagesUrl: String
-        get() = active.baseImages
+    val baseImagesUrl: BaseUrl
+        get() = active.baseImages.toBaseUrl()
 
-    val baseUrl: String
-        get() = active.base
+    val baseUrl: BaseUrl
+        get() = active.base.toBaseUrl()
 
-    val apiUrl: String
-        get() = active.api
+    val apiUrl: BaseUrl
+        get() = active.api.toBaseUrl()
 
     val ips: List<String>
         get() = active.ips

@@ -23,7 +23,7 @@ import ru.radiationx.data.api.auth.models.AuthState
 import ru.radiationx.data.api.auth.models.Credentials
 import ru.radiationx.data.api.auth.models.SocialType
 import ru.radiationx.data.app.config.ApiConfig
-import ru.radiationx.data.common.toRelativeUrl
+import ru.radiationx.data.common.toPathUrl
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
@@ -130,7 +130,7 @@ class AuthViewModel @Inject constructor(
     fun registrationToSiteClick() {
         authMainAnalytics.regToSiteClick()
         // todo API2 change url
-        systemUtils.open("/pages/login.php".toRelativeUrl().absolute(apiConfig.siteUrl))
+        systemUtils.open("/pages/login.php".toPathUrl().absolute(apiConfig.siteUrl))
     }
 
     fun submitUseTime(time: Long) {

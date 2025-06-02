@@ -173,7 +173,7 @@ class OtherViewModel @Inject constructor(
                     when {
                         absoluteLink != null -> systemUtils.open(absoluteLink)
                         pagePath != null -> {
-                            pageAnalytics.open(AnalyticsConstants.screen_other, pagePath.raw)
+                            pageAnalytics.open(AnalyticsConstants.screen_other, pagePath.value)
                             systemUtils.open(pagePath)
                         }
                     }

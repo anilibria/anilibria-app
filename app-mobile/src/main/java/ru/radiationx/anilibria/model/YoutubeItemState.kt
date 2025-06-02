@@ -6,7 +6,7 @@ import ru.radiationx.data.common.YoutubeId
 data class YoutubeItemState(
     val id: YoutubeId,
     val title: String,
-    val image: Url.Relative?,
+    val image: Url.Path?,
     val views: String,
     val comments: String
 )

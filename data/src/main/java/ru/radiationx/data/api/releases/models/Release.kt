@@ -17,7 +17,7 @@ data class Release(
     val id: ReleaseId,
     val code: ReleaseCode,
     val names: ReleaseName,
-    val poster: Url.Relative?,
+    val poster: Url.Path?,
     val createdAt: Date,
     val freshAt: Date,
     val updatedAt: Date,
@@ -56,6 +56,6 @@ data class Release(
             else -> null
         }
 
-    val link: Url.Relative
-        get() = Url.relativeOf("/anime/releases/release/${code.code}")
+    val link: Url.Path
+        get() = Url.pathOf("/anime/releases/release/${code.code}")
 }

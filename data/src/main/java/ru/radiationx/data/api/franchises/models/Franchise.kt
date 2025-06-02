@@ -17,5 +17,5 @@ data class Franchise(
     val totalEpisodes: Int,
     val totalDuration: String,
     val totalDurationInSeconds: Int,
-    val image: Url.Relative?,
+    val image: Url.Path?,
 ) : Parcelable

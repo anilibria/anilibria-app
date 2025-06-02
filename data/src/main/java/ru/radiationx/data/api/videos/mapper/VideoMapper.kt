@@ -5,13 +5,13 @@ import ru.radiationx.data.api.shared.apiDateToDate
 import ru.radiationx.data.api.videos.models.YoutubeItem
 import ru.radiationx.data.common.YoutubeId
 import ru.radiationx.data.common.toAbsoluteUrl
-import ru.radiationx.data.common.toRelativeUrl
+import ru.radiationx.data.common.toPathUrl
 
 fun VideoResponse.toDomain(): YoutubeItem {
     return YoutubeItem(
         id = YoutubeId(id = id),
         title = title,
-        image = image.preview?.toRelativeUrl(),
+        image = image.preview?.toPathUrl(),
         vid = videoId,
         link = url.toAbsoluteUrl(),
         views = views,

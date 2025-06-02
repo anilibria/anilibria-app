@@ -12,6 +12,7 @@ import ru.radiationx.data.network.appendTimeouts
 import ru.radiationx.data.network.interceptors.AcceptJsonInterceptor
 import ru.radiationx.data.network.interceptors.AppInfoInterceptor
 import ru.radiationx.data.network.interceptors.AuthTokenInterceptor
+import ru.radiationx.data.network.interceptors.DynamicApiUrlInterceptor
 import ru.radiationx.data.network.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.network.sslcompat.SslCompat
 import ru.radiationx.data.network.sslcompat.appendSslCompat
@@ -22,6 +23,7 @@ class ApiOkhttpProvider @Inject constructor(
     private val unauthorizedInterceptor: UnauthorizedInterceptor,
     private val authTokenInterceptor: AuthTokenInterceptor,
     private val appInfoInterceptor: AppInfoInterceptor,
+    private val dynamicApiUrlInterceptor: DynamicApiUrlInterceptor,
     private val context: Context,
     private val sharedBuildConfig: SharedBuildConfig,
     private val sslCompat: SslCompat,
@@ -32,6 +34,7 @@ class ApiOkhttpProvider @Inject constructor(
         .appendSslCompatAnalytics(sslCompat, sslCompatAnalytics)
         .appendSslCompat(sslCompat)
         .appendTimeouts()
+        .addInterceptor(dynamicApiUrlInterceptor)
         .addInterceptor(BrotliInterceptor)
         .addInterceptor(AcceptJsonInterceptor())
         .addInterceptor(appInfoInterceptor)

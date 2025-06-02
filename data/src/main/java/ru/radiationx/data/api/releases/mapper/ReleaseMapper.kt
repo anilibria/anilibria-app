@@ -30,7 +30,7 @@ import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.common.ReleaseIdentifier
 import ru.radiationx.data.common.UserId
 import ru.radiationx.data.common.toAbsoluteUrl
-import ru.radiationx.data.common.toRelativeUrl
+import ru.radiationx.data.common.toPathUrl
 import java.math.BigDecimal
 import java.util.Date
 
@@ -67,7 +67,7 @@ fun ReleaseMemberResponse.Role.toDomain(): ReleaseMember.Role {
 }
 
 fun ReleaseMemberResponse.User.toDomain(): ReleaseMember.User {
-    return ReleaseMember.User(id = UserId(id), avatar = avatar?.preview?.toRelativeUrl())
+    return ReleaseMember.User(id = UserId(id), avatar = avatar?.preview?.toPathUrl())
 }
 
 fun ReleaseSponsorResponse.toDomain(): ReleaseSponsor {
@@ -175,7 +175,7 @@ fun ReleaseResponse.toDomain(): Release {
         id = releaseId,
         code = ReleaseCode(code = alias),
         names = name.toDomain(),
-        poster = poster.preview?.toRelativeUrl(),
+        poster = poster.preview?.toPathUrl(),
         createdAt = createdAt?.apiDateToDate() ?: Date(0),
         freshAt = freshAt?.apiDateToDate() ?: Date(0),
         updatedAt = updatedAt?.apiDateToDate() ?: Date(0),

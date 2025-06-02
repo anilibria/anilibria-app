@@ -6,7 +6,7 @@ import ru.radiationx.data.api.profile.models.Profile
 import ru.radiationx.data.api.profile.models.User
 import ru.radiationx.data.api.shared.apiDateToDate
 import ru.radiationx.data.common.UserId
-import ru.radiationx.data.common.toRelativeUrl
+import ru.radiationx.data.common.toPathUrl
 
 fun ProfileResponse.toDomain(): Profile {
     return Profile(
@@ -21,14 +21,14 @@ fun ProfileResponse.toDomain(): Profile {
 }
 
 fun User.toDb(): UserDb {
-    return UserDb(id = id.id, nickname = nickname, avatar = avatar?.raw)
+    return UserDb(id = id.id, nickname = nickname, avatar = avatar?.value)
 }
 
 fun UserDb.toDomain(): User {
     return User(
         id = UserId(id),
         nickname = nickname,
-        avatar = avatar?.toRelativeUrl()
+        avatar = avatar?.toPathUrl()
     )
 }
 
@@ -44,6 +44,6 @@ private fun ProfileResponse.toDomainUser(): User {
     return User(
         id = UserId(id),
         nickname = nickname,
-        avatar = avatar?.preview?.toRelativeUrl()
+        avatar = avatar?.preview?.toPathUrl()
     )
 }

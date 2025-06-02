@@ -17,7 +17,7 @@ class DirectRetrofitProvider @Inject constructor(
 ) : Provider<Retrofit> {
     override fun get(): Retrofit {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://anilibria.top/api/v1/")
+            .baseUrl("http://localhost/")
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create())
             .addConverterFactory(ScalarsConverterFactory.create())

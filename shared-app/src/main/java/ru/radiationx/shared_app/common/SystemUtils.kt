@@ -9,7 +9,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.data.app.downloader.models.LocalFile
 import ru.radiationx.data.common.Url
 import ru.radiationx.data.common.withBase
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 class SystemUtils @Inject constructor(
     private val context: Context,
-    private val apiConfig: ApiConfig
+    private val appConfig: AppConfig
 ) {
 
     private fun getRemoteFileUri(file: File, name: String): Uri {
@@ -74,7 +74,7 @@ class SystemUtils @Inject constructor(
     }
 
     fun copy(url: Url) {
-        val absoluteUrl = url.withBase(apiConfig.site)
+        val absoluteUrl = url.withBase(appConfig.site)
         copy(absoluteUrl)
     }
 
@@ -101,7 +101,7 @@ class SystemUtils @Inject constructor(
     }
 
     fun share(url: Url) {
-        val absoluteUrl = url.withBase(apiConfig.site)
+        val absoluteUrl = url.withBase(appConfig.site)
         share(absoluteUrl)
     }
 
@@ -110,7 +110,7 @@ class SystemUtils @Inject constructor(
     }
 
     fun open(url: Url) {
-        val absoluteUrl = url.withBase(apiConfig.site)
+        val absoluteUrl = url.withBase(appConfig.site)
         val intent =
             Intent(Intent.ACTION_VIEW, absoluteUrl.toUri()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(

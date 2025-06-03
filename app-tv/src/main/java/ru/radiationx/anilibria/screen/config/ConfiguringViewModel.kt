@@ -5,15 +5,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.screen.LifecycleViewModel
-import ru.radiationx.data.app.config.ApiConfig
-import ru.radiationx.data.app.config.ConfiguringInteractor
-import ru.radiationx.data.app.config.models.ConfigScreenState
+import ru.radiationx.data.app.config.AppConfig
+import ru.radiationx.data.app.config.AppConfigUpdater
 import ru.radiationx.shared.ktx.EventFlow
 import javax.inject.Inject
 
 class ConfiguringViewModel @Inject constructor(
-    private val apiConfig: ApiConfig,
-    private val configuringInteractor: ConfiguringInteractor
+    private val appConfig: AppConfig,
+    private val configuringInteractor: AppConfigUpdater
 ) : LifecycleViewModel() {
 
     private var configuringStarted = false
@@ -25,7 +24,7 @@ class ConfiguringViewModel @Inject constructor(
             return
         }
         configuringStarted = true
-        apiConfig
+        appConfig
             .observeNeedConfig()
             .onEach {
                 if (!it) {

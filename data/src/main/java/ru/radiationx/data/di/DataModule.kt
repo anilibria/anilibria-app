@@ -89,12 +89,12 @@ import ru.radiationx.data.app.DirectApi
 import ru.radiationx.data.app.ads.AdsConfigApiDataSource
 import ru.radiationx.data.app.ads.AdsConfigRepository
 import ru.radiationx.data.app.ads.AdsConfigStorage
-import ru.radiationx.data.app.config.ApiConfig
-import ru.radiationx.data.app.config.ApiConfigImpl
-import ru.radiationx.data.app.config.ApiConfigStorage
-import ru.radiationx.data.app.config.ConfigurationApiDataSource
-import ru.radiationx.data.app.config.ConfigurationRepository
-import ru.radiationx.data.app.config.ConfiguringInteractor
+import ru.radiationx.data.app.config.AppConfig
+import ru.radiationx.data.app.config.AppConfigImpl
+import ru.radiationx.data.app.config.AppConfigStorage
+import ru.radiationx.data.app.config.AppConfigApiDataSource
+import ru.radiationx.data.app.config.AppConfigRepository
+import ru.radiationx.data.app.config.AppConfigUpdater
 import ru.radiationx.data.network.NetworkObserver
 import ru.radiationx.data.app.donation.DonationApiDataSource
 import ru.radiationx.data.app.donation.DonationHolder
@@ -124,7 +124,7 @@ import ru.radiationx.data.app.updater.CheckerRepository
 import ru.radiationx.data.app.versions.AppVersionsDataSource
 import ru.radiationx.data.app.versions.AppVersionsDataSourceImpl
 import ru.radiationx.data.app.vkcomments.VkCommentsRepository
-import ru.radiationx.data.di.providers.ApiConfigProvider
+import ru.radiationx.data.di.providers.AppConfigProvider
 import ru.radiationx.data.di.providers.ApiOkhttpProvider
 import ru.radiationx.data.di.providers.ApiRetrofitProvider
 import ru.radiationx.data.di.providers.AuthApiProvider
@@ -211,21 +211,21 @@ class DataModule(context: Context) : QuillModule() {
         single<AppInfoInterceptor>()
         single<UserAgentGenerator>()
 
-        single<ApiConfigImpl>()
-        singleProvider<ApiConfig, ApiConfigProvider>()
-        single<ApiConfigStorage>()
-        single<ConfiguringInteractor>()
+        single<AppConfigImpl>()
+        singleProvider<AppConfig, AppConfigProvider>()
+        single<AppConfigStorage>()
+        single<AppConfigUpdater>()
 
 
 
         single<CheckerApiDataSource>()
-        single<ConfigurationApiDataSource>()
+        single<AppConfigApiDataSource>()
         single<MenuApiDataSource>()
         single<DonationApiDataSource>()
 
         single<AuthRepository>()
         single<ReleaseRepository>()
-        single<ConfigurationRepository>()
+        single<AppConfigRepository>()
         single<SearchRepository>()
         single<VkCommentsRepository>()
         single<CheckerRepository>()

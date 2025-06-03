@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.App
 import ru.radiationx.anilibria.contentprovider.SystemSuggestionEntity
 import ru.radiationx.data.api.releases.ReleaseRepository
 import ru.radiationx.data.api.releases.models.Release
-import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.quill.Quill
 
 class SuggestionsContentProvider : ContentProvider() {
@@ -34,7 +34,7 @@ class SuggestionsContentProvider : ContentProvider() {
     private val uriMatcher by lazy { buildUriMatcher() }
 
     private val releaseRepository by lazy { Quill.getRootScope().get(ReleaseRepository::class) }
-    private val apiConfig by lazy { Quill.getRootScope().get(ApiConfig::class) }
+    private val appConfig by lazy { Quill.getRootScope().get(AppConfig::class) }
 
     override fun onCreate(): Boolean {
         return true
@@ -79,7 +79,7 @@ class SuggestionsContentProvider : ContentProvider() {
         val result = runBlocking { releaseRepository.search(query) }
         val matrixCursor = MatrixCursor(queryProjection)
         result.items.forEach {
-            val entity = it.convertToEntity(apiConfig)
+            val entity = it.convertToEntity(appConfig)
             val columns = appendProjectionColumns(entity.id, entity.getRow())
             matrixCursor.addRow(columns)
         }
@@ -89,12 +89,12 @@ class SuggestionsContentProvider : ContentProvider() {
     private fun appendProjectionColumns(id: Int, columns: Array<Any?>): Array<Any?> =
         columns + INTENT_ACTION + id
 
-    private fun Release.convertToEntity(apiConfig: ApiConfig) = SystemSuggestionEntity(
+    private fun Release.convertToEntity(appConfig: AppConfig) = SystemSuggestionEntity(
         id = id.id,
         title = listOf(names.main, names.english).joinToString(),
         duration = -1,
         productionYear = -1,
-        cardImage = poster?.withBase(apiConfig.image)
+        cardImage = poster?.withBase(appConfig.image)
     )
 
     private fun buildUriMatcher(): UriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {

@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class ApiConfigDataDb(
+data class AppConfigDataDb(
     @Json(name = "addresses")
-    val addresses: List<ApiAddressDb>
+    val addresses: List<AppConfigAddressDb>
 )

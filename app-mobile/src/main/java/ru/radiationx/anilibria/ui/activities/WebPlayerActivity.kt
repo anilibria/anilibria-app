@@ -18,7 +18,7 @@ import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
-import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.data.common.toPathUrl
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
@@ -57,7 +57,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
 
     private val binding by viewBinding<ActivityMoonBinding>()
 
-    private val apiConfig by inject<ApiConfig>()
+    private val appConfig by inject<AppConfig>()
 
     private val systemUtils by inject<SystemUtils>()
 
@@ -153,7 +153,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
         // todo API2 use actual url
         val releaseUrl = "/release/$argReleaseCode.html"
             .toPathUrl()
-            .withBase(apiConfig.widget)
+            .withBase(appConfig.widget)
 
         val template = get<Templates>().videoPageTemplate
         template.setVariableOpt("iframe_url", argUrl)

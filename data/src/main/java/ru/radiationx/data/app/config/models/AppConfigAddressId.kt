@@ -1,5 +1,5 @@
 package ru.radiationx.data.app.config.models
 
-data class ApiAddressId(
+data class AppConfigAddressId(
     val id: String
 )

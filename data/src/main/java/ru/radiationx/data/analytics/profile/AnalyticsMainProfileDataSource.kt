@@ -9,7 +9,7 @@ import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsAuthState
 import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.api.auth.AuthRepository
-import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.data.app.downloader.RemoteFileHolder
 import ru.radiationx.data.app.episodeaccess.EpisodesCheckerHolder
 import ru.radiationx.data.app.history.HistoryHolder
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class AnalyticsMainProfileDataSource @Inject constructor(
     private val preferencesHolder: PreferencesHolder,
     private val analyticsThemeProvider: AnalyticsThemeProvider,
-    private val apiConfig: ApiConfig,
+    private val appConfig: AppConfig,
     private val historyHolder: HistoryHolder,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
     private val remoteFileHolder: RemoteFileHolder,
@@ -34,7 +34,7 @@ class AnalyticsMainProfileDataSource @Inject constructor(
     suspend fun getAttributes(): List<ProfileAttribute> = coroutineScope {
         val attributes = listOf(
             asyncAttr(ProfileConstants.address_tag) {
-                apiConfig.id.id.mapToAttr(it)
+                appConfig.id.id.mapToAttr(it)
             },
             asyncAttr(ProfileConstants.app_theme) {
                 analyticsThemeProvider.getTheme().value.mapToAttr(it)

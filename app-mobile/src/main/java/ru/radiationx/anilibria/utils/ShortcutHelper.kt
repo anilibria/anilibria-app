@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.api.releases.models.Release
-import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.data.common.Url
 import ru.radiationx.data.common.withBase
 import ru.radiationx.shared.ktx.android.asSoftware
@@ -30,7 +30,7 @@ import kotlin.math.min
 
 class ShortcutHelper @Inject constructor(
     private val context: Context,
-    private val apiConfig: ApiConfig
+    private val appConfig: AppConfig
 ) {
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -74,7 +74,7 @@ class ShortcutHelper @Inject constructor(
         url: Url,
         bitmap: Bitmap,
     ) {
-        val absoluteUrl = url.withBase(apiConfig.site)
+        val absoluteUrl = url.withBase(appConfig.site)
         val intent = Screens.IntentHandler(absoluteUrl).createIntent(context)
         val shortcut = ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(shortLabel)

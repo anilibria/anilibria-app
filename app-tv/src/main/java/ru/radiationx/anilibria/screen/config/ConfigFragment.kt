@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.MotionLayoutListener
 import ru.radiationx.anilibria.databinding.FragmentConfigBinding
-import ru.radiationx.data.app.config.models.ConfigScreenState
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
 

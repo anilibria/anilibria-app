@@ -1,11 +1,11 @@
 package ru.radiationx.data.app.config
 
-import ru.radiationx.data.app.config.models.ApiAddressId
+import ru.radiationx.data.app.config.models.AppConfigAddressId
 import ru.radiationx.data.common.Url
 
-interface ApiConfig {
+interface AppConfig {
 
-    val id: ApiAddressId
+    val id: AppConfigAddressId
 
     val description: String?
 

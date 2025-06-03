@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import ru.radiationx.data.app.DirectApi
-import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.data.app.downloader.models.DownloadedFile
 import ru.radiationx.data.app.downloader.models.RemoteFile
 import ru.radiationx.data.app.downloader.models.RemoteFileId
@@ -27,7 +27,7 @@ class RemoteFileRepository @Inject constructor(
     private val context: Context,
     private val api: DirectApi,
     private val holder: RemoteFileHolder,
-    private val apiConfig: ApiConfig
+    private val appConfig: AppConfig
 ) {
 
     suspend fun loadFile(
@@ -35,7 +35,7 @@ class RemoteFileRepository @Inject constructor(
         bucket: RemoteFile.Bucket,
         progress: MutableStateFlow<Int>,
     ): DownloadedFile = withContext(Dispatchers.IO) {
-        val absoluteUrl = url.withBase(apiConfig.api)
+        val absoluteUrl = url.withBase(appConfig.api)
         progress.value = 0
         val existedFile = getDownloadedFile(absoluteUrl)
         if (existedFile != null) {

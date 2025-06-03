@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
-import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.data.common.toPathUrl
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
@@ -41,7 +41,7 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
 
     private val viewModel by viewModel<AuthViewModel>()
 
-    private val apiConfig by inject<ApiConfig>()
+    private val appConfig by inject<AppConfig>()
 
     private val systemUtils by inject<SystemUtils>()
 
@@ -131,7 +131,7 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
                     button {
                         text("Личный кабинет")
                         // todo API2 change url
-                        onClick { systemUtils.open("/pages/cp.php".toPathUrl().withBase(apiConfig.site)) }
+                        onClick { systemUtils.open("/pages/cp.php".toPathUrl().withBase(appConfig.site)) }
                     }
                 }
             }

@@ -3,15 +3,15 @@ package ru.radiationx.data.app.config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.app.config.mapper.toDomain
-import ru.radiationx.data.app.config.models.ApiAddress
+import ru.radiationx.data.app.config.models.AppConfigAddress
 import javax.inject.Inject
 
-class ConfigurationRepository @Inject constructor(
-    private val api: ConfigurationApiDataSource,
-    private val apiConfigStorage: ApiConfigStorage,
+class AppConfigRepository @Inject constructor(
+    private val api: AppConfigApiDataSource,
+    private val storage: AppConfigStorage,
 ) {
 
-    suspend fun findFastest(addresses: List<ApiAddress>): ApiAddress {
+    suspend fun findFastest(addresses: List<AppConfigAddress>): AppConfigAddress {
         return withContext(Dispatchers.IO) {
             api.findFastest(addresses)
         }
@@ -20,9 +20,9 @@ class ConfigurationRepository @Inject constructor(
     suspend fun updateConfig() {
         withContext(Dispatchers.IO) {
             api
-                .getConfiguration()
+                .getConfig()
                 .toDomain()
-                .also { apiConfigStorage.save(it) }
+                .also { storage.save(it) }
         }
     }
 }

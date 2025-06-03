@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentConfiguringBinding
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
-import ru.radiationx.data.app.config.models.ConfigScreenState
 import ru.radiationx.quill.viewModel
 
 class ConfiguringFragment : BaseDimensionsFragment(R.layout.fragment_configuring) {

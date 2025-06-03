@@ -1,11 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.configuring
 
 import androidx.lifecycle.ViewModel
-import ru.radiationx.data.app.config.ConfiguringInteractor
+import ru.radiationx.data.app.config.AppConfigUpdater
 import javax.inject.Inject
 
 class ConfiguringViewModel @Inject constructor(
-    private val configuringInteractor: ConfiguringInteractor
+    private val configuringInteractor: AppConfigUpdater
 ) : ViewModel() {
 
 

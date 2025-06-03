@@ -1,18 +1,17 @@
 package ru.radiationx.data.app.config
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
-import ru.radiationx.data.app.config.models.ApiAddress
-import ru.radiationx.data.app.config.models.ApiAddressId
+import ru.radiationx.data.app.config.models.AppConfigAddress
+import ru.radiationx.data.app.config.models.AppConfigAddressId
 import ru.radiationx.data.common.Url
 import ru.radiationx.data.common.toAbsoluteUrl
 import ru.radiationx.data.common.toBaseUrl
 import javax.inject.Inject
 
-class ApiConfigImpl @Inject constructor() : ApiConfig {
+class AppConfigImpl @Inject constructor() : AppConfig {
 
-    private val defaultAddress = ApiAddress(
-        id = ApiAddressId(id = "default"),
+    private val defaultAddress = AppConfigAddress(
+        id = AppConfigAddressId(id = "default"),
         name = "default",
         description = null,
         widget = "https://www.anilibria.tv/".toBaseUrl(),
@@ -22,7 +21,7 @@ class ApiConfigImpl @Inject constructor() : ApiConfig {
         status = "https://api.anilibria.app/api/v1/teams/roles".toAbsoluteUrl()
     )
 
-    private val activeAddressState = MutableStateFlow<ApiAddress?>(null)
+    private val activeAddressState = MutableStateFlow<AppConfigAddress?>(null)
 
     private var networkHash: Int? = null
 
@@ -38,7 +37,7 @@ class ApiConfigImpl @Inject constructor() : ApiConfig {
         return hash != networkHash
     }
 
-    fun setReady(address: ApiAddress) {
+    fun setReady(address: AppConfigAddress) {
         activeAddressState.value = address
     }
 
@@ -46,10 +45,10 @@ class ApiConfigImpl @Inject constructor() : ApiConfig {
         activeAddressState.value = defaultAddress
     }
 
-    private val active: ApiAddress
+    private val active: AppConfigAddress
         get() = activeAddressState.value ?: defaultAddress
 
-    override val id: ApiAddressId
+    override val id: AppConfigAddressId
         get() = active.id
 
     val name: String?

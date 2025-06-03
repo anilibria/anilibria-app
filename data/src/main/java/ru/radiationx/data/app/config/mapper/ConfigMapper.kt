@@ -1,29 +1,29 @@
 package ru.radiationx.data.app.config.mapper
 
-import ru.radiationx.data.app.config.db.ApiAddressDb
-import ru.radiationx.data.app.config.db.ApiConfigDataDb
-import ru.radiationx.data.app.config.models.ApiAddress
-import ru.radiationx.data.app.config.models.ApiAddressId
-import ru.radiationx.data.app.config.models.ApiConfigData
-import ru.radiationx.data.app.config.remote.ApiAddressResponse
-import ru.radiationx.data.app.config.remote.ApiConfigResponse
+import ru.radiationx.data.app.config.db.AppConfigAddressDb
+import ru.radiationx.data.app.config.db.AppConfigDataDb
+import ru.radiationx.data.app.config.models.AppConfigAddress
+import ru.radiationx.data.app.config.models.AppConfigAddressId
+import ru.radiationx.data.app.config.models.AppConfigData
+import ru.radiationx.data.app.config.remote.AppConfigAddressResponse
+import ru.radiationx.data.app.config.remote.AppConfigResponse
 import ru.radiationx.data.common.toAbsoluteUrl
 import ru.radiationx.data.common.toBaseUrl
 
-fun ApiConfigResponse.toDomain(): ApiConfigData = ApiConfigData(
+fun AppConfigResponse.toDomain(): AppConfigData = AppConfigData(
     addresses = addresses.map { it.toDomain() }
 )
 
-fun ApiConfigDataDb.toDomain(): ApiConfigData = ApiConfigData(
+fun AppConfigDataDb.toDomain(): AppConfigData = AppConfigData(
     addresses = addresses.map { it.toDomain() }
 )
 
-fun ApiConfigData.toDb(): ApiConfigDataDb = ApiConfigDataDb(
+fun AppConfigData.toDb(): AppConfigDataDb = AppConfigDataDb(
     addresses = addresses.map { it.toDb() }
 )
 
-fun ApiAddressResponse.toDomain(): ApiAddress = ApiAddress(
-    id = ApiAddressId(id),
+fun AppConfigAddressResponse.toDomain(): AppConfigAddress = AppConfigAddress(
+    id = AppConfigAddressId(id),
     name = name,
     description = description,
     widget = widget.toBaseUrl(),
@@ -33,8 +33,8 @@ fun ApiAddressResponse.toDomain(): ApiAddress = ApiAddress(
     status = status.toAbsoluteUrl()
 )
 
-fun ApiAddressDb.toDomain(): ApiAddress = ApiAddress(
-    id = ApiAddressId(id),
+fun AppConfigAddressDb.toDomain(): AppConfigAddress = AppConfigAddress(
+    id = AppConfigAddressId(id),
     name = name,
     description = description,
     widget = widget.toBaseUrl(),
@@ -44,7 +44,7 @@ fun ApiAddressDb.toDomain(): ApiAddress = ApiAddress(
     status = status.toAbsoluteUrl()
 )
 
-fun ApiAddress.toDb(): ApiAddressDb = ApiAddressDb(
+fun AppConfigAddress.toDb(): AppConfigAddressDb = AppConfigAddressDb(
     id = id.id,
     name = name,
     description = description,

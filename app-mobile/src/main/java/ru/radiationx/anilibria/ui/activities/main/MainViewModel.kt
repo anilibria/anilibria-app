@@ -6,7 +6,6 @@ import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -25,8 +24,8 @@ import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.auth.models.AuthState
 import ru.radiationx.data.app.ads.AdsConfigRepository
 import ru.radiationx.data.app.ads.models.AdsConfig
-import ru.radiationx.data.app.config.ApiConfig
-import ru.radiationx.data.app.config.ConfigurationRepository
+import ru.radiationx.data.app.config.AppConfig
+import ru.radiationx.data.app.config.AppConfigRepository
 import ru.radiationx.data.app.donation.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
@@ -45,9 +44,9 @@ class MainViewModel @Inject constructor(
     private val router: Router,
     private val authRepository: AuthRepository,
     private val donationRepository: DonationRepository,
-    private val configurationRepository: ConfigurationRepository,
+    private val appConfigRepository: AppConfigRepository,
     private val adsConfigRepository: AdsConfigRepository,
-    private val apiConfig: ApiConfig,
+    private val appConfig: AppConfig,
     private val analyticsProfile: AnalyticsProfile,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,

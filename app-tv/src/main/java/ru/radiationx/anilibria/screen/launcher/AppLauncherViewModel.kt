@@ -16,14 +16,14 @@ import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.MainPagesScreen
 import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.auth.models.AuthState
-import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject
 
 class AppLauncherViewModel @Inject constructor(
-    private val apiConfig: ApiConfig,
+    private val appConfig: AppConfig,
     private val router: Router,
     private val authRepository: AuthRepository
 ) : LifecycleViewModel() {
@@ -42,7 +42,7 @@ class AppLauncherViewModel @Inject constructor(
     }
 
     private fun initWithConfig() {
-        apiConfig
+        appConfig
             .observeNeedConfig()
             .distinctUntilChanged()
             .onEach {
@@ -56,7 +56,7 @@ class AppLauncherViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
 
-        if (apiConfig.needConfig) {
+        if (appConfig.needConfig) {
             router.newRootScreen(ConfigScreen())
         } else {
             initMain()

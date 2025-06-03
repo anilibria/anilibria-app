@@ -22,7 +22,7 @@ import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.auth.models.AuthState
 import ru.radiationx.data.api.auth.models.Credentials
 import ru.radiationx.data.api.auth.models.SocialType
-import ru.radiationx.data.app.config.ApiConfig
+import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.data.common.toPathUrl
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
@@ -36,7 +36,7 @@ class AuthViewModel @Inject constructor(
     private val errorHandler: IErrorHandler,
     private val authMainAnalytics: AuthMainAnalytics,
     private val authSocialAnalytics: AuthSocialAnalytics,
-    private val apiConfig: ApiConfig,
+    private val appConfig: AppConfig,
     private val systemUtils: SystemUtils,
 ) : ViewModel() {
 
@@ -130,7 +130,7 @@ class AuthViewModel @Inject constructor(
     fun registrationToSiteClick() {
         authMainAnalytics.regToSiteClick()
         // todo API2 change url
-        systemUtils.open("/pages/login.php".toPathUrl().withBase(apiConfig.site))
+        systemUtils.open("/pages/login.php".toPathUrl().withBase(appConfig.site))
     }
 
     fun submitUseTime(time: Long) {

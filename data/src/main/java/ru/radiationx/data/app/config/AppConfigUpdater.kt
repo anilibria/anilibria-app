@@ -2,16 +2,16 @@ package ru.radiationx.data.app.config
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ru.radiationx.data.app.config.models.ApiAddress
+import ru.radiationx.data.app.config.models.AppConfigAddress
 import ru.radiationx.data.network.NetworkObserver
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject
 
-class ConfiguringInteractor @Inject constructor(
-    private val apiConfig: ApiConfigImpl,
-    private val repository: ConfigurationRepository,
-    private val storage: ApiConfigStorage,
+class AppConfigUpdater @Inject constructor(
+    private val appConfig: AppConfigImpl,
+    private val repository: AppConfigRepository,
+    private val storage: AppConfigStorage,
     private val networkObserver: NetworkObserver
 ) {
 
@@ -21,9 +21,9 @@ class ConfiguringInteractor @Inject constructor(
 
     private val mutex = Mutex()
 
-    suspend fun configure() {
+    suspend fun update() {
         mutex.withLock {
-            if (apiConfig.needsUpdateAddress(networkObserver.getHash())) {
+            if (appConfig.needsUpdateAddress(networkObserver.getHash())) {
                 stepConfigure()
             } else {
                 Timber.tag(TAG).d("already configured")
@@ -36,18 +36,18 @@ class ConfiguringInteractor @Inject constructor(
 
         stepAwaitNetwork()
 
-        if (apiConfig.getNetworkHash() == null) {
+        if (appConfig.getNetworkHash() == null) {
             stepUpdateConfig()
         }
 
         val address = stepFindAddress()
         if (address != null) {
-            apiConfig.setReady(address)
+            appConfig.setReady(address)
         } else {
-            apiConfig.setDefault()
+            appConfig.setDefault()
         }
 
-        apiConfig.setNetworkHash(networkObserver.getHash())
+        appConfig.setNetworkHash(networkObserver.getHash())
 
         updateState(State.Configured)
     }
@@ -72,7 +72,7 @@ class ConfiguringInteractor @Inject constructor(
         }
     }
 
-    private suspend fun stepFindAddress(): ApiAddress? {
+    private suspend fun stepFindAddress(): AppConfigAddress? {
         return coRunCatching {
             updateState(State.AddressFinding)
             val addresses = storage.get().addresses

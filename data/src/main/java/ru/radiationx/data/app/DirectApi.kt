@@ -9,7 +9,7 @@ import retrofit2.http.HEAD
 import retrofit2.http.POST
 import retrofit2.http.Url
 import ru.radiationx.data.app.ads.remote.AdsConfigDataResponse
-import ru.radiationx.data.app.config.remote.ApiConfigResponse
+import ru.radiationx.data.app.config.remote.AppConfigResponse
 import ru.radiationx.data.app.donation.remote.DonationInfoResponse
 import ru.radiationx.data.app.menu.remote.LinkMenuResponse
 import ru.radiationx.data.app.updater.remote.UpdateDataRootResponse
@@ -24,7 +24,7 @@ interface DirectApi {
     suspend fun getUpdate(@Url url: String): UpdateDataRootResponse
 
     @GET
-    suspend fun getApiConfig(@Url url: String): ApiConfigResponse
+    suspend fun getAppConfig(@Url url: String): AppConfigResponse
 
     @GET
     suspend fun getDonationConfig(@Url url: String): DonationInfoResponse

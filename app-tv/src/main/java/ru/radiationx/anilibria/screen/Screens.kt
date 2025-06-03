@@ -8,7 +8,6 @@ import ru.radiationx.anilibria.common.fragment.GuidedAppScreen
 import ru.radiationx.anilibria.screen.auth.credentials.AuthCredentialsGuidedFragment
 import ru.radiationx.anilibria.screen.auth.main.AuthGuidedFragment
 import ru.radiationx.anilibria.screen.auth.otp.AuthOtpGuidedFragment
-import ru.radiationx.anilibria.screen.config.ConfigFragment
 import ru.radiationx.anilibria.screen.details.DetailFragment
 import ru.radiationx.anilibria.screen.details.other.DetailOtherGuidedFragment
 import ru.radiationx.anilibria.screen.mainpages.MainPagesFragment
@@ -34,12 +33,6 @@ import ru.radiationx.anilibria.screen.update.source.UpdateSourceGuidedFragment
 import ru.radiationx.data.api.shared.filter.legacy.SearchForm
 import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.data.common.ReleaseId
-
-class ConfigScreen : FragmentScreen {
-    override fun createFragment(factory: FragmentFactory): Fragment {
-        return ConfigFragment()
-    }
-}
 
 class MainPagesScreen : FragmentScreen {
     override fun createFragment(factory: FragmentFactory): Fragment {

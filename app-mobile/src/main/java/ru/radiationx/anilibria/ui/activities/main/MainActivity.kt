@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.main
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -18,13 +19,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
 import androidx.core.view.doOnLayout
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.terrakok.cicerone.Back
 import com.github.terrakok.cicerone.Command
@@ -35,10 +33,13 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
+import ru.mintrocket.lib.mintpermissions.MintPermissionsController
+import ru.mintrocket.lib.mintpermissions.ext.isGranted
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ads.BannerAdController
 import ru.radiationx.anilibria.apptheme.AppThemeController
@@ -55,7 +56,6 @@ import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.fragments.TabResetter
 import ru.radiationx.anilibria.ui.fragments.TopScroller
-import ru.radiationx.anilibria.ui.fragments.configuring.ConfiguringFragment
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
@@ -92,6 +92,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     private val navigationHolder by inject<NavigatorHolder>()
 
     private val dimensionsProvider by inject<DimensionsProvider>()
+
+    private val permissionsController by inject<MintPermissionsController>()
 
     private val binding by viewBinding<ActivityMainBinding>()
 
@@ -157,20 +159,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             highlightTab(it)
         }.launchIn(lifecycleScope)
 
-        // lifecycle needs for fragment manager
-        viewModel.state
-            .map { it.needConfig }
-            .distinctUntilChanged()
-            .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
-            .onEach {
-                if (it) {
-                    showConfiguring()
-                } else {
-                    hideConfiguring()
-                }
-            }
-            .launchIn(lifecycleScope)
-
         viewModel.state.map { it.mainLogicCompleted }.filter { it }.distinctUntilChanged().onEach {
             onMainLogicCompleted()
         }.launchIn(lifecycleScope)
@@ -193,52 +181,57 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         bannerAdController.destroy()
     }
 
-    private fun showUpdateData(update: UpdateDataState) {
-        if (update.hasUpdate) {
-            val channelId = "anilibria_channel_updates"
-            val channelName = "Обновления"
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val channel = NotificationChannel(
-                    channelId,
-                    channelName,
-                    NotificationManager.IMPORTANCE_DEFAULT
-                )
-                val manager = getSystemService(NotificationManager::class.java)
-                manager?.createNotificationChannel(channel)
-            }
-
-            val mBuilder = NotificationCompat.Builder(this, channelId)
-
-            val mNotificationManager = NotificationManagerCompat.from(this)
-
-            mBuilder.setSmallIcon(R.drawable.ic_notify)
-            mBuilder.color = getCompatColor(R.color.alib_red)
-
-            mBuilder.setContentTitle("Обновление AniLibria")
-            mBuilder.setContentText("Новая версия: ${update.name}")
-            mBuilder.setChannelId(channelId)
-
-
-            val notifyIntent =
-                Screens.AppUpdateScreen(false, AnalyticsConstants.notification_local_update)
-                    .createIntent(this)
-            val notifyPendingIntent =
-                PendingIntent.getActivity(this, 0, notifyIntent, immutableFlag())
-            mBuilder.setContentIntent(notifyPendingIntent)
-
-            mBuilder.setAutoCancel(true)
-
-            mBuilder.priority = NotificationCompat.PRIORITY_DEFAULT
-            mBuilder.setCategory(NotificationCompat.CATEGORY_EVENT)
-
-            var defaults = 0
-            defaults = defaults or NotificationCompat.DEFAULT_SOUND
-            defaults = defaults or NotificationCompat.DEFAULT_VIBRATE
-            mBuilder.setDefaults(defaults)
-
-            mNotificationManager.notify(update.code, mBuilder.build())
+    @SuppressLint("MissingPermission")
+    private suspend fun showUpdateData(update: UpdateDataState) {
+        if (!update.hasUpdate) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsController
+                .observe(Manifest.permission.POST_NOTIFICATIONS)
+                .first { it.isGranted() }
         }
+        val channelId = "anilibria_channel_updates"
+        val channelName = "Обновления"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager?.createNotificationChannel(channel)
+        }
+
+        val mBuilder = NotificationCompat.Builder(this, channelId)
+
+        val mNotificationManager = NotificationManagerCompat.from(this)
+
+        mBuilder.setSmallIcon(R.drawable.ic_notify)
+        mBuilder.color = getCompatColor(R.color.alib_red)
+
+        mBuilder.setContentTitle("Обновление AniLibria")
+        mBuilder.setContentText("Новая версия: ${update.name}")
+        mBuilder.setChannelId(channelId)
+
+
+        val notifyIntent =
+            Screens.AppUpdateScreen(false, AnalyticsConstants.notification_local_update)
+                .createIntent(this)
+        val notifyPendingIntent =
+            PendingIntent.getActivity(this, 0, notifyIntent, immutableFlag())
+        mBuilder.setContentIntent(notifyPendingIntent)
+
+        mBuilder.setAutoCancel(true)
+
+        mBuilder.priority = NotificationCompat.PRIORITY_DEFAULT
+        mBuilder.setCategory(NotificationCompat.CATEGORY_EVENT)
+
+        var defaults = 0
+        defaults = defaults or NotificationCompat.DEFAULT_SOUND
+        defaults = defaults or NotificationCompat.DEFAULT_VIBRATE
+        mBuilder.setDefaults(defaults)
+
+        mNotificationManager.notify(update.code, mBuilder.build())
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -256,24 +249,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             handleIntent(intent)
         }
         checkerViewModel.checkUpdate()
-    }
-
-    private fun showConfiguring() {
-        binding.configuringContainer.isVisible = true
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.configuring_container, ConfiguringFragment())
-            .commitNow()
-    }
-
-    private fun hideConfiguring() {
-        binding.configuringContainer.isGone = true
-        supportFragmentManager.findFragmentById(R.id.configuring_container)?.also {
-            supportFragmentManager
-                .beginTransaction()
-                .remove(it)
-                .commitNow()
-        }
     }
 
     override fun onPause() {
@@ -322,12 +297,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             )
             layoutActivityContainer.root.updatePadding(
                 bottom = containerInsetsBottom
-            )
-            configuringContainer.updatePadding(
-                left = systemBarInsets.left,
-                top = systemBarInsets.top,
-                right = systemBarInsets.right,
-                bottom = systemBarInsets.bottom
             )
             appFooter.updatePadding(
                 left = systemBarInsets.left,

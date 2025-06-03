@@ -55,11 +55,4 @@
         </FrameLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/configuring_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?colorSurface"
-        android:visibility="gone" />
-
 </RelativeLayout>

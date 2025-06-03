@@ -24,8 +24,6 @@ import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.auth.models.AuthState
 import ru.radiationx.data.app.ads.AdsConfigRepository
 import ru.radiationx.data.app.ads.models.AdsConfig
-import ru.radiationx.data.app.config.AppConfig
-import ru.radiationx.data.app.config.AppConfigRepository
 import ru.radiationx.data.app.donation.DonationRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
@@ -35,7 +33,6 @@ import javax.inject.Inject
 
 data class MainScreenState(
     val selectedTab: String? = null,
-    val needConfig: Boolean = false,
     val mainLogicCompleted: Boolean = false,
     val adsConfig: AdsConfig? = null,
 )
@@ -44,9 +41,7 @@ class MainViewModel @Inject constructor(
     private val router: Router,
     private val authRepository: AuthRepository,
     private val donationRepository: DonationRepository,
-    private val appConfigRepository: AppConfigRepository,
     private val adsConfigRepository: AdsConfigRepository,
-    private val appConfig: AppConfig,
     private val analyticsProfile: AnalyticsProfile,
     private val authMainAnalytics: AuthMainAnalytics,
     private val catalogAnalytics: CatalogAnalytics,
@@ -58,8 +53,6 @@ class MainViewModel @Inject constructor(
 
     private val defaultScreen = Screens.MainFeed().screenKey
 
-    private var firstLaunch = true
-
     private val _state = MutableStateFlow(MainScreenState())
     val state = _state.asStateFlow()
 
@@ -67,28 +60,10 @@ class MainViewModel @Inject constructor(
 
     fun init(savedScreen: String?) {
         analyticsProfile.update()
-
-        /*apiConfig
-            .observeNeedConfig()
-            .distinctUntilChanged()
-            .onEach { needConfig ->
-                _state.update { it.copy(needConfig = needConfig) }
-                if (!needConfig && firstLaunch) {
-                    initMain(savedScreen)
-                }
-            }
-            .launchIn(viewModelScope)
-
-        if (apiConfig.needConfig) {
-            _state.update { it.copy(needConfig = true) }
-        } else {
-            initMain(savedScreen)
-        }*/
         initMain(savedScreen)
     }
 
     private fun initMain(savedScreen: String?) {
-        firstLaunch = false
 
         // todo TR-274 move in scope after refactor screen
         runBlocking {

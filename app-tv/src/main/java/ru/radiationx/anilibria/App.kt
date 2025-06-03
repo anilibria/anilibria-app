@@ -28,9 +28,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-
-
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
@@ -50,9 +47,6 @@ class App : Application() {
     }
 
     private fun initInMainProcess() {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
         initDependencies()
         initMintPermissions()
         initMintPermissionsFlow()

@@ -90,12 +90,11 @@ import ru.radiationx.data.app.ads.AdsConfigApiDataSource
 import ru.radiationx.data.app.ads.AdsConfigRepository
 import ru.radiationx.data.app.ads.AdsConfigStorage
 import ru.radiationx.data.app.config.AppConfig
-import ru.radiationx.data.app.config.AppConfigImpl
-import ru.radiationx.data.app.config.AppConfigStorage
 import ru.radiationx.data.app.config.AppConfigApiDataSource
+import ru.radiationx.data.app.config.AppConfigImpl
 import ru.radiationx.data.app.config.AppConfigRepository
+import ru.radiationx.data.app.config.AppConfigStorage
 import ru.radiationx.data.app.config.AppConfigUpdater
-import ru.radiationx.data.network.NetworkObserver
 import ru.radiationx.data.app.donation.DonationApiDataSource
 import ru.radiationx.data.app.donation.DonationHolder
 import ru.radiationx.data.app.donation.DonationRepository
@@ -124,9 +123,9 @@ import ru.radiationx.data.app.updater.CheckerRepository
 import ru.radiationx.data.app.versions.AppVersionsDataSource
 import ru.radiationx.data.app.versions.AppVersionsDataSourceImpl
 import ru.radiationx.data.app.vkcomments.VkCommentsRepository
-import ru.radiationx.data.di.providers.AppConfigProvider
 import ru.radiationx.data.di.providers.ApiOkhttpProvider
 import ru.radiationx.data.di.providers.ApiRetrofitProvider
+import ru.radiationx.data.di.providers.AppConfigProvider
 import ru.radiationx.data.di.providers.AuthApiProvider
 import ru.radiationx.data.di.providers.CatalogApiProvider
 import ru.radiationx.data.di.providers.CollectionsApiProvider
@@ -147,7 +146,9 @@ import ru.radiationx.data.di.providers.TimeCodesApiProvider
 import ru.radiationx.data.di.providers.TorrentsApiProvider
 import ru.radiationx.data.di.providers.VideosApiProvider
 import ru.radiationx.data.network.DataErrorMapper
+import ru.radiationx.data.network.NetworkObserver
 import ru.radiationx.data.network.UserAgentGenerator
+import ru.radiationx.data.network.interceptors.AppConfigInterceptor
 import ru.radiationx.data.network.interceptors.AppInfoInterceptor
 import ru.radiationx.data.network.interceptors.AuthTokenInterceptor
 import ru.radiationx.data.network.interceptors.DynamicApiUrlInterceptor
@@ -160,7 +161,6 @@ import ru.radiationx.quill.QuillModule
 class DataModule(context: Context) : QuillModule() {
 
     init {
-
 
         instance<SslCompat> {
             val rawCertResources = listOf(
@@ -301,6 +301,7 @@ class DataModule(context: Context) : QuillModule() {
         single<AuthTokenStorage>()
         single<AuthTokenInterceptor>()
         single<DynamicApiUrlInterceptor>()
+        single<AppConfigInterceptor>()
 
 
         singleProvider<AuthApi, AuthApiProvider>()

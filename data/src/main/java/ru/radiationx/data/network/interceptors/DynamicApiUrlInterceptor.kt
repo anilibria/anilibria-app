@@ -1,18 +1,15 @@
 package ru.radiationx.data.network.interceptors
 
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import ru.radiationx.data.app.config.AppConfig
-import ru.radiationx.data.app.config.AppConfigUpdater
 import ru.radiationx.data.common.toBaseUrl
 import ru.radiationx.data.common.toPathUrl
 import timber.log.Timber
 import javax.inject.Inject
 
 class DynamicApiUrlInterceptor @Inject constructor(
-    private val appConfig: AppConfig,
-    private val appConfigUpdater: AppConfigUpdater
+    private val appConfig: AppConfig
 ) : Interceptor {
 
     companion object {
@@ -29,15 +26,11 @@ class DynamicApiUrlInterceptor @Inject constructor(
         }
 
         val endpoint = url.removePrefix(BASE_URL.value).toPathUrl()
-
-        runBlocking {
-            appConfigUpdater.update()
-        }
-
         val apiVersion = appConfig.api.withPath(API_PREFIX).toBaseUrl()
         val newUrl = endpoint.withBase(apiVersion)
 
-        Timber.tag(TAG).d("change url ${url} -> ${newUrl}")
+        Timber.tag(TAG).d("change url $url -> $newUrl")
+
         val newRequest = request.newBuilder().url(newUrl).build()
         return chain.proceed(newRequest)
     }

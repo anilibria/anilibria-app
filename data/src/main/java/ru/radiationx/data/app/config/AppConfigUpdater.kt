@@ -16,7 +16,7 @@ class AppConfigUpdater @Inject constructor(
 ) {
 
     companion object {
-        private const val TAG = "ConfigInteractor"
+        private const val TAG = "AppConfigUpdater"
     }
 
     private val mutex = Mutex()

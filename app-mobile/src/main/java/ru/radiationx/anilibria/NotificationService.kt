@@ -10,21 +10,11 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.squareup.moshi.Moshi
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.analytics.AnalyticsConstants
-import ru.radiationx.data.app.config.ApiConfig
-import ru.radiationx.data.app.config.ApiConfigStorage
-import ru.radiationx.data.app.config.mapper.toDomain
-import ru.radiationx.data.app.config.remote.ApiConfigResponse
-import ru.radiationx.quill.get
 import ru.radiationx.shared.ktx.android.asMutableFlag
 import ru.radiationx.shared.ktx.android.getCompatColor
-import ru.radiationx.shared.ktx.coRunCatching
-import timber.log.Timber
 
 class NotificationService : FirebaseMessagingService() {
 
@@ -34,7 +24,6 @@ class NotificationService : FirebaseMessagingService() {
 
 
         private const val CUSTOM_TYPE_APP_UPDATE = "app_update"
-        private const val CUSTOM_TYPE_CONFIG = "config"
     }
 
     private data class Data(
@@ -45,7 +34,6 @@ class NotificationService : FirebaseMessagingService() {
         val payload: String? = null,
     )
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -67,30 +55,6 @@ class NotificationService : FirebaseMessagingService() {
             )
         }
         manager.notify(System.nanoTime().toInt(), getNotification(data))
-
-
-        if (data.type == CUSTOM_TYPE_CONFIG) {
-            GlobalScope.launch {
-                coRunCatching {
-                    val apiConfig = get<ApiConfig>()
-                    val apiConfigStorage = get<ApiConfigStorage>()
-                    val moshi = get<Moshi>()
-
-                    apiConfig.updateNeedConfig(true)
-
-                    val payload = data.payload.orEmpty()
-                    val adapter = moshi.adapter(ApiConfigResponse::class.java)
-                    val configResponse = adapter.fromJson(payload)
-                    requireNotNull(configResponse) {
-                        "Can't parse push payload config"
-                    }
-                    apiConfigStorage.save(configResponse)
-                    apiConfig.setConfig(configResponse.toDomain())
-                }.onFailure {
-                    Timber.e(it)
-                }
-            }
-        }
     }
 
     private fun String?.defaultTitle() = this ?: "Заголовок уведомления"
@@ -127,10 +91,6 @@ class NotificationService : FirebaseMessagingService() {
                 Screens
                     .AppUpdateScreen(true, AnalyticsConstants.notification_push_update)
                     .createIntent(this)
-            }
-
-            CUSTOM_TYPE_CONFIG -> {
-                Screens.Main().createIntent(this)
             }
 
             else -> {

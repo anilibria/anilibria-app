@@ -35,7 +35,7 @@ class RemoteFileRepository @Inject constructor(
         bucket: RemoteFile.Bucket,
         progress: MutableStateFlow<Int>,
     ): DownloadedFile = withContext(Dispatchers.IO) {
-        val absoluteUrl = url.withBase(apiConfig.apiUrl)
+        val absoluteUrl = url.withBase(apiConfig.api)
         progress.value = 0
         val existedFile = getDownloadedFile(absoluteUrl)
         if (existedFile != null) {

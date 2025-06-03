@@ -14,6 +14,7 @@ import ru.radiationx.data.app.menu.db.LinkMenuDb
 import ru.radiationx.data.app.menu.mapper.toDb
 import ru.radiationx.data.app.menu.mapper.toDomain
 import ru.radiationx.data.app.menu.models.LinkMenuItem
+import ru.radiationx.data.app.menu.remote.LinkMenuResponse
 import ru.radiationx.data.di.DataPreferences
 import ru.radiationx.shared.ktx.android.SuspendMutableStateFlow
 import javax.inject.Inject
@@ -31,6 +32,11 @@ class MenuStorage @Inject constructor(
     private val dataAdapter by lazy {
         val type = Types.newParameterizedType(List::class.java, LinkMenuDb::class.java)
         moshi.adapter<List<LinkMenuDb>>(type)
+    }
+
+    private val assetAdapter by lazy {
+        val type = Types.newParameterizedType(List::class.java, LinkMenuResponse::class.java)
+        moshi.adapter<List<LinkMenuResponse>>(type)
     }
 
     private val dataFlow = SuspendMutableStateFlow {
@@ -70,10 +76,12 @@ class MenuStorage @Inject constructor(
     }
 
     private fun getFromAssets(): List<LinkMenuDb> {
-        return context.assets.open("menu-config.json").use { stream ->
-            stream.source().buffer().use { reader ->
-                requireNotNull(dataAdapter.fromJson(reader))
+        return context.assets.open("menu-config.json")
+            .use { stream ->
+                stream.source().buffer().use { reader ->
+                    requireNotNull(assetAdapter.fromJson(reader))
+                }
             }
-        }
+            .map { it.toDomain().toDb() }
     }
 }

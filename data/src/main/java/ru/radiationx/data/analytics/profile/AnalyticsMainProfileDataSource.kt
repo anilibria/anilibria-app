@@ -34,7 +34,7 @@ class AnalyticsMainProfileDataSource @Inject constructor(
     suspend fun getAttributes(): List<ProfileAttribute> = coroutineScope {
         val attributes = listOf(
             asyncAttr(ProfileConstants.address_tag) {
-                apiConfig.tag.mapToAttr(it)
+                apiConfig.id.id.mapToAttr(it)
             },
             asyncAttr(ProfileConstants.app_theme) {
                 analyticsThemeProvider.getTheme().value.mapToAttr(it)

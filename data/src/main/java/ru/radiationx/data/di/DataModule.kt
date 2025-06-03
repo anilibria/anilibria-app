@@ -29,7 +29,6 @@ import ru.radiationx.data.analytics.features.AuthVkAnalytics
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.CatalogFilterAnalytics
 import ru.radiationx.data.analytics.features.CommentsAnalytics
-import ru.radiationx.data.analytics.features.ConfiguringAnalytics
 import ru.radiationx.data.analytics.features.DonationCardAnalytics
 import ru.radiationx.data.analytics.features.DonationDetailAnalytics
 import ru.radiationx.data.analytics.features.DonationDialogAnalytics
@@ -91,10 +90,12 @@ import ru.radiationx.data.app.ads.AdsConfigApiDataSource
 import ru.radiationx.data.app.ads.AdsConfigRepository
 import ru.radiationx.data.app.ads.AdsConfigStorage
 import ru.radiationx.data.app.config.ApiConfig
-import ru.radiationx.data.app.config.ApiConfigChanger
+import ru.radiationx.data.app.config.ApiConfigImpl
 import ru.radiationx.data.app.config.ApiConfigStorage
 import ru.radiationx.data.app.config.ConfigurationApiDataSource
 import ru.radiationx.data.app.config.ConfigurationRepository
+import ru.radiationx.data.app.config.ConfiguringInteractor
+import ru.radiationx.data.network.NetworkObserver
 import ru.radiationx.data.app.donation.DonationApiDataSource
 import ru.radiationx.data.app.donation.DonationHolder
 import ru.radiationx.data.app.donation.DonationRepository
@@ -120,7 +121,10 @@ import ru.radiationx.data.app.releaseupdate.ReleaseUpdateMiddleware
 import ru.radiationx.data.app.releaseupdate.ReleaseUpdateStorage
 import ru.radiationx.data.app.updater.CheckerApiDataSource
 import ru.radiationx.data.app.updater.CheckerRepository
+import ru.radiationx.data.app.versions.AppVersionsDataSource
+import ru.radiationx.data.app.versions.AppVersionsDataSourceImpl
 import ru.radiationx.data.app.vkcomments.VkCommentsRepository
+import ru.radiationx.data.di.providers.ApiConfigProvider
 import ru.radiationx.data.di.providers.ApiOkhttpProvider
 import ru.radiationx.data.di.providers.ApiRetrofitProvider
 import ru.radiationx.data.di.providers.AuthApiProvider
@@ -142,8 +146,6 @@ import ru.radiationx.data.di.providers.TeamsApiProvider
 import ru.radiationx.data.di.providers.TimeCodesApiProvider
 import ru.radiationx.data.di.providers.TorrentsApiProvider
 import ru.radiationx.data.di.providers.VideosApiProvider
-import ru.radiationx.data.app.versions.AppVersionsDataSource
-import ru.radiationx.data.app.versions.AppVersionsDataSourceImpl
 import ru.radiationx.data.network.DataErrorMapper
 import ru.radiationx.data.network.UserAgentGenerator
 import ru.radiationx.data.network.interceptors.AppInfoInterceptor
@@ -181,6 +183,8 @@ class DataModule(context: Context) : QuillModule() {
             Moshi.Builder().build()
         }
 
+        single<NetworkObserver>()
+
         single<DataErrorMapper>()
 
         singleProvider<SharedPreferences, PreferencesProvider>()
@@ -202,14 +206,15 @@ class DataModule(context: Context) : QuillModule() {
         singleImpl<UserHolder, UserStorage>()
         singleImpl<AuthHolder, AuthStorage>()
 
-        single<ApiConfigChanger>()
-
         single<AppCookieJar>()
         single<UnauthorizedInterceptor>()
         single<AppInfoInterceptor>()
         single<UserAgentGenerator>()
-        single<ApiConfig>()
+
+        single<ApiConfigImpl>()
+        singleProvider<ApiConfig, ApiConfigProvider>()
         single<ApiConfigStorage>()
+        single<ConfiguringInteractor>()
 
 
 
@@ -253,7 +258,6 @@ class DataModule(context: Context) : QuillModule() {
         single<CatalogAnalytics>()
         single<CatalogFilterAnalytics>()
         single<CommentsAnalytics>()
-        single<ConfiguringAnalytics>()
         single<FastSearchAnalytics>()
         single<FavoritesAnalytics>()
         single<FeedAnalytics>()

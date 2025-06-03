@@ -5,6 +5,7 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.HEAD
 import retrofit2.http.POST
 import retrofit2.http.Url
 import ru.radiationx.data.app.ads.remote.AdsConfigDataResponse
@@ -16,7 +17,7 @@ import ru.radiationx.data.app.updater.remote.UpdateDataRootResponse
 // TODO API2 check methods
 interface DirectApi {
 
-    @GET
+    @HEAD
     suspend fun checkUrl(@Url url: String)
 
     @GET

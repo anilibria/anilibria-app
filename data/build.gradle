@@ -57,7 +57,5 @@ dependencies {
 
     compileOnly libs.toothpick
     ksp libs.toothpick.compiler
-
-    implementation libs.androidnetworktools
 }
 

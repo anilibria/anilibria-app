@@ -39,17 +39,6 @@ object AnalyticsConstants {
 
     /* App */
 
-    /* Configuring */
-    const val config_open = "config_open"
-    const val config_check_full = "config_check_full"
-    const val config_check_last = "config_check_last"
-    const val config_load_config = "config_load_config"
-    const val config_check_avail = "config_check_avail"
-    const val config_check_proxies = "config_check_proxies"
-    const val config_repeat = "config_repeat"
-    const val config_skip = "config_skip"
-    const val config_next = "config_next"
-
     /* Fast Search */
     const val fast_search_open = "fast_search_open"
     const val fast_search_release_click = "fast_search_release_click"

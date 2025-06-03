@@ -74,7 +74,7 @@ class ShortcutHelper @Inject constructor(
         url: Url,
         bitmap: Bitmap,
     ) {
-        val absoluteUrl = url.withBase(apiConfig.siteUrl)
+        val absoluteUrl = url.withBase(apiConfig.site)
         val intent = Screens.IntentHandler(absoluteUrl).createIntent(context)
         val shortcut = ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(shortLabel)

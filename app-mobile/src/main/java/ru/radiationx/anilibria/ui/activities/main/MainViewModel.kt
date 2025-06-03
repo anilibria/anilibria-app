@@ -69,7 +69,7 @@ class MainViewModel @Inject constructor(
     fun init(savedScreen: String?) {
         analyticsProfile.update()
 
-        apiConfig
+        /*apiConfig
             .observeNeedConfig()
             .distinctUntilChanged()
             .onEach { needConfig ->
@@ -84,7 +84,8 @@ class MainViewModel @Inject constructor(
             _state.update { it.copy(needConfig = true) }
         } else {
             initMain(savedScreen)
-        }
+        }*/
+        initMain(savedScreen)
     }
 
     private fun initMain(savedScreen: String?) {

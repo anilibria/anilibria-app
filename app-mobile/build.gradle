@@ -124,9 +124,6 @@ dependencies {
     compileOnly libs.toothpick
     ksp libs.toothpick.compiler
 
-    implementation libs.androidnetworktools
-
-
     implementation libs.firebase.messaging
     implementation libs.firebase.core
 

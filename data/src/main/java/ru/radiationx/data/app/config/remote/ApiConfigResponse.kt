@@ -5,5 +5,5 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class ApiConfigResponse(
-    @Json(name = "addresses") val addresses: List<ApiConfigAddressResponse>
+    @Json(name = "addresses") val addresses: List<ApiAddressResponse>
 )

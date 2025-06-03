@@ -8,20 +8,22 @@ class ConfiguringViewModel @Inject constructor(
     private val configuringInteractor: ConfiguringInteractor
 ) : ViewModel() {
 
-    val state = configuringInteractor.observeScreenState()
 
     init {
-        configuringInteractor.initCheck()
     }
 
-    fun continueCheck() = configuringInteractor.repeatCheck()
+    fun continueCheck() {
 
-    fun nextCheck() = configuringInteractor.nextCheck()
+    }
 
-    fun skipCheck() = configuringInteractor.skipCheck()
+    fun nextCheck() {
+    }
+
+    fun skipCheck() {
+
+    }
 
     override fun onCleared() {
         super.onCleared()
-        configuringInteractor.finishCheck()
     }
 }

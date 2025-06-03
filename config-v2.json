@@ -1,0 +1,34 @@
+{
+  "addresses": [
+    {
+      "id": "api.anilibria.app",
+      "name": "Основной API домен + Запасной домен",
+      "description": null,
+      "widget": "https://www.anilibria.tv/",
+      "site": "https://anilibria.wtf/",
+      "image": "https://api.anilibria.app/",
+      "api": "https://api.anilibria.app/",
+      "status": "https://api.anilibria.app/api/v1/teams/roles"
+    },
+    {
+      "id": "anilibria.wtf",
+      "name": "Запасной домен",
+      "description": null,
+      "widget": "https://www.anilibria.tv/",
+      "site": "https://anilibria.wtf/",
+      "image": "https://anilibria.wtf/",
+      "api": "https://anilibria.wtf/",
+      "status": "https://anilibria.wtf/api/v1/teams/roles"
+    },
+    {
+      "id": "anilibria.top",
+      "name": "Основной домен",
+      "description": null,
+      "widget": "https://anilibria.top/",
+      "site": "https://anilibria.top/",
+      "image": "https://anilibria.top/",
+      "api": "https://anilibria.top/",
+      "status": "https://anilibria.top/api/v1/teams/roles"
+    }
+  ]
+}

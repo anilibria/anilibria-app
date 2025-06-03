@@ -1,35 +1,57 @@
 package ru.radiationx.data.app.config.mapper
 
+import ru.radiationx.data.app.config.db.ApiAddressDb
+import ru.radiationx.data.app.config.db.ApiConfigDataDb
 import ru.radiationx.data.app.config.models.ApiAddress
+import ru.radiationx.data.app.config.models.ApiAddressId
 import ru.radiationx.data.app.config.models.ApiConfigData
-import ru.radiationx.data.app.config.models.ApiProxy
-import ru.radiationx.data.app.config.remote.ApiConfigAddressResponse
-import ru.radiationx.data.app.config.remote.ApiConfigProxyResponse
+import ru.radiationx.data.app.config.remote.ApiAddressResponse
 import ru.radiationx.data.app.config.remote.ApiConfigResponse
+import ru.radiationx.data.common.toAbsoluteUrl
+import ru.radiationx.data.common.toBaseUrl
 
 fun ApiConfigResponse.toDomain(): ApiConfigData = ApiConfigData(
-    addresses.map { it.toDomain() }
+    addresses = addresses.map { it.toDomain() }
 )
 
-fun ApiConfigAddressResponse.toDomain(): ApiAddress = ApiAddress(
-    tag = tag,
-    name = name,
-    desc = desc,
-    widgetsSite = widgetsSite,
-    site = site,
-    baseImages = baseImages,
-    base = base,
-    api = api,
-    ips = ips,
-    proxies = proxies.map { it.toDomain() }
+fun ApiConfigDataDb.toDomain(): ApiConfigData = ApiConfigData(
+    addresses = addresses.map { it.toDomain() }
 )
 
-fun ApiConfigProxyResponse.toDomain(): ApiProxy = ApiProxy(
-    tag = tag,
-    name = name,
-    desc = desc,
-    ip = ip,
-    port = port,
-    user = user,
-    password = password
+fun ApiConfigData.toDb(): ApiConfigDataDb = ApiConfigDataDb(
+    addresses = addresses.map { it.toDb() }
 )
+
+fun ApiAddressResponse.toDomain(): ApiAddress = ApiAddress(
+    id = ApiAddressId(id),
+    name = name,
+    description = description,
+    widget = widget.toBaseUrl(),
+    site = site.toBaseUrl(),
+    image = image.toBaseUrl(),
+    api = api.toBaseUrl(),
+    status = status.toAbsoluteUrl()
+)
+
+fun ApiAddressDb.toDomain(): ApiAddress = ApiAddress(
+    id = ApiAddressId(id),
+    name = name,
+    description = description,
+    widget = widget.toBaseUrl(),
+    site = site.toBaseUrl(),
+    image = image.toBaseUrl(),
+    api = api.toBaseUrl(),
+    status = status.toAbsoluteUrl()
+)
+
+fun ApiAddress.toDb(): ApiAddressDb = ApiAddressDb(
+    id = id.id,
+    name = name,
+    description = description,
+    widget = widget.value,
+    site = site.value,
+    image = image.value,
+    api = api.value,
+    status = status.value
+)
+

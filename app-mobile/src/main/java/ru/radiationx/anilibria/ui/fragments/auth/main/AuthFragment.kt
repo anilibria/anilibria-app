@@ -131,7 +131,7 @@ class AuthFragment : BaseToolbarFragment<FragmentAuthBinding>(R.layout.fragment_
                     button {
                         text("Личный кабинет")
                         // todo API2 change url
-                        onClick { systemUtils.open("/pages/cp.php".toPathUrl().withBase(apiConfig.siteUrl)) }
+                        onClick { systemUtils.open("/pages/cp.php".toPathUrl().withBase(apiConfig.site)) }
                     }
                 }
             }

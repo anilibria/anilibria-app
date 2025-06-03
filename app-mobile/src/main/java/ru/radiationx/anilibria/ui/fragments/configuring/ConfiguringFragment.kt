@@ -29,9 +29,9 @@ class ConfiguringFragment : BaseDimensionsFragment(R.layout.fragment_configuring
         binding.configSkip.setOnClickListener { viewModel.skipCheck() }
         binding.configNext.setOnClickListener { viewModel.nextCheck() }
 
-        viewModel.state.onEach { state ->
+        /*viewModel.state.onEach { state ->
             updateScreen(state)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)*/
     }
 
     private fun updateScreen(screenState: ConfigScreenState) {

@@ -1,6 +1,5 @@
 [versions]
 adapterdelegates = "4.3.2"
-androidnetworktools = "0.4.5.3"
 androidx-appcompat = "1.7.0"
 androidx-cardview = "1.0.0"
 cicerone = "7.1"
@@ -48,7 +47,6 @@ appmetrica-plugin = "1.0.1"
 
 [libraries]
 adapterdelegates = { module = "com.hannesdorfmann:adapterdelegates4", version.ref = "adapterdelegates" }
-androidnetworktools = { module = "com.github.stealthcopter:AndroidNetworkTools", version.ref = "androidnetworktools" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "androidx-cardview" }
 chucker = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }

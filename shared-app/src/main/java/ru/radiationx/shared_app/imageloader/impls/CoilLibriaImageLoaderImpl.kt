@@ -39,7 +39,7 @@ class CoilLibriaImageLoaderImpl @Inject constructor(
 
     override fun showImage(imageView: ImageView, url: Url?, config: ImageLoaderScopeConfig) {
         val cacheKey = url.toCacheKey()
-        val absoluteUrl = url?.withBase(apiConfig.baseImagesUrl)
+        val absoluteUrl = url?.withBase(apiConfig.image)
         imageView.load(absoluteUrl, imageLoader) {
             diskCacheKey(cacheKey)
             memoryCacheKey(cacheKey)
@@ -70,7 +70,7 @@ class CoilLibriaImageLoaderImpl @Inject constructor(
 
     override suspend fun loadImageBitmap(context: Context, url: Url?): Bitmap? {
         val cacheKey = url.toCacheKey()
-        val absoluteUrl = url?.withBase(apiConfig.baseImagesUrl)
+        val absoluteUrl = url?.withBase(apiConfig.image)
         val request = ImageRequest.Builder(context)
             .diskCacheKey(cacheKey)
             .memoryCacheKey(cacheKey)

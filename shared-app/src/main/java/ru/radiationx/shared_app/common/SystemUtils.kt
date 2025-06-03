@@ -74,7 +74,7 @@ class SystemUtils @Inject constructor(
     }
 
     fun copy(url: Url) {
-        val absoluteUrl = url.withBase(apiConfig.siteUrl)
+        val absoluteUrl = url.withBase(apiConfig.site)
         copy(absoluteUrl)
     }
 
@@ -101,7 +101,7 @@ class SystemUtils @Inject constructor(
     }
 
     fun share(url: Url) {
-        val absoluteUrl = url.withBase(apiConfig.siteUrl)
+        val absoluteUrl = url.withBase(apiConfig.site)
         share(absoluteUrl)
     }
 
@@ -110,7 +110,7 @@ class SystemUtils @Inject constructor(
     }
 
     fun open(url: Url) {
-        val absoluteUrl = url.withBase(apiConfig.siteUrl)
+        val absoluteUrl = url.withBase(apiConfig.site)
         val intent =
             Intent(Intent.ACTION_VIEW, absoluteUrl.toUri()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(

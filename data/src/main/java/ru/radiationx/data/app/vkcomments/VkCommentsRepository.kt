@@ -6,6 +6,7 @@ import kotlinx.coroutines.withTimeout
 import ru.radiationx.data.app.DirectApi
 import ru.radiationx.data.app.vkcomments.models.VkComments
 import ru.radiationx.data.common.toBaseUrl
+import ru.radiationx.shared.ktx.withTimeoutOrThrow
 import java.net.UnknownHostException
 import javax.inject.Inject
 
@@ -28,7 +29,7 @@ class VkCommentsRepository @Inject constructor(
     suspend fun checkVkBlocked(): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                withTimeout(15_000) {
+                withTimeoutOrThrow(15_000) {
                     api.checkUrl("https://vk.com/")
                     false
                 }

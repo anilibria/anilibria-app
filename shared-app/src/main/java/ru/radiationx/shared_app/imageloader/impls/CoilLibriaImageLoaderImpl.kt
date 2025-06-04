@@ -16,7 +16,7 @@ import okhttp3.OkHttpClient
 import ru.radiationx.data.app.config.AppConfig
 import ru.radiationx.data.common.Url
 import ru.radiationx.data.common.withBase
-import ru.radiationx.data.di.ApiClient
+import ru.radiationx.data.di.DirectClient
 import ru.radiationx.shared_app.R
 import ru.radiationx.shared_app.imageloader.ImageLoaderScopeConfig
 import ru.radiationx.shared_app.imageloader.LibriaImageLoader
@@ -25,7 +25,7 @@ import javax.inject.Inject
 
 class CoilLibriaImageLoaderImpl @Inject constructor(
     private val context: Context,
-    @ApiClient private val okHttpClient: OkHttpClient,
+    @DirectClient private val okHttpClient: OkHttpClient,
     private val appConfig: AppConfig
 ) : LibriaImageLoader {
 

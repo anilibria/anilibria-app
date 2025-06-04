@@ -14,9 +14,8 @@ fun OkHttpClient.Builder.appendSslCompatAnalytics(
 }
 
 fun OkHttpClient.Builder.appendTimeouts(): OkHttpClient.Builder {
-    callTimeout(25, TimeUnit.SECONDS)
-    connectTimeout(15, TimeUnit.SECONDS)
-    readTimeout(15, TimeUnit.SECONDS)
-    writeTimeout(15, TimeUnit.SECONDS)
+    connectTimeout(5, TimeUnit.SECONDS)
+    readTimeout(5, TimeUnit.SECONDS)
+    writeTimeout(5, TimeUnit.SECONDS)
     return this
 }

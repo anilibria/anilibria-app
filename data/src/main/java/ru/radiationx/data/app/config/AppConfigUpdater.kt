@@ -32,9 +32,7 @@ class AppConfigUpdater @Inject constructor(
     }
 
     private suspend fun stepConfigure() {
-        updateState(State.Initial)
-
-        stepAwaitNetwork()
+        updateState(Step.Initial)
 
         if (appConfig.getNetworkHash() == null) {
             stepUpdateConfig()
@@ -44,43 +42,35 @@ class AppConfigUpdater @Inject constructor(
         if (address != null) {
             appConfig.setReady(address)
         } else {
+            showWarning("Не удалось найти подходящий сервер")
             appConfig.setDefault()
         }
 
         appConfig.setNetworkHash(networkObserver.getHash())
 
-        updateState(State.Configured)
-    }
-
-    private suspend fun stepAwaitNetwork() {
-        if (!networkObserver.isAvailable()) {
-            showWarning("Ожидание подключения к интернету")
-        }
-        updateState(State.NetworkWaiting)
-        networkObserver.awaitAvailable()
-        updateState(State.NetworkAvailable)
+        updateState(Step.Finish)
     }
 
     private suspend fun stepUpdateConfig() {
         coRunCatching {
-            updateState(State.ConfigUpdating)
+            updateState(Step.ConfigUpdating)
             repository.updateConfig()
         }.onSuccess {
-            updateState(State.ConfigSuccess)
+            updateState(Step.ConfigSuccess)
         }.onFailure {
-            updateStateError(State.ConfigFailure, it)
+            updateStateError(Step.ConfigFailure, it)
         }
     }
 
     private suspend fun stepFindAddress(): AppConfigAddress? {
         return coRunCatching {
-            updateState(State.AddressFinding)
+            updateState(Step.AddressFinding)
             val addresses = storage.get().addresses
             repository.findFastest(addresses)
         }.onSuccess {
-            updateStateData(State.AddressSuccess, it.id)
+            updateStateData(Step.AddressSuccess, it.id)
         }.onFailure {
-            updateStateError(State.AddressFailure, it)
+            updateStateError(Step.AddressFailure, it)
         }.getOrNull()
     }
 
@@ -88,24 +78,21 @@ class AppConfigUpdater @Inject constructor(
         Timber.tag(TAG).w(message)
     }
 
-    private fun updateState(state: State) {
-        Timber.tag(TAG).i("new state $state")
+    private fun updateState(step: Step) {
+        Timber.tag(TAG).i("new state $step")
     }
 
-    private fun updateStateError(state: State, error: Throwable) {
-        Timber.tag(TAG).e(error, "new state $state with error:")
+    private fun updateStateError(step: Step, error: Throwable) {
+        Timber.tag(TAG).e(error, "new state $step with error:")
     }
 
-    private fun updateStateData(state: State, data: Any?) {
-        Timber.tag(TAG).i("new state $state with data: $data")
+    private fun updateStateData(step: Step, data: Any?) {
+        Timber.tag(TAG).i("new state $step with data: $data")
     }
 
 
-    private enum class State {
+    private enum class Step {
         Initial,
-
-        NetworkWaiting,
-        NetworkAvailable,
 
         ConfigUpdating,
         ConfigSuccess,
@@ -115,6 +102,8 @@ class AppConfigUpdater @Inject constructor(
         AddressSuccess,
         AddressFailure,
 
-        Configured
+        RepeatAddress,
+
+        Finish
     }
 }

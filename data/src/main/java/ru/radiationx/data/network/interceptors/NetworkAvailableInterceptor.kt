@@ -2,16 +2,16 @@ package ru.radiationx.data.network.interceptors
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import ru.radiationx.data.app.config.AppConfigUpdater
+import ru.radiationx.data.network.NetworkObserver
 import javax.inject.Inject
 
 
-class AppConfigInterceptor @Inject constructor(
-    private val appConfigUpdater: AppConfigUpdater
+class NetworkAvailableInterceptor @Inject constructor(
+    private val networkObserver: NetworkObserver
 ) : SuspendableInterceptor() {
 
     override suspend fun interceptSuspend(chain: Interceptor.Chain): Response {
-        appConfigUpdater.update()
+        networkObserver.awaitAvailable()
         return chain.proceed(chain.request())
     }
 }

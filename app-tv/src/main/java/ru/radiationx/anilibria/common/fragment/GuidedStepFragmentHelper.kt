@@ -24,7 +24,7 @@ object GuidedStepFragmentHelper {
     fun add(
         fragmentManager: FragmentManager,
         fragment: FakeGuidedStepFragment,
-        containerId: Int = android.R.id.content,
+        containerId: Int
     ): Int {
         val current = GuidedStepSupportFragment.getCurrentGuidedStepSupportFragment(fragmentManager)
         val inGuidedStep = current != null

@@ -183,7 +183,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
                 statusView = binding.networkStatus,
                 state = it
             )
-        }.launchInResumed(this)
+        }.launchIn(lifecycleScope)
     }
 
     override fun onDestroy() {

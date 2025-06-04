@@ -14,9 +14,9 @@ data class VideoResponse(
     @Json(name = "title")
     val title: String,
     @Json(name = "views")
-    val views: Int,
+    val views: Int?,
     @Json(name = "comments")
-    val comments: Int,
+    val comments: Int?,
     @Json(name = "video_id")
     val videoId: String,
     @Json(name = "created_at")

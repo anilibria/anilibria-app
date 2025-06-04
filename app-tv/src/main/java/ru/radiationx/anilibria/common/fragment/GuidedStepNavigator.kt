@@ -18,6 +18,7 @@ import kotlin.math.max
 class GuidedStepNavigator(
     activity: FragmentActivity,
     containerId: Int,
+    private val guidedContainerId: Int,
     fragmentManager: FragmentManager = activity.supportFragmentManager,
 ) : AppNavigator(activity, containerId, fragmentManager) {
 
@@ -73,7 +74,7 @@ class GuidedStepNavigator(
                     GuidedStepFragmentHelper.prepare(fragmentManager, it, fragment)
                 }
                 .replace(
-                    android.R.id.content,
+                    guidedContainerId,
                     fragment,
                     GuidedStepFragmentHelper.TAG_LEAN_BACK_ACTIONS_FRAGMENT
                 )
@@ -104,7 +105,7 @@ class GuidedStepNavigator(
                     GuidedStepFragmentHelper.prepare(fragmentManager, it, fragment)
                 }
                 .replace(
-                    android.R.id.content,
+                    guidedContainerId,
                     fragment,
                     GuidedStepFragmentHelper.TAG_LEAN_BACK_ACTIONS_FRAGMENT
                 )

@@ -31,8 +31,8 @@ fun YoutubeItem.toState() = YoutubeItemState(
     id = id,
     title = title.orEmpty(),
     image = image,
-    views = views.toString(),
-    comments = comments.toString()
+    views = (views ?: 0).toString(),
+    comments = (comments ?: 0).toString()
 )
 
 fun FeedItem.toState(updates: Map<ReleaseId, ReleaseUpdate>) = FeedItemState(

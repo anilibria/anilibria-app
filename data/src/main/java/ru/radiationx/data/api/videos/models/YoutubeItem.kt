@@ -10,7 +10,7 @@ data class YoutubeItem(
     val image: Url.Path?,
     val vid: String,
     val link: Url.Absolute,
-    val views: Int,
-    val comments: Int,
+    val views: Int?,
+    val comments: Int?,
     val createdAt: Date
 )

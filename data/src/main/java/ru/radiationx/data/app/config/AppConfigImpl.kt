@@ -1,6 +1,8 @@
 package ru.radiationx.data.app.config
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import ru.radiationx.data.app.config.models.AppConfigAddress
 import ru.radiationx.data.app.config.models.AppConfigAddressId
 import ru.radiationx.data.common.Url
@@ -48,6 +50,12 @@ class AppConfigImpl @Inject constructor(
 
     private val active: AppConfigAddress
         get() = activeAddressState.value ?: defaultAddress
+
+    override val configState: Flow<Boolean>
+        get() = activeAddressState.map { it != null }
+
+    override val isConfigured: Boolean
+        get() = activeAddressState.value != null
 
     override val id: AppConfigAddressId
         get() = active.id

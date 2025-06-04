@@ -12,6 +12,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <FrameLayout
+        android:id="@+id/network_status_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/appFooter"
+        android:clipToPadding="false"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/network_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:alpha="0.9"
+            android:background="@drawable/bg_dot"
+            android:elevation="4dp"
+            android:gravity="center_horizontal"
+            android:padding="2dp"
+            android:textAppearance="?textAppearanceCaption"
+            android:textColor="#fff"
+            tools:backgroundTint="@color/md_red"
+            tools:text="Нет подключения" />
+    </FrameLayout>
+
     <View
         android:id="@+id/bottomShadow"
         android:layout_width="match_parent"
@@ -23,8 +48,8 @@
         android:id="@+id/appFooter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?colorSurface"
         android:layout_alignParentBottom="true"
+        android:background="?colorSurface"
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView

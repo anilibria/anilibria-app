@@ -12,6 +12,7 @@ import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import dev.androidbroadcast.vbpd.viewBinding
+import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityAuthBinding
 import ru.radiationx.anilibria.di.DimensionsModule
@@ -19,9 +20,13 @@ import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
+import ru.radiationx.anilibria.ui.common.NetworkStatusBinder
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
+import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
+import ru.radiationx.shared.ktx.android.launchInResumed
+import ru.radiationx.shared_app.networkstatus.NetworkStatusViewModel
 
 
 /**
@@ -44,6 +49,8 @@ class AuthActivity : BaseActivity(R.layout.activity_auth) {
 
     private val navigationHolder by inject<NavigatorHolder>()
 
+    private val networkStatusViewModel by viewModel<NetworkStatusViewModel>()
+
     private val navigatorNew by lazy {
         object : AppNavigator(this, R.id.root_container) {
 
@@ -62,6 +69,15 @@ class AuthActivity : BaseActivity(R.layout.activity_auth) {
             val initScreen = getExtra<BaseFragmentScreen>(ARG_INIT_SCREEN) ?: Screens.AuthMain()
             router.newRootScreen(initScreen)
         }
+
+        networkStatusViewModel.state.onEach {
+            NetworkStatusBinder.bind(
+                transitionRoot = binding.activityRoot,
+                statusWrapper = binding.networkStatusWrapper,
+                statusView = binding.networkStatus,
+                state = it
+            )
+        }.launchInResumed(this)
     }
 
     override fun onResumeFragments() {
@@ -102,6 +118,11 @@ class AuthActivity : BaseActivity(R.layout.activity_auth) {
             )
             layoutActivityContainer.root.updatePadding(
                 top = contentInsets.top,
+                left = contentInsets.left,
+                right = contentInsets.right,
+                bottom = contentInsets.bottom
+            )
+            networkStatusWrapper.updatePadding(
                 left = contentInsets.left,
                 right = contentInsets.right,
                 bottom = contentInsets.bottom

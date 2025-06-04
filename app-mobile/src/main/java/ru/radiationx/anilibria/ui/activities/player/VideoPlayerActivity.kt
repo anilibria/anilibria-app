@@ -45,6 +45,7 @@ import ru.radiationx.anilibria.ui.activities.player.ext.getEpisode
 import ru.radiationx.anilibria.ui.activities.player.mappers.toPlaylistItem
 import ru.radiationx.anilibria.ui.activities.player.models.PlayerAction
 import ru.radiationx.anilibria.ui.activities.player.playlist.PlaylistDialogFragment
+import ru.radiationx.anilibria.ui.common.NetworkStatusBinder
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.PlayerAnalytics
 import ru.radiationx.data.common.EpisodeId
@@ -59,6 +60,7 @@ import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.launchInStarted
 import ru.radiationx.shared.ktx.android.startMainActivity
+import ru.radiationx.shared_app.networkstatus.NetworkStatusViewModel
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
@@ -125,6 +127,8 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     private val settingsViewModel by viewModel<PlayerSettingViewModel>()
 
+    private val networkStatusViewModel by viewModel<NetworkStatusViewModel>()
+
     override fun attachBaseContext(newBase: Context?) {
         delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
         super.attachBaseContext(newBase)
@@ -149,6 +153,14 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         initPipController()
         initSettingsController()
 
+        networkStatusViewModel.state.onEach {
+            NetworkStatusBinder.bindPlayer(
+                transitionRoot = binding.root,
+                statusWrapper = binding.networkStatusWrapper,
+                statusView = binding.networkStatus,
+                state = it
+            )
+        }.launchIn(lifecycleScope)
 
         viewModel.actions.onEach { action ->
             when (action) {
@@ -403,6 +415,9 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             binding.playerToolbarTitleContainer.updatePadding(
                 left = toolbarInsets.right,
                 right = toolbarInsets.left
+            )
+            binding.networkStatusWrapper.updatePadding(
+                bottom = toolbarInsets.bottom
             )
             insets
         }

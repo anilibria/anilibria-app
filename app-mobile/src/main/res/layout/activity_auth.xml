@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,5 +11,30 @@
         layout="@layout/activity_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/network_status_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:clipToPadding="false"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/network_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:alpha="0.9"
+            android:background="@drawable/bg_dot"
+            android:elevation="4dp"
+            android:gravity="center_horizontal"
+            android:padding="2dp"
+            android:textAppearance="?textAppearanceCaption"
+            android:textColor="#fff"
+            tools:backgroundTint="@color/md_red"
+            tools:text="Нет подключения" />
+    </FrameLayout>
 
 </RelativeLayout>

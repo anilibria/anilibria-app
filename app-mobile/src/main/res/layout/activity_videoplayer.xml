@@ -122,4 +122,27 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/network_status_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:alpha="0.9"
+        android:background="@drawable/bg_solid"
+        android:clipToPadding="false"
+        android:visibility="gone"
+        tools:backgroundTint="@color/md_red"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/network_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="2dp"
+            android:textAppearance="?textAppearanceCaption"
+            android:textColor="#fff"
+            tools:text="Нет подключения" />
+    </FrameLayout>
+
 </FrameLayout>

@@ -22,7 +22,6 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.terrakok.cicerone.Back
 import com.github.terrakok.cicerone.Command
@@ -54,6 +53,7 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
+import ru.radiationx.anilibria.ui.common.NetworkStatusBinder
 import ru.radiationx.anilibria.ui.fragments.TabResetter
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
@@ -70,6 +70,7 @@ import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.launchInResumed
+import ru.radiationx.shared_app.networkstatus.NetworkStatusViewModel
 
 class MainActivity : BaseActivity(R.layout.activity_main) {
 
@@ -111,6 +112,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     private val tabsStack = mutableListOf<String>()
 
     private val viewModel by viewModel<MainViewModel>()
+    private val networkStatusViewModel by viewModel<NetworkStatusViewModel>()
 
     private val checkerViewModel by viewModel<CheckerViewModel> {
         CheckerExtra(forceLoad = true)
@@ -173,6 +175,15 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         viewModel.updateTabsAction.observe().onEach {
             updateTabs()
         }.launchInResumed(this)
+
+        networkStatusViewModel.state.onEach {
+            NetworkStatusBinder.bind(
+                transitionRoot = binding.activityRoot,
+                statusWrapper = binding.networkStatusWrapper,
+                statusView = binding.networkStatus,
+                state = it
+            )
+        }.launchInResumed(this)
     }
 
     override fun onDestroy() {
@@ -180,6 +191,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         binding.tabsRecycler.adapter = null
         bannerAdController.destroy()
     }
+
 
     @SuppressLint("MissingPermission")
     private suspend fun showUpdateData(update: UpdateDataState) {
@@ -302,6 +314,10 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
                 left = systemBarInsets.left,
                 right = systemBarInsets.right,
                 bottom = systemBarInsets.bottom
+            )
+            networkStatusWrapper.updatePadding(
+                left = systemBarInsets.left,
+                right = systemBarInsets.right,
             )
             provider.update(dimensions)
             insets

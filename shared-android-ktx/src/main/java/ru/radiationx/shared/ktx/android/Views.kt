@@ -15,6 +15,7 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
 
@@ -36,6 +37,15 @@ fun ImageView.setCompatDrawable(@DrawableRes icRes: Int) =
 
 fun AppCompatImageView.setTint(color: Int) =
     ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
+
+fun View.setBackgroundTint(color: Int) =
+    ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(color))
+
+fun View.setBackgroundTintRes(@ColorRes resId: Int) =
+    setBackgroundTint(getCompatColor(resId))
+
+fun View.setBackgroundTintAttr(@AttrRes resId: Int) =
+    setBackgroundTint(context.getColorFromAttr(resId))
 
 fun AppCompatImageView.setTintColor(@ColorRes colorRes: Int) =
     setTint(ContextCompat.getColor(context, colorRes))

@@ -6,8 +6,10 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import androidx.core.content.getSystemService
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
 import javax.inject.Inject
@@ -57,6 +59,11 @@ class NetworkObserver @Inject constructor(
 
     fun isAvailable(): Boolean {
         return availableNetworks.value.isAvailable()
+    }
+
+
+    fun observeAvailable(): Flow<Boolean> {
+        return availableNetworks.map { it.isAvailable() }
     }
 
     suspend fun awaitAvailable() {

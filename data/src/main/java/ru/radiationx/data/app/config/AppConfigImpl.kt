@@ -6,9 +6,12 @@ import ru.radiationx.data.app.config.models.AppConfigAddressId
 import ru.radiationx.data.common.Url
 import ru.radiationx.data.common.toAbsoluteUrl
 import ru.radiationx.data.common.toBaseUrl
+import ru.radiationx.data.network.NetworkObserver
 import javax.inject.Inject
 
-class AppConfigImpl @Inject constructor() : AppConfig {
+class AppConfigImpl @Inject constructor(
+    private val networkObserver: NetworkObserver
+) : AppConfig {
 
     private val defaultAddress = AppConfigAddress(
         id = AppConfigAddressId(id = "default"),
@@ -25,23 +28,21 @@ class AppConfigImpl @Inject constructor() : AppConfig {
 
     private var networkHash: Int? = null
 
-    fun getNetworkHash(): Int? {
-        return networkHash
+    fun needsConfigure(): Boolean {
+        return networkObserver.getHash() != networkHash
     }
 
-    fun setNetworkHash(hash: Int) {
-        networkHash = hash
-    }
-
-    fun needsUpdateAddress(hash: Int): Boolean {
-        return hash != networkHash
+    fun needsUpdateConfig(): Boolean {
+        return networkHash == null
     }
 
     fun setReady(address: AppConfigAddress) {
+        networkHash = networkObserver.getHash()
         activeAddressState.value = address
     }
 
     fun setDefault() {
+        networkHash = networkObserver.getHash()
         activeAddressState.value = defaultAddress
     }
 

@@ -94,7 +94,7 @@ import ru.radiationx.data.app.config.AppConfigApiDataSource
 import ru.radiationx.data.app.config.AppConfigImpl
 import ru.radiationx.data.app.config.AppConfigRepository
 import ru.radiationx.data.app.config.AppConfigStorage
-import ru.radiationx.data.app.config.AppConfigUpdater
+import ru.radiationx.data.app.config.AppConfigConfigurator
 import ru.radiationx.data.app.donation.DonationApiDataSource
 import ru.radiationx.data.app.donation.DonationHolder
 import ru.radiationx.data.app.donation.DonationRepository
@@ -215,7 +215,7 @@ class DataModule(context: Context) : QuillModule() {
         single<AppConfigImpl>()
         singleProvider<AppConfig, AppConfigProvider>()
         single<AppConfigStorage>()
-        single<AppConfigUpdater>()
+        single<AppConfigConfigurator>()
 
 
 

@@ -1,5 +1,6 @@
 package ru.radiationx.data.network.interceptors
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
@@ -33,7 +34,11 @@ abstract class SuspendableInterceptor : Interceptor {
         }
 
         runCatching { interceptJob.await() }.getOrElse {
-            throw IOException("Intercept job failed", it)
+            if (it is CancellationException) {
+                throw IOException("Intercept job failed", it)
+            } else {
+                throw it
+            }
         }
     }
 

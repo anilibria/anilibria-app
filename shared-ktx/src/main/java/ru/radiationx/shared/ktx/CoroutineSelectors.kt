@@ -3,7 +3,6 @@ package ru.radiationx.shared.ktx
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
-import kotlin.coroutines.cancellation.CancellationException
 
 suspend fun <P, R> List<P>.sequentialFirstNotFailure(block: suspend (P) -> R): R {
     return firstNotFailure { params ->
@@ -50,10 +49,6 @@ private suspend fun <P, R> List<P>.firstNotFailure(
     val result: Result<R>? = block.invoke(params)
     checkNotNull(result) {
         "firstNotFailure returns null result"
-    }
-    val exception = result.exceptionOrNull()
-    if (exception != null && exception !is CancellationException) {
-        throw IllegalStateException("firstNotFailure failed with last exception:", exception)
     }
     return result.getOrThrow()
 }

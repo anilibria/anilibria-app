@@ -23,7 +23,9 @@ suspend fun <T> withTimeoutOrThrow(timeMillis: Long, block: suspend CoroutineSco
         withTimeout(timeMillis, block)
     }.getOrElse {
         if (it is TimeoutCancellationException) {
-            throw TimeoutException(it.message)
+            throw TimeoutException(it.message).apply {
+                initCause(it)
+            }
         } else {
             throw it
         }

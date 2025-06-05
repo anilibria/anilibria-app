@@ -39,14 +39,14 @@ import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
 import toothpick.InjectConstructor
 
-data class FilterExtra(
+data class SearchExtra(
     val type: FilterType,
     val genre: ReleaseGenre?
 ) : QuillExtra
 
 @InjectConstructor
-class FilterViewModel(
-    private val argExtra: FilterExtra,
+class SearchViewModel(
+    private val argExtra: SearchExtra,
     private val filterInteractor: FilterInteractor,
     private val collectionsInteractor: CollectionsInteractor,
     private val releaseUpdateHolder: ReleaseUpdateHolder,
@@ -95,6 +95,7 @@ class FilterViewModel(
 
         _loaderArg
             .drop(1)
+            .debounce(300)
             .onEach { releasesLoader.refresh() }
             .launchIn(viewModelScope)
 
@@ -121,7 +122,16 @@ class FilterViewModel(
         }
             .onEach { loadingState ->
                 _state.update {
-                    it.copy(data = loadingState)
+                    it.copy(releases = loadingState)
+                }
+            }
+            .launchIn(viewModelScope)
+
+        filterDataLoader
+            .observeState()
+            .onEach { filterState ->
+                _state.update {
+                    it.copy(filter = filterState)
                 }
             }
             .launchIn(viewModelScope)
@@ -149,6 +159,10 @@ class FilterViewModel(
 
     fun onQueryChange(query: String) {
         _queryState.value = query
+    }
+
+    fun onFormChanged(newForm: FilterForm) {
+        _loaderArg.update { it.copy(form = newForm) }
     }
 
     fun onItemClick(item: ReleaseItemState) {

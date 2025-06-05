@@ -35,7 +35,7 @@ import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 
 
-class SearchCatalogFragment :
+class SearchFragment :
     BaseSearchItemFragment<FragmentTabsListRefreshBinding>(R.layout.fragment_tabs_list_refresh),
     SharedProvider,
     TopScroller {
@@ -47,13 +47,12 @@ class SearchCatalogFragment :
         fun newInstance(
             filterType: FilterType,
             genre: ReleaseGenre? = null
-        ) = SearchCatalogFragment().putExtra {
+        ) = SearchFragment().putExtra {
             putSerializable(ARG_TYPE, filterType)
             putParcelable(ARG_GENRE, genre)
         }
     }
 
-    private lateinit var genresDialog: CatalogFilterDialog
     private val adapter = SearchAdapter(
         loadMoreListener = { viewModel.loadMore() },
         loadRetryListener = { viewModel.loadMore() },
@@ -74,8 +73,8 @@ class SearchCatalogFragment :
         )
     )
 
-    private val viewModel by viewModel<FilterViewModel> {
-        FilterExtra(
+    private val viewModel by viewModel<SearchViewModel> {
+        SearchExtra(
             type = getExtraNotNull(ARG_TYPE),
             genre = getExtra(ARG_GENRE)
         )
@@ -110,24 +109,10 @@ class SearchCatalogFragment :
         }
 
 
-        genresDialog = CatalogFilterDialog(
-            requireContext(),
-            viewLifecycleOwner,
-            object : CatalogFilterDialog.ClickListener {
-                override fun onAccept(state: CatalogFilterState) {
-                    //viewModel.onAcceptDialog(state)
-                }
-
-                override fun onClose() {
-                    //viewModel.onCloseDialog()
-                }
-            }
-        )
-
         binding.refreshLayout.setOnRefreshListener { viewModel.refresh() }
 
         binding.recyclerView.apply {
-            adapter = this@SearchCatalogFragment.adapter
+            adapter = this@SearchFragment.adapter
             layoutManager = LinearLayoutManager(this.context)
             disableItemChangeAnimation()
         }
@@ -173,8 +158,8 @@ class SearchCatalogFragment :
         }
 
         viewModel.state.onEach { state ->
-            binding.progressBarList.isVisible = state.data.emptyLoading
-            binding.refreshLayout.isRefreshing = state.data.refreshLoading
+            binding.progressBarList.isVisible = state.releases.emptyLoading
+            binding.refreshLayout.isRefreshing = state.releases.refreshLoading
             adapter.bindState(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 

@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.fragments.search
+package ru.radiationx.anilibria.ui.fragments.search.fast
 
 import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.model.SuggestionLocalItemState

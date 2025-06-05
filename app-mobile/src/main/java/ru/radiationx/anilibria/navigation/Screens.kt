@@ -23,7 +23,7 @@ import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
 import ru.radiationx.anilibria.ui.fragments.release.loader.ReleaseLoaderFragment
 import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
-import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
+import ru.radiationx.anilibria.ui.fragments.search.SearchFragment
 import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
 import ru.radiationx.anilibria.ui.fragments.youtube.YoutubeFragment
 import ru.radiationx.data.api.auth.models.SocialType
@@ -107,7 +107,7 @@ object Screens {
 
     class Favorites : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) =
-            SearchCatalogFragment.newInstance(FilterType.Favorites)
+            SearchFragment.newInstance(FilterType.Favorites)
     }
 
     class History(
@@ -141,14 +141,14 @@ object Screens {
 
     class Collections : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) =
-            SearchCatalogFragment.newInstance(FilterType.Collections)
+            SearchFragment.newInstance(FilterType.Collections)
     }
 
     class Catalog(
         private val genre: ReleaseGenre? = null,
     ) : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) =
-            SearchCatalogFragment.newInstance(FilterType.Catalog, genre)
+            SearchFragment.newInstance(FilterType.Catalog, genre)
     }
 
     class MainFeed : BaseFragmentScreen() {

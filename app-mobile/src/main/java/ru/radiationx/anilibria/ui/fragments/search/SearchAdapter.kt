@@ -38,7 +38,7 @@ class SearchAdapter(
     fun bindState(state: SearchScreenState) {
         val newItems = mutableListOf<ListItem>()
 
-        val loadingState = state.data
+        val loadingState = state.releases
 
         getPlaceholder(state)?.also {
             newItems.add(it)
@@ -60,7 +60,7 @@ class SearchAdapter(
     }
 
     private fun getPlaceholder(state: SearchScreenState): PlaceholderListItem? {
-        val loadingState = state.data
+        val loadingState = state.releases
         val needPlaceholder = loadingState.needShowPlaceholder { it?.isNotEmpty() ?: false }
 
         return when {

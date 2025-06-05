@@ -1,4 +1,4 @@
-package ru.radiationx.anilibria.ui.fragments.search
+package ru.radiationx.anilibria.ui.fragments.search.fast
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

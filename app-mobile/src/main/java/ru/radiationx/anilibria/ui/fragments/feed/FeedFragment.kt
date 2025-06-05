@@ -21,8 +21,8 @@ import ru.radiationx.anilibria.ui.common.youtubeItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseSearchFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
-import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
-import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
+import ru.radiationx.anilibria.ui.fragments.search.fast.FastSearchAdapter
+import ru.radiationx.anilibria.ui.fragments.search.fast.FastSearchViewModel
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout

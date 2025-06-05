@@ -23,14 +23,16 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/network_status"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_margin="8dp"
             android:alpha="0.9"
             android:background="@drawable/bg_dot"
             android:elevation="4dp"
             android:gravity="center_horizontal"
-            android:padding="2dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
             android:textAppearance="?textAppearanceCaption"
             android:textColor="#fff"
             tools:backgroundTint="@color/md_red"

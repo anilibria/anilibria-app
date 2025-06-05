@@ -10,7 +10,8 @@ import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderState
 data class FeedScreenState(
     val data: PageLoaderState<FeedDataState> = PageLoaderState.empty(),
     val warnings: List<FeedAppWarning> = emptyList(),
-    val donationCardItemState: DonationCardItemState? = null
+    val donationCardItemState: DonationCardItemState? = null,
+    val randomLoading: Boolean = false
 )
 
 data class FeedDataState(

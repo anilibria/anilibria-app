@@ -135,7 +135,7 @@ class FeedAdapter(
                     hasBg = true
                 )
             )
-            newItems.add(FeedRandomBtnListItem("random"))
+            newItems.add(FeedRandomBtnListItem("random", state.randomLoading))
 
             var lastType: String? = null
             feedItems.forEach {

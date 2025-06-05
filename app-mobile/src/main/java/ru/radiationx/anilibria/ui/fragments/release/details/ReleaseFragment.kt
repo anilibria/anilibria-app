@@ -88,9 +88,9 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
         )
     }
 
-    override var transitionNameLocal = ""
+    private var transitionNameLocal: String? = null
 
-    override fun setTransitionName(name: String) {
+    override fun setTransitionName(name: String?) {
         transitionNameLocal = name
     }
 
@@ -111,8 +111,10 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
                 title = getString(R.string.fragment_title_release)
             )
         }
-        baseBinding.toolbarImage.transitionName = transitionNameLocal
-        postopneEnterTransitionWithTimout()
+        if (transitionNameLocal != null) {
+            baseBinding.toolbarImage.transitionName = transitionNameLocal
+            postopneEnterTransitionWithTimout()
+        }
         ToolbarHelper.setTransparent(baseBinding.toolbar, baseBinding.appbarLayout)
         ToolbarHelper.setScrollFlag(
             baseBinding.toolbarLayout,

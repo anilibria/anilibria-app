@@ -263,6 +263,7 @@ class FeedViewModel @Inject constructor(
             return
         }
         randomJob = viewModelScope.launch {
+            _state.update { it.copy(randomLoading = true) }
             coRunCatching {
                 releaseInteractor.getRandomRelease()
             }.onSuccess {
@@ -271,6 +272,7 @@ class FeedViewModel @Inject constructor(
             }.onFailure {
                 errorHandler.handle(it)
             }
+            _state.update { it.copy(randomLoading = false) }
         }
     }
 

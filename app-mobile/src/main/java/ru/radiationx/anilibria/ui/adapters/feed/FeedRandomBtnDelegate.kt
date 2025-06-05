@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.ui.adapters.feed
 
 import android.view.View
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
@@ -23,7 +25,7 @@ class FeedRandomBtnDelegate(
 ) {
 
     override fun bindData(item: FeedRandomBtnListItem, holder: ViewHolder) =
-        holder.bind()
+        holder.bind(item)
 
     class ViewHolder(
         itemView: View,
@@ -40,8 +42,10 @@ class FeedRandomBtnDelegate(
             }
         }
 
-        fun bind() {
+        fun bind(item: FeedRandomBtnListItem) {
             dimensionsApplier.applyPaddings(Side.Left, Side.Right)
+            binding.itemRandomBtn.isInvisible = item.isLoading
+            binding.itemProgressBar.isVisible = item.isLoading
         }
     }
 }

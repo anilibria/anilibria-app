@@ -135,7 +135,7 @@ data class FeedSectionListItem(
 data class FeedListItem(val item: FeedItemState) :
     ListItem("${item.id}")
 
-data class FeedRandomBtnListItem(val id: Any) : ListItem(id)
+data class FeedRandomBtnListItem(val id: Any, val isLoading: Boolean) : ListItem(id)
 data class AppInfoCardListItem(val warning: FeedAppWarning) : ListItem(warning.tag)
 data class AppWarningCardListItem(val warning: FeedAppWarning) : ListItem(warning.tag)
 data class DonationCardListItem(val state: DonationCardItemState) : ListItem(state.tag)

@@ -32,10 +32,19 @@ class ReleaseInteractor @Inject constructor(
 
     private val releaseItems = MutableStateFlow<List<Release>>(emptyList())
     private val releases = MutableStateFlow<List<Release>>(emptyList())
+    private val randomReleasesPool = MutableStateFlow<List<Release>>(emptyList())
 
     private val sharedRequests = SharedRequests<ReleaseId, Release>()
 
-    suspend fun getRandomRelease(): Release = releaseRepository.getRandomRelease()
+    suspend fun getRandomRelease(): Release {
+        if (randomReleasesPool.value.isEmpty()) {
+            randomReleasesPool.value = releaseRepository.getRandomReleases()
+        }
+        val releases = randomReleasesPool.value.toMutableList()
+        val result = releases.removeFirstOrNull()
+        randomReleasesPool.value = releases
+        return requireNotNull(result)
+    }
 
     suspend fun loadRelease(releaseId: ReleaseId): Release {
         return sharedRequests.request(releaseId) {

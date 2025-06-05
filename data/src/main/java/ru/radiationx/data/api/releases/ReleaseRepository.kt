@@ -19,10 +19,9 @@ class ReleaseRepository @Inject constructor(
 
     private val searchIdRegex = Regex("^id(\\d{3,})\$")
 
-    suspend fun getRandomRelease(): Release = withContext(Dispatchers.IO) {
+    suspend fun getRandomReleases(): List<Release> = withContext(Dispatchers.IO) {
         releaseApi
             .getRandomReleases(5)
-            .random()
     }
 
     suspend fun getReleaseByAlias(alias: ReleaseAlias): Release = withContext(Dispatchers.IO) {

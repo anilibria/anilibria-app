@@ -150,7 +150,6 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     }
 
     private fun loadUrl() {
-        // todo API2 use actual url
         val releaseUrl = "/release/$argReleaseCode.html"
             .toPathUrl()
             .withBase(appConfig.widget)

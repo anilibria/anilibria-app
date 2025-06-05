@@ -113,7 +113,9 @@ class RemoteFileRepository @Inject constructor(
                     output.write(buffer, 0, bytes)
                     progressBytes += bytes
                     bytes = input.read(buffer)
-                    emit(((progressBytes * 100) / length).toInt())
+                    if (length > 0) {
+                        emit(((progressBytes * 100) / length).toInt())
+                    }
                 }
             }
         }

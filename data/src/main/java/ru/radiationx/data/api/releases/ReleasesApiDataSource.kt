@@ -7,7 +7,7 @@ import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.releases.models.ReleaseMember
 import ru.radiationx.data.api.shared.pagination.Paginated
 import ru.radiationx.data.api.shared.pagination.toDomain
-import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
 import toothpick.InjectConstructor
 import kotlin.coroutines.coroutineContext
@@ -44,8 +44,8 @@ class ReleasesApiDataSource(
         return loadedReleases.sortByIdsOrder(ids)
     }
 
-    suspend fun getReleaseByCode(code: ReleaseCode): Release {
-        return api.getRelease(code.code).toDomain()
+    suspend fun getReleaseByAlias(alias: ReleaseAlias): Release {
+        return api.getRelease(alias.alias).toDomain()
     }
 
     suspend fun getRelease(id: ReleaseId): Release {
@@ -72,7 +72,7 @@ class ReleasesApiDataSource(
         page: Int?,
         limit: Int?
     ): Paginated<Release> {
-        val requestIds = ids.joinToString(",") { it.toString() }
+        val requestIds = ids.joinToString(",") { it.id.toString() }
         return api
             .getReleases(ids = requestIds, aliases = null, page = page, limit = limit)
             .toDomain { it.toDomain() }

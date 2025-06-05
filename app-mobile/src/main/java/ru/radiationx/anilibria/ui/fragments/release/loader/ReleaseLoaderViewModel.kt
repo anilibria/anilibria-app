@@ -7,13 +7,13 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.api.releases.ReleaseRepository
-import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.coRunCatching
 import javax.inject.Inject
 
 data class ReleaseLoaderExtra(
-    val code: ReleaseCode
+    val alias: ReleaseAlias
 ) : QuillExtra
 
 class ReleaseLoaderViewModel @Inject constructor(
@@ -26,7 +26,7 @@ class ReleaseLoaderViewModel @Inject constructor(
     fun loadRelease() {
         viewModelScope.launch {
             coRunCatching {
-                releaseRepository.getReleaseByCode(extra.code)
+                releaseRepository.getReleaseByAlias(extra.alias)
             }.onSuccess { release ->
                 router.replaceScreen(
                     Screens.ReleaseDetails(

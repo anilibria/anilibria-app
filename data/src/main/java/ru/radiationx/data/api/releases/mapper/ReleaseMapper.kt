@@ -25,7 +25,7 @@ import ru.radiationx.data.api.shared.secToMillis
 import ru.radiationx.data.api.torrents.mapper.toDomain
 import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.data.common.GenreId
-import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.common.UserId
 import ru.radiationx.data.common.toAbsoluteUrl
@@ -164,7 +164,7 @@ fun ReleaseResponse.toDomain(): Release {
     val releaseId = ReleaseId(id = id)
     return Release(
         id = releaseId,
-        code = ReleaseCode(code = alias),
+        alias = ReleaseAlias(alias = alias),
         names = name.toDomain(),
         poster = poster.preview?.toPathUrl(),
         createdAt = createdAt?.apiDateToDate() ?: Date(0),

@@ -168,7 +168,7 @@ class VkCommentsViewModel @Inject constructor(
         return coRunCatching {
             combine(releaseSource, commentsSource) { release, comments ->
                 VkCommentsState(
-                    url = "release/${release.code.code}.html"
+                    url = "release/${release.alias.alias}.html"
                         .toPathUrl()
                         .withBase(comments.baseUrl),
                     script = comments.script

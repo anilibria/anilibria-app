@@ -32,7 +32,7 @@ import ru.radiationx.data.api.releases.models.ReleaseGenre
 import ru.radiationx.data.api.schedule.models.PublishDay
 import ru.radiationx.data.api.shared.filter.FilterType
 import ru.radiationx.data.common.EpisodeId
-import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
 
 /**
@@ -81,10 +81,10 @@ object Screens {
 
     class WebPlayer(
         private val link: String,
-        private val code: String,
+        private val alias: String,
     ) : BaseActivityScreen() {
         override fun createIntent(context: Context) =
-            WebPlayerActivity.newIntent(context, link, code)
+            WebPlayerActivity.newIntent(context, link, alias)
     }
 
     class TabScreen(
@@ -125,10 +125,10 @@ object Screens {
     }
 
     class ReleaseLoader(
-        val code: ReleaseCode,
+        val alias: ReleaseAlias,
     ) : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) =
-            ReleaseLoaderFragment.newInstance(code)
+            ReleaseLoaderFragment.newInstance(alias)
     }
 
     class ReleaseDetails(

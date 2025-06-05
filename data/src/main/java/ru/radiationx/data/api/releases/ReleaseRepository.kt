@@ -5,7 +5,7 @@ import kotlinx.coroutines.withContext
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.releases.models.Suggestions
 import ru.radiationx.data.app.releaseupdate.ReleaseUpdateMiddleware
-import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
 import javax.inject.Inject
 
@@ -25,8 +25,8 @@ class ReleaseRepository @Inject constructor(
             .random()
     }
 
-    suspend fun getReleaseByCode(code: ReleaseCode): Release = withContext(Dispatchers.IO) {
-        releaseApi.getReleaseByCode(code)
+    suspend fun getReleaseByAlias(alias: ReleaseAlias): Release = withContext(Dispatchers.IO) {
+        releaseApi.getReleaseByAlias(alias)
     }
 
     suspend fun getRelease(id: ReleaseId): Release = withContext(Dispatchers.IO) {

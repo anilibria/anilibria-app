@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import ru.radiationx.anilibria.R
-import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
@@ -12,18 +12,18 @@ import ru.radiationx.shared.ktx.android.putExtra
 class ReleaseLoaderFragment : Fragment(R.layout.fragment_release_loader) {
 
     companion object {
-        private const val ARG_CODE = "release_code"
+        private const val ARG_ALIAS = "release_alias"
 
         fun newInstance(
-            code: ReleaseCode? = null,
+            alias: ReleaseAlias? = null,
         ) = ReleaseLoaderFragment().putExtra {
-            putParcelable(ARG_CODE, code)
+            putParcelable(ARG_ALIAS, alias)
         }
     }
 
     private val viewModel by viewModel<ReleaseLoaderViewModel> {
         ReleaseLoaderExtra(
-            code = getExtraNotNull(ARG_CODE)
+            alias = getExtraNotNull(ARG_ALIAS)
         )
     }
 

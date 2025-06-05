@@ -59,7 +59,7 @@ class ShortcutHelper @Inject constructor(
 
     private fun addShortcut(data: Release, bitmap: Bitmap) = addShortcut(
         context,
-        data.code.code,
+        data.alias.alias,
         data.names.main,
         listOf(data.names.main, data.names.english).joinToString(" / "),
         data.link,

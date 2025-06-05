@@ -7,7 +7,7 @@ import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
-import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseAlias
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -38,11 +38,11 @@ class LinkRouter @Inject constructor(
     }
 
     override fun findScreen(url: String): BaseFragmentScreen? {
-        releaseCodeLegacy(url)?.let { code ->
-            return Screens.ReleaseLoader(code = ReleaseCode(code))
+        releaseAliasLegacy(url)?.let { alias ->
+            return Screens.ReleaseLoader(alias = ReleaseAlias(alias))
         }
-        releaseCode(url)?.let { code ->
-            return Screens.ReleaseLoader(code = ReleaseCode(code))
+        releaseAlias(url)?.let { alias ->
+            return Screens.ReleaseLoader(alias = ReleaseAlias(alias))
         }
         historyImport.matcher(url).let {
             if (it.find()) {
@@ -52,7 +52,7 @@ class LinkRouter @Inject constructor(
         return null
     }
 
-    private fun releaseCodeLegacy(url: String): String? {
+    private fun releaseAliasLegacy(url: String): String? {
         return releaseDetail.matcher(url).let {
             if (it.find()) {
                 it.group(1) ?: it.group(2)
@@ -62,7 +62,7 @@ class LinkRouter @Inject constructor(
         }
     }
 
-    private fun releaseCode(url: String): String? {
+    private fun releaseAlias(url: String): String? {
         val segments = Uri.parse(url).pathSegments
         if (segments.getOrNull(0) != "anime") return null
         if (segments.getOrNull(1) != "releases") return null
@@ -77,7 +77,7 @@ class LinkRouter @Inject constructor(
             }
 
             is Screens.ReleaseLoader -> {
-                releaseAnalytics.open(AnalyticsConstants.link_router, screen.code.code)
+                releaseAnalytics.open(AnalyticsConstants.link_router, screen.alias.alias)
             }
         }
     }

@@ -15,7 +15,7 @@ class ReleaseAnalytics @Inject constructor(
 
     private companion object {
         const val PARAM_HEVC = "hevc"
-        const val PARAM_RELEASE_CODE = "code"
+        const val PARAM_RELEASE_ALIAS = "code"
         const val PARAM_EXTERNAL_TAG = "tag"
     }
 
@@ -27,11 +27,11 @@ class ReleaseAnalytics @Inject constructor(
         )
     }
 
-    fun open(from: String, releaseCode: String) {
+    fun open(from: String, releaseAlias: String) {
         sender.send(
             AnalyticsConstants.release_open,
             from.toNavFromParam(),
-            releaseCode.toParam(PARAM_RELEASE_CODE)
+            releaseAlias.toParam(PARAM_RELEASE_ALIAS)
         )
     }
 

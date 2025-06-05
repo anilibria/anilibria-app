@@ -39,17 +39,17 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
 
     companion object {
         const val ARG_URL = "iframe_url"
-        const val ARG_RELEASE_CODE = "release_code"
+        const val ARG_RELEASE_ALIAS = "release_alias"
 
-        fun newIntent(context: Context, link: String, code: String) =
+        fun newIntent(context: Context, link: String, alias: String) =
             Intent(context, WebPlayerActivity::class.java).apply {
                 putExtra(ARG_URL, link)
-                putExtra(ARG_RELEASE_CODE, code)
+                putExtra(ARG_RELEASE_ALIAS, alias)
             }
     }
 
     private val argUrl by lazy { getExtraNotNull(ARG_URL, "") }
-    private val argReleaseCode by lazy { getExtraNotNull(ARG_RELEASE_CODE, "") }
+    private val argReleaseAlias by lazy { getExtraNotNull(ARG_RELEASE_ALIAS, "") }
 
     private val useTimeCounter by lazy {
         LifecycleTimeCounter(webPlayerAnalytics::useTime)
@@ -64,7 +64,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     private val webPlayerAnalytics by inject<WebPlayerAnalytics>()
 
     private fun isInvalidIntent(): Boolean {
-        return isLaunchedFromHistory() || argUrl.isEmpty() || argReleaseCode.isEmpty()
+        return isLaunchedFromHistory() || argUrl.isEmpty() || argReleaseAlias.isEmpty()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -150,7 +150,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     }
 
     private fun loadUrl() {
-        val releaseUrl = "/release/$argReleaseCode.html"
+        val releaseUrl = "/release/$argReleaseAlias.html"
             .toPathUrl()
             .withBase(appConfig.widget)
 

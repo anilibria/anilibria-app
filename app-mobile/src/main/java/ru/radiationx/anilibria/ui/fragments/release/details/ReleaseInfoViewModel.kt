@@ -308,7 +308,7 @@ class ReleaseInfoViewModel @Inject constructor(
         currentData?.also { release ->
             releaseAnalytics.webPlayerClick(release.id.id)
             release.webPlayer?.let {
-                playWebAction.set(ActionPlayWeb(it, release.code.code))
+                playWebAction.set(ActionPlayWeb(it, release.alias.alias))
             }
         }
     }
@@ -360,7 +360,7 @@ class ReleaseInfoViewModel @Inject constructor(
         episode: RutubeEpisode,
     ) {
         releaseAnalytics.episodeRutubeClick(release.id.id)
-        playWebAction.set(ActionPlayWeb(episode.url, release.code.code))
+        playWebAction.set(ActionPlayWeb(episode.url, release.alias.alias))
     }
 
     private fun onExternalEpisodeClick(
@@ -571,7 +571,7 @@ enum class TorrentAction {
 
 data class ActionPlayWeb(
     val link: String,
-    val code: String,
+    val alias: String,
 )
 
 data class ActionPlayEpisode(

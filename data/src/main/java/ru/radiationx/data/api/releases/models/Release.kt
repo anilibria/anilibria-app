@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import ru.radiationx.data.api.schedule.models.PublishDay
 import ru.radiationx.data.api.torrents.models.TorrentItem
-import ru.radiationx.data.common.ReleaseCode
+import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.common.Url
 import java.util.Date
@@ -15,7 +15,7 @@ import java.util.Date
 data class Release(
     // base
     val id: ReleaseId,
-    val code: ReleaseCode,
+    val alias: ReleaseAlias,
     val names: ReleaseName,
     val poster: Url.Path?,
     val createdAt: Date,
@@ -57,5 +57,5 @@ data class Release(
         }
 
     val link: Url.Path
-        get() = Url.pathOf("/anime/releases/release/${code.code}")
+        get() = Url.pathOf("/anime/releases/release/${alias.alias}")
 }

@@ -112,7 +112,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.playWebAction.observe().onEach {
-            playWeb(it.link, it.code)
+            playWeb(it.link, it.alias)
         }.launchInResumed(viewLifecycleOwner)
 
         viewModel.playEpisodeAction.observe().onEach {
@@ -210,9 +210,9 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
         startActivity(intent)
     }
 
-    private fun playWeb(link: String, code: String) {
+    private fun playWeb(link: String, alias: String) {
         viewModel.onWebPlayerClick()
-        val intent = Screens.WebPlayer(link, code).createIntent(requireContext())
+        val intent = Screens.WebPlayer(link, alias).createIntent(requireContext())
         startActivity(intent)
     }
 

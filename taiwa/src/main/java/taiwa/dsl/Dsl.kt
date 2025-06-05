@@ -27,6 +27,12 @@ annotation class ButtonsScopeMarker
 annotation class ButtonScopeMarker
 
 @DslMarker
+annotation class ChipsScopeMarker
+
+@DslMarker
+annotation class ChipScopeMarker
+
+@DslMarker
 annotation class ItemsScopeMarker
 
 @DslMarker
@@ -36,6 +42,7 @@ annotation class ItemScopeMarker
 @ToolbarScopeMarker
 @MessageScopeMarker
 @ButtonScopeMarker
+@ChipScopeMarker
 @TaiwaScopeMarker
 @ContentScopeMarker
 interface TaiwaContentScope {
@@ -47,6 +54,7 @@ interface TaiwaContentScope {
     fun radioItem(id: Any? = null, block: TaiwaRadioItemScope.() -> Unit)
     fun checkboxItem(id: Any? = null, block: TaiwaCheckboxItemScope.() -> Unit)
     fun buttons(block: TaiwaButtonsScope.() -> Unit)
+    fun chips(block: TaiwaChipsScope.() -> Unit)
 }
 
 @TaiwaScopeMarker
@@ -87,6 +95,13 @@ interface TaiwaButtonsScope {
     fun button(id: Any? = null, block: TaiwaButtonScope.() -> Unit)
 }
 
+@TaiwaScopeMarker
+@ChipsScopeMarker
+interface TaiwaChipsScope {
+    fun action(action: TaiwaAction)
+    fun chip(id: Any? = null, block: TaiwaChipScope.() -> Unit)
+}
+
 @ItemsScopeMarker
 @ItemScopeMarker
 interface TaiwaBaseItemScope {
@@ -104,20 +119,27 @@ interface TaiwaBasicItemScope : TaiwaBaseItemScope {
     fun forward()
 }
 
-interface TaiwaSelectableItemScope {
+interface TaiwaSelectableScope {
     fun select(value: Boolean = true)
 }
 
-interface TaiwaSwitchItemScope : TaiwaBaseItemScope, TaiwaSelectableItemScope
+interface TaiwaSwitchItemScope : TaiwaBaseItemScope, TaiwaSelectableScope
 
-interface TaiwaRadioItemScope : TaiwaBaseItemScope, TaiwaSelectableItemScope
+interface TaiwaRadioItemScope : TaiwaBaseItemScope, TaiwaSelectableScope
 
-interface TaiwaCheckboxItemScope : TaiwaBaseItemScope, TaiwaSelectableItemScope
-
+interface TaiwaCheckboxItemScope : TaiwaBaseItemScope, TaiwaSelectableScope
 
 @ButtonsScopeMarker
 @ButtonScopeMarker
 interface TaiwaButtonScope {
+    fun text(value: String)
+    fun action(action: TaiwaAction)
+    fun onClick(listener: ClickListener)
+}
+
+@ChipsScopeMarker
+@ChipScopeMarker
+interface TaiwaChipScope : TaiwaSelectableScope {
     fun text(value: String)
     fun action(action: TaiwaAction)
     fun onClick(listener: ClickListener)

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:nestedScrollingEnabled="false"
+    android:overScrollMode="never"
+    android:padding="8dp"
+    tools:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
+    tools:listitem="@layout/taiwa_chip_item"
+    tools:orientation="horizontal" />

@@ -10,6 +10,8 @@ import taiwa.dsl.TaiwaBasicItemScope
 import taiwa.dsl.TaiwaButtonScope
 import taiwa.dsl.TaiwaButtonsScope
 import taiwa.dsl.TaiwaCheckboxItemScope
+import taiwa.dsl.TaiwaChipScope
+import taiwa.dsl.TaiwaChipsScope
 import taiwa.dsl.TaiwaContentScope
 import taiwa.dsl.TaiwaMessageScope
 import taiwa.dsl.TaiwaNestingScope
@@ -20,6 +22,8 @@ import taiwa.dsl.TaiwaToolbarScope
 import taiwa.internal.models.ClickListener
 import taiwa.internal.models.TaiwaButtonState
 import taiwa.internal.models.TaiwaButtonsState
+import taiwa.internal.models.TaiwaChipState
+import taiwa.internal.models.TaiwaChipsState
 import taiwa.internal.models.TaiwaContentState
 import taiwa.internal.models.TaiwaItemState
 import taiwa.internal.models.TaiwaMessageState
@@ -151,6 +155,12 @@ internal class TaiwaContentScopeImpl(
 
     override fun buttons(block: TaiwaButtonsScope.() -> Unit) {
         val scope = TaiwaButtonsScopeImpl(getNextId(null))
+        block.invoke(scope)
+        _items.add(scope.build())
+    }
+
+    override fun chips(block: TaiwaChipsScope.() -> Unit) {
+        val scope = TaiwaChipsScopeImpl(getNextId(null))
         block.invoke(scope)
         _items.add(scope.build())
     }
@@ -413,6 +423,73 @@ internal class TaiwaButtonScopeImpl(
         return TaiwaButtonState(
             id = _id,
             text = _text,
+            action = _action,
+            clickListener = _clickListener
+        )
+    }
+}
+
+internal class TaiwaChipsScopeImpl(
+    private val _id: Any
+) : TaiwaChipsScope, ScopeBuilder<TaiwaChipsState> {
+
+    private var _action: TaiwaAction? = null
+    private val _chips = mutableListOf<TaiwaChipState>()
+
+    override fun action(action: TaiwaAction) {
+        _action = action
+    }
+
+    override fun chip(id: Any?, block: TaiwaChipScope.() -> Unit) {
+        val scope = TaiwaChipScopeImpl(createChipId(id), _action)
+        block.invoke(scope)
+        _chips.add(scope.build())
+    }
+
+    override fun build(): TaiwaChipsState {
+        return TaiwaChipsState(
+            id = _id,
+            chips = _chips
+        )
+    }
+
+    private fun createChipId(id: Any?): Any {
+        return id ?: "taiwa_chip_${_chips.lastIndex}"
+    }
+}
+
+internal class TaiwaChipScopeImpl(
+    private val _id: Any,
+    private var _action: TaiwaAction?,
+) : TaiwaChipScope, ScopeBuilder<TaiwaChipState> {
+
+    private var _text: String? = null
+
+    private var _clickListener: ClickListener? = null
+
+    private var _selected = false
+
+    override fun text(value: String) {
+        _text = value
+    }
+
+    override fun action(action: TaiwaAction) {
+        _action = action
+    }
+
+    override fun select(value: Boolean) {
+        _selected = value
+    }
+
+    override fun onClick(listener: ClickListener) {
+        _clickListener = listener
+    }
+
+    override fun build(): TaiwaChipState {
+        return TaiwaChipState(
+            id = _id,
+            text = _text,
+            selected = _selected,
             action = _action,
             clickListener = _clickListener
         )

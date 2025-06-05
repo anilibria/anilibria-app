@@ -44,6 +44,9 @@ internal class TaiwaView @JvmOverloads constructor(
             addEnvoy(buttonsEnvoy {
                 handleClick(it.action, it.clickListener)
             })
+            addEnvoy(chipsEnvoy {
+                handleClick(it.action, it.clickListener)
+            })
         }
     }
 

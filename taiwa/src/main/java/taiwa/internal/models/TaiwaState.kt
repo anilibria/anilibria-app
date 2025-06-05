@@ -75,3 +75,16 @@ internal data class TaiwaButtonState(
     val action: TaiwaAction?,
     val clickListener: ClickListener?,
 )
+
+internal data class TaiwaChipsState(
+    val id: Any,
+    val chips: List<TaiwaChipState>,
+) : DiffItem(id)
+
+internal data class TaiwaChipState(
+    val id: Any,
+    val text: String?,
+    val selected: Boolean,
+    val action: TaiwaAction?,
+    val clickListener: ClickListener?,
+) : DiffItem(id)

@@ -23,8 +23,12 @@ data class ProfileResponse(
     val isBanned: Boolean,
     @Json(name = "created_at")
     val createdAt: String,
-    @Json(name = "is_with_ads")
-    val isWithAds: Boolean
+    @Json(name = "is_with_video_ads")
+    val isWithVideoAds: Boolean,
+    @Json(name = "is_with_content_ads")
+    val isWithContentAds: Boolean,
+    @Json(name = "is_with_video_ads_always")
+    val isWithVideoAdsAlways: Boolean
 ) {
 
     @JsonClass(generateAdapter = true)

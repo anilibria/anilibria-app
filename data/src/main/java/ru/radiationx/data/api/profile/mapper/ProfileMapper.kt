@@ -16,7 +16,6 @@ fun ProfileResponse.toDomain(): Profile {
         torrents = torrents.toDomain(),
         isBanned = isBanned,
         createdAt = createdAt.apiDateToDate(),
-        isWithAds = isWithAds
     )
 }
 

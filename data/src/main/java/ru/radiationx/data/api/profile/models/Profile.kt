@@ -9,7 +9,6 @@ data class Profile(
     val torrents: Torrents,
     val isBanned: Boolean,
     val createdAt: Date,
-    val isWithAds: Boolean
 ) {
 
     data class Torrents(

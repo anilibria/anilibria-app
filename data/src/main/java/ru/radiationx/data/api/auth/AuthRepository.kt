@@ -34,8 +34,8 @@ class AuthRepository @Inject constructor(
 ) {
 
     fun observeUser(): Flow<User?> =
-        combine(observeAuthState(), userHolder.observeUser()) { authState, profileItem ->
-            profileItem?.takeIf { authState == AuthState.AUTH }
+        combine(observeAuthState(), userHolder.observeUser()) { authState, user ->
+            user?.takeIf { authState == AuthState.AUTH }
         }
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
@@ -84,12 +84,12 @@ class AuthRepository @Inject constructor(
         authApi.acceptOtp(code)
     }
 
-    suspend fun signInOtp(code: OtpCode): User = withContext(Dispatchers.IO) {
+    suspend fun signInOtp(code: OtpCode) = withContext(Dispatchers.IO) {
         val token = authApi.loginOtp(code, authHolder.getDeviceId())
         handleNewToken(token)
     }
 
-    suspend fun signIn(credentials: Credentials): User = withContext(Dispatchers.IO) {
+    suspend fun signIn(credentials: Credentials) = withContext(Dispatchers.IO) {
         val token = authApi.login(credentials)
         handleNewToken(token)
     }
@@ -112,15 +112,19 @@ class AuthRepository @Inject constructor(
     suspend fun signInSocial(
         resultUrl: String,
         socialState: SocialState
-    ): User = withContext(Dispatchers.IO) {
+    ) = withContext(Dispatchers.IO) {
         authApi.callbackSocial(resultUrl)
         val token = authApi.authenticateSocial(socialState)
         handleNewToken(token)
     }
 
-    private suspend fun handleNewToken(token: AuthToken): User {
+    private suspend fun handleNewToken(token: AuthToken) {
         tokenStorage.save(token)
-        return loadUser()
+        coRunCatching {
+            loadUser()
+        }.onFailure {
+            Timber.e(it)
+        }
     }
 
     private fun computeAuthState(token: AuthToken?, skipped: Boolean): AuthState {

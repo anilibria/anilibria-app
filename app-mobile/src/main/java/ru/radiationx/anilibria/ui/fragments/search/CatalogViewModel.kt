@@ -233,7 +233,7 @@ class CatalogViewModel @Inject constructor(
         val releaseItem = findRelease(item.id) ?: return
         catalogAnalytics.releaseClick()
         releaseAnalytics.open(AnalyticsConstants.screen_catalog, releaseItem.id.id)
-        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem))
     }
 
     fun onCopyClick(item: ReleaseItemState) {

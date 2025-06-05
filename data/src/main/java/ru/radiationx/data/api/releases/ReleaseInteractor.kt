@@ -16,9 +16,7 @@ import ru.radiationx.data.app.episodeaccess.EpisodesCheckerHolder
 import ru.radiationx.data.app.episodeaccess.models.EpisodeAccess
 import ru.radiationx.data.app.preferences.PreferencesHolder
 import ru.radiationx.data.common.EpisodeId
-import ru.radiationx.data.common.ReleaseCode
 import ru.radiationx.data.common.ReleaseId
-import ru.radiationx.data.common.ReleaseIdentifier
 import ru.radiationx.data.network.SharedRequests
 import javax.inject.Inject
 
@@ -35,46 +33,34 @@ class ReleaseInteractor @Inject constructor(
     private val releaseItems = MutableStateFlow<List<Release>>(emptyList())
     private val releases = MutableStateFlow<List<Release>>(emptyList())
 
-    private val sharedRequests = SharedRequests<RequestKey, Release>()
+    private val sharedRequests = SharedRequests<ReleaseId, Release>()
 
     suspend fun getRandomRelease(): Release = releaseRepository.getRandomRelease()
 
-    private suspend fun loadReleaseByIdentifier(identifier: ReleaseIdentifier): Release {
-        return releaseRepository.getRelease(identifier).also(::updateFullCache)
-    }
-
-    suspend fun loadRelease(
-        releaseId: ReleaseId? = null,
-        releaseCode: ReleaseCode? = null,
-    ): Release {
-        val key = RequestKey(releaseId, releaseCode)
-        return sharedRequests.request(key) {
-            when {
-                releaseId != null -> loadReleaseByIdentifier(releaseId)
-                releaseCode != null -> loadReleaseByIdentifier(releaseCode)
-                else -> throw Exception("Unknown id=null or code=null")
-            }
+    suspend fun loadRelease(releaseId: ReleaseId): Release {
+        return sharedRequests.request(releaseId) {
+            releaseRepository.getRelease(releaseId).also(::updateFullCache)
         }
     }
 
-    fun getItem(releaseId: ReleaseId? = null, releaseCode: ReleaseCode? = null): Release? {
-        return releaseItems.value.findRelease(releaseId, releaseCode)
+    fun getItem(releaseId: ReleaseId): Release? {
+        return releaseItems.value.findRelease(releaseId)
     }
 
-    suspend fun getFull(releaseId: ReleaseId? = null, releaseCode: ReleaseCode? = null): Release? {
-        return observeFull(releaseId, releaseCode).firstOrNull()
+    suspend fun getFull(releaseId: ReleaseId): Release? {
+        return observeFull(releaseId).firstOrNull()
     }
 
-    fun observeItem(releaseId: ReleaseId? = null, releaseCode: ReleaseCode? = null): Flow<Release> {
-        return releaseItems.mapNotNull { it.findRelease(releaseId, releaseCode) }
+    fun observeItem(releaseId: ReleaseId): Flow<Release> {
+        return releaseItems.mapNotNull { it.findRelease(releaseId) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun observeFull(releaseId: ReleaseId? = null, releaseCode: ReleaseCode? = null): Flow<Release> {
+    fun observeFull(releaseId: ReleaseId): Flow<Release> {
         return flow {
-            emit(updateIfNotExists(releaseId, releaseCode))
+            emit(updateIfNotExists(releaseId))
         }.flatMapLatest {
-            releases.mapNotNull { it.findRelease(releaseId, releaseCode) }
+            releases.mapNotNull { it.findRelease(releaseId) }
         }
     }
 
@@ -82,7 +68,7 @@ class ReleaseInteractor @Inject constructor(
         releaseItems.update { releaseItems ->
             releaseItems.filterNot { release ->
                 items.any {
-                    check(release, it.id, it.code)
+                    check(release, it.id)
                 }
             } + items
         }
@@ -91,7 +77,7 @@ class ReleaseInteractor @Inject constructor(
     fun updateFullCache(release: Release) {
         releases.update { releases ->
             releases.filterNot {
-                check(it, release.id, release.code)
+                check(it, release.id)
             } + release
         }
     }
@@ -173,32 +159,22 @@ class ReleaseInteractor @Inject constructor(
         }
     }
 
-    private suspend fun updateIfNotExists(
-        releaseId: ReleaseId? = null,
-        releaseCode: ReleaseCode? = null,
-    ) {
-        val release = releases.value.findRelease(releaseId, releaseCode)
+    private suspend fun updateIfNotExists(releaseId: ReleaseId) {
+        val release = releases.value.findRelease(releaseId)
         if (release != null) {
             return
         }
         runCatching {
-            loadRelease(releaseId, releaseCode)
+            loadRelease(releaseId)
         }
     }
 
-    private fun List<Release>.findRelease(id: ReleaseId?, code: ReleaseCode?): Release? = find {
-        check(it, id, code)
+    private fun List<Release>.findRelease(id: ReleaseId): Release? = find {
+        check(it, id)
     }
 
-    private fun check(release: Release, id: ReleaseId?, code: ReleaseCode?): Boolean {
-        val foundById = id != null && release.id == id
-        val foundByCode = code != null && release.code == code
-        return foundById || foundByCode
+    private fun check(release: Release, id: ReleaseId): Boolean {
+        return release.id == id
     }
-
-    data class RequestKey(
-        val id: ReleaseId?,
-        val code: ReleaseCode?,
-    )
 
 }

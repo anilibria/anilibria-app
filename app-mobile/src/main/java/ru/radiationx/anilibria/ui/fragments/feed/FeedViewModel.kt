@@ -230,14 +230,14 @@ class FeedViewModel @Inject constructor(
         val releaseItem = findScheduleRelease(item.release.id) ?: return
         feedAnalytics.scheduleReleaseClick(position)
         releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id.id)
-        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem))
     }
 
     fun onItemClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
         feedAnalytics.releaseClick()
         releaseAnalytics.open(AnalyticsConstants.screen_feed, releaseItem.id.id)
-        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem))
     }
 
     fun onYoutubeClick(item: YoutubeItemState) {
@@ -266,8 +266,8 @@ class FeedViewModel @Inject constructor(
             coRunCatching {
                 releaseInteractor.getRandomRelease()
             }.onSuccess {
-                releaseAnalytics.open(AnalyticsConstants.screen_feed, null, it.code.code)
-                router.navigateTo(Screens.ReleaseDetails(code = it.code))
+                releaseAnalytics.open(AnalyticsConstants.screen_feed, it.id.id)
+                router.navigateTo(Screens.ReleaseDetails(it.id, it))
             }.onFailure {
                 errorHandler.handle(it)
             }

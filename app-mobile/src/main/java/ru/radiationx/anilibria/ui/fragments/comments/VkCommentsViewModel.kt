@@ -164,7 +164,7 @@ class VkCommentsViewModel @Inject constructor(
 
     private suspend fun getDataSource(): VkCommentsState {
         val commentsSource = flow { emit(vkCommentsRepository.getComments()) }
-        val releaseSource = releaseInteractor.observeFull(argExtra.id, argExtra.code)
+        val releaseSource = releaseInteractor.observeFull(argExtra.id)
         return coRunCatching {
             combine(releaseSource, commentsSource) { release, comments ->
                 VkCommentsState(

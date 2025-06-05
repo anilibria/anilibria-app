@@ -21,6 +21,7 @@ import ru.radiationx.anilibria.ui.fragments.feed.FeedFragment
 import ru.radiationx.anilibria.ui.fragments.history.HistoryFragment
 import ru.radiationx.anilibria.ui.fragments.other.OtherFragment
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFragment
+import ru.radiationx.anilibria.ui.fragments.release.loader.ReleaseLoaderFragment
 import ru.radiationx.anilibria.ui.fragments.schedule.ScheduleFragment
 import ru.radiationx.anilibria.ui.fragments.search.SearchCatalogFragment
 import ru.radiationx.anilibria.ui.fragments.teams.TeamsFragment
@@ -123,13 +124,19 @@ object Screens {
             ScheduleFragment.newInstance(day)
     }
 
-    class ReleaseDetails(
-        val id: ReleaseId? = null,
-        val code: ReleaseCode? = null,
-        val item: Release? = null,
+    class ReleaseLoader(
+        val code: ReleaseCode,
     ) : BaseFragmentScreen() {
         override fun createFragment(factory: FragmentFactory) =
-            ReleaseFragment.newInstance(id, code, item)
+            ReleaseLoaderFragment.newInstance(code)
+    }
+
+    class ReleaseDetails(
+        val id: ReleaseId,
+        val release: Release? = null,
+    ) : BaseFragmentScreen() {
+        override fun createFragment(factory: FragmentFactory) =
+            ReleaseFragment.newInstance(id, release)
     }
 
     class Collections : BaseFragmentScreen() {

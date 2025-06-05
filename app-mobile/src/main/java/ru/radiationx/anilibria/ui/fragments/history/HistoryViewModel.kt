@@ -131,7 +131,7 @@ class HistoryViewModel @Inject constructor(
             historyAnalytics.releaseClick()
         }
         releaseAnalytics.open(AnalyticsConstants.screen_history, releaseItem.id.id)
-        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem.code, releaseItem))
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem))
     }
 
     fun onDeleteClick(item: ReleaseItemState) {

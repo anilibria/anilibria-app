@@ -95,7 +95,6 @@ fun Release.toSuggestionState(query: String): SuggestionItemState {
 
     return SuggestionItemState(
         id = id,
-        code = code,
         title = itemTitle,
         poster = poster,
         matchRanges = matchRanges

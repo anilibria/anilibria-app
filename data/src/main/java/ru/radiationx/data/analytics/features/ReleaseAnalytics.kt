@@ -19,11 +19,18 @@ class ReleaseAnalytics @Inject constructor(
         const val PARAM_EXTERNAL_TAG = "tag"
     }
 
-    fun open(from: String, releaseId: Int?, releaseCode: String? = null) {
+    fun open(from: String, releaseId: Int) {
         sender.send(
             AnalyticsConstants.release_open,
             from.toNavFromParam(),
             releaseId.toIdParam(),
+        )
+    }
+
+    fun open(from: String, releaseCode: String) {
+        sender.send(
+            AnalyticsConstants.release_open,
+            from.toNavFromParam(),
             releaseCode.toParam(PARAM_RELEASE_CODE)
         )
     }

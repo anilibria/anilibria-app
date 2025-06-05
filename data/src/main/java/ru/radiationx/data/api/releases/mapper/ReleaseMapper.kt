@@ -27,7 +27,6 @@ import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.data.common.GenreId
 import ru.radiationx.data.common.ReleaseCode
 import ru.radiationx.data.common.ReleaseId
-import ru.radiationx.data.common.ReleaseIdentifier
 import ru.radiationx.data.common.UserId
 import ru.radiationx.data.common.toAbsoluteUrl
 import ru.radiationx.data.common.toPathUrl
@@ -39,14 +38,6 @@ fun ReleaseId.toNetwork(): ReleaseIdNetwork {
     return ReleaseIdNetwork(
         releaseId = id
     )
-}
-
-
-fun ReleaseIdentifier.toRequestIdentifier(): String {
-    return when (this) {
-        is ReleaseId -> id.toString()
-        is ReleaseCode -> code
-    }
 }
 
 fun ReleaseNameResponse.toDomain(): ReleaseName {

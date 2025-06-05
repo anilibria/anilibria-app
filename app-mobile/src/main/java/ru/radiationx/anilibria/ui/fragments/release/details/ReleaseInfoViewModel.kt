@@ -158,7 +158,7 @@ class ReleaseInfoViewModel @Inject constructor(
         argExtra.release?.also {
             updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet())
         }
-        releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
+        releaseInteractor.getItem(argExtra.id)?.also {
             updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet())
         }
         observeRelease()
@@ -199,7 +199,7 @@ class ReleaseInfoViewModel @Inject constructor(
             it.copy(detailLoading = true)
         }
         releaseInteractor
-            .observeFull(argExtra.id, argExtra.code)
+            .observeFull(argExtra.id)
             .onEach {
                 updateModifiers {
                     it.copy(detailLoading = false)

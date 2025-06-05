@@ -38,15 +38,11 @@ class LinkRouter @Inject constructor(
     }
 
     override fun findScreen(url: String): BaseFragmentScreen? {
-        if (checkUnsupported(url)) {
-            return null
-        }
-
         releaseCodeLegacy(url)?.let { code ->
-            return Screens.ReleaseDetails(code = ReleaseCode(code))
+            return Screens.ReleaseLoader(code = ReleaseCode(code))
         }
         releaseCode(url)?.let { code ->
-            return Screens.ReleaseDetails(code = ReleaseCode(code))
+            return Screens.ReleaseLoader(code = ReleaseCode(code))
         }
         historyImport.matcher(url).let {
             if (it.find()) {
@@ -77,14 +73,13 @@ class LinkRouter @Inject constructor(
     private fun sendNavigateAnalytics(screen: BaseFragmentScreen) {
         when (screen) {
             is Screens.ReleaseDetails -> {
-                releaseAnalytics.open(AnalyticsConstants.link_router, null, screen.code?.code)
+                releaseAnalytics.open(AnalyticsConstants.link_router, screen.id.id)
+            }
+
+            is Screens.ReleaseLoader -> {
+                releaseAnalytics.open(AnalyticsConstants.link_router, screen.code.code)
             }
         }
-    }
-
-    private fun checkUnsupported(url: String): Boolean {
-        if (url.contains("communication/forum")) return true
-        return false
     }
 
 }

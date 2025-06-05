@@ -33,12 +33,12 @@ import ru.radiationx.anilibria.ui.widgets.ScrimHelper
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.ToolbarHelper
 import ru.radiationx.data.api.releases.models.Release
-import ru.radiationx.data.common.ReleaseCode
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
+import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
@@ -51,20 +51,17 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
     SharedReceiver, BackButtonListener, TopScroller {
     companion object {
         private const val ARG_ID: String = "release_id"
-        private const val ARG_ID_CODE: String = "release_id_code"
-        private const val ARG_ITEM: String = "release_item"
+        private const val ARG_RELEASE: String = "release_item"
 
         private const val PAGE_INFO = 0
         private const val PAGE_COMMENTS = 1
 
         fun newInstance(
-            id: ReleaseId? = null,
-            code: ReleaseCode? = null,
-            item: Release? = null,
+            id: ReleaseId,
+            release: Release?,
         ) = ReleaseFragment().putExtra {
             putParcelable(ARG_ID, id)
-            putParcelable(ARG_ID_CODE, code)
-            putParcelable(ARG_ITEM, item)
+            putParcelable(ARG_RELEASE, release)
         }
     }
 
@@ -86,9 +83,8 @@ open class ReleaseFragment : BaseToolbarFragment<FragmentPagedBinding>(R.layout.
 
     private val viewModel by viewModel<ReleaseViewModel> {
         ReleaseExtra(
-            id = getExtra(ARG_ID),
-            code = getExtra(ARG_ID_CODE),
-            release = getExtra(ARG_ITEM)
+            id = getExtraNotNull(ARG_ID),
+            release = getExtra(ARG_RELEASE)
         )
     }
 

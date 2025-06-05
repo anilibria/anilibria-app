@@ -83,7 +83,7 @@ class FastSearchViewModel @Inject constructor(
     fun onItemClick(item: SuggestionItemState) {
         fastSearchAnalytics.releaseClick()
         releaseAnalytics.open(AnalyticsConstants.screen_fast_search, item.id.id)
-        router.navigateTo(Screens.ReleaseDetails(item.id, item.code))
+        router.navigateTo(Screens.ReleaseDetails(item.id))
     }
 
     fun onLocalItemClick(item: SuggestionLocalItemState) {

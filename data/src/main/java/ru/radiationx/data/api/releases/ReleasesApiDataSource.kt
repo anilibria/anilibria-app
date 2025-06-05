@@ -3,14 +3,12 @@ package ru.radiationx.data.api.releases
 import anilibria.api.releases.ReleasesApi
 import kotlinx.coroutines.ensureActive
 import ru.radiationx.data.api.releases.mapper.toDomain
-import ru.radiationx.data.api.releases.mapper.toRequestIdentifier
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.releases.models.ReleaseMember
 import ru.radiationx.data.api.shared.pagination.Paginated
 import ru.radiationx.data.api.shared.pagination.toDomain
 import ru.radiationx.data.common.ReleaseCode
 import ru.radiationx.data.common.ReleaseId
-import ru.radiationx.data.common.ReleaseIdentifier
 import toothpick.InjectConstructor
 import kotlin.coroutines.coroutineContext
 
@@ -27,15 +25,13 @@ class ReleasesApiDataSource(
         return api.getRandomReleases(limit).map { it.toDomain() }
     }
 
-    suspend fun getReleases(
-        identifiers: List<ReleaseIdentifier>,
-    ): List<Release> {
+    suspend fun getReleases(ids: List<ReleaseId>): List<Release> {
         var currentPage = 1
         val loadedReleases = mutableListOf<Release>()
         while (true) {
             coroutineContext.ensureActive()
             val paginated = getReleasesPaginated(
-                identifiers = identifiers,
+                ids = ids,
                 page = currentPage,
                 limit = null
             )
@@ -45,15 +41,19 @@ class ReleasesApiDataSource(
             }
             currentPage++
         }
-        return loadedReleases.sortByIdentifierOrder(identifiers)
+        return loadedReleases.sortByIdsOrder(ids)
     }
 
-    suspend fun getRelease(identifier: ReleaseIdentifier): Release {
-        return api.getRelease(identifier.toRequestIdentifier()).toDomain()
+    suspend fun getReleaseByCode(code: ReleaseCode): Release {
+        return api.getRelease(code.code).toDomain()
     }
 
-    suspend fun getMembers(identifier: ReleaseIdentifier): List<ReleaseMember> {
-        return api.getMembers(identifier.toRequestIdentifier()).map { it.toDomain() }
+    suspend fun getRelease(id: ReleaseId): Release {
+        return api.getRelease(id.id.toString()).toDomain()
+    }
+
+    suspend fun getMembers(id: ReleaseId): List<ReleaseMember> {
+        return api.getMembers(id.id.toString()).map { it.toDomain() }
     }
 
     // todo API2 migrate to universal episode
@@ -68,31 +68,23 @@ class ReleasesApiDataSource(
     }
 
     private suspend fun getReleasesPaginated(
-        identifiers: List<ReleaseIdentifier>,
+        ids: List<ReleaseId>,
         page: Int?,
         limit: Int?
     ): Paginated<Release> {
-        val requestIds = identifiers
-            .filterIsInstance<ReleaseId>()
-            .joinToString(",") { it.toRequestIdentifier() }
-        val requestCodes = identifiers
-            .filterIsInstance<ReleaseCode>()
-            .joinToString(",") { it.toRequestIdentifier() }
+        val requestIds = ids.joinToString(",") { it.toString() }
         return api
-            .getReleases(ids = requestIds, aliases = requestCodes, page = page, limit = limit)
+            .getReleases(ids = requestIds, aliases = null, page = page, limit = limit)
             .toDomain { it.toDomain() }
     }
 
-    private fun List<Release>.sortByIdentifierOrder(
-        identifiers: List<ReleaseIdentifier>
-    ): List<Release> {
+    private fun List<Release>.sortByIdsOrder(ids: List<ReleaseId>): List<Release> {
         val releases = this
-        val indexMap = buildMap {
+        val indexMap = buildMap<ReleaseId, Release> {
             releases.forEach { release ->
                 put(release.id, release)
-                put(release.code, release)
             }
         }
-        return identifiers.mapNotNull { indexMap[it] }
+        return ids.mapNotNull { indexMap[it] }
     }
 }

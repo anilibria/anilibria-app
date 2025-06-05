@@ -7,13 +7,11 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class UserId(val id: Int) : Parcelable
 
-sealed interface ReleaseIdentifier : Parcelable
+@Parcelize
+data class ReleaseId(val id: Int) : Parcelable
 
 @Parcelize
-data class ReleaseId(val id: Int) : ReleaseIdentifier
-
-@Parcelize
-data class ReleaseCode(val code: String) : ReleaseIdentifier
+data class ReleaseCode(val code: String) : Parcelable
 
 @Parcelize
 data class EpisodeId(val id: String, val releaseId: ReleaseId) : Parcelable

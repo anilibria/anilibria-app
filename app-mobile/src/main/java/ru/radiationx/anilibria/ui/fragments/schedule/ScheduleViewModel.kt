@@ -92,7 +92,7 @@ class ScheduleViewModel @Inject constructor(
         val releaseItem = findRelease(item.release.id) ?: return
         scheduleAnalytics.releaseClick(position)
         releaseAnalytics.open(AnalyticsConstants.screen_schedule, releaseItem.id.id)
-        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, item = releaseItem))
+        router.navigateTo(Screens.ReleaseDetails(releaseItem.id, release = releaseItem))
     }
 
     fun onCopyClick(item: ReleaseItemState) {

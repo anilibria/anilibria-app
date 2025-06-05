@@ -18,7 +18,6 @@ import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.releases.ReleaseInteractor
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.app.history.HistoryRepository
-import ru.radiationx.data.common.ReleaseCode
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.common.Url
 import ru.radiationx.quill.QuillExtra
@@ -27,8 +26,7 @@ import ru.radiationx.shared.ktx.coRunCatching
 import javax.inject.Inject
 
 data class ReleaseExtra(
-    val id: ReleaseId?,
-    val code: ReleaseCode?,
+    val id: ReleaseId,
     val release: Release?,
 ) : QuillExtra
 
@@ -58,7 +56,7 @@ class ReleaseViewModel @Inject constructor(
         argExtra.release?.also {
             updateLocalRelease(it)
         }
-        releaseInteractor.getItem(argExtra.id, argExtra.code)?.also {
+        releaseInteractor.getItem(argExtra.id)?.also {
             updateLocalRelease(it)
         }
         observeRelease()
@@ -82,7 +80,7 @@ class ReleaseViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(loading = true) }
             coRunCatching {
-                releaseInteractor.loadRelease(argExtra.id, argExtra.code)
+                releaseInteractor.loadRelease(argExtra.id)
             }.onSuccess {
                 historyRepository.putRelease(it)
             }.onFailure {
@@ -94,7 +92,7 @@ class ReleaseViewModel @Inject constructor(
 
     private fun observeRelease() {
         releaseInteractor
-            .observeFull(argExtra.id, argExtra.code)
+            .observeFull(argExtra.id)
             .onEach { release ->
                 updateLocalRelease(release)
                 historyRepository.putRelease(release)

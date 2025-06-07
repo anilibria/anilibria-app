@@ -83,7 +83,7 @@ class PageLoader<T>(
                 _currentPage.value = page
                 updateStateByAction(dataAction, params)
             }.onFailure { error ->
-                Timber.e("page=$page", error)
+                Timber.e(error, "page=$page")
                 updateStateByAction(PageLoaderAction.Error(error), params)
             }
         }

@@ -36,7 +36,7 @@ class SingleActionExecutor<ARG, RESULT>(
                 val event = SingleEventSuccess(arg, data)
                 onSuccess?.invoke(event)
             }.onFailure { error ->
-                Timber.e("arg=$arg", error)
+                Timber.e(error, "arg=$arg")
                 val event = SingleEventError(arg, error)
                 onError?.invoke(event)
             }

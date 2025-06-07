@@ -97,9 +97,7 @@ class SearchFragment :
         SearchFilterDialog(
             context = requireContext(),
             lifecycleOwner = viewLifecycleOwner,
-            onFormConfirm = {
-                viewModel.onFormChanged(it)
-            }
+            viewModel = filterViewModel
         )
     }
 

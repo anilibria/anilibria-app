@@ -50,7 +50,7 @@
 
 
     <!-- DARK THEME -->
-    <color name="temp_red4">#8f2929</color>
+    <color name="temp_red4">#A22D2D</color>
 
     <color name="temp_red_">@color/temp_red4</color>
     <color name="dark_colorPrimary">@color/dark_cardBackground</color>

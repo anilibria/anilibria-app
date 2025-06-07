@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search.filter
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import ru.radiationx.data.api.shared.filter.FieldType
 import ru.radiationx.data.api.shared.filter.FilterData
@@ -21,7 +20,7 @@ import taiwa.dsl.TaiwaScopeMarker
 class SearchFilterDialog(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
-    private val onFormConfirm: (FilterForm) -> Unit,
+    private val viewModel: SearchFilterViewModel
 ) {
 
     private val dialog = NestedTaiwa(context, lifecycleOwner, DialogType.BottomSheet)
@@ -32,7 +31,7 @@ class SearchFilterDialog(
 
     init {
         dialog.addDelegate(yearsRangeEnvoy {
-            Log.e("kekeke", "range ${it}")
+            viewModel.onYears(it)
         })
     }
 
@@ -65,7 +64,8 @@ class SearchFilterDialog(
                     shipsSection(
                         fieldType = FieldType.ReleaseType,
                         values = filter.types,
-                        formValues = form.types
+                        formValues = form.types,
+                        onClick = { viewModel.onReleaseType(it) }
                     )
                     divider()
                 }
@@ -74,7 +74,8 @@ class SearchFilterDialog(
                     shipsSection(
                         fieldType = FieldType.PublishStatus,
                         values = filter.publishStatuses,
-                        formValues = form.publishStatuses
+                        formValues = form.publishStatuses,
+                        onClick = { viewModel.onPublishStatus(it) }
                     )
                     divider()
                 }
@@ -83,7 +84,8 @@ class SearchFilterDialog(
                     shipsSection(
                         fieldType = FieldType.ProductionStatus,
                         values = filter.productionStatuses,
-                        formValues = form.productionStatuses
+                        formValues = form.productionStatuses,
+                        onClick = { viewModel.onProductionStatus(it) }
                     )
                     divider()
                 }
@@ -93,7 +95,7 @@ class SearchFilterDialog(
                         text(FieldType.Sorting.toTitle())
                     }
                     item(FieldType.Sorting) {
-                        title("Укажите способ сортировки")
+                        title("Укажите сортировку")
                         val selectedSorting = filter.sortings.find { it.item == form.sorting }
                         if (selectedSorting == null) {
                             value("Не выбрано")
@@ -110,7 +112,8 @@ class SearchFilterDialog(
                     shipsSection(
                         fieldType = FieldType.Season,
                         values = filter.seasons,
-                        formValues = form.seasons
+                        formValues = form.seasons,
+                        onClick = { viewModel.onSeason(it) }
                     )
                     divider()
                 }
@@ -144,7 +147,8 @@ class SearchFilterDialog(
                     shipsSection(
                         fieldType = FieldType.AgeRating,
                         values = filter.ageRatings,
-                        formValues = form.ageRatings
+                        formValues = form.ageRatings,
+                        onClick = { viewModel.onAgeRatings(it) }
                     )
                     divider()
                 }
@@ -158,7 +162,9 @@ class SearchFilterDialog(
                     }
                     button {
                         text("Сбросить")
-                        action(TaiwaAction.Close)
+                        onClick {
+                            viewModel.onReset()
+                        }
                     }
                 }
             }
@@ -185,7 +191,8 @@ class SearchFilterDialog(
     private fun TaiwaContentScope.shipsSection(
         fieldType: FieldType,
         values: List<FilterItem.Value>,
-        formValues: Set<FormItem.Value>
+        formValues: Set<FormItem.Value>,
+        onClick: (FormItem.Value) -> Unit
     ) {
         section {
             text(fieldType.toTitle())
@@ -195,6 +202,9 @@ class SearchFilterDialog(
                 chip(value.item) {
                     text(value.title)
                     select(formValues.contains(value.item))
+                    onClick {
+                        onClick.invoke(value.item)
+                    }
                 }
             }
         }
@@ -217,7 +227,19 @@ class SearchFilterDialog(
                     chip(genre.item) {
                         text(genre.title)
                         select(selected.contains(genre.item))
-                        action(TaiwaAction.Root)
+                        onClick {
+                            viewModel.onGenre(genre.item)
+                        }
+                    }
+                }
+            }
+        }
+        footer {
+            buttons {
+                button {
+                    text("Сбросить жанры")
+                    onClick {
+                        viewModel.onResetGenres()
                     }
                 }
             }
@@ -243,6 +265,19 @@ class SearchFilterDialog(
                         text(year.title)
                         select(selected.contains(year.item))
                         action(TaiwaAction.Root)
+                        onClick {
+                            viewModel.onYear(year.item)
+                        }
+                    }
+                }
+            }
+        }
+        footer {
+            buttons {
+                button {
+                    text("Сбросить периоды")
+                    onClick {
+                        viewModel.onResetYears()
                     }
                 }
             }
@@ -268,7 +303,9 @@ class SearchFilterDialog(
                         subtitle(it)
                     }
                     select(sorting.item == selected)
-                    action(TaiwaAction.Root)
+                    onClick {
+                        viewModel.onSorting(sorting.item)
+                    }
                 }
             }
         }

@@ -10,6 +10,7 @@ internal fun chipItemEnvoy(
 
     bind { chip ->
         view.root.text = chip.text
+        view.root.isChecked = chip.selected
         view.root.setOnClickListener {
             clickListener.invoke(chip)
         }

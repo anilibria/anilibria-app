@@ -63,7 +63,7 @@
         app:layout_constraintTop_toBottomOf="@id/itemTitle"
         app:layout_goneMarginStart="16dp"
         tools:text="Subtitle"
-        tools:visibility="visible" />
+        tools:visibility="g" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/textBarrier"

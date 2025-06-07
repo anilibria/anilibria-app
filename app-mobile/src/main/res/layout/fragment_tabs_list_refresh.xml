@@ -9,7 +9,12 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="scrollable" />
+        android:clipToPadding="false"
+        android:paddingHorizontal="8dp"
+        app:tabIndicatorAnimationMode="elastic"
+        app:tabIndicatorFullWidth="false"
+        app:tabMode="scrollable"
+        app:tabTextAppearance="?textAppearanceBody1" />
 
     <FrameLayout
         android:layout_width="match_parent"

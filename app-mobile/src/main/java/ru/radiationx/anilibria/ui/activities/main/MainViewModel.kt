@@ -52,7 +52,7 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     // todo api2 revert
-    private val defaultScreen = Screens.Catalog().screenKey
+    private val defaultScreen = Screens.Collections().screenKey
 
     private val _state = MutableStateFlow(MainScreenState())
     val state = _state.asStateFlow()

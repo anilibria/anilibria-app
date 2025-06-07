@@ -215,13 +215,31 @@ class SearchFragment :
             .filterNotNull()
             .onEach { state ->
                 binding.tabLayout.removeOnTabSelectedListener(tabListener)
-                binding.tabLayout.removeAllTabs()
-                state.types.forEach { type ->
-                    val tab = binding.tabLayout.newTab().apply {
-                        setTag(type)
-                        setText(type.toString())
+                val tabs = (0 until binding.tabLayout.tabCount).map {
+                    requireNotNull(binding.tabLayout.getTabAt(it))
+                }
+                val tabTypes = tabs.map { requireNotNull(it.tag) }.toSet()
+
+                if (tabTypes == state.types) {
+                    val tabToSelect = tabs.find { it.tag == state.selected }
+                    binding.tabLayout.selectTab(tabToSelect)
+                } else {
+                    binding.tabLayout.removeAllTabs()
+                    state.types.forEach { type ->
+                        val tab = binding.tabLayout.newTab().apply {
+                            setTag(type)
+                            val title = when (type) {
+                                CollectionType.Planned -> "Запланировано"
+                                CollectionType.Watched -> "Просмотрено"
+                                CollectionType.Watching -> "Смотрю"
+                                CollectionType.Postponed -> "Отложено"
+                                CollectionType.Abandoned -> "Брошено"
+                                is CollectionType.Unknown -> type.raw
+                            }
+                            setText(title)
+                        }
+                        binding.tabLayout.addTab(tab, type == state.selected)
                     }
-                    binding.tabLayout.addTab(tab, type == state.selected)
                 }
                 binding.tabLayout.addOnTabSelectedListener(tabListener)
             }

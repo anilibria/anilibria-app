@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
@@ -23,7 +22,7 @@ import ru.radiationx.anilibria.databinding.FragmentTabsListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.common.releaseItemDialog
-import ru.radiationx.anilibria.ui.fragments.BaseSearchItemFragment
+import ru.radiationx.anilibria.ui.fragments.BaseSearchFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
@@ -38,18 +37,18 @@ import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
+import searchbar.NavigationIcon
 import taiwa.lifecycle.lifecycleLazy
 
 
 class SearchFragment :
-    BaseSearchItemFragment<FragmentTabsListRefreshBinding>(R.layout.fragment_tabs_list_refresh),
+    BaseSearchFragment<FragmentTabsListRefreshBinding>(R.layout.fragment_tabs_list_refresh),
     SharedProvider,
     TopScroller {
 
     companion object {
         private const val ARG_TYPE = "arg_type"
         private const val ARG_GENRE = "arg_genre"
-        private val MENU_ID_FILTER = View.generateViewId()
 
         fun newInstance(
             filterType: FilterType,
@@ -80,9 +79,13 @@ class SearchFragment :
         )
     )
 
+    private val argType by lazy {
+        getExtraNotNull<FilterType>(ARG_TYPE)
+    }
+
     private val viewModel by viewModel<SearchViewModel> {
         SearchExtra(
-            type = getExtraNotNull(ARG_TYPE),
+            type = argType,
             genre = getExtra(ARG_GENRE)
         )
     }
@@ -146,31 +149,24 @@ class SearchFragment :
             title = "Поиск"
             /*setNavigationOnClickListener({ presenter.onBackPressed() })
             setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
-        }
 
-        baseBinding.toolbar.menu.apply {
-            add("Поиск")
-                .setIcon(R.drawable.ic_toolbar_search)
-                .setOnMenuItemClickListener {
-                    //viewModel.onFastSearchClick()
-                    baseBinding.searchView.show()
-                    false
-                }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            add(0, MENU_ID_FILTER, 0, "Фильтры")
-                .setIcon(R.drawable.ic_filter_toolbar)
-                .setOnMenuItemClickListener {
-                    filterDialog.show()
-                    false
-                }
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
 
         baseBinding.searchView.apply {
-            setHint("Название релиза")
+            val hint = when (argType) {
+                FilterType.Collections -> "Поиск по коллекции"
+                FilterType.Favorites -> "Поиск по избранному"
+                FilterType.Catalog -> "Поиск по каталогу"
+            }
+            setHint(hint)
+            setNavigationIcon(NavigationIcon.Search)
+            setExpandable(false)
             setOnQueryTextListener { newText ->
                 viewModel.onQueryChange(newText)
+            }
+            setOnMenuClickListener {
+                filterDialog.show()
             }
         }
 
@@ -184,13 +180,13 @@ class SearchFragment :
             viewModel.state.map { it.filter }.distinctUntilChanged(),
             filterViewModel.state
         ) { filterState, form ->
-            baseBinding.toolbar.menu.findItem(MENU_ID_FILTER)?.also { menuItem ->
-                if (form.hasChanges()) {
-                    menuItem.setIcon(R.drawable.ic_filter_changes_toolbar)
-                } else {
-                    menuItem.setIcon(R.drawable.ic_filter_toolbar)
-                }
+
+            if (form.hasChanges()) {
+                baseBinding.searchView.setMenuIcon(R.drawable.ic_filter_changes_toolbar)
+            } else {
+                baseBinding.searchView.setMenuIcon(R.drawable.ic_filter_toolbar)
             }
+
             filterDialog.setForm(filterState, form)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 

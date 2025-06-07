@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/search_frame"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -31,7 +32,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/search_layout_height"
                 android:layoutDirection="locale"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingEnd="4dp">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/navigation_button"
@@ -65,17 +67,26 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/clear_button"
-                    android:layout_width="@dimen/search_icon_56"
+                    android:layout_width="@dimen/search_icon_48"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:scaleType="center"
                     app:tint="?attr/colorControlNormal"
-                    app:tintMode="src_in" />
+                    app:tintMode="src_in"
+                    tools:src="@drawable/search_ic_outline_clear_24px" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/menu_button"
+                    android:layout_width="@dimen/search_icon_48"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="center"
+                    tools:src="@drawable/search_ic_outline_clear_24px" />
 
             </LinearLayout>
 

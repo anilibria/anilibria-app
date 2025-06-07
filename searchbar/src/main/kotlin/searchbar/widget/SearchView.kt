@@ -66,7 +66,7 @@ class SearchView @JvmOverloads constructor(
     }
 
     override fun fieldInsetsChanged() {
-        if (binding.input.hasFocus()) {
+        if (needFocusState()) {
             applyFocusedLayout()
         } else {
             applyDefaultLayout()

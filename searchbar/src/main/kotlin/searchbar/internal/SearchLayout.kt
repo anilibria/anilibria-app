@@ -3,15 +3,16 @@ package searchbar.internal
 import android.content.Context
 import android.graphics.Rect
 import android.os.Parcelable
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
+import androidx.core.text.trimmedLength
 import androidx.core.view.SoftwareKeyboardControllerCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -45,6 +46,8 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     protected var mFieldInsets = Insets.NONE
 
+    private var expandable: Boolean = true
+
     // *********************************************************************************************
     protected var mOnFocusChangeListener: OnFocusChangeListener? = null
 
@@ -52,6 +55,7 @@ abstract class SearchLayout @JvmOverloads constructor(
     private var mOnQuerySubmitListener: OnQuerySubmitListener? = null
     private var mOnNavigationClickListener: OnNavigationClickListener? = null
     private var mOnClearClickListener: OnClearClickListener? = null
+    private var mOnMenuClickListener: OnMenuClickListener? = null
 
     // *********************************************************************************************
     protected abstract fun addFocus()
@@ -59,6 +63,10 @@ abstract class SearchLayout @JvmOverloads constructor(
     protected abstract fun removeFocus()
 
     protected abstract fun fieldInsetsChanged()
+
+    protected fun needFocusState(): Boolean {
+        return binding.input.hasFocus() && expandable
+    }
 
     protected fun init() {
         binding.navigationButton.setOnClickListener {
@@ -84,6 +92,11 @@ abstract class SearchLayout @JvmOverloads constructor(
             mOnClearClickListener?.onClearClick()
         }
 
+        binding.menuButton.isVisible = false
+        binding.menuButton.setOnClickListener {
+            mOnMenuClickListener?.onMenuClick()
+        }
+
         binding.input.doOnTextChanged { text, _, _, _ ->
             this@SearchLayout.onTextChanged(text?.toString().orEmpty())
         }
@@ -92,7 +105,7 @@ abstract class SearchLayout @JvmOverloads constructor(
             return@setOnEditorActionListener true // true
         }
         binding.input.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
+            if (hasFocus && needFocusState()) {
                 addFocus()
             } else {
                 removeFocus()
@@ -170,6 +183,14 @@ abstract class SearchLayout @JvmOverloads constructor(
         binding.navigationButton.setImageDrawable(ContextCompat.getDrawable(context, icRes))
     }
 
+    fun setMenuIcon(@DrawableRes iconRes: Int?) {
+        val drawable = iconRes?.takeIf { it != 0 }?.let {
+            ContextCompat.getDrawable(context, it)
+        }
+        binding.menuButton.setImageDrawable(drawable)
+        binding.menuButton.isVisible = drawable != null
+    }
+
     // *********************************************************************************************
     fun setContentAdapter(adapter: RecyclerView.Adapter<*>?) {
         binding.content.adapter = adapter
@@ -182,6 +203,10 @@ abstract class SearchLayout @JvmOverloads constructor(
     fun setFieldInsets(insets: Insets) {
         mFieldInsets = insets
         fieldInsetsChanged()
+    }
+
+    fun setExpandable(state: Boolean) {
+        expandable = state
     }
 
     // *********************************************************************************************
@@ -225,6 +250,10 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     fun setOnClearClickListener(listener: OnClearClickListener?) {
         mOnClearClickListener = listener
+    }
+
+    fun setOnMenuClickListener(listener: OnMenuClickListener?) {
+        mOnMenuClickListener = listener
     }
 
     // *********************************************************************************************
@@ -334,7 +363,7 @@ abstract class SearchLayout @JvmOverloads constructor(
 
     private fun onSubmitQuery() {
         val query = binding.input.getQuery()
-        if (TextUtils.getTrimmedLength(query) <= 0) return
+        if (query.trimmedLength() <= 0) return
         if (mOnQuerySubmitListener?.onQueryTextSubmit(query) == false) {
             binding.input.setText(query)
         }
@@ -361,9 +390,14 @@ abstract class SearchLayout @JvmOverloads constructor(
         fun onNavigationClick()
     }
 
-    interface OnClearClickListener {
+    fun interface OnClearClickListener {
 
         fun onClearClick()
+    }
+
+    fun interface OnMenuClickListener {
+
+        fun onMenuClick()
     }
 
 }

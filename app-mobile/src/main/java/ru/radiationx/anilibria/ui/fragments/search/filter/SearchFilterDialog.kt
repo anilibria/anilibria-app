@@ -252,6 +252,10 @@ class SearchFilterDialog(
             footer {
                 buttons {
                     button {
+                        text("Применить")
+                        action(TaiwaAction.Root)
+                    }
+                    button {
                         text("Сбросить жанры")
                         onClick {
                             viewModel.onResetGenres()
@@ -290,6 +294,10 @@ class SearchFilterDialog(
         if (selected.isNotEmpty()) {
             footer {
                 buttons {
+                    button {
+                        text("Применить")
+                        action(TaiwaAction.Root)
+                    }
                     button {
                         text("Сбросить периоды")
                         onClick {

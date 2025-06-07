@@ -3,6 +3,7 @@
 
     <dimen name="search_text_16">16sp</dimen>
 
+    <dimen name="search_icon_48">48dp</dimen>
     <dimen name="search_icon_56">56dp</dimen>
 
     <dimen name="search_key_line_4">4dp</dimen>

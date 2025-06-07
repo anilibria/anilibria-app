@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.search.filter
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import ru.radiationx.data.api.shared.filter.FieldType
 import ru.radiationx.data.api.shared.filter.FilterData
@@ -28,6 +29,12 @@ class SearchFilterDialog(
     private val genresAnchor = TaiwaAnchor.Id(FieldType.Genre)
     private val sortingAnchor = TaiwaAnchor.Id(FieldType.Sorting)
     private val yearAnchor = TaiwaAnchor.Id(FieldType.Year)
+
+    init {
+        dialog.addDelegate(yearsRangeEnvoy {
+            Log.e("kekeke", "range ${it}")
+        })
+    }
 
     fun show() {
         dialog.show()
@@ -99,6 +106,14 @@ class SearchFilterDialog(
                         values = filter.seasons,
                         formValues = form.seasons
                     )
+                    divider()
+                }
+
+                if (filter.fields.contains(FieldType.YearsRange)) {
+                    section {
+                        text(FieldType.YearsRange.toTitle())
+                    }
+                    envoy(YearsRangeState(filter.years, form.yearsRange))
                     divider()
                 }
 

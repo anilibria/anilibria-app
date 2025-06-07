@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/yearFrom"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:gravity="start|center_vertical"
+        android:src="@drawable/ic_baseline_remove_24"
+        android:textAppearance="?textAppearanceBody2"
+        tools:text="1990" />
+
+    <com.google.android.material.slider.RangeSlider
+        android:id="@+id/seekbar"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        app:labelBehavior="gone"
+        app:tickVisible="false" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/yearTo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:gravity="end|center_vertical"
+        android:src="@drawable/ic_baseline_remove_24"
+        android:textAppearance="?textAppearanceBody2"
+        tools:text="2025" />
+</LinearLayout>

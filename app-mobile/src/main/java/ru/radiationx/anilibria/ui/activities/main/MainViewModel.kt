@@ -51,6 +51,7 @@ class MainViewModel @Inject constructor(
     private val otherAnalytics: OtherAnalytics,
 ) : ViewModel() {
 
+    // todo api2 revert
     private val defaultScreen = Screens.Collections().screenKey
 
     private val _state = MutableStateFlow(MainScreenState())

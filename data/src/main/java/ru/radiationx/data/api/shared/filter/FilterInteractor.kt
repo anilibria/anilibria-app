@@ -69,6 +69,7 @@ class FilterInteractor(
     suspend fun getReleases(
         filterType: FilterType,
         page: Int,
+        query: String,
         form: FilterForm,
         collectionType: CollectionType?
     ): Paginated<Release> = when (filterType) {
@@ -76,27 +77,28 @@ class FilterInteractor(
             requireNotNull(collectionType) {
                 "CollectionType is null"
             }
-            collectionsRepository.getReleases(collectionType, page, form.toCollections())
+            collectionsRepository.getReleases(collectionType, page, form.toCollections(query))
         }
 
         FilterType.Favorites -> {
-            favoriteRepository.getReleases(page, form.toFavorites())
+            favoriteRepository.getReleases(page, form.toFavorites(query))
         }
 
         FilterType.Catalog -> {
-            catalogRepository.getReleases(page, form.toCatalog())
+            catalogRepository.getReleases(page, form.toCatalog(query))
         }
     }
 
-    private fun FilterForm.toCollections(): CollectionsFilterForm = CollectionsFilterForm(
-        query = query,
-        ageRatings = ageRatings,
-        genres = genres,
-        types = types,
-        years = years
-    )
+    private fun FilterForm.toCollections(query: String): CollectionsFilterForm =
+        CollectionsFilterForm(
+            query = query,
+            ageRatings = ageRatings,
+            genres = genres,
+            types = types,
+            years = years
+        )
 
-    private fun FilterForm.toFavorites(): FavoritesFilterForm = FavoritesFilterForm(
+    private fun FilterForm.toFavorites(query: String): FavoritesFilterForm = FavoritesFilterForm(
         query = query,
         ageRatings = ageRatings,
         genres = genres,
@@ -105,7 +107,7 @@ class FilterInteractor(
         years = years
     )
 
-    private fun FilterForm.toCatalog(): CatalogFilterForm = CatalogFilterForm(
+    private fun FilterForm.toCatalog(query: String): CatalogFilterForm = CatalogFilterForm(
         query = query,
         ageRatings = ageRatings,
         genres = genres,
@@ -201,7 +203,6 @@ data class FilterData(
 )
 
 data class FilterForm(
-    val query: String,
     val ageRatings: Set<FormItem.Value>,
     val genres: Set<FormItem.Genre>,
     val productionStatuses: Set<FormItem.Value>,
@@ -213,18 +214,25 @@ data class FilterForm(
     val yearsRange: Pair<FormItem.Year, FormItem.Year>?
 ) {
     companion object {
-        fun empty(): FilterForm = FilterForm(
-            query = "",
-            ageRatings = emptySet(),
-            genres = emptySet(),
-            productionStatuses = emptySet(),
-            publishStatuses = emptySet(),
-            types = emptySet(),
-            seasons = emptySet(),
-            sorting = null,
-            years = emptySet(),
-            yearsRange = null
-        )
+        private val empty: FilterForm by lazy {
+            FilterForm(
+                ageRatings = emptySet(),
+                genres = emptySet(),
+                productionStatuses = emptySet(),
+                publishStatuses = emptySet(),
+                types = emptySet(),
+                seasons = emptySet(),
+                sorting = null,
+                years = emptySet(),
+                yearsRange = null
+            )
+        }
+
+        fun empty(): FilterForm = empty
+    }
+
+    fun hasChanges(): Boolean {
+        return this != empty()
     }
 }
 

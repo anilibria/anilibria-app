@@ -105,9 +105,9 @@
 
     <style name="DayNightAppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents">
         <item name="android:singleLine">true</item>
-        <item name="colorPrimary">?colorSurface</item>
+        <!--<item name="colorPrimary">?colorSurface</item>
         <item name="colorAccent">@color/white</item>
-        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>-->
     </style>
 
     <style name="DayNightAppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents">

@@ -77,6 +77,7 @@ class SearchViewModel(
         val result = filterInteractor.getReleases(
             filterType = argExtra.type,
             page = it.page,
+            query = _queryState.value,
             form = _loaderArg.value.form,
             collectionType = _loaderArg.value.collectionType
         )
@@ -100,11 +101,10 @@ class SearchViewModel(
             .launchIn(viewModelScope)
 
         _queryState
+            .drop(1)
             .debounce(300L)
             .distinctUntilChanged()
-            .onEach { query ->
-                updateForm { it.copy(query = query) }
-            }
+            .onEach { releasesLoader.refresh() }
             .launchIn(viewModelScope)
 
         refresh()

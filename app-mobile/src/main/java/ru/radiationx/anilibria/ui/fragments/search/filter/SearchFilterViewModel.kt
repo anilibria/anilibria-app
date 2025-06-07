@@ -1,33 +1,46 @@
 package ru.radiationx.anilibria.ui.fragments.search.filter
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import ru.radiationx.data.api.shared.filter.FilterForm
 import ru.radiationx.data.api.shared.filter.FormItem
 import javax.inject.Inject
 
-class SearchFilterViewModel @Inject constructor(
-
-) : ViewModel() {
+class SearchFilterViewModel @Inject constructor() : ViewModel() {
 
     private val _state = MutableStateFlow(FilterForm.empty())
     val state = _state.asStateFlow()
 
-    fun onNewForm(form: FilterForm) {
-        _state.value = form
+    private val _applyEvent = MutableSharedFlow<FilterForm>()
+    val applyEvent = _applyEvent.asSharedFlow()
+
+    fun onApply() {
+        viewModelScope.launch {
+            _applyEvent.emit(state.value)
+        }
     }
 
     fun onReset() {
         updateForm {
-            FilterForm.empty().copy(query = it.query)
+            FilterForm.empty()
         }
     }
 
     fun onResetGenres() {
         updateForm {
             it.copy(genres = emptySet())
+        }
+    }
+
+    fun onResetSorting() {
+        updateForm {
+            it.copy(sorting = null)
         }
     }
 

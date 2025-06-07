@@ -34,6 +34,10 @@ class SearchFilterDialog(
         dialog.addDelegate(yearsRangeEnvoy {
             viewModel.onYears(it)
         })
+
+        dialog.setCloseListener {
+            viewModel.onApply()
+        }
     }
 
     override fun onDestroy() {
@@ -164,11 +168,16 @@ class SearchFilterDialog(
                     button {
                         text("Применить")
                         action(TaiwaAction.Close)
-                    }
-                    button {
-                        text("Сбросить")
                         onClick {
-                            viewModel.onReset()
+                            viewModel.onApply()
+                        }
+                    }
+                    if (form.hasChanges()) {
+                        button {
+                            text("Сбросить")
+                            onClick {
+                                viewModel.onReset()
+                            }
                         }
                     }
                 }
@@ -239,12 +248,14 @@ class SearchFilterDialog(
                 }
             }
         }
-        footer {
-            buttons {
-                button {
-                    text("Сбросить жанры")
-                    onClick {
-                        viewModel.onResetGenres()
+        if (selected.isNotEmpty()) {
+            footer {
+                buttons {
+                    button {
+                        text("Сбросить жанры")
+                        onClick {
+                            viewModel.onResetGenres()
+                        }
                     }
                 }
             }
@@ -276,12 +287,14 @@ class SearchFilterDialog(
                 }
             }
         }
-        footer {
-            buttons {
-                button {
-                    text("Сбросить периоды")
-                    onClick {
-                        viewModel.onResetYears()
+        if (selected.isNotEmpty()) {
+            footer {
+                buttons {
+                    button {
+                        text("Сбросить периоды")
+                        onClick {
+                            viewModel.onResetYears()
+                        }
                     }
                 }
             }
@@ -310,6 +323,19 @@ class SearchFilterDialog(
                     action(TaiwaAction.Root)
                     onClick {
                         viewModel.onSorting(sorting.item)
+                    }
+                }
+            }
+        }
+        if (selected != null) {
+            footer {
+                buttons {
+                    button {
+                        text("Сбросить сортировку")
+                        action(TaiwaAction.Root)
+                        onClick {
+                            viewModel.onResetSorting()
+                        }
                     }
                 }
             }

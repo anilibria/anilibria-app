@@ -49,6 +49,7 @@ class SearchFragment :
     companion object {
         private const val ARG_TYPE = "arg_type"
         private const val ARG_GENRE = "arg_genre"
+        private val MENU_ID_FILTER = View.generateViewId()
 
         fun newInstance(
             filterType: FilterType,
@@ -156,7 +157,7 @@ class SearchFragment :
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-            add("Фильтры")
+            add(0, MENU_ID_FILTER, 0, "Фильтры")
                 .setIcon(R.drawable.ic_filter_toolbar)
                 .setOnMenuItemClickListener {
                     filterDialog.show()
@@ -183,7 +184,18 @@ class SearchFragment :
             viewModel.state.map { it.filter }.distinctUntilChanged(),
             filterViewModel.state
         ) { filterState, form ->
+            baseBinding.toolbar.menu.findItem(MENU_ID_FILTER)?.also { menuItem ->
+                if (form.hasChanges()) {
+                    menuItem.setIcon(R.drawable.ic_filter_changes_toolbar)
+                } else {
+                    menuItem.setIcon(R.drawable.ic_filter_toolbar)
+                }
+            }
             filterDialog.setForm(filterState, form)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        filterViewModel.applyEvent.onEach {
+            viewModel.onFormChanged(it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
 

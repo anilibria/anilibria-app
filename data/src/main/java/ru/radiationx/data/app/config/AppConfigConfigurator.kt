@@ -35,6 +35,7 @@ class AppConfigConfigurator @Inject constructor(
 
         coroutineScope {
             if (appConfig.needsUpdateConfig()) {
+                // todo api2 revert
                 //stepUpdateConfig()
             }
 

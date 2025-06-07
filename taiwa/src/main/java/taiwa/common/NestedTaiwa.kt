@@ -56,6 +56,10 @@ class NestedTaiwa(
         taiwa.addDelegate(delegate)
     }
 
+    fun setCloseListener(listener: () -> Unit) {
+        closeListener = listener
+    }
+
     fun show() {
         taiwa.show()
     }

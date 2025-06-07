@@ -17,13 +17,14 @@ import taiwa.databinding.TaiwaRootBinding
 import taiwa.internal.models.ClickListener
 import taiwa.internal.models.TaiwaDividerState
 import taiwa.internal.models.TaiwaItem
+import taiwa.lifecycle.Destroyable
 
 internal class TaiwaView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0,
-) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+) : FrameLayout(context, attrs, defStyleAttr, defStyleRes), Destroyable {
 
     private val binding by viewBinding<TaiwaRootBinding>(attachToRoot = true)
 
@@ -79,6 +80,15 @@ internal class TaiwaView @JvmOverloads constructor(
         binding.itemsRecycler.adapter = null
     }
 
+    override fun onDestroy() {
+        actionListener = null
+        backListener = null
+        binding.itemsRecycler.adapter = null
+        binding.itemsRecycler.itemAnimator = null
+        binding.itemsRecycler.layoutManager = null
+        itemsAdapter.clearEnvoy()
+    }
+
     fun addDelegate(delegate: Envoy<DiffItem>) {
         itemsAdapter.addEnvoy(delegate)
     }
@@ -118,7 +128,6 @@ internal class TaiwaView @JvmOverloads constructor(
     }
 
     private fun handleClick(action: TaiwaAction?, clickListener: ClickListener?) {
-        Log.e("kekeke", "handleClick $action, $clickListener")
         clickListener?.invoke()
         if (action != null) {
             actionListener?.invoke(action)

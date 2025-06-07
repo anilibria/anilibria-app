@@ -9,11 +9,13 @@ import ru.radiationx.anilibria.model.YoutubeItemState
 import taiwa.TaiwaAction
 import taiwa.common.DialogType
 import taiwa.common.Taiwa
+import taiwa.lifecycle.Destroyable
+import taiwa.lifecycle.lifecycleLazy
 
 fun Fragment.youtubeItemDialog(
     onCopyClick: (YoutubeItemState) -> Unit,
     onShareClick: (YoutubeItemState) -> Unit,
-): Lazy<YoutubeItemDialog> = lazy {
+) = lifecycleLazy {
     YoutubeItemDialog(
         context = requireContext(),
         lifecycleOwner = viewLifecycleOwner,
@@ -27,9 +29,13 @@ class YoutubeItemDialog(
     lifecycleOwner: LifecycleOwner,
     private val onCopyClick: (YoutubeItemState) -> Unit,
     private val onShareClick: (YoutubeItemState) -> Unit,
-) {
+) : Destroyable {
 
     private val dialog = Taiwa(context, lifecycleOwner, DialogType.BottomSheet)
+
+    override fun onDestroy() {
+        dialog.onDestroy()
+    }
 
     fun show(item: YoutubeItemState) {
         dialog.setContent {
@@ -40,8 +46,7 @@ class YoutubeItemDialog(
                     action(TaiwaAction.Close)
                     onClick {
                         onCopyClick.invoke(item)
-                        Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(context, "Ссылка скопирована", Toast.LENGTH_SHORT).show()
                     }
                 }
                 item {

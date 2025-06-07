@@ -19,6 +19,14 @@ open class EnvoyAdapter<T : Any>(
         manager.addEnvoy(envoy)
     }
 
+    fun removeEnvoy(envoy: Envoy<T>) {
+        manager.removeEnvoy(envoy)
+    }
+
+    fun clearEnvoy() {
+        manager.clear()
+    }
+
     fun setItems(newItems: List<T>) {
         val callback = createCallBack(items, newItems, diffCallback)
         val diffResult = DiffUtil.calculateDiff(callback, true)

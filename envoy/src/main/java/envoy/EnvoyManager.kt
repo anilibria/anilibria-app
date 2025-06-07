@@ -13,6 +13,14 @@ class EnvoyManager<T> {
         envoys.put(envoy.getViewType(), envoy)
     }
 
+    fun removeEnvoy(envoy: Envoy<T>) {
+        envoys.remove(envoy.getViewType())
+    }
+
+    fun clear() {
+        envoys.clear()
+    }
+
     fun getItemViewType(item: T): Int {
         val count = envoys.size()
         for (index in 0 until count) {

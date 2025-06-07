@@ -10,12 +10,13 @@ import taiwa.dialogs.BaseTaiwaDialog
 import taiwa.dialogs.TaiwaBottomSheetDialog
 import taiwa.dialogs.TaiwaDialog
 import taiwa.dialogs.ext.attachToLifecycle
+import taiwa.lifecycle.Destroyable
 
 class DialogWrapper(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
     private val type: DialogType,
-) {
+) : Destroyable {
 
     private val dialog: BaseTaiwaDialog = when (type) {
         DialogType.Alert -> TaiwaDialog(context)
@@ -34,6 +35,11 @@ class DialogWrapper(
         dialog.setOnCancelListener {
             closeListener?.invoke()
         }
+    }
+
+    override fun onDestroy() {
+        closeListener = null
+        backListener = null
     }
 
     fun setCloseListener(listener: () -> Unit) {

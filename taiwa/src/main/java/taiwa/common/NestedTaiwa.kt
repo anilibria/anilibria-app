@@ -12,12 +12,13 @@ import taiwa.TaiwaEvent
 import taiwa.dsl.TaiwaNestingScope
 import taiwa.internal.buildNestingTaiwa
 import taiwa.internal.view.NestedContentController
+import taiwa.lifecycle.Destroyable
 
 class NestedTaiwa(
     parentContext: Context,
     lifecycleOwner: LifecycleOwner,
     type: DialogType,
-) {
+) : Destroyable {
 
     private val taiwa = Taiwa(parentContext, lifecycleOwner, type)
 
@@ -39,6 +40,12 @@ class NestedTaiwa(
                 is TaiwaEvent.Anchor -> contentController.toAnchor(event.anchor)
             }
         }
+    }
+
+    override fun onDestroy() {
+        taiwa.onDestroy()
+        contentController.onDestroy()
+        closeListener = null
     }
 
     fun setContent(block: TaiwaNestingScope.() -> Unit) {

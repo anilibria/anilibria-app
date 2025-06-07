@@ -8,19 +8,20 @@ import taiwa.common.NestedTaiwa
 import taiwa.common.Taiwa
 import taiwa.dsl.TaiwaNestingScope
 import taiwa.dsl.TaiwaScope
+import taiwa.lifecycle.lifecycleLazy
 
-fun Fragment.alert(): Lazy<DialogWrapper> = lazy {
+fun Fragment.alert() = lifecycleLazy {
     DialogWrapper(requireContext(), viewLifecycleOwner, DialogType.Alert)
 }
 
-fun ComponentActivity.alert(): Lazy<DialogWrapper> = lazy {
+fun ComponentActivity.alert() = lifecycleLazy {
     DialogWrapper(this, this, DialogType.Alert)
 }
 
 
 fun Fragment.alertTaiwa(
     block: (TaiwaScope.() -> Unit)? = null,
-): Lazy<Taiwa> = lazy {
+) = lifecycleLazy {
     Taiwa(requireContext(), viewLifecycleOwner, DialogType.Alert).apply {
         block?.apply(::setContent)
     }
@@ -28,7 +29,7 @@ fun Fragment.alertTaiwa(
 
 fun ComponentActivity.alertTaiwa(
     block: (TaiwaScope.() -> Unit)? = null,
-): Lazy<Taiwa> = lazy {
+) = lifecycleLazy {
     Taiwa(this, this, DialogType.Alert).apply {
         block?.apply(::setContent)
     }
@@ -37,7 +38,7 @@ fun ComponentActivity.alertTaiwa(
 
 fun Fragment.nestedAlertTaiwa(
     block: (TaiwaNestingScope.() -> Unit)? = null,
-): Lazy<NestedTaiwa> = lazy {
+) = lifecycleLazy {
     NestedTaiwa(requireContext(), viewLifecycleOwner, DialogType.Alert).apply {
         block?.apply(::setContent)
     }
@@ -45,7 +46,7 @@ fun Fragment.nestedAlertTaiwa(
 
 fun ComponentActivity.nestedAlertTaiwa(
     block: (TaiwaNestingScope.() -> Unit)? = null,
-): Lazy<NestedTaiwa> = lazy {
+) = lifecycleLazy {
     NestedTaiwa(this, this, DialogType.Alert).apply {
         block?.apply(::setContent)
     }

@@ -1,7 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -39,6 +38,7 @@ import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
+import taiwa.lifecycle.lifecycleLazy
 
 
 class SearchFragment :
@@ -94,7 +94,7 @@ class SearchFragment :
         onShortcutClick = { viewModel.onShortcutClick(it) }
     )
 
-    private val filterDialog by lazy {
+    private val filterDialog by lifecycleLazy {
         SearchFilterDialog(
             context = requireContext(),
             lifecycleOwner = viewLifecycleOwner,
@@ -119,7 +119,6 @@ class SearchFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.w("kekeke","create vlco $viewLifecycleOwner")
         postopneEnterTransitionWithTimout()
         binding.recyclerView.doOnLayout {
             startPostponedEnterTransition()

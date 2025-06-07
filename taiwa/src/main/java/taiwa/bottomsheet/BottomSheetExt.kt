@@ -8,19 +8,20 @@ import taiwa.common.NestedTaiwa
 import taiwa.common.Taiwa
 import taiwa.dsl.TaiwaNestingScope
 import taiwa.dsl.TaiwaScope
+import taiwa.lifecycle.lifecycleLazy
 
-fun Fragment.bottomSheet(): Lazy<DialogWrapper> = lazy {
+fun Fragment.bottomSheet() = lifecycleLazy {
     DialogWrapper(requireContext(), viewLifecycleOwner, DialogType.BottomSheet)
 }
 
-fun ComponentActivity.bottomSheet(): Lazy<DialogWrapper> = lazy {
+fun ComponentActivity.bottomSheet() = lifecycleLazy {
     DialogWrapper(this, this, DialogType.BottomSheet)
 }
 
 
 fun Fragment.bottomSheetTaiwa(
     block: (TaiwaScope.() -> Unit)? = null,
-): Lazy<Taiwa> = lazy {
+) = lifecycleLazy {
     Taiwa(requireContext(), viewLifecycleOwner, DialogType.BottomSheet).apply {
         block?.apply(::setContent)
     }
@@ -28,7 +29,7 @@ fun Fragment.bottomSheetTaiwa(
 
 fun ComponentActivity.bottomSheetTaiwa(
     block: (TaiwaScope.() -> Unit)? = null,
-): Lazy<Taiwa> = lazy {
+) = lifecycleLazy {
     Taiwa(this, this, DialogType.BottomSheet).apply {
         block?.apply(::setContent)
     }
@@ -37,7 +38,7 @@ fun ComponentActivity.bottomSheetTaiwa(
 
 fun Fragment.nestedBottomSheetTaiwa(
     block: (TaiwaNestingScope.() -> Unit)? = null,
-): Lazy<NestedTaiwa> = lazy {
+) = lifecycleLazy {
     NestedTaiwa(requireContext(), viewLifecycleOwner, DialogType.BottomSheet).apply {
         block?.apply(::setContent)
     }
@@ -45,7 +46,7 @@ fun Fragment.nestedBottomSheetTaiwa(
 
 fun ComponentActivity.nestedBottomSheetTaiwa(
     block: (TaiwaNestingScope.() -> Unit)? = null,
-): Lazy<NestedTaiwa> = lazy {
+) = lifecycleLazy {
     NestedTaiwa(this, this, DialogType.BottomSheet).apply {
         block?.apply(::setContent)
     }

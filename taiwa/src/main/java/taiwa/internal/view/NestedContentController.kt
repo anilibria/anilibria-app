@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import taiwa.TaiwaAnchor
 import taiwa.internal.models.TaiwaNestingState
 import taiwa.internal.models.TaiwaState
+import taiwa.lifecycle.Destroyable
 
-internal class NestedContentController {
-
+internal class NestedContentController : Destroyable {
 
     private val anchorFlow = MutableStateFlow<TaiwaAnchor>(TaiwaAnchor.Root)
 
@@ -18,6 +18,10 @@ internal class NestedContentController {
     val currentStateFlow = combine(anchorFlow, rootStateFlow.filterNotNull()) { anchor, rootState ->
         transformState(anchor, rootState)
     }.distinctUntilChanged()
+
+    override fun onDestroy() {
+        rootStateFlow.value = null
+    }
 
     fun apply(state: TaiwaNestingState) {
         rootStateFlow.value = state

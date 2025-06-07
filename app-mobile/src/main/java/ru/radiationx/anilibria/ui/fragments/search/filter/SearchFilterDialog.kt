@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search.filter
 
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import ru.radiationx.data.api.shared.filter.FieldType
 import ru.radiationx.data.api.shared.filter.FilterData
@@ -18,12 +16,13 @@ import taiwa.dsl.ContentScopeMarker
 import taiwa.dsl.TaiwaContentScope
 import taiwa.dsl.TaiwaScope
 import taiwa.dsl.TaiwaScopeMarker
+import taiwa.lifecycle.Destroyable
 
 class SearchFilterDialog(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
     private val viewModel: SearchFilterViewModel
-) {
+) : Destroyable {
 
     private val dialog = NestedTaiwa(context, lifecycleOwner, DialogType.BottomSheet)
 
@@ -32,32 +31,20 @@ class SearchFilterDialog(
     private val yearAnchor = TaiwaAnchor.Id(FieldType.Year)
 
     init {
-        Log.e("kekeke", "dialog init $dialog")
         dialog.addDelegate(yearsRangeEnvoy {
             viewModel.onYears(it)
         })
-        lifecycleOwner.lifecycle.addObserver(object :DefaultLifecycleObserver{
-            override fun onResume(owner: LifecycleOwner) {
-                super.onResume(owner)
+    }
 
-                Log.e("kekeke", "dialog resume $dialog")
-            }
-
-            override fun onPause(owner: LifecycleOwner) {
-                super.onPause(owner)
-
-                Log.e("kekeke", "dialog pause $dialog")
-            }
-        })
+    override fun onDestroy() {
+        dialog.onDestroy()
     }
 
     fun show() {
-        Log.e("kekeke", "dialog show $dialog")
         dialog.show()
     }
 
     fun setForm(filterState: SingleLoaderState<FilterData>, form: FilterForm) {
-        Log.e("kekeke", "dialog set form $dialog")
         val filter = filterState.data ?: return
         dialog.setContent {
             body {

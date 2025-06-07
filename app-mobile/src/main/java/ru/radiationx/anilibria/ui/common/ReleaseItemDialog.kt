@@ -9,13 +9,15 @@ import ru.radiationx.anilibria.model.ReleaseItemState
 import taiwa.TaiwaAction
 import taiwa.common.DialogType
 import taiwa.common.Taiwa
+import taiwa.lifecycle.Destroyable
+import taiwa.lifecycle.lifecycleLazy
 
 fun Fragment.releaseItemDialog(
     onCopyClick: (ReleaseItemState) -> Unit,
     onShareClick: (ReleaseItemState) -> Unit,
     onShortcutClick: (ReleaseItemState) -> Unit,
     onDeleteClick: ((ReleaseItemState) -> Unit)? = null,
-): Lazy<ReleaseItemDialog> = lazy {
+) = lifecycleLazy {
     ReleaseItemDialog(
         context = requireContext(),
         lifecycleOwner = viewLifecycleOwner,
@@ -33,9 +35,13 @@ class ReleaseItemDialog(
     private val onShareClick: (ReleaseItemState) -> Unit,
     private val onShortcutClick: (ReleaseItemState) -> Unit,
     private val onDeleteClick: ((ReleaseItemState) -> Unit)? = null,
-) {
+) : Destroyable {
 
     private val dialog = Taiwa(context, lifecycleOwner, DialogType.BottomSheet)
+
+    override fun onDestroy() {
+        dialog.onDestroy()
+    }
 
     fun show(item: ReleaseItemState) {
         dialog.setContent {

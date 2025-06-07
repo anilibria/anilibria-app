@@ -21,6 +21,14 @@ open class AsyncEnvoyAdapter<T> : ListAdapter<T, AsyncEnvoyAdapter.ViewHolder<T>
         manager.addEnvoy(envoy)
     }
 
+    fun removeEnvoy(envoy: Envoy<T>) {
+        manager.removeEnvoy(envoy)
+    }
+
+    fun clearEnvoy() {
+        manager.clear()
+    }
+
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
         return manager.getItemViewType(item)

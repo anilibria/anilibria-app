@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import kotlin.reflect.KProperty
 
-fun <F : Fragment, T : Destroyable> Fragment.lifecycleLazy(
+fun <F : Fragment, T : Destroyable> F.lifecycleLazy(
     creator: (F) -> T,
 ): LifecycleProperty<F, T> {
     return FragmentLifecycleProperty(creator)

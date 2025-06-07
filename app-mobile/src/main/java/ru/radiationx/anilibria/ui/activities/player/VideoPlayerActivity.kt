@@ -61,6 +61,7 @@ import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.launchInStarted
 import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared_app.networkstatus.NetworkStatusViewModel
+import taiwa.lifecycle.lifecycleLazy
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
@@ -113,7 +114,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     private val keepScreenOnController by lazy { KeepScreenOnController(this) }
 
-    private val settingsController by lazy { PlayerSettingsController(this) }
+    private val settingsController by lifecycleLazy { PlayerSettingsController(this) }
 
     private val binding by viewBinding<ActivityVideoplayerBinding>()
 

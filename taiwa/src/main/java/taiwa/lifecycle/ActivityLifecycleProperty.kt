@@ -5,9 +5,9 @@ import android.app.Application
 import android.os.Bundle
 import kotlin.reflect.KProperty
 
-fun <F : Activity, T : Destroyable> Activity.lifecycleLazy(
-    creator: (F) -> T,
-): LifecycleProperty<F, T> {
+fun <A : Activity, T : Destroyable> A.lifecycleLazy(
+    creator: (A) -> T,
+): LifecycleProperty<A, T> {
     return ActivityLifecycleProperty(creator)
 }
 

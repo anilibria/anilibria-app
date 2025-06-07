@@ -14,14 +14,16 @@ import ru.radiationx.anilibria.utils.view.attachedCoroutineScope
 import ru.radiationx.data.api.releases.models.PlayerQuality
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
-import taiwa.bottomsheet.nestedBottomSheetTaiwa
+import taiwa.common.DialogType
+import taiwa.common.NestedTaiwa
+import taiwa.lifecycle.Destroyable
 import java.math.BigDecimal
 
 class PlayerSettingsController(
     private val activity: ComponentActivity,
-) {
+) : Destroyable {
 
-    private val taiwa by activity.nestedBottomSheetTaiwa()
+    private val taiwa = NestedTaiwa(activity, activity, DialogType.BottomSheet)
 
     private val qualityAnchor = TaiwaAnchor.Id("quality")
     private val speedAnchor = TaiwaAnchor.Id("speed")
@@ -39,6 +41,10 @@ class PlayerSettingsController(
         taiwa.addDelegate(speedSelectorEnvoy {
             onSpeedSelected?.invoke(it)
         })
+    }
+
+    override fun onDestroy() {
+        taiwa.onDestroy()
     }
 
     fun show() {

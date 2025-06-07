@@ -11,13 +11,15 @@ import taiwa.dsl.TaiwaScope
 import taiwa.internal.buildTaiwa
 import taiwa.internal.models.TaiwaState
 import taiwa.internal.view.TaiwaView
+import taiwa.lifecycle.Destroyable
 import java.lang.ref.WeakReference
 
 class Taiwa(
     parentContext: Context,
     lifecycleOwner: LifecycleOwner,
     type: DialogType,
-) {
+) : Destroyable {
+
     private val dialogWrapper = DialogWrapper(parentContext, lifecycleOwner, type)
 
     private var eventListener: ((TaiwaEvent) -> Unit)? = null
@@ -51,6 +53,16 @@ class Taiwa(
                 findBackAction()?.also { handleAction(it) }
             }
         }
+    }
+
+    override fun onDestroy() {
+        dialogWrapper.onDestroy()
+        currentContentView?.get()?.onDestroy()
+        currentFooterView?.get()?.onDestroy()
+        eventListener = null
+        currentContentView = null
+        currentFooterView = null
+        currentContent = null
     }
 
     private fun getContentView(): TaiwaView {

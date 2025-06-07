@@ -40,6 +40,15 @@ internal data class TaiwaMessageState(
     val text: String?,
 ) : DiffItem(id)
 
+internal data class TaiwaSectionState(
+    val id: Any,
+    val text: String?,
+) : DiffItem(id)
+
+internal data class TaiwaDividerState(
+    val id: Any,
+) : DiffItem(id)
+
 internal data class TaiwaItemState(
     val base: Base,
     val type: Type,
@@ -74,12 +83,12 @@ internal data class TaiwaButtonState(
     val text: String?,
     val action: TaiwaAction?,
     val clickListener: ClickListener?,
-)
+) : DiffItem(id)
 
 internal data class TaiwaChipsState(
     val id: Any,
     val chips: List<TaiwaChipState>,
-) : DiffItem(id)
+) : TaiwaItem(id)
 
 internal data class TaiwaChipState(
     val id: Any,

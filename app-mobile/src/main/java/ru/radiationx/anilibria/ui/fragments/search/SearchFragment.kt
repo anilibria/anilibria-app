@@ -12,8 +12,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentTabsListRefreshBinding
@@ -24,6 +27,8 @@ import ru.radiationx.anilibria.ui.fragments.BaseSearchItemFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
+import ru.radiationx.anilibria.ui.fragments.search.filter.SearchFilterDialog
+import ru.radiationx.anilibria.ui.fragments.search.filter.SearchFilterViewModel
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.api.releases.models.ReleaseGenre
@@ -80,11 +85,23 @@ class SearchFragment :
         )
     }
 
+    private val filterViewModel by viewModel<SearchFilterViewModel>()
+
     private val releaseDialog by releaseItemDialog(
         onCopyClick = { viewModel.onCopyClick(it) },
         onShareClick = { viewModel.onShareClick(it) },
         onShortcutClick = { viewModel.onShortcutClick(it) }
     )
+
+    private val filterDialog by lazy {
+        SearchFilterDialog(
+            context = requireContext(),
+            lifecycleOwner = viewLifecycleOwner,
+            onFormConfirm = {
+                viewModel.onFormChanged(it)
+            }
+        )
+    }
 
     override var sharedViewLocal: View? = null
 
@@ -143,7 +160,7 @@ class SearchFragment :
             add("Фильтры")
                 .setIcon(R.drawable.ic_filter_toolbar)
                 .setOnMenuItemClickListener {
-                    //viewModel.showDialog()
+                    filterDialog.show()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -163,6 +180,14 @@ class SearchFragment :
             adapter.bindState(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        combine(
+            viewModel.state.map { it.filter }.distinctUntilChanged(),
+            filterViewModel.state
+        ) { filterState, form ->
+            filterDialog.setForm(filterState, form)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+
         val tabListener = object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewModel.selectCollection(tab.tag as CollectionType)
@@ -176,6 +201,8 @@ class SearchFragment :
 
         }
         binding.tabLayout.addOnTabSelectedListener(tabListener)
+
+
         viewModel.collections
             .onEach { binding.tabLayout.isVisible = it != null }
             .filterNotNull()
@@ -192,22 +219,6 @@ class SearchFragment :
                 binding.tabLayout.addOnTabSelectedListener(tabListener)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
-        /*viewModel.filterState.onEach { state ->
-            val filtersCount = state.form.let {
-                it.genres.size + it.years.size + it.seasons.size
-            }
-            var subtitle = ""
-            subtitle += when (state.form.sort) {
-                SearchForm.Sort.DATE -> "По новизне"
-                SearchForm.Sort.RATING -> "По популярности"
-            }
-            subtitle += ", Фильтров: $filtersCount"
-            baseBinding.toolbar.subtitle = subtitle
-        }.launchIn(viewLifecycleOwner.lifecycleScope)*/
-
-        /*viewModel.showFilterAction.observe().onEach { state ->
-            genresDialog.showDialog(state)
-        }.launchInResumed(viewLifecycleOwner)*/
     }
 
     override fun updateDimens(dimensions: Dimensions) {

@@ -1,6 +1,5 @@
 package taiwa.internal.view
 
-import android.util.Log
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
@@ -27,6 +26,7 @@ internal fun chipsEnvoy(
             flexDirection = FlexDirection.ROW
             justifyContent = JustifyContent.FLEX_START
         }
+        view.root.itemAnimator = null
     }
 
     bind { chips ->

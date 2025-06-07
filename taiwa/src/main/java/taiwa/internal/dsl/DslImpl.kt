@@ -17,6 +17,7 @@ import taiwa.dsl.TaiwaMessageScope
 import taiwa.dsl.TaiwaNestingScope
 import taiwa.dsl.TaiwaRadioItemScope
 import taiwa.dsl.TaiwaScope
+import taiwa.dsl.TaiwaSectionScope
 import taiwa.dsl.TaiwaSwitchItemScope
 import taiwa.dsl.TaiwaToolbarScope
 import taiwa.internal.models.ClickListener
@@ -25,9 +26,11 @@ import taiwa.internal.models.TaiwaButtonsState
 import taiwa.internal.models.TaiwaChipState
 import taiwa.internal.models.TaiwaChipsState
 import taiwa.internal.models.TaiwaContentState
+import taiwa.internal.models.TaiwaDividerState
 import taiwa.internal.models.TaiwaItemState
 import taiwa.internal.models.TaiwaMessageState
 import taiwa.internal.models.TaiwaNestingState
+import taiwa.internal.models.TaiwaSectionState
 import taiwa.internal.models.TaiwaState
 import taiwa.internal.models.TaiwaToolbarState
 
@@ -117,16 +120,26 @@ internal class TaiwaContentScopeImpl(
         _items.add(item)
     }
 
-    override fun toolbar(block: TaiwaToolbarScope.() -> Unit) {
-        val scope = TaiwaToolbarScopeImpl(getNextId(null))
+    override fun toolbar(id: Any?, block: TaiwaToolbarScope.() -> Unit) {
+        val scope = TaiwaToolbarScopeImpl(getNextId(id))
         block.invoke(scope)
         _items.add(scope.build())
     }
 
-    override fun message(block: TaiwaMessageScope.() -> Unit) {
-        val scope = TaiwaMessageScopeImpl(getNextId(null))
+    override fun message(id: Any?, block: TaiwaMessageScope.() -> Unit) {
+        val scope = TaiwaMessageScopeImpl(getNextId(id))
         block.invoke(scope)
         _items.add(scope.build())
+    }
+
+    override fun section(id: Any?, block: TaiwaSectionScope.() -> Unit) {
+        val scope = TaiwaSectionScopeImpl(getNextId(id))
+        block.invoke(scope)
+        _items.add(scope.build())
+    }
+
+    override fun divider(id: Any?) {
+        _items.add(TaiwaDividerState(getNextId(id)))
     }
 
     override fun item(id: Any?, block: TaiwaBasicItemScope.() -> Unit) {
@@ -153,14 +166,14 @@ internal class TaiwaContentScopeImpl(
         _items.add(scope.build())
     }
 
-    override fun buttons(block: TaiwaButtonsScope.() -> Unit) {
-        val scope = TaiwaButtonsScopeImpl(getNextId(null))
+    override fun buttons(id: Any?, block: TaiwaButtonsScope.() -> Unit) {
+        val scope = TaiwaButtonsScopeImpl(getNextId(id))
         block.invoke(scope)
         _items.add(scope.build())
     }
 
-    override fun chips(block: TaiwaChipsScope.() -> Unit) {
-        val scope = TaiwaChipsScopeImpl(getNextId(null))
+    override fun chips(id: Any?, block: TaiwaChipsScope.() -> Unit) {
+        val scope = TaiwaChipsScopeImpl(getNextId(id))
         block.invoke(scope)
         _items.add(scope.build())
     }
@@ -228,6 +241,23 @@ internal class TaiwaMessageScopeImpl(
 
     override fun build(): TaiwaMessageState {
         return TaiwaMessageState(
+            id = _id,
+            text = _text
+        )
+    }
+}
+
+internal class TaiwaSectionScopeImpl(
+    private val _id: Any
+) : TaiwaSectionScope, ScopeBuilder<TaiwaSectionState> {
+    private var _text: String? = null
+
+    override fun text(value: String) {
+        _text = value
+    }
+
+    override fun build(): TaiwaSectionState {
+        return TaiwaSectionState(
             id = _id,
             text = _text
         )

@@ -51,7 +51,7 @@ class MainViewModel @Inject constructor(
     private val otherAnalytics: OtherAnalytics,
 ) : ViewModel() {
 
-    private val defaultScreen = Screens.MainFeed().screenKey
+    private val defaultScreen = Screens.Collections().screenKey
 
     private val _state = MutableStateFlow(MainScreenState())
     val state = _state.asStateFlow()

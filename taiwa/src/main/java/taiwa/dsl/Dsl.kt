@@ -21,6 +21,9 @@ annotation class ToolbarScopeMarker
 annotation class MessageScopeMarker
 
 @DslMarker
+annotation class SectionScopeMarker
+
+@DslMarker
 annotation class ButtonsScopeMarker
 
 @DslMarker
@@ -41,25 +44,29 @@ annotation class ItemScopeMarker
 @ItemScopeMarker
 @ToolbarScopeMarker
 @MessageScopeMarker
+@SectionScopeMarker
 @ButtonScopeMarker
 @ChipScopeMarker
 @TaiwaScopeMarker
 @ContentScopeMarker
 interface TaiwaContentScope {
     fun envoy(item: DiffItem)
-    fun toolbar(block: TaiwaToolbarScope.() -> Unit)
-    fun message(block: TaiwaMessageScope.() -> Unit)
+    fun toolbar(id: Any? = null, block: TaiwaToolbarScope.() -> Unit)
+    fun message(id: Any? = null, block: TaiwaMessageScope.() -> Unit)
+    fun section(id: Any? = null, block: TaiwaSectionScope.() -> Unit)
+    fun divider(id: Any? = null)
     fun item(id: Any? = null, block: TaiwaBasicItemScope.() -> Unit)
     fun switchItem(id: Any? = null, block: TaiwaSwitchItemScope.() -> Unit)
     fun radioItem(id: Any? = null, block: TaiwaRadioItemScope.() -> Unit)
     fun checkboxItem(id: Any? = null, block: TaiwaCheckboxItemScope.() -> Unit)
-    fun buttons(block: TaiwaButtonsScope.() -> Unit)
-    fun chips(block: TaiwaChipsScope.() -> Unit)
+    fun buttons(id: Any? = null, block: TaiwaButtonsScope.() -> Unit)
+    fun chips(id: Any? = null, block: TaiwaChipsScope.() -> Unit)
 }
 
 @TaiwaScopeMarker
 @ToolbarScopeMarker
 @MessageScopeMarker
+@SectionScopeMarker
 @ItemsScopeMarker
 interface TaiwaScope {
     fun backAction(action: TaiwaAction)
@@ -85,6 +92,12 @@ interface TaiwaToolbarScope {
 @TaiwaScopeMarker
 @MessageScopeMarker
 interface TaiwaMessageScope {
+    fun text(value: String)
+}
+
+@TaiwaScopeMarker
+@SectionScopeMarker
+interface TaiwaSectionScope {
     fun text(value: String)
 }
 

@@ -125,11 +125,11 @@ class FilterInteractor(
         fields = fields,
         ageRatings = ageRatings,
         genres = genres,
-        productionStatuses = null,
-        publishStatuses = null,
+        productionStatuses = emptyList(),
+        publishStatuses = emptyList(),
         types = types,
-        seasons = null,
-        sortings = null,
+        seasons = emptyList(),
+        sortings = emptyList(),
         years = years
     )
 
@@ -141,10 +141,10 @@ class FilterInteractor(
         fields = fields,
         ageRatings = ageRatings,
         genres = genres,
-        productionStatuses = null,
-        publishStatuses = null,
+        productionStatuses = emptyList(),
+        publishStatuses = emptyList(),
         types = types,
-        seasons = null,
+        seasons = emptyList(),
         sortings = sortings,
         years = years
     )
@@ -190,14 +190,14 @@ enum class FieldType {
 data class FilterData(
     val type: FilterType,
     val fields: Set<FieldType>,
-    val ageRatings: List<FilterItem.Value>?,
-    val genres: List<FilterItem.Genre>?,
-    val productionStatuses: List<FilterItem.Value>?,
-    val publishStatuses: List<FilterItem.Value>?,
-    val types: List<FilterItem.Value>?,
-    val seasons: List<FilterItem.Value>?,
-    val sortings: List<FilterItem.Value>?,
-    val years: List<FilterItem.Year>?,
+    val ageRatings: List<FilterItem.Value>,
+    val genres: List<FilterItem.Genre>,
+    val productionStatuses: List<FilterItem.Value>,
+    val publishStatuses: List<FilterItem.Value>,
+    val types: List<FilterItem.Value>,
+    val seasons: List<FilterItem.Value>,
+    val sortings: List<FilterItem.Value>,
+    val years: List<FilterItem.Year>,
 )
 
 data class FilterForm(

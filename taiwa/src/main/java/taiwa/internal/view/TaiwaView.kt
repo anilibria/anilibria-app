@@ -14,6 +14,7 @@ import taiwa.TaiwaAction
 import taiwa.common.ViewTransition
 import taiwa.databinding.TaiwaRootBinding
 import taiwa.internal.models.ClickListener
+import taiwa.internal.models.TaiwaDividerState
 import taiwa.internal.models.TaiwaItem
 
 internal class TaiwaView @JvmOverloads constructor(
@@ -41,6 +42,8 @@ internal class TaiwaView @JvmOverloads constructor(
                 )
             )
             addEnvoy(messageEnvoy())
+            addEnvoy(sectionEnvoy())
+            addEnvoy(dividerEnvoy())
             addEnvoy(buttonsEnvoy {
                 handleClick(it.action, it.clickListener)
             })
@@ -83,9 +86,17 @@ internal class TaiwaView @JvmOverloads constructor(
         items: List<DiffItem>,
         transition: ViewTransition,
     ) {
+        val filterItems = items.toMutableList().apply {
+            if (firstOrNull() is TaiwaDividerState) {
+                removeAt(0)
+            }
+            if (lastOrNull() is TaiwaDividerState) {
+                removeAt(lastIndex)
+            }
+        }
         updateAnimator(transition)
-        updateSpaces(items)
-        setItems(items)
+        updateSpaces(filterItems)
+        setItems(filterItems)
     }
 
     private fun setItems(items: List<DiffItem>) {

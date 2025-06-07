@@ -35,7 +35,7 @@ class AppConfigConfigurator @Inject constructor(
 
         coroutineScope {
             if (appConfig.needsUpdateConfig()) {
-                stepUpdateConfig()
+                //stepUpdateConfig()
             }
 
             val address = stepFindAddress()

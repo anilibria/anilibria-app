@@ -10,37 +10,36 @@ import anilibria.api.shared.filter.FilterSortingResponse
 import ru.radiationx.data.common.GenreId
 
 fun FilterAgeRatingResponse.toDomain(): FilterItem.Value {
-    return FilterItem.Value(value, label, description)
+    return FilterItem.Value(FormItem.Value(value), label, description)
 }
 
 fun FilterReleaseTypeResponse.toDomain(): FilterItem.Value {
-    return FilterItem.Value(value, description, null)
+    return FilterItem.Value(FormItem.Value(value), description, null)
 }
 
 fun FilterGenreResponse.toDomain(): FilterItem.Genre {
-    return FilterItem.Genre(GenreId(id), name)
+    return FilterItem.Genre(FormItem.Genre(GenreId(id)), name)
 }
 
 fun FilterProductionStatusResponse.toDomain(): FilterItem.Value {
-    return FilterItem.Value(value, description, null)
+    return FilterItem.Value(FormItem.Value(value), description, null)
 }
 
 fun FilterPublishStatusResponse.toDomain(): FilterItem.Value {
-    return FilterItem.Value(value, description, null)
+    return FilterItem.Value(FormItem.Value(value), description, null)
 }
 
 fun FilterSeasonResponse.toDomain(): FilterItem.Value {
-    return FilterItem.Value(value, description, value)
+    return FilterItem.Value(FormItem.Value(value), description, value)
 }
 
 fun FilterSortingResponse.toDomain(): FilterItem.Value {
-    return FilterItem.Value(value, label, description)
+    return FilterItem.Value(FormItem.Value(value), label, description)
 }
 
 fun Int.toDomainFilterYear(): FilterItem.Year {
-    return FilterItem.Year(this, this.toString())
+    return FilterItem.Year(FormItem.Year(this), this.toString())
 }
-
 
 
 fun Iterable<FormItem>.toListRequest(): List<String> {

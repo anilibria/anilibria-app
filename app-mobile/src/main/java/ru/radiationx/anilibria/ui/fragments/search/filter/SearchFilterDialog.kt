@@ -2,11 +2,20 @@ package ru.radiationx.anilibria.ui.fragments.search.filter
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
-import ru.radiationx.anilibria.R
+import ru.radiationx.data.api.shared.filter.FieldType
+import ru.radiationx.data.api.shared.filter.FilterData
 import ru.radiationx.data.api.shared.filter.FilterForm
+import ru.radiationx.data.api.shared.filter.FilterItem
+import ru.radiationx.data.api.shared.filter.FormItem
+import ru.radiationx.shared_app.controllers.loadersingle.SingleLoaderState
 import taiwa.TaiwaAction
+import taiwa.TaiwaAnchor
 import taiwa.common.DialogType
-import taiwa.common.Taiwa
+import taiwa.common.NestedTaiwa
+import taiwa.dsl.ContentScopeMarker
+import taiwa.dsl.TaiwaContentScope
+import taiwa.dsl.TaiwaScope
+import taiwa.dsl.TaiwaScopeMarker
 
 class SearchFilterDialog(
     private val context: Context,
@@ -14,38 +23,216 @@ class SearchFilterDialog(
     private val onFormConfirm: (FilterForm) -> Unit,
 ) {
 
-    private val dialog = Taiwa(context, lifecycleOwner, DialogType.BottomSheet)
+    private val dialog = NestedTaiwa(context, lifecycleOwner, DialogType.BottomSheet)
+
+    private val genresAnchor = TaiwaAnchor.Id(FieldType.Genre)
+    private val sortingAnchor = TaiwaAnchor.Id(FieldType.Sorting)
+    private val yearAnchor = TaiwaAnchor.Id(FieldType.Year)
 
     fun show() {
         dialog.show()
     }
 
-    fun setForm(form: FilterForm) {
+    fun setForm(filterState: SingleLoaderState<FilterData>, form: FilterForm) {
+        val filter = filterState.data ?: return
         dialog.setContent {
             body {
-                item {
-                    icon(R.drawable.ic_baseline_content_copy_24)
-                    title("Копировать ссылку")
-                    action(TaiwaAction.Close)
+                if (filter.fields.contains(FieldType.Genre)) {
+                    section {
+                        text(FieldType.Genre.toTitle())
+                    }
+                    item(FieldType.Genre) {
+                        title("Выберите жанры")
+                        value("Выбрано: ${form.genres.size}")
+                        action(TaiwaAction.Anchor(genresAnchor))
+                        forward()
+                    }
+                    divider()
                 }
-                item {
-                    icon(R.drawable.ic_baseline_share_24)
-                    title("Поделиться")
-                    action(TaiwaAction.Close)
+
+                if (filter.fields.contains(FieldType.ReleaseType)) {
+                    shipsSection(
+                        fieldType = FieldType.ReleaseType,
+                        values = filter.types,
+                        formValues = form.types
+                    )
+                    divider()
                 }
-                item {
-                    icon(R.drawable.ic_baseline_app_shortcut_24)
-                    title("Добавить на главный экран")
-                    action(TaiwaAction.Close)
+
+                if (filter.fields.contains(FieldType.PublishStatus)) {
+                    shipsSection(
+                        fieldType = FieldType.PublishStatus,
+                        values = filter.publishStatuses,
+                        formValues = form.publishStatuses
+                    )
+                    divider()
                 }
+
+                if (filter.fields.contains(FieldType.ProductionStatus)) {
+                    shipsSection(
+                        fieldType = FieldType.ProductionStatus,
+                        values = filter.productionStatuses,
+                        formValues = form.productionStatuses
+                    )
+                    divider()
+                }
+
+                if (filter.fields.contains(FieldType.Sorting)) {
+                    section {
+                        text(FieldType.Sorting.toTitle())
+                    }
+                    item(FieldType.Sorting) {
+                        title("Выберите способ сортировки")
+                        filter.sortings.find { it.item == form.sorting }?.also {
+                            value(it.title)
+                        }
+                        action(TaiwaAction.Anchor(sortingAnchor))
+                        forward()
+                    }
+                    divider()
+                }
+
+
+                if (filter.fields.contains(FieldType.Season)) {
+                    shipsSection(
+                        fieldType = FieldType.Season,
+                        values = filter.seasons,
+                        formValues = form.seasons
+                    )
+                    divider()
+                }
+
+                if (filter.fields.contains(FieldType.AgeRating)) {
+                    shipsSection(
+                        fieldType = FieldType.AgeRating,
+                        values = filter.ageRatings,
+                        formValues = form.ageRatings
+                    )
+                    divider()
+                }
+
+
             }
             footer {
-                item {
-                    icon(R.drawable.ic_baseline_content_copy_24)
-                    title("Копировать ссылку")
+                buttons {
+                    button {
+                        text("Применить")
+                        action(TaiwaAction.Close)
+                    }
+                    button {
+                        text("Сбросить")
+                        action(TaiwaAction.Close)
+                    }
+                }
+            }
+            if (filter.fields.contains(FieldType.Genre)) {
+                nested(genresAnchor) {
+                    createGenresContent(filter.genres, form.genres)
+                }
+            }
+            if (filter.fields.contains(FieldType.Sorting)) {
+                nested(sortingAnchor) {
+                    createSortingContent(filter.sortings, form.sorting)
+                }
+            }
+        }
+    }
+
+    @TaiwaScopeMarker
+    @ContentScopeMarker
+    private fun TaiwaContentScope.shipsSection(
+        fieldType: FieldType,
+        values: List<FilterItem.Value>,
+        formValues: Set<FormItem.Value>
+    ) {
+        section {
+            text(fieldType.toTitle())
+        }
+        chips(fieldType) {
+            values.forEach { value ->
+                chip(value.item) {
+                    text(value.title)
+                    select(formValues.contains(value.item))
+                }
+            }
+        }
+    }
+
+    private fun TaiwaScope.createGenresContent(
+        genres: List<FilterItem.Genre>,
+        selected: Set<FormItem.Genre>
+    ) {
+        backAction(TaiwaAction.Root)
+        header {
+            toolbar {
+                title(FieldType.Genre.toTitle())
+                withBack()
+            }
+        }
+        body {
+            chips(FieldType.Genre) {
+                genres.forEach { genre ->
+                    chip(genre.item) {
+                        text(genre.title)
+                        select(selected.contains(genre.item))
+                        action(TaiwaAction.Root)
+                    }
+                }
+            }
+        }
+        footer {
+            buttons {
+                button {
+                    text("Применить")
+                    action(TaiwaAction.Close)
+                }
+                button {
+                    text("Сбросить")
                     action(TaiwaAction.Close)
                 }
             }
+        }
+    }
+
+    private fun TaiwaScope.createSortingContent(
+        sorting: List<FilterItem.Value>?,
+        selected: FormItem.Value?
+    ) {
+        backAction(TaiwaAction.Root)
+        header {
+            toolbar {
+                title(FieldType.Sorting.toTitle())
+                withBack()
+                withClose()
+            }
+        }
+        body {
+            sorting?.forEach { sorting ->
+                radioItem(sorting.item) {
+                    title(sorting.title)
+                    sorting.description?.also {
+                        subtitle(it)
+                    }
+                    select(sorting.item == selected)
+                    action(TaiwaAction.Root)
+                }
+            }
+        }
+    }
+
+
+    private fun FieldType.toTitle(): String {
+        return when (this) {
+            FieldType.Query -> "Название аниме"
+            FieldType.AgeRating -> "Возрастные рейтинги"
+            FieldType.Genre -> "Жанры"
+            FieldType.ProductionStatus -> "Статус озвучки"
+            FieldType.PublishStatus -> "Статус выхода"
+            FieldType.ReleaseType -> "Тип"
+            FieldType.Season -> "Сезон"
+            FieldType.Sorting -> "Сортировка"
+            FieldType.Year -> "Период выхода"
+            FieldType.YearsRange -> "Период выхода"
         }
     }
 }

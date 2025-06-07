@@ -49,8 +49,12 @@ class SearchFilterDialog(
                         text(FieldType.Genre.toTitle())
                     }
                     item(FieldType.Genre) {
-                        title("Выберите жанры")
-                        value("Выбрано: ${form.genres.size}")
+                        title("Укажите жанры")
+                        if (form.genres.isEmpty()) {
+                            value("Не выбрано")
+                        } else {
+                            value("Выбрано: ${form.genres.size}")
+                        }
                         action(TaiwaAction.Anchor(genresAnchor))
                         forward()
                     }
@@ -89,16 +93,18 @@ class SearchFilterDialog(
                         text(FieldType.Sorting.toTitle())
                     }
                     item(FieldType.Sorting) {
-                        title("Выберите способ сортировки")
-                        filter.sortings.find { it.item == form.sorting }?.also {
-                            value(it.title)
+                        title("Укажите способ сортировки")
+                        val selectedSorting = filter.sortings.find { it.item == form.sorting }
+                        if (selectedSorting == null) {
+                            value("Не выбрано")
+                        } else {
+                            value(selectedSorting.title)
                         }
                         action(TaiwaAction.Anchor(sortingAnchor))
                         forward()
                     }
                     divider()
                 }
-
 
                 if (filter.fields.contains(FieldType.Season)) {
                     shipsSection(
@@ -117,6 +123,23 @@ class SearchFilterDialog(
                     divider()
                 }
 
+                if (filter.fields.contains(FieldType.Year)) {
+                    section {
+                        text(FieldType.Year.toTitle())
+                    }
+                    item(FieldType.Year) {
+                        title("Укажите года")
+                        if (form.years.isEmpty()) {
+                            value("Не выбрано")
+                        } else {
+                            value("Выбрано: ${form.years.size}")
+                        }
+                        action(TaiwaAction.Anchor(yearAnchor))
+                        forward()
+                    }
+                    divider()
+                }
+
                 if (filter.fields.contains(FieldType.AgeRating)) {
                     shipsSection(
                         fieldType = FieldType.AgeRating,
@@ -125,9 +148,8 @@ class SearchFilterDialog(
                     )
                     divider()
                 }
-
-
             }
+
             footer {
                 buttons {
                     button {
@@ -148,6 +170,11 @@ class SearchFilterDialog(
             if (filter.fields.contains(FieldType.Sorting)) {
                 nested(sortingAnchor) {
                     createSortingContent(filter.sortings, form.sorting)
+                }
+            }
+            if (filter.fields.contains(FieldType.Year)) {
+                nested(yearAnchor) {
+                    createYearContent(filter.years, form.years)
                 }
             }
         }
@@ -195,15 +222,28 @@ class SearchFilterDialog(
                 }
             }
         }
-        footer {
-            buttons {
-                button {
-                    text("Применить")
-                    action(TaiwaAction.Close)
-                }
-                button {
-                    text("Сбросить")
-                    action(TaiwaAction.Close)
+    }
+
+
+    private fun TaiwaScope.createYearContent(
+        years: List<FilterItem.Year>,
+        selected: Set<FormItem.Year>
+    ) {
+        backAction(TaiwaAction.Root)
+        header {
+            toolbar {
+                title(FieldType.Year.toTitle())
+                withBack()
+            }
+        }
+        body {
+            chips(FieldType.Year) {
+                years.forEach { year ->
+                    chip(year.item) {
+                        text(year.title)
+                        select(selected.contains(year.item))
+                        action(TaiwaAction.Root)
+                    }
                 }
             }
         }
@@ -218,7 +258,6 @@ class SearchFilterDialog(
             toolbar {
                 title(FieldType.Sorting.toTitle())
                 withBack()
-                withClose()
             }
         }
         body {

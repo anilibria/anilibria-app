@@ -11,11 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentTabsListRefreshBinding
@@ -27,6 +24,7 @@ import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.search.filter.SearchFilterDialog
+import ru.radiationx.anilibria.ui.fragments.search.filter.SearchFilterExtra
 import ru.radiationx.anilibria.ui.fragments.search.filter.SearchFilterViewModel
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.data.api.collections.models.CollectionType
@@ -84,13 +82,15 @@ class SearchFragment :
     }
 
     private val viewModel by viewModel<SearchViewModel> {
-        SearchExtra(
+        SearchExtra(type = argType)
+    }
+
+    private val filterViewModel by viewModel<SearchFilterViewModel> {
+        SearchFilterExtra(
             type = argType,
             genre = getExtra(ARG_GENRE)
         )
     }
-
-    private val filterViewModel by viewModel<SearchFilterViewModel>()
 
     private val releaseDialog by releaseItemDialog(
         onCopyClick = { viewModel.onCopyClick(it) },
@@ -176,18 +176,13 @@ class SearchFragment :
             adapter.bindState(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        combine(
-            viewModel.state.map { it.filter }.distinctUntilChanged(),
-            filterViewModel.state
-        ) { filterState, form ->
-
-            if (form.hasChanges()) {
+        filterViewModel.state.onEach {
+            if (it.form.hasChanges()) {
                 baseBinding.searchView.setMenuIcon(R.drawable.ic_filter_changes_toolbar)
             } else {
                 baseBinding.searchView.setMenuIcon(R.drawable.ic_filter_toolbar)
             }
-
-            filterDialog.setForm(filterState, form)
+            filterDialog.setForm(it.filter, it.form)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         filterViewModel.applyEvent.onEach {
@@ -197,7 +192,7 @@ class SearchFragment :
 
         val tabListener = object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                viewModel.selectCollection(tab.tag as CollectionType)
+                viewModel.onCollectionChanged(tab.tag as CollectionType)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {

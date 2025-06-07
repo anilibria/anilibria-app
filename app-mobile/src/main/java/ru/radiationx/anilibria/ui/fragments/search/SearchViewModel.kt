@@ -24,11 +24,9 @@ import ru.radiationx.data.analytics.features.ReleaseAnalytics
 import ru.radiationx.data.api.collections.CollectionsInteractor
 import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.api.releases.models.Release
-import ru.radiationx.data.api.releases.models.ReleaseGenre
 import ru.radiationx.data.api.shared.filter.FilterForm
 import ru.radiationx.data.api.shared.filter.FilterInteractor
 import ru.radiationx.data.api.shared.filter.FilterType
-import ru.radiationx.data.api.shared.filter.FormItem
 import ru.radiationx.data.app.releaseupdate.ReleaseUpdateHolder
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.quill.QuillExtra
@@ -41,7 +39,6 @@ import toothpick.InjectConstructor
 
 data class SearchExtra(
     val type: FilterType,
-    val genre: ReleaseGenre?
 ) : QuillExtra
 
 @InjectConstructor
@@ -65,10 +62,6 @@ class SearchViewModel(
 
     private val _queryState = MutableStateFlow("")
 
-    private val filterDataLoader = SingleLoader(viewModelScope) {
-        filterInteractor.getFilterData(argExtra.type)
-    }
-
     private val collectionsLoader = SingleLoader(viewModelScope) {
         collectionsInteractor.loadReleaseIds()
     }
@@ -88,23 +81,20 @@ class SearchViewModel(
     val state = _state.asStateFlow()
 
     init {
-        argExtra.genre?.also { genre ->
-            updateForm { it.copy(genres = it.genres.plus(FormItem.Genre(genre.id))) }
-        }
         initCollections()
         initScreenState()
 
         _loaderArg
             .drop(1)
             .debounce(300)
-            .onEach { releasesLoader.refresh() }
+            .onEach { refresh() }
             .launchIn(viewModelScope)
 
         _queryState
             .drop(1)
             .debounce(300L)
             .distinctUntilChanged()
-            .onEach { releasesLoader.refresh() }
+            .onEach { refresh() }
             .launchIn(viewModelScope)
 
         refresh()
@@ -127,29 +117,12 @@ class SearchViewModel(
             }
             .launchIn(viewModelScope)
 
-        filterDataLoader
-            .observeState()
-            .onEach { filterState ->
-                _state.update {
-                    it.copy(filter = filterState)
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private fun updateForm(block: (FilterForm) -> FilterForm) {
-        _loaderArg.update { it.copy(form = block(it.form)) }
-    }
-
-    fun selectCollection(type: CollectionType?) {
-        _loaderArg.update { it.copy(collectionType = type) }
     }
 
     fun refresh() {
-        if (argExtra.type == FilterType.Collections) {
+        if (argExtra.type == FilterType.Collections && collectionsLoader.isNeedRefresh()) {
             collectionsLoader.refresh()
         }
-        filterDataLoader.refresh()
         releasesLoader.refresh()
     }
 
@@ -163,6 +136,10 @@ class SearchViewModel(
 
     fun onFormChanged(newForm: FilterForm) {
         _loaderArg.update { it.copy(form = newForm) }
+    }
+
+    fun onCollectionChanged(type: CollectionType?) {
+        _loaderArg.update { it.copy(collectionType = type) }
     }
 
     fun onItemClick(item: ReleaseItemState) {

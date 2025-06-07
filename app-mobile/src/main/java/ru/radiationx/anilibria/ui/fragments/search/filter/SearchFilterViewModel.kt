@@ -6,23 +6,63 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.radiationx.data.api.releases.models.ReleaseGenre
 import ru.radiationx.data.api.shared.filter.FilterForm
+import ru.radiationx.data.api.shared.filter.FilterInteractor
+import ru.radiationx.data.api.shared.filter.FilterType
 import ru.radiationx.data.api.shared.filter.FormItem
+import ru.radiationx.quill.QuillExtra
+import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
 import javax.inject.Inject
 
-class SearchFilterViewModel @Inject constructor() : ViewModel() {
+data class SearchFilterExtra(
+    val type: FilterType,
+    val genre: ReleaseGenre?
+) : QuillExtra
 
-    private val _state = MutableStateFlow(FilterForm.empty())
+class SearchFilterViewModel @Inject constructor(
+    private val argExtra: SearchFilterExtra,
+    private val filterInteractor: FilterInteractor,
+) : ViewModel() {
+
+    private val filterDataLoader = SingleLoader(viewModelScope) {
+        filterInteractor.getFilterData(argExtra.type)
+    }
+
+    private val _state = MutableStateFlow(SearchFilterState())
     val state = _state.asStateFlow()
 
     private val _applyEvent = MutableSharedFlow<FilterForm>()
     val applyEvent = _applyEvent.asSharedFlow()
 
+    init {
+        argExtra.genre?.also { genre ->
+            onGenre(FormItem.Genre(genre.id))
+        }
+        filterDataLoader
+            .observeState()
+            .onEach { filterState ->
+                _state.update {
+                    it.copy(filter = filterState)
+                }
+            }
+            .launchIn(viewModelScope)
+        refresh()
+    }
+
+    fun refresh() {
+        if (filterDataLoader.isNeedRefresh() || argExtra.type != FilterType.Catalog) {
+            filterDataLoader.refresh()
+        }
+    }
+
     fun onApply() {
         viewModelScope.launch {
-            _applyEvent.emit(state.value)
+            _applyEvent.emit(state.value.form)
         }
     }
 
@@ -118,6 +158,8 @@ class SearchFilterViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun updateForm(block: (FilterForm) -> FilterForm) {
-        _state.update(block)
+        _state.update {
+            it.copy(form = block(it.form))
+        }
     }
 }

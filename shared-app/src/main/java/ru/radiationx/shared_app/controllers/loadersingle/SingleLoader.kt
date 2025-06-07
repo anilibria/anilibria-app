@@ -39,6 +39,10 @@ class SingleLoader<DATA>(
         modifyData(newData)
     }
 
+    fun isNeedRefresh(): Boolean {
+        return _state.value.error != null || _state.value.data == null
+    }
+
     fun refresh() {
         loadingJob.launch(coroutineScope) {
             _state.update { it.copy(loading = true) }

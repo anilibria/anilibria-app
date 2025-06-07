@@ -2,6 +2,7 @@ package taiwa.internal.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -117,6 +118,7 @@ internal class TaiwaView @JvmOverloads constructor(
     }
 
     private fun handleClick(action: TaiwaAction?, clickListener: ClickListener?) {
+        Log.e("kekeke", "handleClick $action, $clickListener")
         clickListener?.invoke()
         if (action != null) {
             actionListener?.invoke(action)

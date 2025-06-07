@@ -1,6 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.search.filter
 
 import android.content.Context
+import android.util.Log
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import ru.radiationx.data.api.shared.filter.FieldType
 import ru.radiationx.data.api.shared.filter.FilterData
@@ -30,16 +32,32 @@ class SearchFilterDialog(
     private val yearAnchor = TaiwaAnchor.Id(FieldType.Year)
 
     init {
+        Log.e("kekeke", "dialog init $dialog")
         dialog.addDelegate(yearsRangeEnvoy {
             viewModel.onYears(it)
+        })
+        lifecycleOwner.lifecycle.addObserver(object :DefaultLifecycleObserver{
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+
+                Log.e("kekeke", "dialog resume $dialog")
+            }
+
+            override fun onPause(owner: LifecycleOwner) {
+                super.onPause(owner)
+
+                Log.e("kekeke", "dialog pause $dialog")
+            }
         })
     }
 
     fun show() {
+        Log.e("kekeke", "dialog show $dialog")
         dialog.show()
     }
 
     fun setForm(filterState: SingleLoaderState<FilterData>, form: FilterForm) {
+        Log.e("kekeke", "dialog set form $dialog")
         val filter = filterState.data ?: return
         dialog.setContent {
             body {
@@ -264,7 +282,6 @@ class SearchFilterDialog(
                     chip(year.item) {
                         text(year.title)
                         select(selected.contains(year.item))
-                        action(TaiwaAction.Root)
                         onClick {
                             viewModel.onYear(year.item)
                         }
@@ -303,6 +320,7 @@ class SearchFilterDialog(
                         subtitle(it)
                     }
                     select(sorting.item == selected)
+                    action(TaiwaAction.Root)
                     onClick {
                         viewModel.onSorting(sorting.item)
                     }

@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.donation.adapter
 
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.data.app.donation.models.DonationContentButton
 import ru.radiationx.data.app.donation.models.DonationContentCaption
@@ -22,7 +23,7 @@ class DonationContentAdapter(
         addDelegate(DonationSectionDelegate(linkClickListener))
     }
 
-    fun bindState(content: List<DonationContentItem>) {
+    suspend fun bindState(content: List<DonationContentItem>) {
         val newItems = content.mapNotNull {
             when (it) {
                 is DonationContentButton -> DonationButtonListItem(it)
@@ -37,6 +38,6 @@ class DonationContentAdapter(
                 else -> null
             }
         }
-        items = newItems
+        setAndAwaitItems(newItems)
     }
 }

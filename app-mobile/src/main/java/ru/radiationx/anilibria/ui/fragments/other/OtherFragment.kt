@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.MenuListItem
@@ -76,8 +77,8 @@ class OtherFragment : BaseDimensionsFragment(R.layout.fragment_list) {
             }
         }
 
-        fun bindItems(state: ProfileScreenState) {
-            items = mutableListOf<ListItem>().apply {
+        suspend fun bindItems(state: ProfileScreenState) {
+            val newItems  = mutableListOf<ListItem>().apply {
 
                 add(ProfileListItem("profile", state.profile))
                 addAll(state.profileMenuGroups.map { MenuListItem(it) })
@@ -104,6 +105,7 @@ class OtherFragment : BaseDimensionsFragment(R.layout.fragment_list) {
                     )
                 }
             }
+            setAndAwaitItems(newItems)
         }
     }
 }

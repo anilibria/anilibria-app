@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.schedule
 
 import android.view.View
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.ui.adapters.FeedSchedulesListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
@@ -20,13 +21,13 @@ class ScheduleAdapter(
         addDelegate(FeedSchedulesDelegate(clickListener, longClickListener, scrollListener))
     }
 
-    fun bindState(state: ScheduleScreenState) {
+    suspend fun bindState(state: ScheduleScreenState) {
         val newItems = mutableListOf<ListItem>()
         state.dayItems.forEach { dayItem ->
             newItems.add(FeedSectionListItem(dayItem.title, dayItem.title, null, null))
             newItems.add(FeedSchedulesListItem(dayItem.title, dayItem.items))
         }
-        items = newItems
+        setAndAwaitItems(newItems)
     }
 
     fun getPositionByDay(day: ScheduleDayState): Int = items.indexOfFirst {

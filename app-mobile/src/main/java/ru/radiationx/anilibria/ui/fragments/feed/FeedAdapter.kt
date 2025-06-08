@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.view.View
 import ru.radiationx.anilibria.ads.NativeAdItem
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
@@ -91,7 +92,7 @@ class FeedAdapter(
         addDelegate(NativeAdDelegate())
     }
 
-    fun bindState(state: FeedScreenState) {
+    suspend fun bindState(state: FeedScreenState) {
         val loadingState = state.data
         val newItems = mutableListOf<ListItem>()
         newItems.add(AnchorListItem())
@@ -170,7 +171,7 @@ class FeedAdapter(
             }
         }
 
-        items = newItems
+        setAndAwaitItems(newItems)
     }
 
     private fun getPlaceholder(state: FeedScreenState): PlaceholderListItem? {

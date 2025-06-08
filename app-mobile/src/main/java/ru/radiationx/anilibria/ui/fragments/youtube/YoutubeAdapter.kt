@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
@@ -32,7 +33,7 @@ class YoutubeAdapter(
         addDelegate(PlaceholderDelegate())
     }
 
-    fun bindState(state: YoutubeScreenState) {
+    suspend fun bindState(state: YoutubeScreenState) {
         val newItems = mutableListOf<ListItem>()
         newItems.add(AnchorListItem())
 
@@ -54,7 +55,7 @@ class YoutubeAdapter(
             }
         }
 
-        items = newItems
+        setAndAwaitItems(newItems)
     }
 
     private fun getPlaceholder(state: YoutubeScreenState): PlaceholderListItem? {

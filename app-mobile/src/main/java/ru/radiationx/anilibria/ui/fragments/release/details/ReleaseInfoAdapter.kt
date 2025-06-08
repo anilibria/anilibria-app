@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 /* Created by radiationx on 18.11.17. */
 
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.ui.adapters.CommentRouteListItem
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
@@ -78,7 +79,7 @@ class ReleaseInfoAdapter(
         addDelegate(NativeAdDelegate())
     }
 
-    fun bindState(releaseState: ReleaseDetailState, screenState: ReleaseDetailScreenState) {
+    suspend fun bindState(releaseState: ReleaseDetailState, screenState: ReleaseDetailScreenState) {
         val modifications = screenState.modifiers
         val newItems = mutableListOf<ListItem>()
 
@@ -197,6 +198,6 @@ class ReleaseInfoAdapter(
             newItems.add(DividerShadowListItem(ShadowDirection.Bottom, "nativeAd"))
         }
 
-        items = newItems
+        setAndAwaitItems(newItems)
     }
 }

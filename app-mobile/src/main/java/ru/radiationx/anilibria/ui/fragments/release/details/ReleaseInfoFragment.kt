@@ -149,7 +149,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
         binding.recyclerView.scrollToPosition(0)
     }
 
-    private fun showState(state: ReleaseDetailScreenState) {
+    private suspend fun showState(state: ReleaseDetailScreenState) {
         state.data?.let { releaseInfoAdapter.bindState(it, state) }
     }
 

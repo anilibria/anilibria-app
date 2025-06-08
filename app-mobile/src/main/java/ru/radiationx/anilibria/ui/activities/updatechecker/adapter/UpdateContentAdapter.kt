@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.activities.updatechecker.adapter
 
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.data.app.updater.models.UpdateData
@@ -14,7 +15,7 @@ class UpdateContentAdapter(
         addDelegate(UpdateInfoDelegate())
     }
 
-    fun bindState(content: UpdateDataState) {
+    suspend fun bindState(content: UpdateDataState) {
         val newItems = buildList {
             content.links.forEach {
                 add(UpdateLinkListItem(it))
@@ -25,6 +26,6 @@ class UpdateContentAdapter(
                 }
             }
         }
-        items = newItems
+        setAndAwaitItems(newItems)
     }
 }

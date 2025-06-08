@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
 import android.view.View
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
@@ -53,7 +54,7 @@ class ReleasesAdapter(
         addDelegate(DividerShadowItemDelegate())
     }
 
-    fun bindState(
+    suspend fun bindState(
         loadingState: PageLoaderState<List<ReleaseItemState>>,
         withExport: Boolean = false,
     ) {
@@ -89,7 +90,7 @@ class ReleasesAdapter(
             }
         }
 
-        items = newItems
+        setAndAwaitItems(newItems)
     }
 
 

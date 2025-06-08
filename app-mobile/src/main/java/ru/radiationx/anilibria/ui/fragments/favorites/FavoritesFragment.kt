@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
@@ -168,12 +169,12 @@ class FavoritesFragment :
         baseBinding.appbarLayout.setExpanded(true, true)
     }
 
-    private fun showState(state: FavoritesScreenState) {
+    private suspend fun showState(state: FavoritesScreenState) {
         binding.progressBarList.isVisible = state.data.emptyLoading
         binding.refreshLayout.isRefreshing =
             state.data.refreshLoading || state.deletingItemIds.isNotEmpty()
         baseBinding.searchView.setLoading(state.data.hasAnyLoading())
         adapter.bindState(state.data)
-        searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
+        searchAdapter.setAndAwaitItems(state.searchItems.map { ReleaseListItem(it) })
     }
 }

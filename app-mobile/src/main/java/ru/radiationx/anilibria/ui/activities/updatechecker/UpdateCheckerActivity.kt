@@ -129,7 +129,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         }
     }
 
-    private fun bindState(state: CheckerScreenState) {
+    private suspend fun bindState(state: CheckerScreenState) {
         binding.updatePlaceholder.isVisible =
             (state.data == null || !state.data.hasUpdate) && !state.loading
         binding.updatePlaceholderTitle.isVisible = state.data?.hasUpdate != true

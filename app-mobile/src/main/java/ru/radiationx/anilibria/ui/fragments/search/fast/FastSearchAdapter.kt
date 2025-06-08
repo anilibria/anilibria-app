@@ -1,5 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.search.fast
 
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.model.SuggestionLocalItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -27,7 +28,7 @@ class FastSearchAdapter(
         addDelegate(LoadErrorDelegate(retryClickListener))
     }
 
-    fun bindItems(state: FastSearchScreenState) {
+    suspend fun bindItems(state: FastSearchScreenState) {
         val newItems = mutableListOf<ListItem>()
         state.loaderState.data?.also { data ->
             newItems.addAll(data.localItems.map { SuggestionLocalListItem(it) })
@@ -36,6 +37,6 @@ class FastSearchAdapter(
         if (state.loaderState.needShowError()) {
             newItems.add(LoadErrorListItem("bottom"))
         }
-        items = newItems
+        setAndAwaitItems(newItems)
     }
 }

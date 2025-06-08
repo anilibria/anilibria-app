@@ -7,6 +7,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.androidbroadcast.vbpd.viewBinding
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemFeedSchedulesBinding
 import ru.radiationx.anilibria.extension.addItemsPositionListener
@@ -19,6 +20,7 @@ import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.feed.FeedSchedulesAdapter
 import ru.radiationx.anilibria.utils.dimensions.Side
 import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
+import ru.radiationx.anilibria.utils.view.attachedCoroutineScope
 import ru.radiationx.shared.ktx.android.inflate
 
 /**
@@ -61,7 +63,6 @@ class FeedSchedulesDelegate(
 
         private val dimensionsApplier by binding.itemFeedScheduleList.dimensionsApplier()
 
-        private val currentItems = mutableListOf<ScheduleItemState>()
         private val scheduleAdapter = FeedSchedulesAdapter(clickListener, longClickListener)
 
         init {
@@ -86,15 +87,15 @@ class FeedSchedulesDelegate(
 
         fun bind(items: List<ScheduleItemState>) {
             dimensionsApplier.applyPaddings(Side.Left, Side.Right)
-            currentItems.clear()
-            currentItems.addAll(items)
-            scheduleAdapter.bindItems(currentItems)
-            binding.itemFeedScheduleList.isVisible = currentItems.isNotEmpty()
-            binding.itemFeedScheduleEmpty.isVisible = currentItems.isEmpty()
+            attachedCoroutineScope.launch {
+                binding.itemFeedScheduleList.isVisible = items.isNotEmpty()
+                binding.itemFeedScheduleEmpty.isVisible = items.isEmpty()
+                scheduleAdapter.bindItems(items)
+            }
         }
 
         override fun getStateId(): Int {
-            return currentItems.hashCode()
+            return scheduleAdapter.items.hashCode()
         }
 
         override fun saveState(): Parcelable? {

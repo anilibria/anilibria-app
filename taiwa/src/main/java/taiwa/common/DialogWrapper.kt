@@ -6,9 +6,9 @@ import android.view.View
 import androidx.activity.addCallback
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
-import taiwa.dialogs.BaseTaiwaDialog
-import taiwa.dialogs.TaiwaBottomSheetDialog
-import taiwa.dialogs.TaiwaDialog
+import taiwa.dialogs.BaseCustomDialog
+import taiwa.dialogs.CustomBottomSheetDialog
+import taiwa.dialogs.CustomDialog
 import taiwa.dialogs.ext.attachToLifecycle
 import taiwa.lifecycle.Destroyable
 
@@ -18,9 +18,9 @@ class DialogWrapper(
     private val type: DialogType,
 ) : Destroyable {
 
-    private val dialog: BaseTaiwaDialog = when (type) {
-        DialogType.Alert -> TaiwaDialog(context)
-        DialogType.BottomSheet -> TaiwaBottomSheetDialog(context)
+    private val dialog: BaseCustomDialog = when (type) {
+        DialogType.Alert -> CustomDialog(context)
+        DialogType.BottomSheet -> CustomBottomSheetDialog(context)
     }.attachToLifecycle(lifecycleOwner)
 
     private val backPressedCallback = dialog.onBackPressedDispatcher.addCallback(enabled = false) {

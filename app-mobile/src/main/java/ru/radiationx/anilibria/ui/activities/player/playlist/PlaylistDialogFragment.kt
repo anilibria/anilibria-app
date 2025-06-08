@@ -18,9 +18,9 @@ import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.launchInResumed
-import taiwa.dialogs.TaiwaDialogFragment
+import taiwa.dialogs.CustomDialogFragment
 
-class PlaylistDialogFragment : TaiwaDialogFragment(R.layout.fragment_player_playlist) {
+class PlaylistDialogFragment : CustomDialogFragment(R.layout.fragment_player_playlist) {
 
     private val binding by viewBinding<FragmentPlayerPlaylistBinding>()
 

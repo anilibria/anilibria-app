@@ -15,9 +15,9 @@ import ru.radiationx.anilibria.ui.fragments.donation.adapter.DonationContentAdap
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
-import taiwa.dialogs.TaiwaDialogFragment
+import taiwa.dialogs.CustomDialogFragment
 
-class DonationDialogFragment : TaiwaDialogFragment(R.layout.dialog_donation_content) {
+class DonationDialogFragment : CustomDialogFragment(R.layout.dialog_donation_content) {
 
     companion object {
         private const val ARG_TAG = "arg_tag"

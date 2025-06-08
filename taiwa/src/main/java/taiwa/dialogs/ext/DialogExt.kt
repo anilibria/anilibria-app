@@ -7,7 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import dev.androidbroadcast.vbpd.ViewBindingProperty
 import dev.androidbroadcast.vbpd.viewBinding
-import taiwa.dialogs.BaseTaiwaDialogFragment
+import taiwa.dialogs.BaseCustomDialogFragment
 
 internal fun <T : Dialog> T.attachToLifecycle(
     lifecycleOwner: LifecycleOwner,
@@ -31,10 +31,10 @@ internal fun <T : Dialog> T.attachToLifecycle(
     return dialog
 }
 
-inline fun <VB : ViewBinding> BaseTaiwaDialogFragment.footerViewBinding(
+inline fun <VB : ViewBinding> BaseCustomDialogFragment.footerViewBinding(
     crossinline vbFactory: (View) -> VB,
     noinline onViewDestroyed: (VB) -> Unit = {},
-): ViewBindingProperty<BaseTaiwaDialogFragment, VB> {
+): ViewBindingProperty<BaseCustomDialogFragment, VB> {
     return viewBinding(
         vbFactory = vbFactory,
         viewProvider = { requireFooterView() },

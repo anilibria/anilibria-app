@@ -21,9 +21,9 @@ import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
 import ru.radiationx.shared.ktx.android.launchInResumed
-import taiwa.dialogs.TaiwaDialogFragment
+import taiwa.dialogs.CustomDialogFragment
 
-class DonationYooMoneyDialogFragment : TaiwaDialogFragment(R.layout.dialog_donation_yoomoney) {
+class DonationYooMoneyDialogFragment : CustomDialogFragment(R.layout.dialog_donation_yoomoney) {
 
     private val binding by viewBinding<DialogDonationYoomoneyBinding>()
 

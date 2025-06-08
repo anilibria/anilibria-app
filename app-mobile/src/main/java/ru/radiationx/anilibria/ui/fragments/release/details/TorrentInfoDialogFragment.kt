@@ -7,9 +7,9 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogTorrentsInfoBinding
 import ru.radiationx.quill.get
 import ru.radiationx.shared_app.common.SystemUtils
-import taiwa.dialogs.TaiwaDialogFragment
+import taiwa.dialogs.CustomDialogFragment
 
-class TorrentInfoDialogFragment : TaiwaDialogFragment(R.layout.dialog_torrents_info) {
+class TorrentInfoDialogFragment : CustomDialogFragment(R.layout.dialog_torrents_info) {
 
     private val binding by viewBinding<DialogTorrentsInfoBinding>()
 

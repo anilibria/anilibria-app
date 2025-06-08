@@ -12,10 +12,10 @@ import androidx.core.view.updatePadding
 import taiwa.R
 import taiwa.databinding.TaiwaAlertDialogBinding
 
-class TaiwaDialog @JvmOverloads constructor(
+class CustomDialog @JvmOverloads constructor(
     context: Context,
     @StyleRes theme: Int = 0,
-) : BaseTaiwaDialog(context, getThemeResId(context, theme)) {
+) : BaseCustomDialog(context, getThemeResId(context, theme)) {
 
     private val binding by lazy {
         TaiwaAlertDialogBinding.inflate(layoutInflater)

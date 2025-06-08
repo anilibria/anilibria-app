@@ -26,7 +26,7 @@ import com.google.android.material.internal.EdgeToEdgeUtils
 import taiwa.common.ViewTransition
 
 @SuppressLint("RestrictedApi")
-abstract class BaseTaiwaDialog @JvmOverloads constructor(
+abstract class BaseCustomDialog @JvmOverloads constructor(
     context: Context,
     @StyleRes theme: Int = 0,
 ) : AppCompatDialog(context, theme) {

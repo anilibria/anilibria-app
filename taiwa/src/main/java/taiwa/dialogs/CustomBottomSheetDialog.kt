@@ -33,10 +33,10 @@ import taiwa.databinding.TaiwaBottomSheetDialogBinding
 import kotlin.math.roundToInt
 
 @SuppressLint("RestrictedApi")
-class TaiwaBottomSheetDialog @JvmOverloads constructor(
+class CustomBottomSheetDialog @JvmOverloads constructor(
     context: Context,
     @StyleRes theme: Int = 0,
-) : BaseTaiwaDialog(context, getThemeResId(context, theme)) {
+) : BaseCustomDialog(context, getThemeResId(context, theme)) {
 
     private val binding by lazy {
         TaiwaBottomSheetDialogBinding.inflate(layoutInflater)

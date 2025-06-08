@@ -4,12 +4,12 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.annotation.LayoutRes
 
-open class TaiwaDialogFragment(
+open class CustomDialogFragment(
     @LayoutRes contentLayoutId: Int = 0,
     @LayoutRes footerLayoutId: Int = 0,
-) : BaseTaiwaDialogFragment(contentLayoutId, footerLayoutId) {
+) : BaseCustomDialogFragment(contentLayoutId, footerLayoutId) {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return TaiwaDialog(requireContext(), theme)
+        return CustomDialog(requireContext(), theme)
     }
 }

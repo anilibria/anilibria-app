@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 
-open class BaseTaiwaDialogFragment(
+open class BaseCustomDialogFragment(
     @LayoutRes contentLayoutId: Int = 0,
     @LayoutRes private val footerLayoutId: Int = 0,
 ) : AppCompatDialogFragment(contentLayoutId) {
@@ -21,7 +21,7 @@ open class BaseTaiwaDialogFragment(
         if (footerLayoutId != 0 && value != null && showsDialog) {
             val footerView = requireFooterView()
             val customDialog = requireDialog()
-            require(customDialog is BaseTaiwaDialog) {
+            require(customDialog is BaseCustomDialog) {
                 "Footer view can't set in this dialog $dialog"
             }
             customDialog.setFooterView(footerView)

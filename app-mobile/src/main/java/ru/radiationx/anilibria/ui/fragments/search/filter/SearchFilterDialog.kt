@@ -34,6 +34,9 @@ class SearchFilterDialog(
         dialog.addDelegate(yearsRangeEnvoy {
             viewModel.onYears(it)
         })
+        dialog.addDelegate(contentPlaceholderEnvoy {
+            viewModel.refresh()
+        })
 
         dialog.setCloseListener {
             viewModel.onApply()
@@ -49,7 +52,16 @@ class SearchFilterDialog(
     }
 
     fun setForm(filterState: SingleLoaderState<FilterData>, form: FilterForm) {
-        val filter = filterState.data ?: return
+        val filter = filterState.data
+
+        if (filter == null) {
+            dialog.setContent {
+                body {
+                    envoy(ContentPlaceholderState(filterState.loading, filterState.error))
+                }
+            }
+            return
+        }
         dialog.setContent {
             body {
                 if (filter.fields.contains(FieldType.Genre)) {

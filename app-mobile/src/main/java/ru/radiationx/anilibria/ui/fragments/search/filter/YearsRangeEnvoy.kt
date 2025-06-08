@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
 data class YearsRangeState(
     val years: List<FilterItem.Year>,
     val selected: Pair<FormItem.Year, FormItem.Year>?
-) : DiffItem("yaers")
+) : DiffItem("years")
 
 fun yearsRangeEnvoy(
     yearsListener: (Pair<FormItem.Year, FormItem.Year>) -> Unit

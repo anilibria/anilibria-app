@@ -6,6 +6,7 @@ import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toPageParam
 import javax.inject.Inject
 
+// todo api2 update analytics
 class FavoritesAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {

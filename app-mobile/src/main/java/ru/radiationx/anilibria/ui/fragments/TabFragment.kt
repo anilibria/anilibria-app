@@ -180,8 +180,9 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
                 currentFragment.reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
                 nextFragment.enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
                 nextFragment.returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-                if (currentFragment.sharedViewLocal != null) {
-                    setupSharedTransition(currentFragment, nextFragment, fragmentTransaction)
+
+                currentFragment.getSharedView()?.also {
+                    setupSharedTransition(nextFragment, fragmentTransaction, it)
                 }
             }
 
@@ -192,9 +193,9 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
     }
 
     private fun setupSharedTransition(
-        sharedProvider: SharedProvider,
         sharedReceiver: SharedReceiver,
         fragmentTransaction: FragmentTransaction,
+        sharedView: View
     ) {
 
         val nextFragment = sharedReceiver as Fragment
@@ -206,9 +207,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
             drawingViewId = R.id.fragments_container
         }
 
-        sharedProvider.getSharedView()?.let {
-            sharedReceiver.setTransitionName(it.transitionName)
-            fragmentTransaction.addSharedElement(it, it.transitionName)
-        }
+        sharedReceiver.setTransitionName(sharedView.transitionName)
+        fragmentTransaction.addSharedElement(sharedView, sharedView.transitionName)
     }
 }

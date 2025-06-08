@@ -100,7 +100,7 @@ class FeedFragment :
         onShareClick = { viewModel.onShareClick(it) },
     )
 
-    override var sharedViewLocal: View? = null
+    private var sharedViewLocal: View? = null
 
     override fun getSharedView(): View? {
         val sharedView = sharedViewLocal

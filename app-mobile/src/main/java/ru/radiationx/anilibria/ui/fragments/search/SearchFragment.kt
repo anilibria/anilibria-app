@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
@@ -35,6 +36,7 @@ import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull
+import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 import searchbar.NavigationIcon
 import taiwa.lifecycle.lifecycleLazy
@@ -89,12 +91,13 @@ class SearchFragment :
         }
     }
 
-    override var sharedViewLocal: View? = null
-
     override fun getSharedView(): View? {
-        val sharedView = sharedViewLocal
-        sharedViewLocal = null
-        return sharedView
+        return childFragmentManager
+            .fragments
+            .filter { it.isResumed && it.isVisible && it.isAdded }
+            .filterIsInstance<SharedProvider>()
+            .firstOrNull()
+            ?.getSharedView()
     }
 
     override val statusBarVisible: Boolean = true
@@ -110,6 +113,11 @@ class SearchFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        postopneEnterTransitionWithTimout()
+        binding.viewPager.doOnLayout {
+            startPostponedEnterTransition()
+        }
 
         binding.viewPager.apply {
             offscreenPageLimit = CollectionType.knownTypes.size

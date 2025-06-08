@@ -14,6 +14,7 @@ import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.AnchorListItem
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.anilibria.ui.fragments.search.tab.SearchTabState
 import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
 /**
@@ -37,7 +38,7 @@ class SearchAdapter(
         }
     }
 
-    suspend fun bindState(state: SearchScreenState) {
+    suspend fun bindState(state: SearchTabState) {
         val newItems = mutableListOf<ListItem>()
         newItems.add(AnchorListItem())
 
@@ -62,7 +63,7 @@ class SearchAdapter(
         setAndAwaitItems(newItems)
     }
 
-    private fun getPlaceholder(state: SearchScreenState): PlaceholderListItem? {
+    private fun getPlaceholder(state: SearchTabState): PlaceholderListItem? {
         val loadingState = state.releases
         val needPlaceholder = loadingState.needShowPlaceholder { it?.isNotEmpty() ?: false }
 

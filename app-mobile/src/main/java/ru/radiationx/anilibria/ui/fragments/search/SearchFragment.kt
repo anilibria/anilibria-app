@@ -4,44 +4,44 @@ import android.os.Bundle
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.Insets
-import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import kotlinx.coroutines.flow.filterNotNull
+import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
-import ru.radiationx.anilibria.databinding.FragmentTabsListRefreshBinding
+import ru.radiationx.anilibria.databinding.FragmentTabsViewPagerBinding
 import ru.radiationx.anilibria.databinding.ViewTabCustomBinding
-import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.common.releaseItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseSearchFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
-import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
+import ru.radiationx.anilibria.ui.fragments.search.di.SearchModule
 import ru.radiationx.anilibria.ui.fragments.search.filter.SearchFilterDialog
 import ru.radiationx.anilibria.ui.fragments.search.filter.SearchFilterExtra
 import ru.radiationx.anilibria.ui.fragments.search.filter.SearchFilterViewModel
+import ru.radiationx.anilibria.ui.fragments.search.tab.SearchTabFragment
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.api.releases.models.ReleaseGenre
 import ru.radiationx.data.api.shared.filter.FilterType
+import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull
-import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 import searchbar.NavigationIcon
 import taiwa.lifecycle.lifecycleLazy
 
 
 class SearchFragment :
-    BaseSearchFragment<FragmentTabsListRefreshBinding>(R.layout.fragment_tabs_list_refresh),
+    BaseSearchFragment<FragmentTabsViewPagerBinding>(R.layout.fragment_tabs_view_pager),
     SharedProvider,
     TopScroller {
 
@@ -58,40 +58,6 @@ class SearchFragment :
         }
     }
 
-
-    private val tabListener = object : OnTabSelectedListener {
-        override fun onTabSelected(tab: TabLayout.Tab) {
-            viewModel.onCollectionChanged(tab.tag as CollectionType)
-        }
-
-        override fun onTabUnselected(tab: TabLayout.Tab) {
-        }
-
-        override fun onTabReselected(tab: TabLayout.Tab) {
-        }
-
-    }
-
-    private val adapter = SearchAdapter(
-        loadMoreListener = { viewModel.loadMore() },
-        loadRetryListener = { viewModel.loadMore() },
-        clickListener = { item, view ->
-            this.sharedViewLocal = view
-            viewModel.onItemClick(item)
-        },
-        longClickListener = { item -> releaseDialog.show(item) },
-        emptyPlaceHolder = PlaceholderListItem(
-            R.drawable.ic_toolbar_search,
-            R.string.placeholder_title_nodata_base,
-            R.string.placeholder_desc_nodata_search
-        ),
-        errorPlaceHolder = PlaceholderListItem(
-            R.drawable.ic_toolbar_search,
-            R.string.placeholder_title_errordata_base,
-            R.string.placeholder_desc_nodata_base
-        )
-    )
-
     private val argType by lazy {
         getExtraNotNull<FilterType>(ARG_TYPE)
     }
@@ -107,18 +73,20 @@ class SearchFragment :
         )
     }
 
-    private val releaseDialog by releaseItemDialog(
-        onCopyClick = { viewModel.onCopyClick(it) },
-        onShareClick = { viewModel.onShareClick(it) },
-        onShortcutClick = { viewModel.onShortcutClick(it) }
-    )
-
     private val filterDialog by lifecycleLazy {
         SearchFilterDialog(
             context = requireContext(),
             lifecycleOwner = viewLifecycleOwner,
             viewModel = filterViewModel
         )
+    }
+
+    private val pagerListener = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            getPagerAdapter().getTab(position).collectionType?.also {
+                viewModel.onCollectionChanged(it)
+            }
+        }
     }
 
     override var sharedViewLocal: View? = null
@@ -131,42 +99,38 @@ class SearchFragment :
 
     override val statusBarVisible: Boolean = true
 
-    override fun onCreateBinding(view: View): FragmentTabsListRefreshBinding {
-        return FragmentTabsListRefreshBinding.bind(view)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        installModules(SearchModule())
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateBinding(view: View): FragmentTabsViewPagerBinding {
+        return FragmentTabsViewPagerBinding.bind(view)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        postopneEnterTransitionWithTimout()
-        binding.recyclerView.doOnLayout {
-            startPostponedEnterTransition()
+        binding.viewPager.apply {
+            offscreenPageLimit = CollectionType.knownTypes.size
+            adapter = TabsAdapter(this@SearchFragment)
+            registerOnPageChangeCallback(pagerListener)
         }
-
-
-        binding.refreshLayout.setOnRefreshListener { viewModel.refresh() }
-
-        binding.recyclerView.apply {
-            adapter = this@SearchFragment.adapter
-            layoutManager = LinearLayoutManager(this.context)
-            disableItemChangeAnimation()
-        }
-
-        ToolbarShadowController(
-            binding.recyclerView,
-            baseBinding.appbarLayout
-        ) {
-            updateToolbarShadow(it)
-        }
-
-        //ToolbarHelper.fixInsets(toolbar)
-        with(baseBinding.toolbar) {
-            title = "Поиск"
-            /*setNavigationOnClickListener({ presenter.onBackPressed() })
-            setNavigationIcon(R.drawable.ic_toolbar_arrow_back)*/
-
-        }
-
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            val adapterTab = getPagerAdapter().getTab(position)
+            val title = when (adapterTab.collectionType) {
+                CollectionType.Planned -> "Запланировано"
+                CollectionType.Watching -> "Смотрю"
+                CollectionType.Watched -> "Просмотрено"
+                CollectionType.Postponed -> "Отложено"
+                CollectionType.Abandoned -> "Брошено"
+                is CollectionType.Unknown -> adapterTab.collectionType.raw
+                null -> "null"
+            }
+            tab.setCustomView(R.layout.view_tab_custom)
+            tab.setText(title)
+            tab.setBadgeText(adapterTab.count?.toString())
+        }.attach()
 
         baseBinding.searchView.apply {
             val hint = when (argType) {
@@ -185,15 +149,6 @@ class SearchFragment :
             }
         }
 
-        viewModel.state.onEach { state ->
-            binding.progressBarList.isVisible = state.releases.emptyLoading
-            binding.refreshLayout.isRefreshing = state.releases.refreshLoading
-            adapter.bindState(state)
-            if (state.releases.refreshLoading) {
-                binding.recyclerView.scrollToPosition(0)
-            }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-
         filterViewModel.state.onEach {
             if (it.form.hasChanges()) {
                 baseBinding.searchView.setMenuIcon(R.drawable.ic_filter_changes_toolbar)
@@ -203,18 +158,21 @@ class SearchFragment :
             filterDialog.setForm(it.filter, it.form)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        filterViewModel.applyEvent.onEach {
-            viewModel.onFormChanged(it)
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
-
-
-        binding.tabLayout.addOnTabSelectedListener(tabListener)
 
         viewModel.collections
-            .onEach { binding.tabLayout.isVisible = it != null }
-            .filterNotNull()
             .onEach { state ->
-                updateTabs(state)
+                binding.tabLayout.isVisible = state != null
+            }
+            .map { state ->
+                state?.types
+                    ?.map { TabsAdapter.Tab(argType, it, state.counts[it]) }
+                    ?: listOf(TabsAdapter.Tab(argType, null, null))
+            }
+            .distinctUntilChanged()
+            .onEach { tabs ->
+                binding.viewPager.unregisterOnPageChangeCallback(pagerListener)
+                getPagerAdapter().updateTabs(tabs)
+                binding.viewPager.registerOnPageChangeCallback(pagerListener)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -229,59 +187,54 @@ class SearchFragment :
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.recyclerView.adapter = null
-        baseBinding.searchView.setContentAdapter(null)
+        binding.viewPager.adapter = null
+        binding.viewPager.unregisterOnPageChangeCallback(pagerListener)
     }
 
     override fun scrollToTop() {
-        binding.recyclerView.scrollToPosition(0)
         baseBinding.appbarLayout.setExpanded(true, true)
+        childFragmentManager
+            .fragments
+            .filter { it.isResumed && it.isVisible && it.isAdded }
+            .filterIsInstance<TopScroller>()
+            .firstOrNull()
+            ?.scrollToTop()
     }
 
-    private fun updateTabs(state: CollectionsState) {
-        binding.tabLayout.removeOnTabSelectedListener(tabListener)
-
-        val tabsMap = createOrGetTabs(state)
-
-        binding.tabLayout.selectTab(tabsMap[state.selected])
-
-        tabsMap.forEach { entry ->
-            entry.value.setBadgeText(state.counts[entry.key]?.toString())
-        }
-
-        binding.tabLayout.addOnTabSelectedListener(tabListener)
+    private fun getPagerAdapter(): TabsAdapter {
+        return binding.viewPager.adapter as TabsAdapter
     }
 
-    private fun createOrGetTabs(state: CollectionsState): Map<CollectionType, TabLayout.Tab> {
-        val tabsMap = getTabsMap()
-        if (tabsMap.keys == state.types) {
-            return tabsMap
-        }
-        binding.tabLayout.removeAllTabs()
-        state.types.forEach { type ->
-            val tab = binding.tabLayout.newTab().apply {
-                setTag(type)
-                val title = when (type) {
-                    CollectionType.Planned -> "Запланировано"
-                    CollectionType.Watching -> "Смотрю"
-                    CollectionType.Watched -> "Просмотрено"
-                    CollectionType.Postponed -> "Отложено"
-                    CollectionType.Abandoned -> "Брошено"
-                    is CollectionType.Unknown -> type.raw
-                }
-                setText(title)
+    private class TabsAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+
+        private var currentTabs = listOf<Tab>()
+
+        fun updateTabs(tabs: List<Tab>) {
+            if (tabs == currentTabs) {
+                return
             }
-            tab.setCustomView(R.layout.view_tab_custom)
-            binding.tabLayout.addTab(tab)
+            currentTabs = tabs.toList()
+            notifyDataSetChanged()
         }
-        return getTabsMap()
-    }
 
-    private fun getTabsMap(): Map<CollectionType, TabLayout.Tab> {
-        val tabs = (0 until binding.tabLayout.tabCount).map {
-            requireNotNull(binding.tabLayout.getTabAt(it))
+        override fun getItemCount(): Int {
+            return currentTabs.size
         }
-        return tabs.associateBy { it.tag as CollectionType }
+
+        override fun createFragment(position: Int): Fragment {
+            val tab = getTab(position)
+            return SearchTabFragment.newInstance(tab.filterType, tab.collectionType)
+        }
+
+        fun getTab(position: Int): Tab {
+            return currentTabs[position]
+        }
+
+        data class Tab(
+            val filterType: FilterType,
+            val collectionType: CollectionType?,
+            val count: Int?
+        )
     }
 
     private fun TabLayout.Tab.setBadgeText(text: String?) {

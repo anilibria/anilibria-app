@@ -26,5 +26,12 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
+    <View
+        android:id="@+id/toolbar_shadow_prelp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/toolbar_shadow_prelp"
+        android:visibility="gone" />
+
 </FrameLayout>
 

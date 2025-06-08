@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.radiationx.anilibria.ui.fragments.search.controller.SearchController
 import ru.radiationx.data.api.releases.models.ReleaseGenre
 import ru.radiationx.data.api.shared.filter.FilterForm
 import ru.radiationx.data.api.shared.filter.FilterInteractor
@@ -25,7 +26,8 @@ data class SearchFilterExtra(
 
 class SearchFilterViewModel @Inject constructor(
     private val argExtra: SearchFilterExtra,
-    private val filterInteractor: FilterInteractor,
+    private val searchController: SearchController,
+    private val filterInteractor: FilterInteractor
 ) : ViewModel() {
 
     private val filterDataLoader = SingleLoader(viewModelScope) {
@@ -34,9 +36,6 @@ class SearchFilterViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(SearchFilterState())
     val state = _state.asStateFlow()
-
-    private val _applyEvent = EventFlow<FilterForm>()
-    val applyEvent = _applyEvent.observe()
 
     init {
         argExtra.genre?.also { genre ->
@@ -61,8 +60,8 @@ class SearchFilterViewModel @Inject constructor(
     }
 
     fun onApply() {
-        viewModelScope.launch {
-            _applyEvent.emit(state.value.form)
+        searchController.loaderArg.update {
+            it.copy(form = state.value.form)
         }
     }
 

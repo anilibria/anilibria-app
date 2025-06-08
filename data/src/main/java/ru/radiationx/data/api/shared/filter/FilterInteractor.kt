@@ -13,6 +13,8 @@ import ru.radiationx.data.api.favorites.models.FavoritesFilterForm
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.shared.pagination.Paginated
 import javax.inject.Inject
+import kotlin.math.max
+import kotlin.math.min
 
 class FilterInteractor @Inject constructor(
     private val collectionsRepository: CollectionsRepository,
@@ -131,7 +133,7 @@ class FilterInteractor @Inject constructor(
         types = types,
         seasons = emptyList(),
         sortings = emptyList(),
-        years = years
+        years = years.sortedByDescending { it.item.year }
     )
 
     private fun FavoritesFilterData.toData(
@@ -147,7 +149,7 @@ class FilterInteractor @Inject constructor(
         types = types,
         seasons = emptyList(),
         sortings = sortings,
-        years = years
+        years = years.sortedByDescending { it.item.year }
     )
 
     private fun CatalogFilterData.toData(
@@ -163,7 +165,7 @@ class FilterInteractor @Inject constructor(
         types = types,
         seasons = seasons,
         sortings = sortings,
-        years = years
+        years = years.sortedByDescending { it.item.year }
     )
 }
 
@@ -201,6 +203,7 @@ data class FilterData(
     val years: List<FilterItem.Year>,
 )
 
+
 data class FilterForm(
     val ageRatings: Set<FormItem.Value>,
     val genres: Set<FormItem.Genre>,
@@ -233,6 +236,51 @@ data class FilterForm(
     fun hasChanges(): Boolean {
         return this != empty()
     }
+
+    fun coerceInData(filter: FilterData?): FilterForm {
+        if (filter == null) {
+            return this
+        }
+        val newYearsRange = yearsRange?.coerceYearsRange(filter)
+
+        return FilterForm(
+            ageRatings = ageRatings.coerceIn(filter.ageRatings),
+            genres = genres.coerceIn(filter.genres),
+            productionStatuses = productionStatuses.coerceIn(filter.productionStatuses),
+            publishStatuses = publishStatuses.coerceIn(filter.publishStatuses),
+            types = types.coerceIn(filter.types),
+            seasons = seasons.coerceIn(filter.seasons),
+            sorting = sorting?.takeIf { filter.sortings.toFormSet().contains(it) },
+            years = years.coerceIn(filter.years),
+            yearsRange = newYearsRange
+        )
+    }
+
+
+    private fun <O : FormItem, I : FilterItem<O>> Set<O>.coerceIn(filterItems: List<I>): Set<O> {
+        return intersect(filterItems.toFormSet())
+    }
+
+    private fun <O : FormItem, I : FilterItem<O>> List<I>.toFormSet(): Set<O> {
+        return mapTo(mutableSetOf()) { it.item }
+    }
+}
+
+fun Pair<FormItem.Year, FormItem.Year>.coerceYearsRange(filter: FilterData?): Pair<FormItem.Year, FormItem.Year>? {
+    if (filter == null) {
+        return this
+    }
+    val minYear = filter.years.minOfOrNull { it.item.year }
+    val maxYear = filter.years.maxOfOrNull { it.item.year }
+    if (minYear == null || maxYear == null) {
+        return null
+    }
+    val newFrom = max(first.year, minYear)
+    val newTo = min(second.year, maxYear)
+    if (newFrom == minYear && newTo == maxYear) {
+        return null
+    }
+    return Pair(FormItem.Year(newFrom), FormItem.Year(newTo))
 }
 
 

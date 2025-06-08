@@ -57,12 +57,11 @@ fun yearsRangeEnvoy(
             .launchIn(view.root.attachedCoroutineScope)
     }
 
-    bind {
-        view.seekbar.valueFrom = it.years.first().item.year.toFloat()
-        view.seekbar.valueTo = it.years.last().item.year.toFloat()
-        view.seekbar.values = listOf(
-            it.selected?.first?.year?.toFloat() ?: view.seekbar.valueFrom,
-            it.selected?.second?.year?.toFloat() ?: view.seekbar.valueTo
-        )
+    bind { state ->
+        view.seekbar.valueFrom = state.years.minOf { it.item.year }.toFloat()
+        view.seekbar.valueTo = state.years.maxOf { it.item.year }.toFloat()
+        view.seekbar.values = state.selected
+            ?.let { listOf(it.first.year.toFloat(), it.second.year.toFloat()) }
+            ?: listOf(view.seekbar.valueFrom, view.seekbar.valueTo)
     }
 }

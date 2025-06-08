@@ -2,23 +2,26 @@ package ru.radiationx.data.api.shared.filter
 
 import ru.radiationx.data.common.GenreId
 
-sealed interface FilterItem {
+sealed interface FilterItem<T : FormItem> {
+
+    val item: T
+    val title: String
 
     data class Value(
-        val item: FormItem.Value,
-        val title: String,
+        override val item: FormItem.Value,
+        override val title: String,
         val description: String?
-    ) : FilterItem
+    ) : FilterItem<FormItem.Value>
 
     data class Genre(
-        val item: FormItem.Genre,
-        val title: String
-    ) : FilterItem
+        override val item: FormItem.Genre,
+        override val title: String
+    ) : FilterItem<FormItem.Genre>
 
     data class Year(
-        val item: FormItem.Year,
-        val title: String
-    ) : FilterItem
+        override val item: FormItem.Year,
+        override val title: String
+    ) : FilterItem<FormItem.Year>
 }
 
 sealed interface FormItem {

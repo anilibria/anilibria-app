@@ -4,18 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.ui.fragments.search.controller.SearchController
+import ru.radiationx.data.api.collections.CollectionsInteractor
+import ru.radiationx.data.api.favorites.FavoritesInteractor
 import ru.radiationx.data.api.releases.models.ReleaseGenre
 import ru.radiationx.data.api.shared.filter.FilterForm
 import ru.radiationx.data.api.shared.filter.FilterInteractor
 import ru.radiationx.data.api.shared.filter.FilterType
 import ru.radiationx.data.api.shared.filter.FormItem
+import ru.radiationx.data.api.shared.filter.coerceYearsRange
 import ru.radiationx.quill.QuillExtra
-import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
 import javax.inject.Inject
 
@@ -27,7 +30,9 @@ data class SearchFilterExtra(
 class SearchFilterViewModel @Inject constructor(
     private val argExtra: SearchFilterExtra,
     private val searchController: SearchController,
-    private val filterInteractor: FilterInteractor
+    private val filterInteractor: FilterInteractor,
+    private val favoritesInteractor: FavoritesInteractor,
+    private val collectionsInteractor: CollectionsInteractor
 ) : ViewModel() {
 
     private val filterDataLoader = SingleLoader(viewModelScope) {
@@ -45,11 +50,33 @@ class SearchFilterViewModel @Inject constructor(
         filterDataLoader
             .observeState()
             .onEach { filterState ->
-                _state.update {
-                    it.copy(filter = filterState)
+                _state.update { searchState ->
+                    searchState.copy(
+                        filter = filterState,
+                        form = searchState.form.coerceInData(searchState.filter.data)
+                    )
                 }
             }
             .launchIn(viewModelScope)
+
+        if (argExtra.type == FilterType.Favorites) {
+            favoritesInteractor
+                .observeIds()
+                .drop(1)
+                .distinctUntilChanged()
+                .onEach { refresh() }
+                .launchIn(viewModelScope)
+        }
+
+        if (argExtra.type == FilterType.Collections) {
+            collectionsInteractor
+                .observeIds()
+                .drop(1)
+                .distinctUntilChanged()
+                .onEach { refresh() }
+                .launchIn(viewModelScope)
+        }
+
         refresh()
     }
 
@@ -143,8 +170,9 @@ class SearchFilterViewModel @Inject constructor(
     }
 
     fun onYears(item: Pair<FormItem.Year, FormItem.Year>) {
-        updateForm {
-            it.copy(yearsRange = item)
+        _state.update {
+            val newForm = it.form.copy(yearsRange = item.coerceYearsRange(it.filter.data))
+            it.copy(form = newForm)
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import dev.androidbroadcast.vbpd.viewBinding
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemLoadMoreBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -12,6 +13,10 @@ import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.utils.dimensions.Side
 import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
+import ru.radiationx.anilibria.utils.view.attachedCoroutineScope
+import ru.radiationx.anilibria.utils.view.awaitAttached
+import ru.radiationx.anilibria.utils.view.awaitContainsInParent
+import ru.radiationx.anilibria.utils.view.awaitLayout
 
 /**
  * Created by radiationx on 13.01.18.
@@ -42,7 +47,11 @@ class LoadMoreDelegate(
 
         fun bind(needNotify: Boolean) {
             dimensionsApplier.applyPaddings(Side.Left, Side.Right)
-            if (needNotify) {
+            if (!needNotify) return
+            binding.root.attachedCoroutineScope.launch {
+                binding.root.awaitAttached()
+                binding.root.awaitLayout()
+                binding.root.awaitContainsInParent()
                 listener?.invoke()
             }
         }

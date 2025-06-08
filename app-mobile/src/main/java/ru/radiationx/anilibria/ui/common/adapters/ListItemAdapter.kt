@@ -3,7 +3,12 @@ package ru.radiationx.anilibria.ui.common.adapters
 import androidx.recyclerview.widget.DiffUtil
 import ru.radiationx.anilibria.ui.adapters.ListItem
 
-open class ListItemAdapter : OptimizeAdapter<ListItem>(ListItemDiffCallback)
+open class ListItemAdapter : OptimizeAdapter<ListItem>(ListItemDiffCallback) {
+
+    init {
+        delegatesManager.addDelegate(AnchorDelegate())
+    }
+}
 
 object ListItemDiffCallback : DiffUtil.ItemCallback<ListItem>() {
 

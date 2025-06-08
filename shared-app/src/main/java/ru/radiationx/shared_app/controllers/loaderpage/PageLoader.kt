@@ -30,12 +30,13 @@ class PageLoader<T>(
     }
 
     fun reset() {
-        release()
+        cancel()
         _currentPage.value = firstPage
         _state.value = PageLoaderState.empty()
     }
 
     fun refresh() {
+        cancel()
         loadPage(firstPage)
     }
 
@@ -45,7 +46,7 @@ class PageLoader<T>(
         }
     }
 
-    fun release() {
+    fun cancel() {
         loadingJob?.cancel()
     }
 

@@ -33,6 +33,7 @@ import ru.radiationx.anilibria.ui.adapters.feed.FeedYoutubeDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
+import ru.radiationx.anilibria.ui.common.adapters.AnchorListItem
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
@@ -93,6 +94,7 @@ class FeedAdapter(
     fun bindState(state: FeedScreenState) {
         val loadingState = state.data
         val newItems = mutableListOf<ListItem>()
+        newItems.add(AnchorListItem())
 
         if (loadingState.data != null || loadingState.error != null) {
             val warningItems = state.warnings.map { warning ->

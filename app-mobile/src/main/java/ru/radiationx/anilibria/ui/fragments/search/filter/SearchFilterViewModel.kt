@@ -2,9 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.search.filter
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -16,6 +14,7 @@ import ru.radiationx.data.api.shared.filter.FilterInteractor
 import ru.radiationx.data.api.shared.filter.FilterType
 import ru.radiationx.data.api.shared.filter.FormItem
 import ru.radiationx.quill.QuillExtra
+import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
 import javax.inject.Inject
 
@@ -36,13 +35,14 @@ class SearchFilterViewModel @Inject constructor(
     private val _state = MutableStateFlow(SearchFilterState())
     val state = _state.asStateFlow()
 
-    private val _applyEvent = MutableSharedFlow<FilterForm>()
-    val applyEvent = _applyEvent.asSharedFlow()
+    private val _applyEvent = EventFlow<FilterForm>()
+    val applyEvent = _applyEvent.observe()
 
     init {
         argExtra.genre?.also { genre ->
             onGenre(FormItem.Genre(genre.id))
         }
+        onApply()
         filterDataLoader
             .observeState()
             .onEach { filterState ->

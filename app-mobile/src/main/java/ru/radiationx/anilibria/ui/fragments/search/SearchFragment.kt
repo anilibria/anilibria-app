@@ -174,6 +174,9 @@ class SearchFragment :
             binding.progressBarList.isVisible = state.releases.emptyLoading
             binding.refreshLayout.isRefreshing = state.releases.refreshLoading
             adapter.bindState(state)
+            if (state.releases.refreshLoading) {
+                binding.recyclerView.scrollToPosition(0)
+            }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         filterViewModel.state.onEach {

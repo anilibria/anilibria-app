@@ -10,6 +10,7 @@ import ru.radiationx.anilibria.ui.adapters.YoutubeListItem
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
+import ru.radiationx.anilibria.ui.common.adapters.AnchorListItem
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
@@ -33,6 +34,7 @@ class YoutubeAdapter(
 
     fun bindState(state: YoutubeScreenState) {
         val newItems = mutableListOf<ListItem>()
+        newItems.add(AnchorListItem())
 
         val loadingState = state.data
 

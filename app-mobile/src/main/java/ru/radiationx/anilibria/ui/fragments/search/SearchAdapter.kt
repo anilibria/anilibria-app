@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
 import android.view.View
+import ru.radiationx.anilibria.extension.setAndAwaitItems
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
@@ -11,6 +12,7 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
+import ru.radiationx.anilibria.ui.common.adapters.AnchorListItem
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
@@ -35,8 +37,9 @@ class SearchAdapter(
         }
     }
 
-    fun bindState(state: SearchScreenState) {
+    suspend fun bindState(state: SearchScreenState) {
         val newItems = mutableListOf<ListItem>()
+        newItems.add(AnchorListItem())
 
         val loadingState = state.releases
 
@@ -56,7 +59,7 @@ class SearchAdapter(
             }
         }
 
-        items = newItems
+        setAndAwaitItems(newItems)
     }
 
     private fun getPlaceholder(state: SearchScreenState): PlaceholderListItem? {

@@ -8,8 +8,8 @@ import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 
 abstract class AppAdapterDelegate<I : T, T, VH : RecyclerView.ViewHolder>(
     protected val layoutRes: Int? = null,
-    private val viewChecker: ((T) -> Boolean)? = null,
-    private val holderCreator: ((View) -> VH)? = null,
+    protected val viewChecker: ((T) -> Boolean)? = null,
+    protected val holderCreator: ((View) -> VH)? = null,
 ) : AbsListItemAdapterDelegate<I, T, VH>() {
 
     open fun bindData(item: I, holder: VH) {}

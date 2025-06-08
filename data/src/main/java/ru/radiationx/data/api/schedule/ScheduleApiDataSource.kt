@@ -3,10 +3,9 @@ package ru.radiationx.data.api.schedule
 import anilibria.api.schedule.ScheduleApi
 import ru.radiationx.data.api.schedule.mapper.toDomain
 import ru.radiationx.data.api.schedule.models.ScheduleDay
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ScheduleApiDataSource(
+class ScheduleApiDataSource @Inject constructor(
     private val api: ScheduleApi
 ) {
 

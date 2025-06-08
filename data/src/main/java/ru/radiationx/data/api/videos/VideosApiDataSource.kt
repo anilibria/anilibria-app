@@ -3,10 +3,9 @@ package ru.radiationx.data.api.videos
 import anilibria.api.videos.VideosApi
 import ru.radiationx.data.api.videos.mapper.toDomain
 import ru.radiationx.data.api.videos.models.YoutubeItem
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class VideosApiDataSource(
+class VideosApiDataSource @Inject constructor(
     private val api: VideosApi
 ) {
 

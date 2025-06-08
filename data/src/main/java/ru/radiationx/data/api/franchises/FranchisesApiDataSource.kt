@@ -7,10 +7,9 @@ import ru.radiationx.data.api.franchises.models.Franchise
 import ru.radiationx.data.api.franchises.models.FranchiseFull
 import ru.radiationx.data.common.FranchiseId
 import ru.radiationx.data.common.ReleaseId
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class FranchisesApiDataSource(
+class FranchisesApiDataSource @Inject constructor(
     private val api: FranchisesApi
 ) {
 

@@ -12,10 +12,9 @@ import ru.radiationx.data.api.favorites.models.FavoritesFilterData
 import ru.radiationx.data.api.favorites.models.FavoritesFilterForm
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.shared.pagination.Paginated
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class FilterInteractor(
+class FilterInteractor @Inject constructor(
     private val collectionsRepository: CollectionsRepository,
     private val favoriteRepository: FavoriteRepository,
     private val catalogRepository: CatalogRepository

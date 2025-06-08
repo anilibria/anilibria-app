@@ -9,10 +9,9 @@ import ru.radiationx.data.api.collections.models.CollectionsFilterForm
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.shared.pagination.Paginated
 import ru.radiationx.data.common.ReleaseId
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CollectionsRepository(
+class CollectionsRepository @Inject constructor(
     private val api: CollectionsApiDataSource
 ) {
 

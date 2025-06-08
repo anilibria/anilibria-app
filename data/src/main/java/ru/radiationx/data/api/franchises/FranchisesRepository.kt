@@ -4,10 +4,10 @@ import ru.radiationx.data.api.franchises.models.Franchise
 import ru.radiationx.data.api.franchises.models.FranchiseFull
 import ru.radiationx.data.common.FranchiseId
 import ru.radiationx.data.common.ReleaseId
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class FranchisesRepository(
+// todo api2 use in release info
+class FranchisesRepository @Inject constructor(
     private val franchisesApi: FranchisesApiDataSource
 ) {
 

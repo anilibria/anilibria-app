@@ -7,10 +7,9 @@ import ru.radiationx.data.api.collections.models.CollectionReleaseId
 import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.network.SharedRequests
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CollectionsInteractor(
+class CollectionsInteractor @Inject constructor(
     private val collectionsRepository: CollectionsRepository
 ) {
 

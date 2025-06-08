@@ -2,10 +2,9 @@ package ru.radiationx.data.api.auth
 
 import ru.radiationx.data.api.auth.legacy.CookieHolder
 import ru.radiationx.data.api.profile.UserHolder
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class LogoutCleaner(
+class LogoutCleaner @Inject constructor(
     private val tokenStorage: AuthTokenStorage,
     private val userHolder: UserHolder,
     private val cookieHolder: CookieHolder,

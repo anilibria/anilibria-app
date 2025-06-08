@@ -9,11 +9,10 @@ import ru.radiationx.data.api.shared.pagination.Paginated
 import ru.radiationx.data.api.shared.pagination.toDomain
 import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
-import toothpick.InjectConstructor
+import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
-@InjectConstructor
-class ReleasesApiDataSource(
+class ReleasesApiDataSource @Inject constructor(
     private val api: ReleasesApi
 ) {
 

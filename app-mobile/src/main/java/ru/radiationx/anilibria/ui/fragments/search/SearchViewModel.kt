@@ -35,14 +35,13 @@ import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
 import ru.radiationx.shared_app.controllers.loaderpage.mapData
 import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 data class SearchExtra(
     val type: FilterType,
 ) : QuillExtra
 
-@InjectConstructor
-class SearchViewModel(
+class SearchViewModel @Inject constructor(
     private val argExtra: SearchExtra,
     private val filterInteractor: FilterInteractor,
     private val collectionsInteractor: CollectionsInteractor,

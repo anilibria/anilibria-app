@@ -8,10 +8,9 @@ import ru.radiationx.data.api.torrents.mapper.toDomain
 import ru.radiationx.data.api.torrents.models.TorrentItem
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.common.TorrentId
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class TorrentsApiDataSource(
+class TorrentsApiDataSource @Inject constructor(
     private val api: TorrentsApi
 ) {
 

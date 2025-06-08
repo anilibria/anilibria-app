@@ -7,10 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import ru.radiationx.data.api.auth.models.AuthToken
 import ru.radiationx.shared.ktx.android.SuspendMutableStateFlow
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AuthTokenStorage(
+class AuthTokenStorage @Inject constructor(
     private val sharedPreferences: SharedPreferences,
 ) {
 

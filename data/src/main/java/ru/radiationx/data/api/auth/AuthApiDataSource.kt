@@ -21,11 +21,10 @@ import ru.radiationx.data.api.auth.models.OtpWrongUserException
 import ru.radiationx.data.api.auth.models.SocialAuthException
 import ru.radiationx.data.api.auth.models.SocialState
 import ru.radiationx.data.api.auth.models.SocialType
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 // TODO API2 update exception mapping
-@InjectConstructor
-class AuthApiDataSource(
+class AuthApiDataSource @Inject constructor(
     private val api: AuthApi
 ) {
 

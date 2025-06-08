@@ -7,10 +7,9 @@ import ru.radiationx.data.api.timecodes.mapper.toDomain
 import ru.radiationx.data.api.timecodes.mapper.toNetwork
 import ru.radiationx.data.api.timecodes.models.TimeCode
 import ru.radiationx.data.common.EpisodeUUID
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class TimeCodesApiDataSource(
+class TimeCodesApiDataSource @Inject constructor(
     private val api: TimeCodesApi
 ) {
 

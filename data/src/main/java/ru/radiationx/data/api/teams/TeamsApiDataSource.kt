@@ -5,10 +5,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import ru.radiationx.data.api.teams.mapper.toDomain
 import ru.radiationx.data.api.teams.models.Team
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class TeamsApiDataSource(
+class TeamsApiDataSource @Inject constructor(
     private val api: TeamsApi
 ) {
 

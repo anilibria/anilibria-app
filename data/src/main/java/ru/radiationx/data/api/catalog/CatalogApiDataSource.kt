@@ -12,10 +12,9 @@ import ru.radiationx.data.api.shared.filter.toDomain
 import ru.radiationx.data.api.shared.filter.toDomainFilterYear
 import ru.radiationx.data.api.shared.pagination.Paginated
 import ru.radiationx.data.api.shared.pagination.toDomain
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CatalogApiDataSource(
+class CatalogApiDataSource @Inject constructor(
     private val api: CatalogApi
 ) {
 

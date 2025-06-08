@@ -6,10 +6,9 @@ import ru.radiationx.data.api.catalog.models.CatalogFilterData
 import ru.radiationx.data.api.catalog.models.CatalogFilterForm
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.shared.pagination.Paginated
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CatalogRepository(
+class CatalogRepository @Inject constructor(
     private val api: CatalogApiDataSource
 ) {
 

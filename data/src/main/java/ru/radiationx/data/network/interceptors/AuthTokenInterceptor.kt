@@ -4,10 +4,9 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import ru.radiationx.data.api.auth.AuthTokenStorage
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AuthTokenInterceptor(
+class AuthTokenInterceptor @Inject constructor(
     private val tokenStorage: AuthTokenStorage
 ) : Interceptor {
 

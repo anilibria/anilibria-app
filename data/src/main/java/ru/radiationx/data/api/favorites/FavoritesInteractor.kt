@@ -4,10 +4,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.network.SharedRequests
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class FavoritesInteractor(
+class FavoritesInteractor @Inject constructor(
     private val favoriteRepository: FavoriteRepository
 ) {
 

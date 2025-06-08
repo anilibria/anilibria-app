@@ -7,6 +7,7 @@ import envoy.Envoy
 import taiwa.TaiwaAction
 import taiwa.TaiwaAnchor
 import taiwa.TaiwaEvent
+import taiwa.dialogs.BaseCustomDialog
 import taiwa.dsl.TaiwaScope
 import taiwa.internal.buildTaiwa
 import taiwa.internal.models.TaiwaState
@@ -15,12 +16,13 @@ import taiwa.lifecycle.Destroyable
 import java.lang.ref.WeakReference
 
 class Taiwa(
-    parentContext: Context,
+    private val parentContext: Context,
     lifecycleOwner: LifecycleOwner,
     type: DialogType,
+    private val dialogProvider: ((DialogType) -> BaseCustomDialog)? = null
 ) : Destroyable {
 
-    private val dialogWrapper = DialogWrapper(parentContext, lifecycleOwner, type)
+    private val dialogWrapper = DialogWrapper(parentContext, lifecycleOwner, type, dialogProvider)
 
     private var eventListener: ((TaiwaEvent) -> Unit)? = null
 
@@ -65,14 +67,18 @@ class Taiwa(
         currentContent = null
     }
 
-    private fun getContentView(): TaiwaView {
-        val view = currentContentView?.get() ?: dialogWrapper.setContentView { TaiwaView(it) }
+    internal fun getContentView(): TaiwaView {
+        val view = currentContentView?.get()
+            ?: dialogProvider?.let { TaiwaView(dialogWrapper.dialog.context) }
+            ?: dialogWrapper.setContentView { TaiwaView(it) }
         currentContentView = WeakReference(view)
         return view
     }
 
-    private fun getFooterView(): TaiwaView {
-        val view = currentFooterView?.get() ?: dialogWrapper.setFooterView { TaiwaView(it) }
+    internal fun getFooterView(): TaiwaView {
+        val view = currentFooterView?.get()
+            ?: dialogProvider?.let { TaiwaView(dialogWrapper.dialog.context) }
+            ?: dialogWrapper.setFooterView { TaiwaView(it) }
         currentFooterView = WeakReference(view)
         return view
     }

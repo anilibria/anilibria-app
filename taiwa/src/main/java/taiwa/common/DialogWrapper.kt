@@ -16,12 +16,14 @@ class DialogWrapper(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
     private val type: DialogType,
+    private val dialogProvider: ((DialogType) -> BaseCustomDialog)? = null
 ) : Destroyable {
 
-    private val dialog: BaseCustomDialog = when (type) {
-        DialogType.Alert -> CustomDialog(context)
-        DialogType.BottomSheet -> CustomBottomSheetDialog(context)
-    }.attachToLifecycle(lifecycleOwner)
+    internal val dialog: BaseCustomDialog = dialogProvider?.invoke(type)
+        ?: when (type) {
+            DialogType.Alert -> CustomDialog(context)
+            DialogType.BottomSheet -> CustomBottomSheetDialog(context)
+        }.attachToLifecycle(lifecycleOwner)
 
     private val backPressedCallback = dialog.onBackPressedDispatcher.addCallback(enabled = false) {
         backListener?.invoke()

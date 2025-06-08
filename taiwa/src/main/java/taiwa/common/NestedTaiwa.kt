@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import taiwa.TaiwaAnchor
 import taiwa.TaiwaEvent
+import taiwa.dialogs.BaseCustomDialog
 import taiwa.dsl.TaiwaNestingScope
 import taiwa.internal.buildNestingTaiwa
 import taiwa.internal.view.NestedContentController
@@ -18,9 +19,10 @@ class NestedTaiwa(
     parentContext: Context,
     lifecycleOwner: LifecycleOwner,
     type: DialogType,
+    dialogProvider: ((DialogType) -> BaseCustomDialog)? = null
 ) : Destroyable {
 
-    private val taiwa = Taiwa(parentContext, lifecycleOwner, type)
+    internal val taiwa = Taiwa(parentContext, lifecycleOwner, type, dialogProvider)
 
     private var closeListener: (() -> Unit)? = null
 

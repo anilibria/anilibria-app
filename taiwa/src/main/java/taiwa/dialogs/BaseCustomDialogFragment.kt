@@ -18,7 +18,7 @@ open class BaseCustomDialogFragment(
     private var mFooterView: View? = null
 
     private val mObserver = Observer<LifecycleOwner?> { value ->
-        if (footerLayoutId != 0 && value != null && showsDialog) {
+        if ((footerLayoutId != 0 || getFooterView() != null) && value != null && showsDialog) {
             val footerView = requireFooterView()
             val customDialog = requireDialog()
             require(customDialog is BaseCustomDialog) {

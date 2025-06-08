@@ -17,9 +17,9 @@ data class TimeCodeNetwork(
     companion object {
         fun ofList(list: List<Any>): TimeCodeNetwork {
             return TimeCodeNetwork(
-                releaseEpisodeId = list[0].toString(),
-                time = list[1].toString().toDouble(),
-                isWatched = list[2].toString().toBooleanStrict()
+                releaseEpisodeId = (list[0] as String),
+                time = (list[1] as Number).toDouble(),
+                isWatched = (list[2] as Boolean)
             )
         }
     }

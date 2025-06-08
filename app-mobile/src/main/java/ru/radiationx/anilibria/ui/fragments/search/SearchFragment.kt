@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentTabsListRefreshBinding
+import ru.radiationx.anilibria.databinding.ViewTabCustomBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.common.releaseItemDialog
@@ -55,6 +56,20 @@ class SearchFragment :
             putSerializable(ARG_TYPE, filterType)
             putParcelable(ARG_GENRE, genre)
         }
+    }
+
+
+    private val tabListener = object : OnTabSelectedListener {
+        override fun onTabSelected(tab: TabLayout.Tab) {
+            viewModel.onCollectionChanged(tab.tag as CollectionType)
+        }
+
+        override fun onTabUnselected(tab: TabLayout.Tab) {
+        }
+
+        override fun onTabReselected(tab: TabLayout.Tab) {
+        }
+
     }
 
     private val adapter = SearchAdapter(
@@ -193,53 +208,13 @@ class SearchFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
 
-        val tabListener = object : OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                viewModel.onCollectionChanged(tab.tag as CollectionType)
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab) {
-            }
-
-        }
         binding.tabLayout.addOnTabSelectedListener(tabListener)
-
 
         viewModel.collections
             .onEach { binding.tabLayout.isVisible = it != null }
             .filterNotNull()
             .onEach { state ->
-                binding.tabLayout.removeOnTabSelectedListener(tabListener)
-                val tabs = (0 until binding.tabLayout.tabCount).map {
-                    requireNotNull(binding.tabLayout.getTabAt(it))
-                }
-                val tabTypes = tabs.map { requireNotNull(it.tag) }.toSet()
-
-                if (tabTypes == state.types) {
-                    val tabToSelect = tabs.find { it.tag == state.selected }
-                    binding.tabLayout.selectTab(tabToSelect)
-                } else {
-                    binding.tabLayout.removeAllTabs()
-                    state.types.forEach { type ->
-                        val tab = binding.tabLayout.newTab().apply {
-                            setTag(type)
-                            val title = when (type) {
-                                CollectionType.Planned -> "Запланировано"
-                                CollectionType.Watched -> "Просмотрено"
-                                CollectionType.Watching -> "Смотрю"
-                                CollectionType.Postponed -> "Отложено"
-                                CollectionType.Abandoned -> "Брошено"
-                                is CollectionType.Unknown -> type.raw
-                            }
-                            setText(title)
-                        }
-                        binding.tabLayout.addTab(tab, type == state.selected)
-                    }
-                }
-                binding.tabLayout.addOnTabSelectedListener(tabListener)
+                updateTabs(state)
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -263,4 +238,55 @@ class SearchFragment :
         baseBinding.appbarLayout.setExpanded(true, true)
     }
 
+    private fun updateTabs(state: CollectionsState) {
+        binding.tabLayout.removeOnTabSelectedListener(tabListener)
+
+        val tabsMap = createOrGetTabs(state)
+
+        binding.tabLayout.selectTab(tabsMap[state.selected])
+
+        tabsMap.forEach { entry ->
+            entry.value.setBadgeText(state.counts[entry.key]?.toString())
+        }
+
+        binding.tabLayout.addOnTabSelectedListener(tabListener)
+    }
+
+    private fun createOrGetTabs(state: CollectionsState): Map<CollectionType, TabLayout.Tab> {
+        val tabsMap = getTabsMap()
+        if (tabsMap.keys == state.types) {
+            return tabsMap
+        }
+        binding.tabLayout.removeAllTabs()
+        state.types.forEach { type ->
+            val tab = binding.tabLayout.newTab().apply {
+                setTag(type)
+                val title = when (type) {
+                    CollectionType.Planned -> "Запланировано"
+                    CollectionType.Watching -> "Смотрю"
+                    CollectionType.Watched -> "Просмотрено"
+                    CollectionType.Postponed -> "Отложено"
+                    CollectionType.Abandoned -> "Брошено"
+                    is CollectionType.Unknown -> type.raw
+                }
+                setText(title)
+            }
+            tab.setCustomView(R.layout.view_tab_custom)
+            binding.tabLayout.addTab(tab)
+        }
+        return getTabsMap()
+    }
+
+    private fun getTabsMap(): Map<CollectionType, TabLayout.Tab> {
+        val tabs = (0 until binding.tabLayout.tabCount).map {
+            requireNotNull(binding.tabLayout.getTabAt(it))
+        }
+        return tabs.associateBy { it.tag as CollectionType }
+    }
+
+    private fun TabLayout.Tab.setBadgeText(text: String?) {
+        val tabBinding = ViewTabCustomBinding.bind(requireNotNull(customView))
+        tabBinding.tabBadge.text = text
+        tabBinding.tabBadge.isVisible = text != null
+    }
 }

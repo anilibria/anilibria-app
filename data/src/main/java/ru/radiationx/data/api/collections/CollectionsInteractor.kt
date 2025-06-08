@@ -3,7 +3,6 @@ package ru.radiationx.data.api.collections
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import ru.radiationx.data.api.collections.models.CollectionReleaseId
 import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.common.ReleaseId
@@ -39,17 +38,11 @@ class CollectionsInteractor(
     }
 
     suspend fun deleteRelease(releaseId: ReleaseId) {
-        collectionsRepository.deleteRelease(releaseId)
-        releaseIds.update {
-            it.removeById(releaseId)
-        }
+        releaseIds.value = collectionsRepository.deleteRelease(releaseId)
     }
 
     suspend fun addRelease(releaseId: ReleaseId, type: CollectionType) {
-        collectionsRepository.addRelease(releaseId, type)
-        releaseIds.update {
-            it.removeById(releaseId).plus(CollectionReleaseId(releaseId, type))
-        }
+        releaseIds.value = collectionsRepository.addRelease(releaseId, type)
     }
 
     private fun Set<CollectionReleaseId>.removeById(releaseId: ReleaseId): Set<CollectionReleaseId> {

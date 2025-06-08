@@ -116,11 +116,10 @@ class SearchViewModel(
                 }
             }
             .launchIn(viewModelScope)
-
     }
 
     fun refresh() {
-        if (argExtra.type == FilterType.Collections && collectionsLoader.isNeedRefresh()) {
+        if (argExtra.type == FilterType.Collections) {
             collectionsLoader.refresh()
         }
         releasesLoader.refresh()
@@ -175,6 +174,7 @@ class SearchViewModel(
         if (argExtra.type != FilterType.Collections) {
             return
         }
+
         _loaderArg
             .mapNotNull { it.collectionType }
             .distinctUntilChanged()
@@ -195,6 +195,16 @@ class SearchViewModel(
                 }
             }
             .launchIn(viewModelScope)
+
+        collectionsInteractor
+            .observeIdsGrouped()
+            .map { it.mapValues { it.value.size } }
+            .onEach { countsMap ->
+                _collections.update {
+                    it?.copy(counts = countsMap)
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     private data class LoaderArg(
@@ -211,5 +221,6 @@ class SearchViewModel(
 
 data class CollectionsState(
     val selected: CollectionType = CollectionType.Planned,
-    val types: Set<CollectionType> = CollectionType.knownTypes
+    val types: Set<CollectionType> = CollectionType.knownTypes,
+    val counts: Map<CollectionType, Int> = emptyMap()
 )

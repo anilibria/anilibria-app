@@ -14,8 +14,8 @@ data class CollectionReleaseIdNetwork(
     companion object {
         fun ofList(list: List<Any>): CollectionReleaseIdNetwork {
             return CollectionReleaseIdNetwork(
-                releaseId = list[0].toString().toInt(),
-                typeOfCollection = list[1].toString()
+                releaseId = (list[0] as Number).toInt(),
+                typeOfCollection = (list[1] as String)
             )
         }
     }

@@ -38,14 +38,14 @@ class CollectionsRepository(
         }
     }
 
-    suspend fun deleteRelease(releaseId: ReleaseId) {
-        withContext(Dispatchers.IO) {
+    suspend fun deleteRelease(releaseId: ReleaseId): Set<CollectionReleaseId> {
+        return withContext(Dispatchers.IO) {
             api.deleteRelease(releaseId)
         }
     }
 
-    suspend fun addRelease(releaseId: ReleaseId, type: CollectionType) {
-        withContext(Dispatchers.IO) {
+    suspend fun addRelease(releaseId: ReleaseId, type: CollectionType): Set<CollectionReleaseId> {
+        return withContext(Dispatchers.IO) {
             api.addRelease(releaseId, type)
         }
     }

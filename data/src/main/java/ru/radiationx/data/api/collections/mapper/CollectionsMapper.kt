@@ -42,8 +42,8 @@ fun CollectionReleaseIdNetwork.toDomain(): CollectionReleaseId {
 fun String.toCollectionType(): CollectionType {
     return when (this) {
         "PLANNED" -> CollectionType.Planned
-        "WATCHED" -> CollectionType.Watched
         "WATCHING" -> CollectionType.Watching
+        "WATCHED" -> CollectionType.Watched
         "POSTPONED" -> CollectionType.Postponed
         "ABANDONED" -> CollectionType.Abandoned
         else -> CollectionType.Unknown(this)
@@ -53,8 +53,8 @@ fun String.toCollectionType(): CollectionType {
 fun CollectionType.toRequest(): String {
     return when (this) {
         CollectionType.Planned -> "PLANNED"
-        CollectionType.Watched -> "WATCHED"
         CollectionType.Watching -> "WATCHING"
+        CollectionType.Watched -> "WATCHED"
         CollectionType.Postponed -> "POSTPONED"
         CollectionType.Abandoned -> "ABANDONED"
         is CollectionType.Unknown -> raw

@@ -260,13 +260,13 @@ class SearchFilterDialog(
                 }
             }
         }
-        if (selected.isNotEmpty()) {
-            footer {
-                buttons {
-                    button {
-                        text("Применить")
-                        action(TaiwaAction.Root)
-                    }
+        footer {
+            buttons {
+                button {
+                    text("Применить")
+                    action(TaiwaAction.Root)
+                }
+                if (selected.isNotEmpty()) {
                     button {
                         text("Сбросить жанры")
                         onClick {
@@ -303,13 +303,13 @@ class SearchFilterDialog(
                 }
             }
         }
-        if (selected.isNotEmpty()) {
-            footer {
-                buttons {
-                    button {
-                        text("Применить")
-                        action(TaiwaAction.Root)
-                    }
+        footer {
+            buttons {
+                button {
+                    text("Применить")
+                    action(TaiwaAction.Root)
+                }
+                if (selected.isNotEmpty()) {
                     button {
                         text("Сбросить периоды")
                         onClick {

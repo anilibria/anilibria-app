@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -19,9 +20,10 @@ import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.ReleaseAnalytics
+import ru.radiationx.data.api.collections.CollectionsInteractor
 import ru.radiationx.data.api.collections.models.CollectionType
+import ru.radiationx.data.api.favorites.FavoritesInteractor
 import ru.radiationx.data.api.releases.models.Release
-import ru.radiationx.data.api.shared.filter.FilterForm
 import ru.radiationx.data.api.shared.filter.FilterInteractor
 import ru.radiationx.data.api.shared.filter.FilterType
 import ru.radiationx.data.app.releaseupdate.ReleaseUpdateHolder
@@ -42,6 +44,8 @@ class SearchTabViewModel @Inject constructor(
     private val argExtra: SearchTabExtra,
     private val searchController: SearchController,
     private val filterInteractor: FilterInteractor,
+    private val favoritesInteractor: FavoritesInteractor,
+    private val collectionsInteractor: CollectionsInteractor,
     private val releaseUpdateHolder: ReleaseUpdateHolder,
     private val systemUtils: SystemUtils,
     private val releaseAnalytics: ReleaseAnalytics,
@@ -74,6 +78,24 @@ class SearchTabViewModel @Inject constructor(
             .distinctUntilChanged()
             .onEach { refresh() }
             .launchIn(viewModelScope)
+
+        if (argExtra.type == FilterType.Favorites) {
+            favoritesInteractor
+                .observeIds()
+                .drop(1)
+                .distinctUntilChanged()
+                .onEach { refresh() }
+                .launchIn(viewModelScope)
+        }
+
+        if (argExtra.type == FilterType.Collections) {
+            collectionsInteractor
+                .observeIds()
+                .drop(1)
+                .distinctUntilChanged()
+                .onEach { refresh() }
+                .launchIn(viewModelScope)
+        }
     }
 
     private fun initScreenState() {
@@ -131,7 +153,4 @@ class SearchTabViewModel @Inject constructor(
         return releasesLoader.getData()?.find { it.id == id }
     }
 
-    private data class LoaderArg(
-        val form: FilterForm = FilterForm.empty(),
-    )
 }

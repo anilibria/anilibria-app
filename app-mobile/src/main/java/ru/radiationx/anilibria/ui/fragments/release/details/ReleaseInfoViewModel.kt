@@ -200,11 +200,6 @@ class ReleaseInfoViewModel @Inject constructor(
         }
         releaseInteractor
             .observeFull(argExtra.id)
-            .onEach {
-                updateModifiers {
-                    it.copy(detailLoading = false)
-                }
-            }
             .flatMapLatest { release ->
                 combine(
                     _currentLoadings,
@@ -214,6 +209,11 @@ class ReleaseInfoViewModel @Inject constructor(
                     favoritesInteractor.observeIds()
                 ) { loadings, accesses, favoriteIds ->
                     updateLocalRelease(release, loadings, accesses, favoriteIds)
+                }
+            }
+            .onEach {
+                updateModifiers {
+                    it.copy(detailLoading = false)
                 }
             }
             .launchIn(viewModelScope)

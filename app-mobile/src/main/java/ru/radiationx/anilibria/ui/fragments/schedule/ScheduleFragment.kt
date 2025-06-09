@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.ui.common.releaseItemDialog
+import ru.radiationx.anilibria.ui.common.release.showContextRelease
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
@@ -40,7 +40,7 @@ class ScheduleFragment :
             viewModel.onItemClick(item, position)
         },
         longClickListener = { item ->
-            releaseDialog.show(item.release)
+            viewModel.onItemContextClick(item)
         },
         scrollListener = { position ->
             viewModel.onHorizontalScroll(position)
@@ -50,12 +50,6 @@ class ScheduleFragment :
     private val viewModel by viewModel<ScheduleViewModel> {
         ScheduleExtra(day = getExtra(ARG_DAY))
     }
-
-    private val releaseDialog by releaseItemDialog(
-        onCopyClick = { viewModel.onCopyClick(it) },
-        onShareClick = { viewModel.onShareClick(it) },
-        onShortcutClick = { viewModel.onShortcutClick(it) }
-    )
 
     private var sharedViewLocal: View? = null
 
@@ -103,11 +97,19 @@ class ScheduleFragment :
             scheduleAdapter.bindState(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.contextEvent.onEach {
+            showContextRelease(it.id, it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         viewModel.scrollEvent.onEach { day ->
             val position = scheduleAdapter.getPositionByDay(day)
             (binding.recyclerView.layoutManager as? LinearLayoutManager)?.also {
                 it.scrollToPositionWithOffset(position, 0)
             }
+        }.launchInResumed(viewLifecycleOwner)
+
+        viewModel.contextEvent.onEach {
+            showContextRelease(it.id, it)
         }.launchInResumed(viewLifecycleOwner)
     }
 

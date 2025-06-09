@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.common.releaseItemDialog
+import ru.radiationx.anilibria.ui.common.release.showContextRelease
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.search.SearchAdapter
@@ -60,7 +60,7 @@ class SearchTabFragment : Fragment(R.layout.fragment_list_refresh), SharedProvid
             this.sharedViewLocal = view
             viewModel.onItemClick(item)
         },
-        longClickListener = { item -> releaseDialog.show(item) },
+        longClickListener = { item -> viewModel.onItemContextClick(item) },
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,
             R.string.placeholder_title_nodata_base,
@@ -71,12 +71,6 @@ class SearchTabFragment : Fragment(R.layout.fragment_list_refresh), SharedProvid
             R.string.placeholder_title_errordata_base,
             R.string.placeholder_desc_nodata_base
         )
-    )
-
-    private val releaseDialog by releaseItemDialog(
-        onCopyClick = { viewModel.onCopyClick(it) },
-        onShareClick = { viewModel.onShareClick(it) },
-        onShortcutClick = { viewModel.onShortcutClick(it) }
     )
 
     private var sharedViewLocal: View? = null
@@ -118,6 +112,10 @@ class SearchTabFragment : Fragment(R.layout.fragment_list_refresh), SharedProvid
             if (state.releases.refreshLoading) {
                 binding.recyclerView.scrollToPosition(0)
             }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.contextEvent.onEach {
+            showContextRelease(it.id, it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 

@@ -3,7 +3,9 @@ package ru.radiationx.anilibria.ui.fragments.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -52,6 +54,9 @@ class HistoryViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(HistoryScreenState())
     val state = _state.asStateFlow()
+
+    private val _contextEvent = MutableSharedFlow<Release>()
+    val contextEvent = _contextEvent.asSharedFlow()
 
     private val queryFlow = MutableStateFlow("")
 
@@ -134,30 +139,11 @@ class HistoryViewModel @Inject constructor(
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem))
     }
 
-    fun onDeleteClick(item: ReleaseItemState) {
+    fun onItemContextClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
         viewModelScope.launch {
-            historyAnalytics.releaseDeleteClick()
-            historyRepository.removeRelease(releaseItem.id)
+            _contextEvent.emit(releaseItem)
         }
-    }
-
-    fun onCopyClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
-        systemUtils.copy(releaseItem.link)
-        releaseAnalytics.copyLink(AnalyticsConstants.screen_history, releaseItem.id.id)
-    }
-
-    fun onShareClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
-        systemUtils.share(releaseItem.link)
-        releaseAnalytics.share(AnalyticsConstants.screen_history, releaseItem.id.id)
-    }
-
-    fun onShortcutClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
-        shortcutHelper.addShortcut(releaseItem)
-        releaseAnalytics.shortcut(AnalyticsConstants.screen_history, releaseItem.id.id)
     }
 
     fun onSearchClick() {

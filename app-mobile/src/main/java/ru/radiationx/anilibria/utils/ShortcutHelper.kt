@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.utils
 
 import android.app.PendingIntent
 import android.content.Context
+import android.content.pm.ShortcutInfo
 import android.content.res.Resources
 import android.graphics.Bitmap
 import androidx.core.content.pm.ShortcutInfoCompat

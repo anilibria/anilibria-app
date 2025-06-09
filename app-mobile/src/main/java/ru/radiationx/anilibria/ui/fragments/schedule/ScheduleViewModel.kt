@@ -3,13 +3,14 @@ package ru.radiationx.anilibria.ui.fragments.schedule
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
@@ -54,6 +55,9 @@ class ScheduleViewModel @Inject constructor(
     private val _scrollEvent = EventFlow<ScheduleDayState>()
     val scrollEvent = _scrollEvent.observe()
 
+    private val _contextEvent = MutableSharedFlow<Release>()
+    val contextEvent = _contextEvent.asSharedFlow()
+
     private val currentDays = mutableListOf<ScheduleDay>()
 
     init {
@@ -95,22 +99,11 @@ class ScheduleViewModel @Inject constructor(
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, release = releaseItem))
     }
 
-    fun onCopyClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
-        systemUtils.copy(releaseItem.link)
-        releaseAnalytics.copyLink(AnalyticsConstants.screen_schedule, item.id.id)
-    }
-
-    fun onShareClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
-        systemUtils.share(releaseItem.link)
-        releaseAnalytics.share(AnalyticsConstants.screen_schedule, item.id.id)
-    }
-
-    fun onShortcutClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
-        shortcutHelper.addShortcut(releaseItem)
-        releaseAnalytics.shortcut(AnalyticsConstants.screen_schedule, item.id.id)
+    fun onItemContextClick(item: ScheduleItemState){
+        val releaseItem = findRelease(item.release.id) ?: return
+        viewModelScope.launch {
+            _contextEvent.emit(releaseItem)
+        }
     }
 
     fun refresh() {

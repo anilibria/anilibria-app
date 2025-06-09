@@ -24,6 +24,14 @@ class FavoritesInteractor @Inject constructor(
         }
     }
 
+    suspend fun toggle(releaseId: ReleaseId) {
+        if (releaseIds.value.contains(releaseId)) {
+            deleteRelease(releaseId)
+        } else {
+            addRelease(releaseId)
+        }
+    }
+
     suspend fun deleteRelease(releaseId: ReleaseId) {
         val ids = favoriteRepository.deleteRelease(releaseId)
         releaseIds.value = ids

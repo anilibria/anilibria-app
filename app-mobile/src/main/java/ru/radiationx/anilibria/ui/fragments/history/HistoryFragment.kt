@@ -22,7 +22,7 @@ import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.common.releaseItemDialog
+import ru.radiationx.anilibria.ui.common.release.showContextRelease
 import ru.radiationx.anilibria.ui.fragments.BaseSearchItemFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
@@ -73,7 +73,9 @@ class HistoryFragment :
             this.sharedViewLocal = view
             viewModel.onItemClick(item)
         },
-        longClickListener = { item -> releaseDialog.show(item) },
+        longClickListener = { item ->
+            viewModel.onItemContextClick(item)
+        },
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_history,
             R.string.placeholder_title_nodata_base,
@@ -93,7 +95,9 @@ class HistoryFragment :
                     sharedViewLocal = view
                     viewModel.onItemClick(item)
                 },
-                longClickListener = { item -> releaseDialog.show(item) }
+                longClickListener = { item ->
+                    viewModel.onItemContextClick(item)
+                }
             )
         )
     }
@@ -106,13 +110,6 @@ class HistoryFragment :
             fileViewModel.onImportFileSelected(it)
         }
     }
-
-    private val releaseDialog by releaseItemDialog(
-        onCopyClick = { viewModel.onCopyClick(it) },
-        onShareClick = { viewModel.onShareClick(it) },
-        onShortcutClick = { viewModel.onShortcutClick(it) },
-        onDeleteClick = { viewModel.onDeleteClick(it) }
-    )
 
     override val statusBarVisible: Boolean = true
 
@@ -175,6 +172,10 @@ class HistoryFragment :
 
         viewModel.state.onEach {
             showState(it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+        viewModel.contextEvent.onEach {
+            showContextRelease(it.id, it)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         val importUri = getExtra<Uri>(ARG_IMPORT_URI)

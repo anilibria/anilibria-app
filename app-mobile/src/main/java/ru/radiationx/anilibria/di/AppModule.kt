@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.ErrorHandler
 import ru.radiationx.anilibria.ui.common.LinkRouter
 import ru.radiationx.anilibria.ui.common.Templates
+import ru.radiationx.anilibria.ui.common.release.ContextReleaseController
 import ru.radiationx.anilibria.ui.fragments.comments.VkCommentsCss
 import ru.radiationx.anilibria.utils.ShortcutHelper
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
@@ -57,6 +58,8 @@ class AppModule(application: Application) : QuillModule() {
         single<SystemMessenger>()
 
         single<ShortcutHelper>()
+
+        single<ContextReleaseController>()
 
         instance {
             MintPermissions.controller

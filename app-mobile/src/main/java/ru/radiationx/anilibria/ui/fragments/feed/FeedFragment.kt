@@ -16,7 +16,7 @@ import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.common.releaseItemDialog
+import ru.radiationx.anilibria.ui.common.release.showContextRelease
 import ru.radiationx.anilibria.ui.common.youtubeItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseSearchFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
@@ -59,7 +59,7 @@ class FeedFragment :
             this.sharedViewLocal = view
             viewModel.onItemClick(releaseItem)
         }, releaseLongClickListener = { releaseItem ->
-            releaseOnLongClick(releaseItem)
+            viewModel.onItemContextClick(releaseItem)
         }, youtubeClickListener = { youtubeItem ->
             viewModel.onYoutubeClick(youtubeItem)
         },
@@ -88,12 +88,6 @@ class FeedFragment :
     private val viewModel by viewModel<FeedViewModel>()
 
     private val searchViewModel by viewModel<FastSearchViewModel>()
-
-    private val releaseDialog by releaseItemDialog(
-        onCopyClick = { viewModel.onCopyClick(it) },
-        onShareClick = { viewModel.onShareClick(it) },
-        onShortcutClick = { viewModel.onShortcutClick(it) }
-    )
 
     private val youtubeDialog by youtubeItemDialog(
         onCopyClick = { viewModel.onCopyClick(it) },
@@ -166,6 +160,10 @@ class FeedFragment :
             adapter.bindState(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
+        viewModel.contextEvent.onEach {
+            showContextRelease(it.id, it)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         searchViewModel.state.onEach { state ->
             baseBinding.searchView.setLoading(state.loaderState.loading)
             searchAdapter.bindItems(state)
@@ -200,9 +198,5 @@ class FeedFragment :
     override fun scrollToTop() {
         binding.recyclerView.scrollToPosition(0)
         baseBinding.appbarLayout.setExpanded(true, true)
-    }
-
-    private fun releaseOnLongClick(item: ReleaseItemState) {
-        releaseDialog.show(item)
     }
 }

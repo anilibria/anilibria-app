@@ -9,7 +9,9 @@ import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -131,6 +133,9 @@ class FeedViewModel @Inject constructor(
     private val _state = MutableStateFlow(FeedScreenState())
     val state = _state.asStateFlow()
 
+    private val _contextEvent = MutableSharedFlow<Release>()
+    val contextEvent = _contextEvent.asSharedFlow()
+
     private val warningsController = AppWarningsController()
 
     private var randomJob: Job? = null
@@ -240,6 +245,13 @@ class FeedViewModel @Inject constructor(
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem))
     }
 
+    fun onItemContextClick(item: ReleaseItemState) {
+        val releaseItem = findRelease(item.id) ?: return
+        viewModelScope.launch {
+            _contextEvent.emit(releaseItem)
+        }
+    }
+
     fun onYoutubeClick(item: YoutubeItemState) {
         val youtubeItem = findYoutube(item.id) ?: return
         youtubeAnalytics.openVideo(
@@ -335,24 +347,6 @@ class FeedViewModel @Inject constructor(
     fun onShareClick(item: YoutubeItemState) {
         val releaseItem = findYoutube(item.id) ?: return
         systemUtils.share(releaseItem.link)
-    }
-
-    fun onCopyClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: findScheduleRelease(item.id) ?: return
-        systemUtils.copy(releaseItem.link)
-        releaseAnalytics.copyLink(AnalyticsConstants.screen_feed, item.id.id)
-    }
-
-    fun onShareClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: findScheduleRelease(item.id) ?: return
-        systemUtils.share(releaseItem.link)
-        releaseAnalytics.share(AnalyticsConstants.screen_feed, item.id.id)
-    }
-
-    fun onShortcutClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: findScheduleRelease(item.id) ?: return
-        shortcutHelper.addShortcut(releaseItem)
-        releaseAnalytics.shortcut(AnalyticsConstants.screen_feed, item.id.id)
     }
 
     private fun requestNotificationsPermission() {

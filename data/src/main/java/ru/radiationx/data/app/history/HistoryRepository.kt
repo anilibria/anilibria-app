@@ -23,6 +23,10 @@ class HistoryRepository @Inject constructor(
     private val historyRuntimeCache: HistoryRuntimeCache,
 ) {
 
+    fun observeIds(): Flow<Set<ReleaseId>> {
+        return historyStorage.observeIds().map { it.toSet() }.flowOn(Dispatchers.IO)
+    }
+
     suspend fun getReleases(count: Int = Int.MAX_VALUE): HistoryReleases =
         withContext(Dispatchers.IO) {
             val allIds = historyStorage.getIds()

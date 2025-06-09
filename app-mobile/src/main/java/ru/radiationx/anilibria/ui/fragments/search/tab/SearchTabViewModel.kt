@@ -3,7 +3,9 @@ package ru.radiationx.anilibria.ui.fragments.search.tab
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
@@ -68,6 +71,9 @@ class SearchTabViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(SearchTabState())
     val state = _state.asStateFlow()
+
+    private val _contextEvent = MutableSharedFlow<Release>()
+    val contextEvent = _contextEvent.asSharedFlow()
 
     init {
         initScreenState()
@@ -131,22 +137,11 @@ class SearchTabViewModel @Inject constructor(
         router.navigateTo(Screens.ReleaseDetails(releaseItem.id, releaseItem))
     }
 
-    fun onCopyClick(item: ReleaseItemState) {
+    fun onItemContextClick(item: ReleaseItemState) {
         val releaseItem = findRelease(item.id) ?: return
-        systemUtils.copy(releaseItem.link)
-        releaseAnalytics.copyLink(AnalyticsConstants.screen_catalog, releaseItem.id.id)
-    }
-
-    fun onShareClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
-        systemUtils.share(releaseItem.link)
-        releaseAnalytics.share(AnalyticsConstants.screen_catalog, releaseItem.id.id)
-    }
-
-    fun onShortcutClick(item: ReleaseItemState) {
-        val releaseItem = findRelease(item.id) ?: return
-        shortcutHelper.addShortcut(releaseItem)
-        releaseAnalytics.shortcut(AnalyticsConstants.screen_catalog, releaseItem.id.id)
+        viewModelScope.launch {
+            _contextEvent.emit(releaseItem)
+        }
     }
 
     private fun findRelease(id: ReleaseId): Release? {

@@ -23,7 +23,7 @@ class AppConfigImpl @Inject constructor(
         site = "https://anilibria.wtf/".toBaseUrl(),
         image = "https://api.anilibria.app/".toBaseUrl(),
         api = "https://api.anilibria.app/".toBaseUrl(),
-        status = "https://api.anilibria.app/api/v1/teams/roles".toAbsoluteUrl()
+        status = "https://api.anilibria.app/api/v1/app/status".toAbsoluteUrl()
     )
 
     private val activeAddressState = MutableStateFlow<AppConfigAddress?>(null)

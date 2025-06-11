@@ -109,6 +109,9 @@ object AnalyticsConstants {
     const val catalog_filter_use_time = "catalog_filter_use_time"
     const val catalog_filter_apply_click = "catalog_filter_apply_click"
 
+    /* Collections */
+    const val collections_open = "collections_open"
+
     /* Comments */
     const val comments_open = "comments_open"
     const val comments_loaded = "comments_loaded"
@@ -130,6 +133,7 @@ object AnalyticsConstants {
     const val other_history_click = "other_history_click"
     const val other_team_click = "other_team_click"
     const val other_donate_click = "other_donate_click"
+    const val other_youtube_click = "other_youtube_click"
     const val other_auth_device_click = "other_auth_device_click"
     const val other_settings_click = "other_settings_click"
     const val other_link_click = "other_link_click"

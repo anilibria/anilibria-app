@@ -9,7 +9,7 @@ import ru.radiationx.anilibria.model.SocialAuthItemState
 import ru.radiationx.anilibria.model.SuggestionItemState
 import ru.radiationx.anilibria.model.SuggestionLocalItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
-import ru.radiationx.anilibria.ui.activities.main.MainActivity
+import ru.radiationx.anilibria.ui.activities.main.MainTab
 import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.fragments.feed.FeedAppWarning
 import ru.radiationx.anilibria.ui.fragments.other.OtherMenuItemState
@@ -65,9 +65,9 @@ data class LoadMoreListItem(val id: Any, val needNotify: Boolean) : ListItem(id)
 data class LoadErrorListItem(val id: Any) : ListItem(id)
 data class CommentRouteListItem(val id: Any) : ListItem(id)
 data class BottomTabListItem(
-    val item: MainActivity.Tab,
+    val tab: MainTab,
     val selected: Boolean,
-) : ListItem(item.screen.screenKey)
+) : ListItem(tab.name)
 
 data class PlaceholderListItem(
     val icRes: Int,

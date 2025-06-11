@@ -26,6 +26,7 @@ import ru.radiationx.data.analytics.features.OtherAnalytics
 import ru.radiationx.data.analytics.features.PageAnalytics
 import ru.radiationx.data.analytics.features.SettingsAnalytics
 import ru.radiationx.data.analytics.features.TeamsAnalytics
+import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
 import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.auth.models.AuthState
 import ru.radiationx.data.api.profile.models.User
@@ -51,6 +52,7 @@ class OtherViewModel @Inject constructor(
     private val settingsAnalytics: SettingsAnalytics,
     private val pageAnalytics: PageAnalytics,
     private val donationDetailAnalytics: DonationDetailAnalytics,
+    private val youtubeVideosAnalytics: YoutubeVideosAnalytics,
     private val teamsAnalytics: TeamsAnalytics,
 ) : ViewModel() {
 
@@ -60,6 +62,9 @@ class OtherViewModel @Inject constructor(
         const val MENU_DONATE = 2
         const val MENU_SETTINGS = 3
         const val MENU_OTP_CODE = 4
+        const val MENU_YOUTUBE = 5
+
+        private val onlyAuthItems = setOf(MENU_OTP_CODE, MENU_YOUTUBE)
     }
 
     private val _state = MutableStateFlow(ProfileScreenState())
@@ -80,7 +85,8 @@ class OtherViewModel @Inject constructor(
     private val allMainMenu = listOf(
         OtherMenuItem(MENU_HISTORY, "История", R.drawable.ic_history),
         OtherMenuItem(MENU_TEAM, "Команда проекта", R.drawable.ic_account_multiple),
-        OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift)
+        OtherMenuItem(MENU_DONATE, "Поддержать", R.drawable.ic_gift),
+        OtherMenuItem(MENU_YOUTUBE, "Последние видео", R.drawable.ic_youtube)
     )
     private val allSystemMenu = listOf(
         OtherMenuItem(MENU_SETTINGS, "Настройки", R.drawable.ic_settings)
@@ -153,6 +159,12 @@ class OtherViewModel @Inject constructor(
                 router.navigateTo(Screens.DonationDetail())
             }
 
+            MENU_YOUTUBE -> {
+                otherAnalytics.youtubeClick()
+                youtubeVideosAnalytics.open(AnalyticsConstants.screen_other)
+                router.navigateTo(Screens.MainYouTube())
+            }
+
             MENU_SETTINGS -> {
                 otherAnalytics.settingsClick()
                 router.navigateTo(Screens.Settings())
@@ -207,27 +219,32 @@ class OtherViewModel @Inject constructor(
         linksMap.clear()
         linksMap.putAll(menu.associateBy { it.hashCode() })
 
-        val profileMenu = profileMenu.let { items ->
-            if (authState != AuthState.AUTH) {
-                items.filterNot { it.id == MENU_OTP_CODE }
-            } else {
-                items
-            }
-        }
-
         val profileState = user.toState()
-        val profileMenuState = profileMenu.map { it.toState() }
+        val profileMenuState = profileMenu
+            .filterByAuth(authState)
+            .map { it.toState() }
+
         val menuState = listOf(allMainMenu, allSystemMenu, linkMenu)
+            .map { it.filterByAuth(authState) }
             .filter { it.isNotEmpty() }
             .map { itemsGroup ->
                 itemsGroup.map { it.toState() }
             }
+
         _state.update {
             it.copy(
                 profile = profileState,
                 profileMenuGroups = profileMenuState,
                 menuGroups = menuState
             )
+        }
+    }
+
+    private fun List<OtherMenuItem>.filterByAuth(authState: AuthState): List<OtherMenuItem> {
+        return if (authState != AuthState.AUTH) {
+            filterNot { it.id in onlyAuthItems }
+        } else {
+            this
         }
     }
 }

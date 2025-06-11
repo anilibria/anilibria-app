@@ -10,8 +10,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -20,20 +18,14 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
 import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.github.terrakok.cicerone.Back
-import com.github.terrakok.cicerone.Command
 import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Replace
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -45,7 +37,6 @@ import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.DimensionsModule
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerExtra
@@ -61,12 +52,12 @@ import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
-import ru.radiationx.data.api.auth.models.AuthState
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getCompatColor
+import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.launchInResumed
@@ -76,7 +67,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     companion object {
         private const val TABS_STACK = "TABS_STACK"
-        private const val SELECTED_TAB = "SELECTED_TAB"
 
         fun newIntent(context: Context, url: String? = null) =
             Intent(context, MainActivity::class.java).apply {
@@ -98,18 +88,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private val binding by viewBinding<ActivityMainBinding>()
 
-    private val tabsAdapter by lazy { BottomTabsAdapter(tabsListener) }
-
-    private val allTabs = arrayOf(
-        Tab(R.string.fragment_title_releases, R.drawable.ic_newspaper, Screens.MainFeed()),
-        Tab(R.string.fragment_title_favorites, R.drawable.ic_star, Screens.Favorites()),
-        Tab(R.string.fragment_title_search, R.drawable.ic_toolbar_search, Screens.Catalog()),
-        Tab(R.string.fragment_title_youtube, R.drawable.ic_youtube, Screens.Collections()),
-        Tab(R.string.fragment_title_other, R.drawable.ic_other, Screens.MainOther())
-    )
-    private val tabs = mutableListOf<Tab>()
-
-    private val tabsStack = mutableListOf<String>()
 
     private val viewModel by viewModel<MainViewModel>()
     private val networkStatusViewModel by viewModel<NetworkStatusViewModel>()
@@ -118,12 +96,27 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         CheckerExtra(forceLoad = true)
     }
 
-    private var createdWithSavedState = false
-
     private val bannerAdController by lazy {
         BannerAdController(this, binding.bannerAdBview, binding.bannerAdContainer)
     }
 
+    private val tabsViewModel by viewModel<MainTabsViewModel>()
+
+    private val navigator by lazy {
+        AppNavigator(this, R.id.root_container)
+    }
+    private val tabsFragmentManager by lazy {
+        MainTabsFragmentManager(this, R.id.tabs_container)
+    }
+
+    private val tabsAdapter by lazy {
+        BottomTabsAdapter(
+            clickListener = { tabsViewModel.onTabClick(it) },
+            longClickListener = { tabsViewModel.onTabLongClick(it) }
+        )
+    }
+
+    private var createdWithSavedState = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
@@ -135,45 +128,50 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         }
         createdWithSavedState = savedInstanceState != null
 
-        viewModel.init(savedInstanceState?.getString(SELECTED_TAB))
-        savedInstanceState?.getStringArrayList(TABS_STACK)?.also {
-            if (it.isNotEmpty()) {
-                tabsStack.addAll(it)
-            }
-        }
-
         binding.initInsets(dimensionsProvider)
 
+        viewModel.init()
+        tabsViewModel.init(savedInstanceState?.getExtra(TABS_STACK))
+
         binding.tabsRecycler.apply {
-            layoutManager = GridLayoutManager(this.context, allTabs.size)
+            layoutManager = GridLayoutManager(this.context, 5)
             adapter = tabsAdapter
-            disableItemChangeAnimation()
+            itemAnimator = null
         }
 
-        updateTabs()
-        initContainers()
+        tabsViewModel.tabsState.onEach {
+            tabsFragmentManager.setState(it.tabs, it.selected)
+            (binding.tabsRecycler.layoutManager as GridLayoutManager).spanCount = it.tabs.size
+            tabsAdapter.bindItems(it)
+        }.launchInResumed(this)
+
+        tabsViewModel.scrollTopEvent.onEach {
+            val fragment = supportFragmentManager.findFragmentByTag(it.key)
+            if (fragment is TopScroller) {
+                fragment.scrollToTop()
+            }
+        }.launchInResumed(this)
+
+        tabsViewModel.tabResetEvent.onEach {
+            val fragment = supportFragmentManager.findFragmentByTag(it.key)
+            if (fragment is TabResetter) {
+                fragment.resetTab()
+            }
+        }.launchInResumed(this)
 
         checkerViewModel.state.mapNotNull { it.data }.onEach {
             showUpdateData(it)
-        }.launchIn(lifecycleScope)
-
-        viewModel.state.mapNotNull { it.selectedTab }.distinctUntilChanged().onEach {
-            highlightTab(it)
-        }.launchIn(lifecycleScope)
+        }.launchInResumed(this)
 
         viewModel.state.map { it.mainLogicCompleted }.filter { it }.distinctUntilChanged().onEach {
             onMainLogicCompleted()
-        }.launchIn(lifecycleScope)
+        }.launchInResumed(this)
 
         viewModel.state.mapNotNull { it.adsConfig }.distinctUntilChanged().onEach {
             bannerAdController.load(
                 it.mainBanner,
                 appThemeController.getTheme()
             )
-        }.launchIn(lifecycleScope)
-
-        viewModel.updateTabsAction.observe().onEach {
-            updateTabs()
         }.launchInResumed(this)
 
         networkStatusViewModel.state.onEach {
@@ -183,7 +181,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
                 statusView = binding.networkStatus,
                 state = it
             )
-        }.launchIn(lifecycleScope)
+        }.launchInResumed(this)
     }
 
     override fun onDestroy() {
@@ -191,7 +189,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         binding.tabsRecycler.adapter = null
         bannerAdController.destroy()
     }
-
 
     @SuppressLint("MissingPermission")
     private suspend fun showUpdateData(update: UpdateDataState) {
@@ -253,7 +250,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     override fun onResumeFragments() {
         super.onResumeFragments()
-        navigationHolder.setNavigator(navigatorNew)
+        navigationHolder.setNavigator(navigator)
     }
 
     private fun onMainLogicCompleted() {
@@ -270,21 +267,21 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putStringArrayList(TABS_STACK, ArrayList(tabsStack))
-        outState.putString(SELECTED_TAB, viewModel.state.value.selectedTab)
+        outState.putParcelableArrayList(TABS_STACK, ArrayList(tabsViewModel.tabsState.value.stack))
     }
 
     @Deprecated("Deprecated in Java")
     @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
-        val fragment = supportFragmentManager.findFragmentByTag(tabsStack.lastOrNull())
+        val fragment =
+            supportFragmentManager.findFragmentByTag(tabsViewModel.tabsState.value.selected.key)
         val check = fragment != null
                 && fragment is BackButtonListener
                 && (fragment as BackButtonListener).onBackPressed()
         if (check) {
             return
         } else {
-            viewModel.onBackPressed()
+            tabsViewModel.onBackPressed()
         }
     }
 
@@ -338,160 +335,25 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     private fun handleIntent(intent: Intent?) {
         intent?.data?.also { intentData ->
             val url = intentData.toString()
-            val handled = findTabIntentHandler(url, tabsStack.asReversed())
+            val handled =
+                findTabIntentHandler(url, tabsViewModel.tabsState.value.stack.asReversed())
             if (!handled) {
-                findTabIntentHandler(url, tabs.map { it.screen.screenKey })
+                findTabIntentHandler(url, tabsViewModel.tabsState.value.stack)
             }
         }
         intent?.data = null
     }
 
-    private fun findTabIntentHandler(url: String, tabs: List<String>): Boolean {
+    private fun findTabIntentHandler(url: String, tabs: List<MainTab>): Boolean {
         val fm = supportFragmentManager
         tabs.forEach { tab ->
-            fm.findFragmentByTag(tab)?.let {
+            fm.findFragmentByTag(tab.key)?.let {
                 if (it is IntentHandler && it.handle(url)) {
+                    tabsViewModel.onTabClick(tab)
                     return true
                 }
             }
         }
         return false
     }
-
-    private fun initContainers() {
-        val fm = supportFragmentManager
-        val ta = fm.beginTransaction()
-        allTabs.forEach { tab ->
-            var fragment: Fragment? = fm.findFragmentByTag(tab.screen.screenKey)
-            if (fragment == null) {
-                fragment = Screens.TabScreen(tab.screen).createFragment(fm.fragmentFactory)
-                ta.add(R.id.root_container, fragment, tab.screen.screenKey)
-                if (tabsStack.contains(tab.screen.screenKey)) {
-                    ta.attach(fragment)
-                } else {
-                    ta.detach(fragment)
-                }
-            }
-        }
-        ta.commitNow()
-    }
-
-    private fun updateBottomTabs() {
-        tabsAdapter.bindItems(tabs)
-        (binding.tabsRecycler.layoutManager as GridLayoutManager).spanCount = tabs.size
-    }
-
-    private fun updateTabs() {
-        tabs.clear()
-        if (viewModel.getAuthState() == AuthState.AUTH) {
-            tabs.addAll(allTabs)
-        } else {
-            tabs.addAll(allTabs.filter { it.screen !is Screens.Favorites })
-            removeFromStack(allTabs.first { it.screen is Screens.Favorites }.screen.screenKey)
-        }
-        updateBottomTabs()
-    }
-
-    private fun highlightTab(screenKey: String) {
-        tabsAdapter.setSelected(screenKey)
-        val screen = tabs.first { it.screen.screenKey == screenKey }.screen
-        viewModel.submitScreenAnalytics(screen)
-        router.replaceScreen(screen)
-    }
-
-    fun addInStack(screenKey: String) {
-        tabsStack.remove(screenKey)
-        tabsStack.add(screenKey)
-    }
-
-    fun removeFromStack(screenKey: String) {
-        tabsStack.remove(screenKey)
-    }
-
-    private val tabsListener = object : BottomTabsAdapter.Listener {
-        override fun onTabClick(tab: Tab) {
-            if (viewModel.state.value.selectedTab == tab.screen.screenKey) {
-                val fragment = supportFragmentManager.findFragmentByTag(tab.screen.screenKey)
-                if (fragment is TopScroller) {
-                    fragment.scrollToTop()
-                }
-            }
-            viewModel.selectTab(tab.screen.screenKey)
-        }
-
-        override fun onTabLongClick(tab: Tab) {
-            if (viewModel.state.value.selectedTab == tab.screen.screenKey) {
-                val fragment = supportFragmentManager.findFragmentByTag(tab.screen.screenKey)
-                if (fragment is TabResetter) {
-                    fragment.resetTab()
-                }
-            }
-        }
-    }
-
-    private val navigatorNew = object : AppNavigator(this, R.id.root_container) {
-
-        override fun applyCommand(command: Command) {
-            if (command is Back) {
-                if (tabsStack.size <= 1) {
-                    activityBack()
-                    return
-                }
-                val fm = supportFragmentManager
-                val ta = fm.beginTransaction()
-                val fragment = fm.findFragmentByTag(tabsStack.last())
-                fragment?.also { ta.detach(it) }
-                removeFromStack(tabsStack.last())
-                ta.commitNow()
-                if (tabsStack.isNotEmpty()) {
-                    viewModel.selectTab(tabsStack.last())
-                } else {
-                    activityBack()
-                }
-                return
-            } else if (command is Replace) {
-                val inTabs =
-                    allTabs.firstOrNull { it.screen.screenKey == command.screen.screenKey } != null
-                if (inTabs) {
-                    val fm = supportFragmentManager
-                    val ta = fm.beginTransaction()
-                    allTabs.forEach {
-                        val fragment = fm.findFragmentByTag(it.screen.screenKey)
-                        if (fragment != null) {
-                            if (it.screen.screenKey == command.screen.screenKey) {
-                                if (fragment.isDetached) {
-                                    ta.attach(fragment)
-                                }
-                                ta.show(fragment)
-                                addInStack(it.screen.screenKey)
-                            } else {
-                                ta.hide(fragment)
-                            }
-                        }
-                    }
-                    ta.commitNow()
-                    return
-                }
-            }
-
-            super.applyCommand(command)
-        }
-
-        private var exitToastShowed: Boolean = false
-        override fun activityBack() {
-            if (!exitToastShowed) {
-                screenMessenger.showMessage("Нажмите кнопку назад снова, чтобы выйти из программы")
-                exitToastShowed = true
-                Handler(Looper.getMainLooper()).postDelayed({ exitToastShowed = false }, 3L * 1000)
-            } else {
-                super.activityBack()
-            }
-        }
-    }
-
-    data class Tab(
-        val title: Int,
-        val icon: Int,
-        val screen: BaseFragmentScreen,
-    )
 }

@@ -52,9 +52,7 @@ class AuthActivity : BaseActivity(R.layout.activity_auth) {
     private val networkStatusViewModel by viewModel<NetworkStatusViewModel>()
 
     private val navigatorNew by lazy {
-        object : AppNavigator(this, R.id.root_container) {
-
-        }
+        AppNavigator(this, R.id.root_container)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

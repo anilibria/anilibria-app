@@ -3,8 +3,8 @@
     android:id="@+id/tabIcon"
     android:layout_width="match_parent"
     android:layout_height="48dp"
+    android:background="?actionBarItemBackground"
     android:clickable="true"
     android:contentDescription="@null"
     android:focusable="true"
-    android:foreground="?selectableItemBackgroundBorderless"
     android:scaleType="center" />

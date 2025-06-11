@@ -45,6 +45,10 @@ class OtherAnalytics @Inject constructor(
         sender.send(AnalyticsConstants.other_donate_click)
     }
 
+    fun youtubeClick() {
+        sender.send(AnalyticsConstants.other_youtube_click)
+    }
+
     fun authDeviceClick() {
         sender.send(AnalyticsConstants.other_auth_device_click)
     }

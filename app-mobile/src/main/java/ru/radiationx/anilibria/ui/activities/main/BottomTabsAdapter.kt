@@ -8,33 +8,19 @@ import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
  * Created by radiationx on 25.02.18.
  */
 class BottomTabsAdapter(
-    private val listener: BottomTabDelegate.Listener
+    private val clickListener: (MainTab) -> Unit,
+    private val longClickListener: (MainTab) -> Unit
 ) : ListItemAdapter() {
-
-    private var currentScreenKey: String? = null
 
     init {
         delegatesManager.run {
-            addDelegate(BottomTabDelegate(listener))
+            addDelegate(BottomTabDelegate(clickListener, longClickListener))
         }
     }
 
-    fun bindItems(tabs: List<MainActivity.Tab>) {
-        items = tabs.map {
-            BottomTabListItem(it, it.screen.screenKey == currentScreenKey)
+    fun bindItems(tabsState: MainTabsState) {
+        items = tabsState.tabs.map {
+            BottomTabListItem(it, it == tabsState.selected)
         }
     }
-
-    fun setSelected(screenKey: String) {
-        currentScreenKey = screenKey
-        items = items.map {
-            if (it is BottomTabListItem) {
-                it.copy(selected = it.item.screen.screenKey == screenKey)
-            } else {
-                it
-            }
-        }
-    }
-
-    interface Listener : BottomTabDelegate.Listener
 }

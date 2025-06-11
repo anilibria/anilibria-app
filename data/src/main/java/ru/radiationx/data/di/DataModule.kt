@@ -28,6 +28,7 @@ import ru.radiationx.data.analytics.features.AuthSocialAnalytics
 import ru.radiationx.data.analytics.features.AuthVkAnalytics
 import ru.radiationx.data.analytics.features.CatalogAnalytics
 import ru.radiationx.data.analytics.features.CatalogFilterAnalytics
+import ru.radiationx.data.analytics.features.CollectionsAnalytics
 import ru.radiationx.data.analytics.features.CommentsAnalytics
 import ru.radiationx.data.analytics.features.DonationCardAnalytics
 import ru.radiationx.data.analytics.features.DonationDetailAnalytics
@@ -258,6 +259,7 @@ class DataModule(context: Context) : QuillModule() {
         single<AuthVkAnalytics>()
         single<CatalogAnalytics>()
         single<CatalogFilterAnalytics>()
+        single<CollectionsAnalytics>()
         single<CommentsAnalytics>()
         single<FastSearchAnalytics>()
         single<FavoritesAnalytics>()

@@ -9,6 +9,106 @@
     android:orientation="vertical"
     android:paddingBottom="8dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/full_collection_btn"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="?bg_fav_btn"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/full_collection_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@null"
+                app:tint="@color/icon_fav"
+                tools:src="@drawable/ic_collections" />
+
+            <ProgressBar
+                android:id="@+id/full_collection_progress"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:indeterminateTint="@color/icon_fav"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/full_collection_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/medium"
+                android:gravity="center_vertical"
+                android:textAppearance="?textAppearanceBody2"
+                android:textColor="@color/text_fav"
+                tools:text="Добавить в коллекцию" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@null"
+                app:srcCompat="@drawable/ic_chevron_down"
+                app:tint="@color/icon_fav" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/full_fav_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="?bg_fav_btn"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="16dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/full_fav_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@null"
+                app:srcCompat="@drawable/ic_fav_border"
+                app:tint="@color/icon_fav" />
+
+            <ProgressBar
+                android:id="@+id/full_fav_progress"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:indeterminateTint="@color/icon_fav"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/full_fav_count"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/medium"
+                android:gravity="center_vertical"
+                android:textAppearance="?textAppearanceBody2"
+                android:textColor="@color/text_fav"
+                tools:text="10000" />
+
+        </LinearLayout>
+    </LinearLayout>
+
     <RelativeLayout
         android:id="@+id/full_item"
         android:layout_width="match_parent"
@@ -32,8 +132,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
-            android:layout_marginEnd="8dp"
-            android:layout_toStartOf="@+id/full_fav_btn"
+            android:layout_marginEnd="16dp"
             android:textColor="?textDefault"
             android:textIsSelectable="true"
             android:textSize="20sp"
@@ -80,52 +179,6 @@
 
         <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:id="@+id/full_fav_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="9dp"
-            android:layout_marginEnd="16dp"
-            android:background="?bg_fav_btn"
-            android:orientation="horizontal"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
-
-            <TextView
-                android:id="@+id/full_fav_count"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="@font/medium"
-                android:gravity="center_vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:textColor="@color/text_fav"
-                android:textSize="13sp"
-                tools:text="100" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/full_fav_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@null"
-                android:padding="3dp"
-                app:srcCompat="@drawable/ic_fav_border"
-                app:tint="@color/icon_fav" />
-
-            <ProgressBar
-                android:id="@+id/full_fav_progress"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:indeterminateTint="@color/icon_fav"
-                android:padding="3dp"
-                android:visibility="gone" />
-
-        </LinearLayout>
     </RelativeLayout>
 
     <View

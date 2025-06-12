@@ -11,6 +11,9 @@ import ru.radiationx.anilibria.databinding.ItemReleaseHeadNewBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.ui.common.collections.toIcRes
+import ru.radiationx.anilibria.ui.common.collections.toTitle
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseCollectionState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseDetailModifiersState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFavoriteState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseInfoState
@@ -49,6 +52,9 @@ class ReleaseHeadDelegate(
 
             binding.fullFavBtn.setOnClickListener {
                 itemListener.onClickFav()
+            }
+            binding.fullCollectionBtn.setOnClickListener {
+                itemListener.onCollectionClick()
             }
             binding.fullDaysBar.clickListener = {
                 itemListener.onScheduleClick(it)
@@ -98,10 +104,23 @@ class ReleaseHeadDelegate(
             binding.fullAnnounce.isVisible = state.announce != null
             binding.fullAnnounce.text = state.announce
 
-            bindFavorite(
-                state.favorite,
-                modifiers.favoriteRefreshing || modifiers.favoriteLoading || modifiers.detailLoading
+            bindCollection(
+                state = state.collection,
+                loading = modifiers.collectionRefreshing || modifiers.collectionLoading || modifiers.detailLoading
             )
+            bindFavorite(
+                state = state.favorite,
+                favoritesRefresh = modifiers.favoriteRefreshing || modifiers.favoriteLoading || modifiers.detailLoading
+            )
+        }
+
+        private fun bindCollection(state: ReleaseCollectionState, loading: Boolean) {
+            binding.fullCollectionIcon.isVisible = !loading
+            binding.fullCollectionProgress.isVisible = loading
+            binding.fullCollectionIcon.setCompatDrawable(
+                state.type?.toIcRes() ?: R.drawable.ic_collections
+            )
+            binding.fullCollectionName.text = state.type?.toTitle() ?: "Добавить в коллекцию"
         }
 
         private fun bindFavorite(state: ReleaseFavoriteState, favoritesRefresh: Boolean) {
@@ -140,6 +159,8 @@ class ReleaseHeadDelegate(
         fun onClickGenre(tag: String, value: String)
 
         fun onClickFav()
+
+        fun onCollectionClick()
 
         fun onScheduleClick(day: PublishDay)
 

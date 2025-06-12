@@ -15,6 +15,8 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.EpisodeControlPlace
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
+import ru.radiationx.anilibria.ui.common.collections.toIcRes
+import ru.radiationx.anilibria.ui.common.collections.toTitle
 import ru.radiationx.anilibria.ui.fragments.BaseDimensionsFragment
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.data.api.releases.models.Episode
@@ -27,7 +29,6 @@ import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared_app.common.SystemUtils
 import taiwa.TaiwaAction
-import taiwa.alert.alert
 import taiwa.bottomsheet.bottomSheetTaiwa
 
 class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopScroller {
@@ -78,6 +79,8 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
 
     private val torrentTaiwa by bottomSheetTaiwa()
 
+    private val collectionTaiwa by bottomSheetTaiwa()
+
     private val favoriteTaiwa by bottomSheetTaiwa {
         body {
             message {
@@ -95,8 +98,6 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
             }
         }
     }
-
-    private val fileDonateAlert by alert()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -121,6 +122,10 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
 
         viewModel.showUnauthAction.observe().onEach {
             showFavoriteDialog()
+        }.launchInResumed(viewLifecycleOwner)
+
+        viewModel.showCollectionAction.observe().onEach {
+            showCollectionDialog(it)
         }.launchInResumed(viewLifecycleOwner)
 
         viewModel.showEpisodesMenuAction.observe().onEach {
@@ -204,6 +209,39 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
         torrentTaiwa.show()
     }
 
+    private fun showCollectionDialog(action: ActionCollection) {
+        collectionTaiwa.setContent {
+            body {
+                action.collections.forEach { type ->
+                    radioItem(type) {
+                        title(type.toTitle())
+                        val icRes = type.toIcRes()
+                        icon(icRes)
+                        select(type == action.selected)
+                        action(TaiwaAction.Close)
+                        onClick {
+                            viewModel.onCollectionSelected(type)
+                        }
+                    }
+                }
+            }
+            if (action.selected != null) {
+                footer {
+                    item("collection_delete") {
+                        title("Удалить из коллекций")
+                        action(TaiwaAction.Close)
+                        icon(R.drawable.ic_baseline_delete_outline_24)
+                        tint(androidx.appcompat.R.attr.colorError)
+                        onClick {
+                            viewModel.onCollectionSelected(null)
+                        }
+                    }
+                }
+            }
+        }
+        collectionTaiwa.show()
+    }
+
     private fun playEpisode(id: EpisodeId) {
         viewModel.submitPlayerOpenAnalytics(id)
         val intent = Screens.Player(id).createIntent(requireContext())
@@ -236,6 +274,10 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
 
         override fun onClickFav() {
             viewModel.onClickFav()
+        }
+
+        override fun onCollectionClick() {
+            viewModel.onClickCollection()
         }
 
         override fun onScheduleClick(day: PublishDay) {

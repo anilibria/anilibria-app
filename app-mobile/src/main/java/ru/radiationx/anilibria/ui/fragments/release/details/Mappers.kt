@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
+import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.api.releases.models.Episode
 import ru.radiationx.data.api.releases.models.ExternalEpisode
 import ru.radiationx.data.api.releases.models.ExternalPlaylist
@@ -25,10 +26,11 @@ import java.util.Date
 fun Release.toState(
     loadings: Map<TorrentId, MutableStateFlow<Int>>,
     accesses: Map<EpisodeId, EpisodeAccess>,
-    isInFavorites: Boolean
+    isInFavorites: Boolean,
+    collectionType: CollectionType?
 ): ReleaseDetailState = ReleaseDetailState(
     id = id,
-    info = toInfoState(isInFavorites),
+    info = toInfoState(isInFavorites, collectionType),
     episodesControl = toEpisodeControlState(accesses),
     episodesTabs = toTabsState(accesses),
     torrents = torrents.map { it.toState(loadings) },
@@ -36,7 +38,7 @@ fun Release.toState(
     sponsor = sponsor
 )
 
-fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {
+fun Release.toInfoState(isInFavorites: Boolean, collectionType: CollectionType?): ReleaseInfoState {
     val types = listOfNotNull(
         type,
         averageEpisodeDuration?.let { "~$it мин" },
@@ -69,7 +71,8 @@ fun Release.toInfoState(isInFavorites: Boolean): ReleaseInfoState {
         publishDay = publishDay,
         needShowDay = isInProduction,
         announce = announce,
-        favorite = ReleaseFavoriteState(counters.favorites.toString(), isInFavorites)
+        favorite = ReleaseFavoriteState(counters.favorites.toString(), isInFavorites),
+        collection = ReleaseCollectionState(collectionType)
     )
 }
 

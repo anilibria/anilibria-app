@@ -2,6 +2,7 @@ package ru.radiationx.data.api.collections
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import ru.radiationx.data.api.collections.models.CollectionReleaseId
 import ru.radiationx.data.api.collections.models.CollectionType
@@ -19,6 +20,12 @@ class CollectionsInteractor @Inject constructor(
 
     fun observeIds(): Flow<Set<CollectionReleaseId>> = releaseIds
 
+    fun observeById(releaseId: ReleaseId): Flow<CollectionType?> {
+        return observeIds().map { ids ->
+            ids.find { it.id == releaseId }?.type
+        }
+    }
+
     fun observeIdsGrouped(): Flow<Map<CollectionType, List<ReleaseId>>> {
         return releaseIds.map { collectionIds ->
             collectionIds.groupBy(
@@ -28,11 +35,28 @@ class CollectionsInteractor @Inject constructor(
         }
     }
 
+    fun observeAllTypes(): Flow<Set<CollectionType>> {
+        return observeIdsGrouped()
+            .map { it.keys.filterIsInstance<CollectionType.Unknown>() }
+            .distinctUntilChanged()
+            .map { unknownTypes ->
+                CollectionType.knownTypes + unknownTypes
+            }
+    }
+
     suspend fun loadReleaseIds(): Set<CollectionReleaseId> {
         return sharedRequest.request(Unit) {
             val ids = collectionsRepository.getReleaseIds()
             releaseIds.value = ids
             ids
+        }
+    }
+
+    suspend fun toggle(releaseId: ReleaseId, type: CollectionType?) {
+        if (type == null) {
+            deleteRelease(releaseId)
+        } else {
+            addRelease(releaseId, type)
         }
     }
 

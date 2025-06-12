@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.update
 import ru.radiationx.anilibria.ui.fragments.search.controller.SearchController
 import ru.radiationx.data.api.collections.CollectionsInteractor
 import ru.radiationx.data.api.collections.models.CollectionType
-import ru.radiationx.data.api.shared.filter.FilterForm
 import ru.radiationx.data.api.shared.filter.FilterType
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
@@ -85,12 +84,10 @@ class SearchViewModel @Inject constructor(
         }
 
         collectionsInteractor
-            .observeIdsGrouped()
-            .map { it.keys.filterIsInstance<CollectionType.Unknown>() }
-            .distinctUntilChanged()
-            .onEach { unknownTypes ->
+            .observeAllTypes()
+            .onEach { types ->
                 _collections.update {
-                    it?.copy(types = CollectionType.knownTypes + unknownTypes)
+                    it?.copy(types = types)
                 }
             }
             .launchIn(viewModelScope)

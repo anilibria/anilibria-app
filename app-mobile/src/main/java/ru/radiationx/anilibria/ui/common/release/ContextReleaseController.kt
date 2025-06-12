@@ -35,11 +35,7 @@ class ContextReleaseController @Inject constructor(
     fun toggleCollection(id: ReleaseId, type: CollectionType?) {
         scope.launch {
             coRunCatching {
-                if (type != null) {
-                    collectionsInteractor.addRelease(id, type)
-                } else {
-                    collectionsInteractor.deleteRelease(id)
-                }
+                collectionsInteractor.toggle(id, type)
             }.onSuccess {
                 systemMessenger.showMessage("Коллекции обновлены")
             }.onFailure {

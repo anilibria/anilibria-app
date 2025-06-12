@@ -8,6 +8,8 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
+import ru.radiationx.anilibria.ui.common.collections.toIcRes
+import ru.radiationx.anilibria.ui.common.collections.toTitle
 import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.common.ReleaseId
@@ -134,11 +136,7 @@ class ContextReleaseDialogFragment : NestedTaiwaDialogFragment(DialogType.Bottom
                         radioItem(type) {
                             title(type.toTitle())
                             val icRes = type.toIcRes()
-                            if (icRes != null) {
-                                icon(icRes)
-                            } else {
-                                emptyIcon()
-                            }
+                            icon(icRes)
                             select(type == state.collectionType)
                             action(TaiwaAction.Close)
                             onClick {
@@ -161,29 +159,6 @@ class ContextReleaseDialogFragment : NestedTaiwaDialogFragment(DialogType.Bottom
                     }
                 }
             }
-        }
-    }
-
-    private fun CollectionType.toTitle(): String {
-        return when (this) {
-            CollectionType.Planned -> "Запланировано"
-            CollectionType.Watching -> "Смотрю"
-            CollectionType.Watched -> "Просмотрено"
-            CollectionType.Postponed -> "Отложено"
-            CollectionType.Abandoned -> "Брошено"
-            is CollectionType.Unknown -> raw
-        }
-    }
-
-    @DrawableRes
-    private fun CollectionType.toIcRes(): Int? {
-        return when (this) {
-            CollectionType.Planned -> R.drawable.ic_collection_planned
-            CollectionType.Watching -> R.drawable.ic_collection_watching
-            CollectionType.Watched -> R.drawable.ic_collection_watched
-            CollectionType.Postponed -> R.drawable.ic_collection_postponed
-            CollectionType.Abandoned -> R.drawable.ic_collection_abandoned
-            is CollectionType.Unknown -> null
         }
     }
 }

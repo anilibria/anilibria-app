@@ -3,6 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 import com.yandex.mobile.ads.nativeads.NativeAd
 import kotlinx.coroutines.flow.MutableStateFlow
 import ru.radiationx.anilibria.model.DonationCardItemState
+import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.api.releases.models.ReleaseSponsor
 import ru.radiationx.data.api.schedule.models.PublishDay
 import ru.radiationx.data.common.EpisodeId
@@ -29,6 +30,8 @@ data class ReleaseDetailModifiersState(
     val selectedEpisodesTabTag: String? = null,
     val favoriteRefreshing: Boolean = false,
     val favoriteLoading: Boolean = false,
+    val collectionRefreshing: Boolean = false,
+    val collectionLoading: Boolean = false,
     val episodesReversed: Boolean = false,
     val descriptionExpanded: Boolean = false,
     val detailLoading: Boolean = true,
@@ -54,6 +57,7 @@ data class ReleaseInfoState(
     val needShowDay: Boolean,
     val announce: String?,
     val favorite: ReleaseFavoriteState,
+    val collection: ReleaseCollectionState
 ) {
     companion object {
         const val TAG_GENRE = "genre"
@@ -64,6 +68,10 @@ data class ReleaseInfoState(
 data class ReleaseFavoriteState(
     val rating: String,
     val isAdded: Boolean,
+)
+
+data class ReleaseCollectionState(
+    val type: CollectionType?
 )
 
 data class ReleaseEpisodeItemState(

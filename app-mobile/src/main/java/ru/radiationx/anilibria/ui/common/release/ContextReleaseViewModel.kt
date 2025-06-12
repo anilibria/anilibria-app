@@ -46,21 +46,18 @@ class ReleaseItemViewModel @Inject constructor(
         combine(
             authRepository.observeAuthState(),
             favoritesInteractor.observeIds(),
-            collectionsInteractor.observeIds(),
+            collectionsInteractor.observeById(argExtra.id),
+            collectionsInteractor.observeAllTypes(),
             historyRepository.observeIds()
-        ) { authState, favoriteIds, collectionIds, historyIds ->
+        ) { authState, favoriteIds, collectionType, collectionTypes, historyIds ->
             val isInFavorite = favoriteIds.contains(argExtra.id)
-            val collectionType = collectionIds.find { it.id == argExtra.id }?.type
-            val unknownTypes =
-                collectionIds.filter { it.type is CollectionType.Unknown }.map { it.type }.toSet()
-            val collections = CollectionType.knownTypes + unknownTypes
             val isInHistory = historyIds.contains(argExtra.id)
             _state.update {
                 it.copy(
                     hasAuth = authState == AuthState.AUTH,
                     isInFavorite = isInFavorite,
                     collectionType = collectionType,
-                    collections = collections,
+                    collections = collectionTypes,
                     isInHistory = isInHistory
                 )
             }

@@ -37,6 +37,8 @@ import ru.radiationx.data.analytics.features.mapper.toAnalyticsQuality
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.auth.models.AuthState
+import ru.radiationx.data.api.collections.CollectionsInteractor
+import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.api.favorites.FavoriteRepository
 import ru.radiationx.data.api.favorites.FavoritesInteractor
 import ru.radiationx.data.api.releases.ReleaseInteractor
@@ -69,6 +71,7 @@ class ReleaseInfoViewModel @Inject constructor(
     private val argExtra: ReleaseExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val favoritesInteractor: FavoritesInteractor,
+    private val collectionsInteractor: CollectionsInteractor,
     private val authRepository: AuthRepository,
     private val favoriteRepository: FavoriteRepository,
     donationRepository: DonationRepository,
@@ -106,6 +109,7 @@ class ReleaseInfoViewModel @Inject constructor(
     val playWebAction = EventFlow<ActionPlayWeb>()
     val playEpisodeAction = EventFlow<ActionPlayEpisode>()
     val showUnauthAction = EventFlow<Unit>()
+    val showCollectionAction = EventFlow<ActionCollection>()
     val showEpisodesMenuAction = EventFlow<Unit>()
     val showContextEpisodeAction = EventFlow<Episode>()
     val openDownloadedFileAction = EventFlow<LocalFile>()
@@ -156,10 +160,10 @@ class ReleaseInfoViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         argExtra.release?.also {
-            updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet())
+            updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet(), null)
         }
         releaseInteractor.getItem(argExtra.id)?.also {
-            updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet())
+            updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet(), null)
         }
         observeRelease()
 
@@ -192,6 +196,16 @@ class ReleaseInfoViewModel @Inject constructor(
             }
             updateModifiers { it.copy(favoriteLoading = false) }
         }
+        viewModelScope.launch {
+            authRepository.observeAuthState().filter { it == AuthState.AUTH }.first()
+            updateModifiers { it.copy(collectionLoading = true) }
+            coRunCatching {
+                collectionsInteractor.loadReleaseIds()
+            }.onFailure {
+                Timber.e(it, "Error while favorites release ids")
+            }
+            updateModifiers { it.copy(collectionLoading = false) }
+        }
     }
 
     private fun observeRelease() {
@@ -206,9 +220,10 @@ class ReleaseInfoViewModel @Inject constructor(
                     releaseInteractor.observeAccesses(release.id).map { accesses ->
                         accesses.associateBy { it.id }
                     },
-                    favoritesInteractor.observeIds()
-                ) { loadings, accesses, favoriteIds ->
-                    updateLocalRelease(release, loadings, accesses, favoriteIds)
+                    favoritesInteractor.observeIds(),
+                    collectionsInteractor.observeById(release.id)
+                ) { loadings, accesses, favoriteIds, collectionType ->
+                    updateLocalRelease(release, loadings, accesses, favoriteIds, collectionType)
                 }
             }
             .onEach {
@@ -223,11 +238,19 @@ class ReleaseInfoViewModel @Inject constructor(
         release: Release,
         loadings: Map<TorrentId, MutableStateFlow<Int>>,
         accesses: Map<EpisodeId, EpisodeAccess>,
-        favoriteIds: Set<ReleaseId>
+        favoriteIds: Set<ReleaseId>,
+        collectionType: CollectionType?
     ) {
         currentData = release
         _state.update {
-            it.copy(data = release.toState(loadings, accesses, favoriteIds.contains(release.id)))
+            it.copy(
+                data = release.toState(
+                    loadings = loadings,
+                    accesses = accesses,
+                    isInFavorites = favoriteIds.contains(release.id),
+                    collectionType = collectionType
+                )
+            )
         }
     }
 
@@ -474,16 +497,42 @@ class ReleaseInfoViewModel @Inject constructor(
                 it.copy(favoriteRefreshing = true)
             }
             coRunCatching {
-                if (isAdded) {
-                    favoritesInteractor.deleteRelease(releaseId)
-                } else {
-                    favoritesInteractor.addRelease(releaseId)
-                }
+                favoritesInteractor.toggle(releaseId)
             }.onFailure {
                 errorHandler.handle(it)
             }
             updateModifiers {
                 it.copy(favoriteRefreshing = false)
+            }
+        }
+    }
+
+    fun onClickCollection() {
+        val releaseId = currentData?.id ?: return
+        viewModelScope.launch {
+            if (authRepository.getAuthState() != AuthState.AUTH) {
+                showUnauthAction.set(Unit)
+                return@launch
+            }
+            val collections = collectionsInteractor.observeAllTypes().first()
+            val selected = collectionsInteractor.observeById(releaseId).first()
+            showCollectionAction.set(ActionCollection(collections, selected))
+        }
+    }
+
+    fun onCollectionSelected(type: CollectionType?) {
+        val releaseId = currentData?.id ?: return
+        viewModelScope.launch {
+            updateModifiers {
+                it.copy(collectionRefreshing = true)
+            }
+            coRunCatching {
+                collectionsInteractor.toggle(releaseId, type)
+            }.onFailure {
+                errorHandler.handle(it)
+            }
+            updateModifiers {
+                it.copy(collectionRefreshing = false)
             }
         }
     }
@@ -576,4 +625,9 @@ data class ActionPlayWeb(
 
 data class ActionPlayEpisode(
     val id: EpisodeId,
+)
+
+data class ActionCollection(
+    val collections: Set<CollectionType>,
+    val selected: CollectionType?
 )

@@ -173,13 +173,17 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
                 currentFragment: Fragment?,
                 nextFragment: Fragment,
             ) {
+                if (currentFragment != null) {
+                    currentFragment.exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+                    currentFragment.reenterTransition =
+                        MaterialSharedAxis(MaterialSharedAxis.Z, false)
+                    nextFragment.enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+                    nextFragment.returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+                }
+
                 if (currentFragment !is SharedProvider || nextFragment !is SharedReceiver) {
                     return
                 }
-                currentFragment.exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
-                currentFragment.reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-                nextFragment.enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
-                nextFragment.returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
 
                 currentFragment.getSharedView()?.also {
                     setupSharedTransition(nextFragment, fragmentTransaction, it)

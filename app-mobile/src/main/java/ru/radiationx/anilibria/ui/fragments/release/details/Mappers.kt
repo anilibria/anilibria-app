@@ -6,6 +6,7 @@ import ru.radiationx.anilibria.model.asDataColorRes
 import ru.radiationx.anilibria.model.asDataIconRes
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.api.collections.models.CollectionType
+import ru.radiationx.data.api.franchises.models.FranchiseFull
 import ru.radiationx.data.api.releases.models.Episode
 import ru.radiationx.data.api.releases.models.ExternalEpisode
 import ru.radiationx.data.api.releases.models.ExternalPlaylist
@@ -15,6 +16,7 @@ import ru.radiationx.data.api.releases.models.RutubeEpisode
 import ru.radiationx.data.api.torrents.models.TorrentItem
 import ru.radiationx.data.app.episodeaccess.models.EpisodeAccess
 import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.common.TorrentId
 import ru.radiationx.shared.ktx.asTimeSecString
 import ru.radiationx.shared.ktx.capitalizeDefault
@@ -27,13 +29,15 @@ fun Release.toState(
     loadings: Map<TorrentId, MutableStateFlow<Int>>,
     accesses: Map<EpisodeId, EpisodeAccess>,
     isInFavorites: Boolean,
-    collectionType: CollectionType?
+    collectionType: CollectionType?,
+    franchises: List<FranchiseFull>
 ): ReleaseDetailState = ReleaseDetailState(
     id = id,
     info = toInfoState(isInFavorites, collectionType),
     episodesControl = toEpisodeControlState(accesses),
     episodesTabs = toTabsState(accesses),
     torrents = torrents.map { it.toState(loadings) },
+    franchises = franchises.map { it.toFranchiseState(id) },
     blockedInfo = toBlockedInfoState(),
     sponsor = sponsor
 )
@@ -128,6 +132,40 @@ fun Release.toEpisodeControlState(
     } else {
         null
     }
+}
+
+fun FranchiseFull.toFranchiseState(rootId: ReleaseId): ReleaseFranchiseState {
+    val subtitle = listOfNotNull(
+        "${info.firstYear} - ${info.lastYear}".takeIf { info.firstYear != info.lastYear },
+        "Сезонов: ${info.totalReleases}",
+        "Серий: ${info.totalEpisodes}",
+        info.totalDuration
+    ).joinToString(" • ")
+    val header = ReleaseFranchiseHeaderState(
+        id = info.id,
+        title = info.name,
+        subtitle = subtitle
+    )
+    return ReleaseFranchiseState(
+        header = header,
+        releases = releases.map { it.toFranchiseState(rootId) }
+    )
+}
+
+fun Release.toFranchiseState(rootId: ReleaseId): ReleaseFranchiseItemState {
+    val subtitle = listOfNotNull(
+        year.toString(),
+        season,
+        type,
+        episodesTotal?.let { "Серий: $it" }
+    ).joinToString(" • ")
+    return ReleaseFranchiseItemState(
+        id = id,
+        poster = poster,
+        title = names.main,
+        subtitle = subtitle,
+        selected = id == rootId
+    )
 }
 
 fun TorrentItem.toState(

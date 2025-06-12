@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -39,8 +40,9 @@ import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.auth.models.AuthState
 import ru.radiationx.data.api.collections.CollectionsInteractor
 import ru.radiationx.data.api.collections.models.CollectionType
-import ru.radiationx.data.api.favorites.FavoriteRepository
 import ru.radiationx.data.api.favorites.FavoritesInteractor
+import ru.radiationx.data.api.franchises.FranchisesRepository
+import ru.radiationx.data.api.franchises.models.FranchiseFull
 import ru.radiationx.data.api.releases.ReleaseInteractor
 import ru.radiationx.data.api.releases.models.Episode
 import ru.radiationx.data.api.releases.models.ExternalEpisode
@@ -64,6 +66,7 @@ import ru.radiationx.data.common.TorrentId
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
+import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -73,7 +76,7 @@ class ReleaseInfoViewModel @Inject constructor(
     private val favoritesInteractor: FavoritesInteractor,
     private val collectionsInteractor: CollectionsInteractor,
     private val authRepository: AuthRepository,
-    private val favoriteRepository: FavoriteRepository,
+    private val franchisesRepository: FranchisesRepository,
     donationRepository: DonationRepository,
     private val router: Router,
     private val linkHandler: ILinkHandler,
@@ -105,6 +108,10 @@ class ReleaseInfoViewModel @Inject constructor(
     private val loadingJobs = mutableMapOf<TorrentId, Job>()
     private val _currentLoadings =
         MutableStateFlow<Map<TorrentId, MutableStateFlow<Int>>>(emptyMap())
+
+    private val franchiseLoader = SingleLoader(viewModelScope) {
+        franchisesRepository.getReleaseFranchises(argExtra.id)
+    }
 
     val playWebAction = EventFlow<ActionPlayWeb>()
     val playEpisodeAction = EventFlow<ActionPlayEpisode>()
@@ -160,10 +167,16 @@ class ReleaseInfoViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         argExtra.release?.also {
-            updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet(), null)
+            updateLocalRelease(
+                it, _currentLoadings.value, emptyMap(), emptySet(), null,
+                emptyList()
+            )
         }
         releaseInteractor.getItem(argExtra.id)?.also {
-            updateLocalRelease(it, _currentLoadings.value, emptyMap(), emptySet(), null)
+            updateLocalRelease(
+                it, _currentLoadings.value, emptyMap(), emptySet(), null,
+                emptyList()
+            )
         }
         observeRelease()
 
@@ -206,6 +219,7 @@ class ReleaseInfoViewModel @Inject constructor(
             }
             updateModifiers { it.copy(collectionLoading = false) }
         }
+        franchiseLoader.refresh()
     }
 
     private fun observeRelease() {
@@ -221,9 +235,17 @@ class ReleaseInfoViewModel @Inject constructor(
                         accesses.associateBy { it.id }
                     },
                     favoritesInteractor.observeIds(),
-                    collectionsInteractor.observeById(release.id)
-                ) { loadings, accesses, favoriteIds, collectionType ->
-                    updateLocalRelease(release, loadings, accesses, favoriteIds, collectionType)
+                    collectionsInteractor.observeById(release.id),
+                    franchiseLoader.observeState().mapNotNull { it.data }.distinctUntilChanged()
+                ) { loadings, accesses, favoriteIds, collectionType, franchises ->
+                    updateLocalRelease(
+                        release,
+                        loadings,
+                        accesses,
+                        favoriteIds,
+                        collectionType,
+                        franchises
+                    )
                 }
             }
             .onEach {
@@ -239,7 +261,8 @@ class ReleaseInfoViewModel @Inject constructor(
         loadings: Map<TorrentId, MutableStateFlow<Int>>,
         accesses: Map<EpisodeId, EpisodeAccess>,
         favoriteIds: Set<ReleaseId>,
-        collectionType: CollectionType?
+        collectionType: CollectionType?,
+        franchiseReleases: List<FranchiseFull>
     ) {
         currentData = release
         _state.update {
@@ -248,7 +271,8 @@ class ReleaseInfoViewModel @Inject constructor(
                     loadings = loadings,
                     accesses = accesses,
                     isInFavorites = favoriteIds.contains(release.id),
-                    collectionType = collectionType
+                    collectionType = collectionType,
+                    franchises = franchiseReleases
                 )
             )
         }
@@ -272,6 +296,15 @@ class ReleaseInfoViewModel @Inject constructor(
 
     fun onRemindCloseClick() {
         appPreferences.releaseRemind.value = false
+    }
+
+    fun onReleaseClick(id: ReleaseId) {
+        val release = franchiseLoader.observeState()
+            .value.data
+            ?.map { it.releases }
+            ?.flatten()
+            ?.find { it.id == id }
+        router.navigateTo(Screens.ReleaseDetails(id, release))
     }
 
     fun onTorrentClick(id: TorrentId, action: TorrentAction) {

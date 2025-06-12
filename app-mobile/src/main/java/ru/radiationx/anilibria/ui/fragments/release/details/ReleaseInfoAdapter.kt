@@ -15,6 +15,8 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseDonateListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeControlItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseFranchiseHeaderListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseFranchiseListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseSponsorListItem
@@ -31,12 +33,15 @@ import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeControlD
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodeDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseEpisodesHeadDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseExpandDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseFranchiseDelegate
+import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseFranchiseHeaderDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseHeadDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseSponsorDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseTorrentDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.data.api.releases.models.ReleaseSponsor
+import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.common.TorrentId
 
 class ReleaseInfoAdapter(
@@ -51,11 +56,13 @@ class ReleaseInfoAdapter(
     commentsClickListener: () -> Unit,
     episodesTabListener: (String) -> Unit,
     remindCloseListener: () -> Unit,
+    franchiseClickListener: (ReleaseId) -> Unit,
     private val torrentInfoListener: () -> Unit,
 ) : ListItemAdapter() {
 
     companion object {
         private const val TORRENT_TAG = "torrents"
+        private const val FRANCHISE_TAG = "franchise"
     }
 
     init {
@@ -77,6 +84,8 @@ class ReleaseInfoAdapter(
         addDelegate(CommentRouteDelegate(commentsClickListener))
         addDelegate(DividerShadowItemDelegate())
         addDelegate(NativeAdDelegate())
+        addDelegate(ReleaseFranchiseHeaderDelegate())
+        addDelegate(ReleaseFranchiseDelegate(franchiseClickListener))
     }
 
     suspend fun bindState(releaseState: ReleaseDetailState, screenState: ReleaseDetailScreenState) {
@@ -128,6 +137,21 @@ class ReleaseInfoAdapter(
             newItems.add(DividerShadowListItem(ShadowDirection.Double, "donate"))
         }
 
+        if (releaseState.franchises.isNotEmpty()) {
+            newItems.add(
+                FeedSectionListItem(
+                    tag = FRANCHISE_TAG,
+                    title = "Связанное",
+                    hasBg = true
+                )
+            )
+            releaseState.franchises.forEach { franchise ->
+                newItems.add(ReleaseFranchiseHeaderListItem(franchise.header))
+                newItems.addAll(franchise.releases.map { ReleaseFranchiseListItem(it) })
+                newItems.add(DividerShadowListItem(ShadowDirection.Double, franchise.header.id))
+            }
+        }
+
         if (releaseState.torrents.isNotEmpty()) {
             newItems.add(
                 FeedSectionListItem(
@@ -139,7 +163,7 @@ class ReleaseInfoAdapter(
                 )
             )
             newItems.addAll(releaseState.torrents.map { ReleaseTorrentListItem(it) })
-            newItems.add(DividerShadowListItem(ShadowDirection.Double, "torrents"))
+            newItems.add(DividerShadowListItem(ShadowDirection.Double, TORRENT_TAG))
         }
 
         if (releaseState.blockedInfo == null && screenState.remindText != null) {

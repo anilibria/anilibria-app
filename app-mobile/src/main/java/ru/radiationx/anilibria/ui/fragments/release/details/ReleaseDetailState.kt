@@ -7,8 +7,10 @@ import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.api.releases.models.ReleaseSponsor
 import ru.radiationx.data.api.schedule.models.PublishDay
 import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.FranchiseId
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.common.TorrentId
+import ru.radiationx.data.common.Url
 import java.util.Date
 
 data class ReleaseDetailScreenState(
@@ -43,6 +45,7 @@ data class ReleaseDetailState(
     val episodesControl: ReleaseEpisodesControlState?,
     val episodesTabs: List<EpisodesTabState>,
     val torrents: List<ReleaseTorrentItemState>,
+    val franchises: List<ReleaseFranchiseState>,
     val blockedInfo: ReleaseBlockedInfoState?,
     val sponsor: ReleaseSponsor?
 )
@@ -95,6 +98,25 @@ data class ReleaseEpisodeItemState(
 enum class ReleaseEpisodeItemType {
     ONLINE, EXTERNAL, RUTUBE
 }
+
+data class ReleaseFranchiseState(
+    val header: ReleaseFranchiseHeaderState,
+    val releases: List<ReleaseFranchiseItemState>
+)
+
+data class ReleaseFranchiseHeaderState(
+    val id: FranchiseId,
+    val title: String,
+    val subtitle: String,
+)
+
+data class ReleaseFranchiseItemState(
+    val id: ReleaseId,
+    val poster: Url.Path?,
+    val title: String,
+    val subtitle: String,
+    val selected: Boolean
+)
 
 data class ReleaseTorrentItemState(
     val id: TorrentId,

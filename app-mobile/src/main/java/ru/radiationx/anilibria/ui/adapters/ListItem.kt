@@ -19,6 +19,8 @@ import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseBlockedInfoSt
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseDetailModifiersState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodesControlState
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFranchiseHeaderState
+import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseFranchiseItemState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseInfoState
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseTorrentItemState
 import ru.radiationx.data.api.releases.models.Episode
@@ -103,6 +105,8 @@ data class ReleaseEpisodesHeadListItem(
 data class ReleaseDonateListItem(val state: DonationCardItemState) : ListItem(state.tag)
 data class ReleaseSponsorListItem(val sponsor: ReleaseSponsor) : ListItem(sponsor.id)
 data class ReleaseRemindListItem(val text: String) : ListItem(text)
+data class ReleaseFranchiseHeaderListItem(val state: ReleaseFranchiseHeaderState) : ListItem(state.id)
+data class ReleaseFranchiseListItem(val state: ReleaseFranchiseItemState) : ListItem(state.id)
 data class ReleaseBlockedListItem(val state: ReleaseBlockedInfoState) : ListItem(state.title)
 data class ReleaseHeadListItem(
     val id: Any,

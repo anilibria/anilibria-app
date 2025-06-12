@@ -44,7 +44,7 @@ class HistoryViewModel @Inject constructor(
     private val systemUtils: SystemUtils,
 ) : ViewModel() {
 
-    private fun pageToCount(page: Int) = page * 50
+    private fun pageToCount(page: Int) = page * 15
 
     private val pageLoader = PageLoader(viewModelScope) {
         val count = pageToCount(it.page)

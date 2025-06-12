@@ -32,8 +32,8 @@ class ApiRetrofitProvider @Inject constructor(
         val retrofit = Retrofit.Builder()
             .baseUrl(DynamicApiUrlInterceptor.BASE_URL.value)
             .client(okHttpClient)
-            .addConverterFactory(MoshiConverterFactory.create())
             .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .build()
         return retrofit
     }

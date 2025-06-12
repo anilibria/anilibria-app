@@ -17,7 +17,7 @@ import ru.radiationx.data.app.updater.remote.UpdateDataRootResponse
 // TODO API2 check methods
 interface DirectApi {
 
-    @HEAD
+    @GET
     suspend fun checkUrl(@Url url: String)
 
     @GET

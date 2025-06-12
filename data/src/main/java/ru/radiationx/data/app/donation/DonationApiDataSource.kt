@@ -5,6 +5,7 @@ import retrofit2.HttpException
 import ru.radiationx.data.app.DirectApi
 import ru.radiationx.data.app.donation.models.YooMoneyDialog
 import ru.radiationx.data.app.donation.remote.DonationInfoResponse
+import ru.radiationx.data.app.requireSuccess
 import ru.radiationx.shared.ktx.sequentialFirstNotFailure
 import javax.inject.Inject
 
@@ -52,11 +53,9 @@ class DonationApiDataSource @Inject constructor(
             }
         }.build()
 
-        val response = api.getYooMoney("https://yoomoney.ru/quickpay/confirm.xml", body)
-
-        if (!response.isSuccessful) {
-            throw HttpException(response)
-        }
+        val response = api
+            .getYooMoney("https://yoomoney.ru/quickpay/confirm.xml", body)
+            .requireSuccess()
 
         // redirect
         return response.raw().request.url.toString()

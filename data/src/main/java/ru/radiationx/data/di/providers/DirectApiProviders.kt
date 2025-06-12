@@ -19,8 +19,8 @@ class DirectRetrofitProvider @Inject constructor(
         val retrofit = Retrofit.Builder()
             .baseUrl("http://localhost/")
             .client(okHttpClient)
-            .addConverterFactory(MoshiConverterFactory.create())
             .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .build()
         return retrofit
     }

@@ -15,6 +15,7 @@ import ru.radiationx.data.app.downloader.models.DownloadedFile
 import ru.radiationx.data.app.downloader.models.RemoteFile
 import ru.radiationx.data.app.downloader.models.RemoteFileId
 import ru.radiationx.data.app.downloader.models.RemoteFileSaveData
+import ru.radiationx.data.app.requireSuccess
 import ru.radiationx.data.common.Url
 import ru.radiationx.data.common.withBase
 import timber.log.Timber
@@ -45,9 +46,9 @@ class RemoteFileRepository @Inject constructor(
         val loadingFileId = holder.get(absoluteUrl)?.id ?: holder.generateId()
         val loadingFile = getFileById(loadingFileId)
         try {
-            val response = api.getFile(absoluteUrl).raw()
+            val response = api.getFile(absoluteUrl).requireSuccess()
 
-            val responseBody = requireNotNull(response.body) {
+            val responseBody = requireNotNull(response.body()) {
                 "Response doesn't contain a body"
             }
             // todo API2 await result
@@ -63,8 +64,8 @@ class RemoteFileRepository @Inject constructor(
                 id = loadingFileId,
                 url = absoluteUrl,
                 bucket = bucket,
-                contentDisposition = response.header("Content-Disposition"),
-                contentType = response.header("Content-Type"),
+                contentDisposition = response.headers()["Content-Disposition"],
+                contentType = response.headers()["Content-Type"],
             )
             val remoteFile = holder.put(saveData)
             DownloadedFile(remoteFile, loadingFile)

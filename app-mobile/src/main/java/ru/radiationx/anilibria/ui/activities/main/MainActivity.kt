@@ -13,7 +13,6 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.terrakok.cicerone.NavigatorHolder
-import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -38,7 +37,6 @@ import ru.radiationx.anilibria.ui.fragments.TabResetter
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
-import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
@@ -61,10 +59,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private val appThemeController by inject<AppThemeController>()
-
-    private val screenMessenger by inject<SystemMessenger>()
-
-    private val router by inject<Router>()
 
     private val navigationHolder by inject<NavigatorHolder>()
 
@@ -271,7 +265,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             val handled =
                 findTabIntentHandler(url, tabsViewModel.tabsState.value.stack.asReversed())
             if (!handled) {
-                findTabIntentHandler(url, tabsViewModel.tabsState.value.stack)
+                findTabIntentHandler(url, tabsViewModel.tabsState.value.tabs)
             }
         }
         intent?.data = null

@@ -44,6 +44,7 @@
                 <data android:host="anilibria.tv" />
                 <data android:host="www.anilibria.tv" />
                 <data android:host="anilibria.top" />
+                <data android:host="anilibria.wtf" />
                 <data android:host="iss.ink" />
                 <data android:pathPattern="/release/.*" />
                 <data android:pathPattern="/anime/releases/release/.*" />

@@ -1,18 +1,11 @@
 package ru.radiationx.anilibria.ui.activities.main
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
@@ -25,23 +18,19 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import ru.mintrocket.lib.mintpermissions.MintPermissionsController
-import ru.mintrocket.lib.mintpermissions.ext.isGranted
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ads.BannerAdController
 import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.ActivityMainBinding
 import ru.radiationx.anilibria.di.DimensionsModule
-import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerExtra
 import ru.radiationx.anilibria.ui.activities.updatechecker.CheckerViewModel
-import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateDataState
+import ru.radiationx.anilibria.ui.activities.updatechecker.UpdateNotificationHelper
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
 import ru.radiationx.anilibria.ui.common.NetworkStatusBinder
@@ -50,15 +39,12 @@ import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.anilibria.utils.dimensions.DimensionsProvider
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
-import ru.radiationx.shared.ktx.android.getCompatColor
 import ru.radiationx.shared.ktx.android.getExtra
-import ru.radiationx.shared.ktx.android.immutableFlag
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
 import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared_app.networkstatus.NetworkStatusViewModel
@@ -160,7 +146,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         }.launchInResumed(this)
 
         checkerViewModel.state.mapNotNull { it.data }.onEach {
-            showUpdateData(it)
+            UpdateNotificationHelper.showUpdateData(this, it, permissionsController)
         }.launchInResumed(this)
 
         viewModel.state.map { it.mainLogicCompleted }.filter { it }.distinctUntilChanged().onEach {
@@ -184,65 +170,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         }.launchInResumed(this)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.tabsRecycler.adapter = null
-        bannerAdController.destroy()
-    }
-
-    @SuppressLint("MissingPermission")
-    private suspend fun showUpdateData(update: UpdateDataState) {
-        if (!update.hasUpdate) return
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionsController
-                .observe(Manifest.permission.POST_NOTIFICATIONS)
-                .first { it.isGranted() }
-        }
-        val channelId = "anilibria_channel_updates"
-        val channelName = "Обновления"
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager?.createNotificationChannel(channel)
-        }
-
-        val mBuilder = NotificationCompat.Builder(this, channelId)
-
-        val mNotificationManager = NotificationManagerCompat.from(this)
-
-        mBuilder.setSmallIcon(R.drawable.ic_notify)
-        mBuilder.color = getCompatColor(R.color.alib_red)
-
-        mBuilder.setContentTitle("Обновление AniLibria")
-        mBuilder.setContentText("Новая версия: ${update.name}")
-        mBuilder.setChannelId(channelId)
-
-
-        val notifyIntent =
-            Screens.AppUpdateScreen(false, AnalyticsConstants.notification_local_update)
-                .createIntent(this)
-        val notifyPendingIntent =
-            PendingIntent.getActivity(this, 0, notifyIntent, immutableFlag())
-        mBuilder.setContentIntent(notifyPendingIntent)
-
-        mBuilder.setAutoCancel(true)
-
-        mBuilder.priority = NotificationCompat.PRIORITY_DEFAULT
-        mBuilder.setCategory(NotificationCompat.CATEGORY_EVENT)
-
-        var defaults = 0
-        defaults = defaults or NotificationCompat.DEFAULT_SOUND
-        defaults = defaults or NotificationCompat.DEFAULT_VIBRATE
-        mBuilder.setDefaults(defaults)
-
-        mNotificationManager.notify(update.code, mBuilder.build())
-    }
-
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
@@ -253,13 +180,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         navigationHolder.setNavigator(navigator)
     }
 
-    private fun onMainLogicCompleted() {
-        if (!createdWithSavedState) {
-            handleIntent(intent)
-        }
-        checkerViewModel.checkUpdate()
-    }
-
     override fun onPause() {
         navigationHolder.removeNavigator()
         super.onPause()
@@ -268,6 +188,19 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelableArrayList(TABS_STACK, ArrayList(tabsViewModel.tabsState.value.stack))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.tabsRecycler.adapter = null
+        bannerAdController.destroy()
+    }
+
+    private fun onMainLogicCompleted() {
+        if (!createdWithSavedState) {
+            handleIntent(intent)
+        }
+        checkerViewModel.checkUpdate()
     }
 
     @Deprecated("Deprecated in Java")

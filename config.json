@@ -1,30 +1,6 @@
 {
   "addresses": [
     {
-      "tag": "api0",
-      "name": "Основной домен",
-      "desc": null,
-      "widgetsSite": "https://www.anilibria.tv",
-      "site": "https://www.anilibria.tv",
-      "baseImages": "https://www.anilibria.tv/",
-      "base": "https://www.anilibria.tv",
-      "api": "https://www.anilibria.tv/public/api/index.php",
-      "ips": [],
-      "proxies": []
-    },
-    {
-      "tag": "api2",
-      "name": "Апи2",
-      "desc": null,
-      "widgetsSite": "https://www.anilibria.tv",
-      "site": "https://anilibria.uno",
-      "baseImages": "https://static-libria.weekstorm.one/",
-      "base": "https://wwnd.anilib.moe",
-      "api": "https://wwnd.anilib.moe/public/api/index.php",
-      "ips": [],
-      "proxies": []
-    },
-    {
       "tag": "api1",
       "name": "Апи1",
       "desc": null,

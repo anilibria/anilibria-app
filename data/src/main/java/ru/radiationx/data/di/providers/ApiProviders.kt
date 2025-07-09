@@ -10,7 +10,7 @@ import anilibria.api.profile.ProfileApi
 import anilibria.api.releases.ReleasesApi
 import anilibria.api.schedule.ScheduleApi
 import anilibria.api.teams.TeamsApi
-import anilibria.api.timecodes.TimeCodesApi
+import anilibria.api.views.ViewsApi
 import anilibria.api.torrent.TorrentsApi
 import anilibria.api.videos.VideosApi
 import okhttp3.OkHttpClient
@@ -99,10 +99,10 @@ class TeamsApiProvider @Inject constructor(
     override fun get(): TeamsApi = retrofit.create()
 }
 
-class TimeCodesApiProvider @Inject constructor(
+class ViewsApiProvider @Inject constructor(
     @ApiRetrofit private val retrofit: Retrofit
-) : Provider<TimeCodesApi> {
-    override fun get(): TimeCodesApi = retrofit.create()
+) : Provider<ViewsApi> {
+    override fun get(): ViewsApi = retrofit.create()
 }
 
 class VideosApiProvider @Inject constructor(

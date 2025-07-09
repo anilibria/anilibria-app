@@ -13,7 +13,7 @@ import anilibria.api.releases.ReleasesApi
 import anilibria.api.schedule.ScheduleApi
 import anilibria.api.shared.errors.ApiErrorParser
 import anilibria.api.teams.TeamsApi
-import anilibria.api.timecodes.TimeCodesApi
+import anilibria.api.views.ViewsApi
 import anilibria.api.torrent.TorrentsApi
 import anilibria.api.videos.VideosApi
 import com.squareup.moshi.Moshi
@@ -82,7 +82,7 @@ import ru.radiationx.data.api.shared.filter.FilterInteractor
 import ru.radiationx.data.api.shared.filter.legacy.SearchRepository
 import ru.radiationx.data.api.teams.TeamsApiDataSource
 import ru.radiationx.data.api.teams.TeamsRepository
-import ru.radiationx.data.api.timecodes.TimeCodesApiDataSource
+import ru.radiationx.data.api.views.ViewsApiDataSource
 import ru.radiationx.data.api.torrents.TorrentsApiDataSource
 import ru.radiationx.data.api.videos.VideosApiDataSource
 import ru.radiationx.data.api.videos.YoutubeRepository
@@ -143,7 +143,7 @@ import ru.radiationx.data.di.providers.ProfileApiProvider
 import ru.radiationx.data.di.providers.ReleasesApiProvider
 import ru.radiationx.data.di.providers.ScheduleApiProvider
 import ru.radiationx.data.di.providers.TeamsApiProvider
-import ru.radiationx.data.di.providers.TimeCodesApiProvider
+import ru.radiationx.data.di.providers.ViewsApiProvider
 import ru.radiationx.data.di.providers.TorrentsApiProvider
 import ru.radiationx.data.di.providers.VideosApiProvider
 import ru.radiationx.data.network.DataErrorMapper
@@ -318,7 +318,7 @@ class DataModule(context: Context) : QuillModule() {
         singleProvider<ReleasesApi, ReleasesApiProvider>()
         singleProvider<ScheduleApi, ScheduleApiProvider>()
         singleProvider<TeamsApi, TeamsApiProvider>()
-        singleProvider<TimeCodesApi, TimeCodesApiProvider>()
+        singleProvider<ViewsApi, ViewsApiProvider>()
         singleProvider<VideosApi, VideosApiProvider>()
         singleProvider<TorrentsApi, TorrentsApiProvider>()
 
@@ -332,7 +332,7 @@ class DataModule(context: Context) : QuillModule() {
         single<ReleasesApiDataSource>()
         single<ScheduleApiDataSource>()
         single<TeamsApiDataSource>()
-        single<TimeCodesApiDataSource>()
+        single<ViewsApiDataSource>()
         single<VideosApiDataSource>()
         single<TorrentsApiDataSource>()
 

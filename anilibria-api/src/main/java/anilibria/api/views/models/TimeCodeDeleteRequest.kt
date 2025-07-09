@@ -1,4 +1,4 @@
-package anilibria.api.timecodes.models
+package anilibria.api.views.models
 
 
 import com.squareup.moshi.Json

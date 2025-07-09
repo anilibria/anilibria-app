@@ -1398,6 +1398,47 @@
                 ]
             }
         },
+        "/accounts/users/me/views/history": {
+            "get": {
+                "tags": [
+                    "Аккаунты.Пользователи.Мое.Просмотры"
+                ],
+                "summary": "История просмотренных эпизодов",
+                "description": "Возвращает историю просмотров эпизодов авторизованного пользователя",
+                "operationId": "98e2d85bdf06f190dde743b204aacaa0",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/commons.v1.utils.pagination.parameters.page"
+                    },
+                    {
+                        "$ref": "#/components/parameters/commons.v1.utils.pagination.parameters.limit"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "История просмотров",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/responses.v1.accounts.users.me.views.history"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Необходимо авторизоваться"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/commons.v1.http.responses.422"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionToken": []
+                    }
+                ]
+            }
+        },
         "/accounts/users/me/views/timecodes": {
             "get": {
                 "tags": [
@@ -1405,7 +1446,20 @@
                 ],
                 "summary": "Таймкоды просмотренных эпизодов",
                 "description": "Возвращает таймкоды по прогрессу просмотренных эпизодов",
-                "operationId": "38b0296d9cab60f12dfe352392167c79",
+                "operationId": "8c43236d8913f7775c5c4781ed2a1aff",
+                "parameters": [
+                    {
+                        "name": "since",
+                        "in": "query",
+                        "description": "Возвращает только таймкоды, которые были добавлены после указанного времени (в iso формате)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "example": "2025-05-12T07:20:50.52Z"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Список таймкодов просмотренных эпизодов",
@@ -1436,7 +1490,7 @@
                 ],
                 "summary": "Обновление таймкодов прогресса просмотренного эпизода",
                 "description": "Обновляет таймкоды просмотренных эпизодов",
-                "operationId": "1add0b5beec299a484b32aaaa02b4590",
+                "operationId": "de259a20def1fb0f5237f3f3ceb477ea",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1473,17 +1527,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Таймкоды просмотренных эпизодов обновлены успешно",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/responses.v1.accounts.users.me.views.timecodes.update"
-                                    }
-                                }
-                            }
-                        }
+                        "description": "Таймкоды просмотренных эпизодов обновлены успешно"
                     },
                     "403": {
                         "description": "Необходимо авторизоваться"
@@ -1501,7 +1545,7 @@
                 ],
                 "summary": "Удаление таймкодов просмотра эпизодов",
                 "description": "Удаляет данные по таймкодам просмотров для указанных эпизодов",
-                "operationId": "4bd1ce1d626de6e6f15f3812dc56ec0e",
+                "operationId": "04d4073f12d50d4998b33ce7bbc94d8b",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1528,17 +1572,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Таймкоды просмотренных эпизодов удалены успешно",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/responses.v1.accounts.users.me.views.timecodes.delete"
-                                    }
-                                }
-                            }
-                        }
+                        "description": "Таймкоды просмотренных эпизодов удалены успешно"
                     },
                     "403": {
                         "description": "Необходимо авторизоваться"

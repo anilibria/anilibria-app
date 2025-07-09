@@ -1,11 +1,11 @@
 package ru.radiationx.data.app
 
+import anilibria.api.status.models.StatusResponse
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.HEAD
 import retrofit2.http.POST
 import retrofit2.http.Url
 import ru.radiationx.data.app.ads.remote.AdsConfigDataResponse
@@ -19,6 +19,9 @@ interface DirectApi {
 
     @GET
     suspend fun checkUrl(@Url url: String)
+
+    @GET
+    suspend fun getApiStatus(@Url url: String): StatusResponse
 
     @GET
     suspend fun getUpdate(@Url url: String): UpdateDataRootResponse

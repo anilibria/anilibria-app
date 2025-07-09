@@ -2992,6 +2992,28 @@
                 }
             }
         },
+        "/app/status": {
+            "get": {
+                "tags": [
+                    "Приложение.Статус"
+                ],
+                "summary": "Статус API",
+                "description": "Возвращает информацию о статусе API",
+                "operationId": "5523c4a4ef98641efa267e67891c7762",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/responses.v1.app.status"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/media/promotions": {
             "get": {
                 "tags": [
@@ -5594,6 +5616,46 @@
                     "$ref": "#/components/schemas/models.anime.releases.v1.release"
                 }
             },
+            "responses.v1.app.status": {
+                "title": "responses.v1.app.status",
+                "properties": {
+                    "request": {
+                        "properties": {
+                            "ip": {
+                                "type": "string",
+                                "example": "192.168.1.1"
+                            },
+                            "country": {
+                                "type": "string",
+                                "example": "Russia"
+                            },
+                            "iso_code": {
+                                "type": "string",
+                                "example": "RU"
+                            },
+                            "timezone": {
+                                "type": "string",
+                                "example": "Europe/Moscow"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "is_alive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "available_api_endpoints": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "https://anilibria.top"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
             "responses.v1.media.promotions": {
                 "title": "responses.v1.media.promotions",
                 "properties": {
@@ -6051,6 +6113,10 @@
         {
             "name": "Приложение.Поиск",
             "description": "Приложение.Поиск"
+        },
+        {
+            "name": "Приложение.Статус",
+            "description": "Приложение.Статус"
         },
         {
             "name": "Медиа.Промо",

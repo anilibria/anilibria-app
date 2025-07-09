@@ -3,6 +3,8 @@ package ru.radiationx.data.app.config
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
+import ru.radiationx.data.api.status.mapper.toDomain
+import ru.radiationx.data.api.status.model.Status
 import ru.radiationx.data.app.DirectApi
 import ru.radiationx.data.app.config.models.AppConfigAddress
 import ru.radiationx.data.app.config.remote.AppConfigResponse
@@ -22,15 +24,17 @@ class AppConfigApiDataSource @Inject constructor(
         "https://bitbucket.org/RadiationX/anilibria-app/raw/master/config-v2.json"
     )
 
-    suspend fun checkWithTimeout(address: AppConfigAddress) {
-        withTimeoutOrThrow(15_000) {
-            api.checkUrl(address.status.value)
+    suspend fun checkStatusWithTimeout(address: AppConfigAddress): Status {
+        return withTimeoutOrThrow(15_000) {
+            val response = api.getApiStatus(address.status.value).toDomain()
+            check(response.isAlive == true)
+            response
         }
     }
 
     suspend fun findFastest(addresses: List<AppConfigAddress>): AppConfigAddress {
         return addresses.parallelFirstNotFailure { address ->
-            checkWithTimeout(address)
+            checkStatusWithTimeout(address)
             address
         }
     }
@@ -41,7 +45,7 @@ class AppConfigApiDataSource @Inject constructor(
                 async {
                     address to measureTimedValue {
                         runCatching {
-                            checkWithTimeout(address)
+                            checkStatusWithTimeout(address)
                         }
                     }
                 }

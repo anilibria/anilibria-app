@@ -7,6 +7,9 @@ import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.releases.models.ReleaseMember
 import ru.radiationx.data.api.shared.pagination.Paginated
 import ru.radiationx.data.api.shared.pagination.toDomain
+import ru.radiationx.data.api.views.mapper.toDomain
+import ru.radiationx.data.api.views.models.ViewHistory
+import ru.radiationx.data.common.EpisodeUUID
 import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
 import javax.inject.Inject
@@ -22,6 +25,10 @@ class ReleasesApiDataSource @Inject constructor(
 
     suspend fun getRandomReleases(limit: Int?): List<Release> {
         return api.getRandomReleases(limit).map { it.toDomain() }
+    }
+
+    suspend fun getRecommendedReleases(limit: Int?, releaseId: ReleaseId?): List<Release> {
+        return api.getRecommendedReleases(limit, releaseId?.id).map { it.toDomain() }
     }
 
     suspend fun getReleases(ids: List<ReleaseId>): List<Release> {
@@ -55,12 +62,20 @@ class ReleasesApiDataSource @Inject constructor(
         return api.getMembers(id.id.toString()).map { it.toDomain() }
     }
 
+    suspend fun getViewHistory(id: ReleaseId): List<ViewHistory> {
+        return api.getReleaseViewHistory(id.id.toString()).map { it.toDomain() }
+    }
+
     // todo API2 migrate to universal episode
     /*suspend fun getEpisode(releaseId: ReleaseId, episodeUUID: EpisodeUUID): Episode {
         return api.getEpisode(episodeUUID.uuid).let { response ->
             response.toEpisode(releaseId)
         }
     }*/
+
+    suspend fun getTimeCode(episodeId: EpisodeUUID): ViewHistory {
+        return api.getEpisodeViewHistory(episodeId.uuid).toDomain()
+    }
 
     suspend fun search(query: String): List<Release> {
         return api.search(query).map { it.toDomain() }

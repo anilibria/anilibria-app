@@ -2392,6 +2392,53 @@
                 }
             }
         },
+        "/anime/releases/recommended": {
+            "get": {
+                "tags": [
+                    "Аниме.Релизы"
+                ],
+                "summary": "Данные по рекомендованным релизам",
+                "description": "Возвращает данные по рекомендованным релизам",
+                "operationId": "990d70067d30af5eda130e840fcef7ac",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Количество рекомендованных релизов",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    {
+                        "name": "release_id",
+                        "in": "query",
+                        "description": "Идентификатор релиза, для которого рекомендуем",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 9246
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные по релизам",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/responses.api.v1.anime.releases.recommended"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/commons.v1.http.responses.422"
+                    }
+                }
+            }
+        },
         "/anime/releases/list": {
             "get": {
                 "tags": [
@@ -2459,19 +2506,19 @@
                 }
             }
         },
-        "/anime/releases/{aliasOrId}": {
+        "/anime/releases/{idOrAlias}": {
             "get": {
                 "tags": [
                     "Аниме.Релизы"
                 ],
                 "summary": "Данные по релизу",
                 "description": "Возвращает данные по релизу",
-                "operationId": "db2de499f814a375405b077e3c9f081a",
+                "operationId": "1a04f3ab108f6960aacb815ecabe29d2",
                 "parameters": [
                     {
-                        "name": "aliasOrId",
+                        "name": "idOrAlias",
                         "in": "path",
-                        "description": "Alias или Id релиза",
+                        "description": "id или alias релиза",
                         "required": true
                     }
                 ],
@@ -2485,23 +2532,26 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Релиз не найден"
                     }
                 }
             }
         },
-        "/anime/releases/{aliasOrId}/members": {
+        "/anime/releases/{idOrAlias}/members": {
             "get": {
                 "tags": [
                     "Аниме.Релизы"
                 ],
                 "summary": "Список участников, которые работали над релизом",
                 "description": "Возвращает данные по участникам релиза",
-                "operationId": "4ac98853c36f2ef09ac4cf6a9e479d4c",
+                "operationId": "073e49978330ed579e84cc9deb3ba3e6",
                 "parameters": [
                     {
-                        "name": "aliasOrId",
+                        "name": "idOrAlias",
                         "in": "path",
-                        "description": "Alias или Id релиза",
+                        "description": "id или alias релиза",
                         "required": true,
                         "example": "4754"
                     }
@@ -2512,12 +2562,57 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/responses.api.v1.anime.releases.members"
+                                    "$ref": "#/components/schemas/responses.api.v1.anime.releases.release.members"
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Релиз не найден"
                     }
                 }
+            }
+        },
+        "/anime/releases/{idOrAlias}/episodes/timecodes": {
+            "get": {
+                "tags": [
+                    "Аниме.Релизы"
+                ],
+                "summary": "Данные по таймкодам просмотра эпизодов релиза",
+                "description": "Возвращает данные по всем существующим таймкодам просмотра эпизодов релиза. Имеет 1-2-x минутный кэш.",
+                "operationId": "ca61988f225283fc8a0db99f4f4cfab4",
+                "parameters": [
+                    {
+                        "name": "idOrAlias",
+                        "in": "path",
+                        "description": "id или alias релиза",
+                        "required": true,
+                        "example": "4754"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные по просмотру пользователем эпизодов релиза",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/responses.api.v1.anime.releases.release.episodes.timecodes"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Необходимо авторизоваться"
+                    },
+                    "404": {
+                        "description": "Релиз не найден"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionToken": []
+                    }
+                ]
             }
         },
         "/anime/releases/episodes/{releaseEpisodeId}": {
@@ -2527,7 +2622,7 @@
                 ],
                 "summary": "Данные по эпизоду",
                 "description": "Возвращает данные по эпизоду",
-                "operationId": "c61dc0d5c11298135f31e5a0a493081e",
+                "operationId": "d5f0cbb2ce401655a7af10ca7b50eb41",
                 "parameters": [
                     {
                         "name": "releaseEpisodeId",
@@ -2552,6 +2647,48 @@
                         "description": "Эпизод не найден"
                     }
                 }
+            }
+        },
+        "/anime/releases/episodes/{releaseEpisodeId}/timecode": {
+            "get": {
+                "tags": [
+                    "Аниме.Релизы.Эпизоды"
+                ],
+                "summary": "Данные по просмотру эпизода",
+                "description": "Возвращает данные по просмотру указанного эпизода авторизованным пользователем. Имеет 1-2-x минутный кэш.",
+                "operationId": "3983ade6cbabc60d428294310a365755",
+                "parameters": [
+                    {
+                        "name": "releaseEpisodeId",
+                        "in": "path",
+                        "description": "Идентификатор эпизода",
+                        "required": true,
+                        "example": "cf31fe87-fad8-11eb-b2fa-0242ac120004"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные по просмотру эпизода",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/responses.api.v1.anime.releases.episode.timecode"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Необходимо авторизоваться"
+                    },
+                    "404": {
+                        "description": "Данные по просмотру эпизода не найдены"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionToken": []
+                    }
+                ]
             }
         },
         "/anime/schedule/now": {
@@ -3039,35 +3176,40 @@
             },
             "commons.v1.utils.pagination.schemes.meta": {
                 "properties": {
-                    "total": {
-                        "type": "integer",
-                        "example": "1704"
-                    },
-                    "count": {
-                        "type": "integer",
-                        "example": "10"
-                    },
-                    "per_page": {
-                        "type": "integer",
-                        "example": "10"
-                    },
-                    "current_page": {
-                        "type": "integer",
-                        "example": "5"
-                    },
-                    "total_pages": {
-                        "type": "integer",
-                        "example": "171"
-                    },
-                    "links": {
+                    "pagination": {
                         "properties": {
-                            "previous": {
-                                "type": "string",
-                                "example": "/api/version/path-to-resource?page=1"
+                            "total": {
+                                "type": "integer",
+                                "example": "1704"
                             },
-                            "next": {
-                                "type": "string",
-                                "example": "/api/version/path-to-resource?page=3"
+                            "count": {
+                                "type": "integer",
+                                "example": "10"
+                            },
+                            "per_page": {
+                                "type": "integer",
+                                "example": "10"
+                            },
+                            "current_page": {
+                                "type": "integer",
+                                "example": "5"
+                            },
+                            "total_pages": {
+                                "type": "integer",
+                                "example": "171"
+                            },
+                            "links": {
+                                "properties": {
+                                    "previous": {
+                                        "type": "string",
+                                        "example": "/api/version/path-to-resource?page=1"
+                                    },
+                                    "next": {
+                                        "type": "string",
+                                        "example": "/api/version/path-to-resource?page=3"
+                                    }
+                                },
+                                "type": "object"
                             }
                         },
                         "type": "object"
@@ -3526,12 +3668,46 @@
                     9025
                 ]
             },
-            "responses.v1.accounts.users.me.views.timecodes.delete": {
-                "title": "responses.v1.accounts.users.me.views.timecodes.delete",
-                "type": "array",
-                "items": {
-                    "$ref": "#/components/schemas/responses.v1.accounts.users.me.views.timecodes.item"
-                }
+            "responses.v1.accounts.users.me.views.history": {
+                "title": "responses.v1.accounts.users.me.views.history",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/models.accounts.users.v1.user.view"
+                                },
+                                {
+                                    "properties": {
+                                        "release_episode": {
+                                            "type": "object",
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/models.anime.releases.v1.release.episode"
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "release": {
+                                                            "$ref": "#/components/schemas/models.anime.releases.v1.release"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/commons.v1.utils.pagination.schemes.meta"
+                    }
+                },
+                "type": "object"
             },
             "responses.v1.accounts.users.me.views.timecodes.item": {
                 "title": "responses.v1.accounts.users.me.views.timecodes.item",
@@ -3555,13 +3731,6 @@
             },
             "responses.v1.accounts.users.me.views.timecodes": {
                 "title": "responses.v1.accounts.users.me.views.timecodes",
-                "type": "array",
-                "items": {
-                    "$ref": "#/components/schemas/responses.v1.accounts.users.me.views.timecodes.item"
-                }
-            },
-            "responses.v1.accounts.users.me.views.timecodes.update": {
-                "title": "responses.v1.accounts.users.me.views.timecodes.update",
                 "type": "array",
                 "items": {
                     "$ref": "#/components/schemas/responses.v1.accounts.users.me.views.timecodes.item"
@@ -3720,6 +3889,44 @@
                         "description": "Отображение рекламы",
                         "type": "boolean",
                         "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "models.accounts.users.v1.user.view": {
+                "title": "models.accounts.users.v1.user.view",
+                "properties": {
+                    "id": {
+                        "description": "ID записи просмотра",
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "time": {
+                        "description": "Таймкод просмотра, в секундах от начала эпизода",
+                        "type": "integer",
+                        "format": "float",
+                        "example": 127.45
+                    },
+                    "user_id": {
+                        "description": "ID пользователя",
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "is_watched": {
+                        "description": "Флаг, просмотрен ли эпизод полностью",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "updated_at": {
+                        "description": "Дата обновления записи",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-06-23T14:00:00+00:00"
+                    },
+                    "release_episode_id": {
+                        "description": "ID эпизода релиза",
+                        "type": "string",
+                        "example": "9b5e26ee-598f-4b8b-b77e-188d3e456318"
                     }
                 },
                 "type": "object"
@@ -4039,106 +4246,83 @@
             },
             "responses.v1.anime.franchise": {
                 "title": "responses.v1.anime.franchise",
-                "properties": {
-                    "data": {
-                        "type": "object",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/models.anime.franchises.v1.franchise"
-                            },
-                            {
-                                "properties": {
-                                    "franchise_releases": {
-                                        "type": "array",
-                                        "items": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/components/schemas/models.anime.franchises.v1.franchise.release"
-                                                },
-                                                {
-                                                    "properties": {
-                                                        "release": {
-                                                            "$ref": "#/components/schemas/models.anime.releases.v1.release"
-                                                        }
-                                                    },
-                                                    "type": "object"
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/models.anime.franchises.v1.franchise"
+                    },
+                    {
+                        "properties": {
+                            "franchise_releases": {
+                                "type": "array",
+                                "items": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/models.anime.franchises.v1.franchise.release"
+                                        },
+                                        {
+                                            "properties": {
+                                                "release": {
+                                                    "$ref": "#/components/schemas/models.anime.releases.v1.release"
                                                 }
-                                            ]
+                                            },
+                                            "type": "object"
                                         }
-                                    }
-                                },
-                                "type": "object"
+                                    ]
+                                }
                             }
-                        ]
+                        },
+                        "type": "object"
                     }
-                },
-                "type": "object"
+                ]
             },
             "responses.v1.anime.franchises": {
                 "title": "responses.v1.anime.franchises",
-                "properties": {
-                    "data": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/models.anime.franchises.v1.franchise"
-                        }
-                    },
-                    "meta": {
-                        "$ref": "#/components/schemas/commons.v1.utils.pagination.schemes.meta"
-                    }
-                },
-                "type": "object"
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/models.anime.franchises.v1.franchise"
+                }
             },
             "responses.v1.anime.franchises.random": {
                 "title": "responses.v1.anime.franchises.random",
-                "properties": {
-                    "data": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/models.anime.franchises.v1.franchise"
-                        }
-                    }
-                },
-                "type": "object"
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/models.anime.franchises.v1.franchise"
+                }
             },
             "responses.v1.anime.franchises.byRelease": {
                 "title": "responses.v1.anime.franchises.byRelease",
-                "properties": {
-                    "data": {
-                        "type": "array",
-                        "items": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/components/schemas/models.anime.franchises.v1.franchise"
-                                },
-                                {
-                                    "properties": {
-                                        "franchise_releases": {
-                                            "type": "array",
-                                            "items": {
-                                                "allOf": [
-                                                    {
-                                                        "$ref": "#/components/schemas/models.anime.franchises.v1.franchise.release"
-                                                    },
-                                                    {
-                                                        "properties": {
-                                                            "release": {
-                                                                "$ref": "#/components/schemas/models.anime.releases.v1.release"
-                                                            }
-                                                        },
-                                                        "type": "object"
+                "type": "array",
+                "items": {
+                    "allOf": [
+                        {
+                            "$ref": "#/components/schemas/models.anime.franchises.v1.franchise"
+                        },
+                        {
+                            "properties": {
+                                "franchise_releases": {
+                                    "type": "array",
+                                    "items": {
+                                        "allOf": [
+                                            {
+                                                "$ref": "#/components/schemas/models.anime.franchises.v1.franchise.release"
+                                            },
+                                            {
+                                                "properties": {
+                                                    "release": {
+                                                        "$ref": "#/components/schemas/models.anime.releases.v1.release"
                                                     }
-                                                ]
+                                                },
+                                                "type": "object"
                                             }
-                                        }
-                                    },
-                                    "type": "object"
+                                        ]
+                                    }
                                 }
-                            ]
+                            },
+                            "type": "object"
                         }
-                    }
-                },
-                "type": "object"
+                    ]
+                }
             },
             "models.anime.franchises.v1.franchise.release": {
                 "title": "models.anime.franchises.v1.franchise.release",
@@ -4448,6 +4632,13 @@
                     "$ref": "#/components/schemas/models.anime.releases.v1.release"
                 }
             },
+            "responses.api.v1.anime.releases.recommended": {
+                "title": "responses.api.v1.anime.releases.recommended",
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/models.anime.releases.v1.release"
+                }
+            },
             "responses.api.v1.anime.releases.release": {
                 "type": "array",
                 "items": {
@@ -4491,7 +4682,15 @@
                     ]
                 }
             },
-            "responses.api.v1.anime.releases.members": {
+            "responses.api.v1.anime.releases.release.episodes.timecodes": {
+                "title": "responses.api.v1.anime.releases.release.episodes.timecodes",
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/models.accounts.users.v1.user.view"
+                }
+            },
+            "responses.api.v1.anime.releases.release.members": {
+                "title": "responses.api.v1.anime.releases.release.members",
                 "type": "array",
                 "items": {
                     "$ref": "#/components/schemas/models.anime.releases.v1.release.member"
@@ -4526,6 +4725,15 @@
                             }
                         },
                         "type": "object"
+                    }
+                ]
+            },
+            "responses.api.v1.anime.releases.episode.timecode": {
+                "title": "responses.api.v1.anime.releases.episode.timecode",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/models.accounts.users.v1.user.view"
                     }
                 ]
             },
@@ -4882,6 +5090,11 @@
                         "description": "Порядковый номер эпизода для сортировки",
                         "type": "number",
                         "example": 12
+                    },
+                    "release_id": {
+                        "description": "Идентификатор релиза",
+                        "type": "number",
+                        "example": 9324
                     },
                     "name_english": {
                         "description": "Название эпизода на английском",

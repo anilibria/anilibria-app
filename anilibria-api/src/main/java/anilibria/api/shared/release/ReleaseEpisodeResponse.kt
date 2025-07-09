@@ -8,6 +8,8 @@ import com.squareup.moshi.JsonClass
 data class ReleaseEpisodeResponse(
     @Json(name = "id")
     val id: String,
+    @Json(name = "release_id")
+    val releaseId: Int,
     @Json(name = "name")
     val name: String?,
     @Json(name = "ordinal")

@@ -19,5 +19,5 @@ data class ViewHistoryResponse(
     @Json(name = "release_episode_id")
     val releaseEpisodeId: String,
     @Json(name = "release_episode")
-    val releaseEpisode: ReleaseEpisodeResponse,
+    val releaseEpisode: ReleaseEpisodeResponse?,
 )

@@ -73,7 +73,7 @@ object AnalyticsConstants {
     const val release_episodes_start = "release_episodes_start"
     const val release_episodes_continue = "release_episodes_continue"
     const val release_episode_play = "release_episode_play"
-    const val release_episode_external = "release_episode_external"
+    const val release_episode_youtube = "release_episode_youtube"
     const val release_episode_rutube = "release_episode_rutube"
     const val release_web_player = "release_web_player"
     const val release_torrent = "release_torrent"

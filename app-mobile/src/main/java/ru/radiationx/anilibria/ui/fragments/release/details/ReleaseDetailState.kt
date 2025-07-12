@@ -96,7 +96,7 @@ data class ReleaseEpisodeItemState(
 )
 
 enum class ReleaseEpisodeItemType {
-    ONLINE, EXTERNAL, RUTUBE
+    ONLINE, YOUTUBE, RUTUBE
 }
 
 data class ReleaseFranchiseState(

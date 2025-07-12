@@ -23,7 +23,9 @@ import ru.radiationx.data.api.releases.models.Episode
 import ru.radiationx.data.api.releases.models.PlayerQuality
 import ru.radiationx.data.api.schedule.models.PublishDay
 import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.TorrentId
+import ru.radiationx.data.common.Url
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.launchInResumed
@@ -249,7 +251,7 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
         startActivity(intent)
     }
 
-    private fun playWeb(link: String, alias: String) {
+    private fun playWeb(link: Url.Absolute, alias: ReleaseAlias) {
         viewModel.onWebPlayerClick()
         val intent = Screens.WebPlayer(link, alias).createIntent(requireContext())
         startActivity(intent)

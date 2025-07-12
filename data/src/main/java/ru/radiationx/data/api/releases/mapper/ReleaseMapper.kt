@@ -7,9 +7,8 @@ import anilibria.api.shared.release.ReleaseMemberResponse
 import anilibria.api.shared.release.ReleaseNameResponse
 import anilibria.api.shared.release.ReleaseResponse
 import anilibria.api.shared.release.ReleaseSponsorResponse
+import ru.radiationx.data.api.releases.models.ComboEpisode
 import ru.radiationx.data.api.releases.models.Episode
-import ru.radiationx.data.api.releases.models.ExternalEpisode
-import ru.radiationx.data.api.releases.models.ExternalPlaylist
 import ru.radiationx.data.api.releases.models.PlayerSkips
 import ru.radiationx.data.api.releases.models.QualityInfo
 import ru.radiationx.data.api.releases.models.Release
@@ -19,11 +18,13 @@ import ru.radiationx.data.api.releases.models.ReleaseMember
 import ru.radiationx.data.api.releases.models.ReleaseName
 import ru.radiationx.data.api.releases.models.ReleaseSponsor
 import ru.radiationx.data.api.releases.models.RutubeEpisode
+import ru.radiationx.data.api.releases.models.YoutubeEpisode
 import ru.radiationx.data.api.schedule.models.PublishDay
 import ru.radiationx.data.api.shared.apiDateToDate
 import ru.radiationx.data.api.shared.secToMillis
 import ru.radiationx.data.api.torrents.mapper.toDomain
 import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.EpisodeUUID
 import ru.radiationx.data.common.GenreId
 import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
@@ -71,12 +72,13 @@ fun ReleaseSponsorResponse.toDomain(): ReleaseSponsor {
     )
 }
 
-fun ReleaseEpisodeResponse.toEpisode(releaseId: ReleaseId): Episode? {
+fun ReleaseEpisodeResponse.toEpisode(): Episode? {
     if (hls480 == null && hls720 == null && hls1080 == null) {
         return null
     }
-    val episodeId = createId(releaseId)
+    val episodeId = createId()
     return Episode(
+        uuid = EpisodeUUID(id),
         id = episodeId,
         title = toEpisodeTitle(episodeId),
         qualityInfo = QualityInfo(
@@ -89,45 +91,47 @@ fun ReleaseEpisodeResponse.toEpisode(releaseId: ReleaseId): Episode? {
     )
 }
 
-fun ReleaseEpisodeResponse.toRutubeEpisode(releaseId: ReleaseId): RutubeEpisode? {
+fun ReleaseEpisodeResponse.toRutubeEpisode(): RutubeEpisode? {
     val safeRutubeId = rutubeId ?: return null
-    val episodeId = createId(releaseId)
+    val episodeId = createId()
     return RutubeEpisode(
+        uuid = EpisodeUUID(id),
         id = episodeId,
         title = toEpisodeTitle(episodeId),
         updatedAt = updatedAt.apiDateToDate(),
         rutubeId = safeRutubeId,
-        url = "https://rutube.ru/play/embed/$safeRutubeId"
+        url = "https://rutube.ru/play/embed/$safeRutubeId".toAbsoluteUrl()
     )
 }
 
-fun ReleaseResponse.toYoutubePlaylist(releaseId: ReleaseId): ExternalPlaylist? {
-    val episodes = episodes?.mapNotNull { it.toYoutubeEpisode(releaseId) }.orEmpty()
-    if (episodes.isEmpty()) {
-        return null
-    }
-    return ExternalPlaylist(
-        tag = "youtube",
-        title = "YouTube",
-        actionText = "Смотреть",
-        episodes = episodes
-    )
-}
-
-fun ReleaseEpisodeResponse.toYoutubeEpisode(releaseId: ReleaseId): ExternalEpisode? {
+fun ReleaseEpisodeResponse.toYoutubeEpisode(): YoutubeEpisode? {
     val safeYoutubeId = youtubeId ?: return null
-    val episodeId = createId(releaseId)
-    return ExternalEpisode(
+    val episodeId = createId()
+    return YoutubeEpisode(
+        uuid = EpisodeUUID(id),
         id = episodeId,
         title = toEpisodeTitle(episodeId),
+        updatedAt = updatedAt.apiDateToDate(),
+        youtubeId = safeYoutubeId,
         url = "https://www.youtube.com/watch?v=$safeYoutubeId".toAbsoluteUrl()
     )
 }
 
+fun ReleaseEpisodeResponse.toComboEpisode(): ComboEpisode {
+    val episodeId = createId()
+    return ComboEpisode(
+        uuid = EpisodeUUID(id),
+        id = episodeId,
+        episode = toEpisode(),
+        youtubeEpisode = toYoutubeEpisode(),
+        rutubeEpisode = toRutubeEpisode()
+    )
+}
+
 // episode ids can be float/double/int e.g. 25, 25.5.
-private fun ReleaseEpisodeResponse.createId(releaseId: ReleaseId): EpisodeId {
+private fun ReleaseEpisodeResponse.createId(): EpisodeId {
     val big = BigDecimal(ordinal)
-    return EpisodeId(big.toString(), releaseId)
+    return EpisodeId(big.toString(), ReleaseId(releaseId))
 }
 
 fun ReleaseEpisodeResponse.toEpisodeTitle(episodeId: EpisodeId): String {
@@ -184,14 +188,14 @@ fun ReleaseResponse.toDomain(): Release {
         averageEpisodeDuration = averageDurationOfEpisode,
         isBlockedByGeo = isBlockedByGeo,
         isBlockedByCopyrights = isBlockedByCopyrights,
-        webPlayer = externalPlayer?.ifEmpty { null },
+        webPlayer = externalPlayer?.ifEmpty { null }?.toAbsoluteUrl(),
 
         genres = genres?.map { it.toDomain() }.orEmpty(),
         members = members?.map { it.toDomain() }.orEmpty(),
         sponsor = sponsor?.toDomain(),
-        episodes = episodes?.mapNotNull { it.toEpisode(releaseId) }.orEmpty(),
-        externalPlaylists = listOfNotNull(toYoutubePlaylist(releaseId)),
-        rutubePlaylist = episodes?.mapNotNull { it.toRutubeEpisode(releaseId) }.orEmpty(),
+        episodes = episodes?.mapNotNull { it.toEpisode() }.orEmpty(),
+        youtubePlaylists = episodes?.mapNotNull { it.toYoutubeEpisode() }.orEmpty(),
+        rutubePlaylist = episodes?.mapNotNull { it.toRutubeEpisode() }.orEmpty(),
         torrents = torrents?.map { it.toDomain(releaseId) }.orEmpty(),
     )
 }

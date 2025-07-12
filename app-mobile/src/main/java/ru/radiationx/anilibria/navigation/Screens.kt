@@ -34,6 +34,7 @@ import ru.radiationx.data.api.shared.filter.FilterType
 import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
+import ru.radiationx.data.common.Url
 
 /**
  * Created by radiationx on 17.11.17.
@@ -80,8 +81,8 @@ object Screens {
     }
 
     class WebPlayer(
-        private val link: String,
-        private val alias: String,
+        private val link: Url.Absolute,
+        private val alias: ReleaseAlias,
     ) : BaseActivityScreen() {
         override fun createIntent(context: Context) =
             WebPlayerActivity.newIntent(context, link, alias)

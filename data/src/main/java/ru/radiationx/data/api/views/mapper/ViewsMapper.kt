@@ -2,6 +2,7 @@ package ru.radiationx.data.api.views.mapper
 
 import anilibria.api.views.models.TimeCodeNetwork
 import anilibria.api.views.models.ViewHistoryResponse
+import ru.radiationx.data.api.releases.mapper.toComboEpisode
 import ru.radiationx.data.api.shared.apiDateToDate
 import ru.radiationx.data.api.views.models.EpisodeTime
 import ru.radiationx.data.api.views.models.TimeCode
@@ -17,8 +18,7 @@ fun ViewHistoryResponse.toDomain(): ViewHistory {
         isWatched = isWatched,
         updatedAt = updatedAt.apiDateToDate(),
         episodeId = EpisodeUUID(releaseEpisodeId),
-        // todo api2 replace episode
-        releaseEpisode = null
+        releaseEpisode = releaseEpisode?.toComboEpisode()
     )
 }
 

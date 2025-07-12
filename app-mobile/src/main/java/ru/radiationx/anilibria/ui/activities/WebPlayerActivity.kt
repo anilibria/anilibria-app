@@ -19,6 +19,8 @@ import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.app.config.AppConfig
+import ru.radiationx.data.common.ReleaseAlias
+import ru.radiationx.data.common.Url
 import ru.radiationx.data.common.toPathUrl
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
@@ -41,15 +43,15 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
         const val ARG_URL = "iframe_url"
         const val ARG_RELEASE_ALIAS = "release_alias"
 
-        fun newIntent(context: Context, link: String, alias: String) =
+        fun newIntent(context: Context, link: Url.Absolute, alias: ReleaseAlias) =
             Intent(context, WebPlayerActivity::class.java).apply {
                 putExtra(ARG_URL, link)
                 putExtra(ARG_RELEASE_ALIAS, alias)
             }
     }
 
-    private val argUrl by lazy { getExtraNotNull(ARG_URL, "") }
-    private val argReleaseAlias by lazy { getExtraNotNull(ARG_RELEASE_ALIAS, "") }
+    private val argUrl by lazy { getExtraNotNull<Url.Absolute>(ARG_URL) }
+    private val argReleaseAlias by lazy { getExtraNotNull<ReleaseAlias>(ARG_RELEASE_ALIAS) }
 
     private val useTimeCounter by lazy {
         LifecycleTimeCounter(webPlayerAnalytics::useTime)
@@ -64,7 +66,7 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     private val webPlayerAnalytics by inject<WebPlayerAnalytics>()
 
     private fun isInvalidIntent(): Boolean {
-        return isLaunchedFromHistory() || argUrl.isEmpty() || argReleaseAlias.isEmpty()
+        return isLaunchedFromHistory()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -150,12 +152,12 @@ class WebPlayerActivity : BaseActivity(R.layout.activity_moon) {
     }
 
     private fun loadUrl() {
-        val releaseUrl = "/release/$argReleaseAlias.html"
+        val releaseUrl = "/release/${argReleaseAlias.alias}.html"
             .toPathUrl()
             .withBase(appConfig.widget)
 
         val template = get<Templates>().videoPageTemplate
-        template.setVariableOpt("iframe_url", argUrl)
+        template.setVariableOpt("iframe_url", argUrl.value)
 
         binding.webView.easyLoadData(releaseUrl, template.generateWithTheme(AppTheme.DARK))
     }

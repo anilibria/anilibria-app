@@ -2,7 +2,9 @@ package ru.radiationx.data.api.releases
 
 import anilibria.api.releases.ReleasesApi
 import kotlinx.coroutines.ensureActive
+import ru.radiationx.data.api.releases.mapper.toComboEpisode
 import ru.radiationx.data.api.releases.mapper.toDomain
+import ru.radiationx.data.api.releases.models.ComboEpisode
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.releases.models.ReleaseMember
 import ru.radiationx.data.api.shared.pagination.Paginated
@@ -66,12 +68,9 @@ class ReleasesApiDataSource @Inject constructor(
         return api.getReleaseViewHistory(id.id.toString()).map { it.toDomain() }
     }
 
-    // todo API2 migrate to universal episode
-    /*suspend fun getEpisode(releaseId: ReleaseId, episodeUUID: EpisodeUUID): Episode {
-        return api.getEpisode(episodeUUID.uuid).let { response ->
-            response.toEpisode(releaseId)
-        }
-    }*/
+    suspend fun getEpisode(episodeUUID: EpisodeUUID): ComboEpisode {
+        return api.getEpisode(episodeUUID.uuid).toComboEpisode()
+    }
 
     suspend fun getTimeCode(episodeId: EpisodeUUID): ViewHistory {
         return api.getEpisodeViewHistory(episodeId.uuid).toDomain()

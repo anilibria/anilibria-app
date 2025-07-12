@@ -4,6 +4,7 @@ import ru.radiationx.data.common.Url
 import ru.radiationx.data.common.YoutubeId
 import java.util.Date
 
+// todo api2 rename youtube to video
 data class YoutubeItem(
     val id: YoutubeId,
     val title: String?,

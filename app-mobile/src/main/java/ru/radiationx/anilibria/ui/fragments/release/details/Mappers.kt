@@ -2,17 +2,15 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 import androidx.core.text.htmlEncode
 import kotlinx.coroutines.flow.MutableStateFlow
-import ru.radiationx.anilibria.model.asDataColorRes
-import ru.radiationx.anilibria.model.asDataIconRes
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.utils.Utils
 import ru.radiationx.data.api.collections.models.CollectionType
 import ru.radiationx.data.api.franchises.models.FranchiseFull
 import ru.radiationx.data.api.releases.models.Episode
-import ru.radiationx.data.api.releases.models.ExternalEpisode
-import ru.radiationx.data.api.releases.models.ExternalPlaylist
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.releases.models.ReleaseMember
 import ru.radiationx.data.api.releases.models.RutubeEpisode
+import ru.radiationx.data.api.releases.models.YoutubeEpisode
 import ru.radiationx.data.api.torrents.models.TorrentItem
 import ru.radiationx.data.app.episodeaccess.models.EpisodeAccess
 import ru.radiationx.data.common.EpisodeId
@@ -112,7 +110,7 @@ fun Release.toEpisodeControlState(
     val hasViewed = episodes.any {
         accesses[it.id]?.isViewed == true
     }
-    val hasWeb = !webPlayer.isNullOrEmpty()
+    val hasWeb = webPlayer != null
     val continueTitle = if (hasViewed) {
         val lastViewed = episodes.maxByOrNull {
             accesses[it.id]?.lastValidAccess ?: 0
@@ -200,11 +198,16 @@ fun Release.toTabsState(
     )
     val rutubeTab = EpisodesTabState(
         "rutube",
-        "RUTUBE",
+        "Rutube",
         textColor = null,
         episodes = rutubePlaylist.map { it.toState() }
     )
-    val externalTabs = externalPlaylists.map { it.toTabState() }
+    val externalTabs = EpisodesTabState(
+        "youtube",
+        "YouTube",
+        textColor = R.color.brand_youtube,
+        episodes = youtubePlaylists.map { it.toState() }
+    )
 
     return listOf(onlineTab, rutubeTab)
         .plus(externalTabs)
@@ -213,33 +216,6 @@ fun Release.toTabsState(
                     && tab.episodes.all { it.hasSd || it.hasHd || it.hasFullHd || it.hasActionUrl }
         }
 }
-
-fun ExternalPlaylist.toTabState(): EpisodesTabState = EpisodesTabState(
-    tag = tag,
-    title = title,
-    textColor = tag.asDataColorRes(),
-    episodes = episodes.map { it.toState(this) }
-)
-
-fun ExternalEpisode.toState(
-    playlist: ExternalPlaylist,
-): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
-    id = id,
-    title = title.orEmpty(),
-    subtitle = null,
-    updatedAt = null,
-    isViewed = false,
-    hasUpdate = false,
-    hasSd = false,
-    hasHd = false,
-    hasFullHd = false,
-    type = ReleaseEpisodeItemType.EXTERNAL,
-    tag = playlist.tag,
-    actionTitle = playlist.actionText,
-    hasActionUrl = url != null,
-    actionIconRes = playlist.tag.asDataIconRes(),
-    actionColorRes = playlist.tag.asDataColorRes()
-)
 
 fun Episode.toState(
     accesses: Map<EpisodeId, EpisodeAccess>,
@@ -288,5 +264,23 @@ fun RutubeEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
     actionTitle = "Смотреть",
     actionColorRes = null,
     actionIconRes = null,
+    hasActionUrl = true
+)
+
+fun YoutubeEpisode.toState(): ReleaseEpisodeItemState = ReleaseEpisodeItemState(
+    id = id,
+    title = title.orEmpty(),
+    subtitle = null,
+    updatedAt = updatedAt,
+    isViewed = false,
+    hasUpdate = false,
+    hasSd = false,
+    hasHd = false,
+    hasFullHd = false,
+    type = ReleaseEpisodeItemType.YOUTUBE,
+    tag = "youtube",
+    actionTitle = "Смотреть",
+    actionColorRes = R.color.brand_youtube,
+    actionIconRes = R.drawable.ic_logo_youtube,
     hasActionUrl = true
 )

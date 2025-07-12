@@ -107,11 +107,10 @@ class ReleaseAnalytics @Inject constructor(
         )
     }
 
-    fun episodeExternalClick(releaseId: Int, externalTag: String) {
+    fun episodeYouTubeClick(releaseId: Int) {
         sender.send(
-            AnalyticsConstants.release_episode_external,
+            AnalyticsConstants.release_episode_youtube,
             releaseId.toIdParam(),
-            externalTag.toParam(PARAM_EXTERNAL_TAG)
         )
     }
 

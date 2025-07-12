@@ -4,15 +4,12 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import ru.radiationx.data.common.EpisodeId
 import ru.radiationx.data.common.EpisodeUUID
-import ru.radiationx.data.common.Url
-import java.util.Date
 
 @Parcelize
-data class RutubeEpisode(
+data class ComboEpisode(
     val uuid: EpisodeUUID,
     val id: EpisodeId,
-    val title: String?,
-    val updatedAt: Date?,
-    val rutubeId: String,
-    val url: Url.Absolute
+    val episode: Episode?,
+    val youtubeEpisode: YoutubeEpisode?,
+    val rutubeEpisode: RutubeEpisode?
 ) : Parcelable

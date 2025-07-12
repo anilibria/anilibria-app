@@ -35,7 +35,7 @@ data class Release(
     val averageEpisodeDuration: Int?,
     val isBlockedByGeo: Boolean,
     val isBlockedByCopyrights: Boolean,
-    val webPlayer: String?,
+    val webPlayer: Url.Absolute?,
 
     // semi full
     val genres: List<ReleaseGenre>,
@@ -44,7 +44,7 @@ data class Release(
     val members: List<ReleaseMember>,
     val sponsor: ReleaseSponsor?,
     val episodes: List<Episode>,
-    val externalPlaylists: List<ExternalPlaylist>,
+    val youtubePlaylists: List<YoutubeEpisode>,
     val rutubePlaylist: List<RutubeEpisode>,
     val torrents: List<TorrentItem>,
 ) : Parcelable {

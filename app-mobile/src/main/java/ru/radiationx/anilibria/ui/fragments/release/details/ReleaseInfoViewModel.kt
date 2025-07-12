@@ -45,11 +45,11 @@ import ru.radiationx.data.api.franchises.FranchisesRepository
 import ru.radiationx.data.api.franchises.models.FranchiseFull
 import ru.radiationx.data.api.releases.ReleaseInteractor
 import ru.radiationx.data.api.releases.models.Episode
-import ru.radiationx.data.api.releases.models.ExternalEpisode
 import ru.radiationx.data.api.releases.models.PlayerQuality
 import ru.radiationx.data.api.releases.models.Release
 import ru.radiationx.data.api.releases.models.ReleaseSponsor
 import ru.radiationx.data.api.releases.models.RutubeEpisode
+import ru.radiationx.data.api.releases.models.YoutubeEpisode
 import ru.radiationx.data.api.schedule.models.PublishDay
 import ru.radiationx.data.api.torrents.models.TorrentItem
 import ru.radiationx.data.app.ads.AdsConfigRepository
@@ -61,8 +61,10 @@ import ru.radiationx.data.app.downloader.models.RemoteFile
 import ru.radiationx.data.app.episodeaccess.models.EpisodeAccess
 import ru.radiationx.data.app.preferences.PreferencesHolder
 import ru.radiationx.data.common.EpisodeId
+import ru.radiationx.data.common.ReleaseAlias
 import ru.radiationx.data.common.ReleaseId
 import ru.radiationx.data.common.TorrentId
+import ru.radiationx.data.common.Url
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
@@ -364,7 +366,7 @@ class ReleaseInfoViewModel @Inject constructor(
         currentData?.also { release ->
             releaseAnalytics.webPlayerClick(release.id.id)
             release.webPlayer?.let {
-                playWebAction.set(ActionPlayWeb(it, release.alias.alias))
+                playWebAction.set(ActionPlayWeb(it, release.alias))
             }
         }
     }
@@ -416,16 +418,15 @@ class ReleaseInfoViewModel @Inject constructor(
         episode: RutubeEpisode,
     ) {
         releaseAnalytics.episodeRutubeClick(release.id.id)
-        playWebAction.set(ActionPlayWeb(episode.url, release.alias.alias))
+        playWebAction.set(ActionPlayWeb(episode.url, release.alias))
     }
 
-    private fun onExternalEpisodeClick(
-        episodeState: ReleaseEpisodeItemState,
+    private fun onYouTubeEpisodeClick(
         release: Release,
-        episode: ExternalEpisode,
+        episode: YoutubeEpisode,
     ) {
-        releaseAnalytics.episodeExternalClick(release.id.id, episodeState.tag)
-        episode.url?.also { systemUtils.open(it) }
+        releaseAnalytics.episodeYouTubeClick(release.id.id)
+        systemUtils.open(episode.url)
     }
 
     private fun onOnlineEpisodeClick(
@@ -449,9 +450,9 @@ class ReleaseInfoViewModel @Inject constructor(
                 onOnlineEpisodeClick(release, episodeItem)
             }
 
-            ReleaseEpisodeItemType.EXTERNAL -> {
-                val episodeItem = getExternalEpisode(episodeState) ?: return
-                onExternalEpisodeClick(episodeState, release, episodeItem)
+            ReleaseEpisodeItemType.YOUTUBE -> {
+                val episodeItem = getYouTubeEpisode(episodeState) ?: return
+                onYouTubeEpisodeClick(release, episodeItem)
             }
 
             ReleaseEpisodeItemType.RUTUBE -> {
@@ -471,13 +472,9 @@ class ReleaseInfoViewModel @Inject constructor(
         return currentData?.episodes?.find { it.id == episode.id }
     }
 
-    private fun getExternalEpisode(episode: ReleaseEpisodeItemState): ExternalEpisode? {
-        if (episode.type != ReleaseEpisodeItemType.EXTERNAL) return null
-        val release = currentData ?: return null
-        return release.externalPlaylists
-            .find { it.tag == episode.tag }
-            ?.episodes
-            ?.find { it.id == episode.id }
+    private fun getYouTubeEpisode(episode: ReleaseEpisodeItemState): YoutubeEpisode? {
+        if (episode.type != ReleaseEpisodeItemType.YOUTUBE) return null
+        return currentData?.youtubePlaylists?.find { it.id == episode.id }
     }
 
     private fun getRutubeEpisode(episode: ReleaseEpisodeItemState): RutubeEpisode? {
@@ -652,8 +649,8 @@ enum class TorrentAction {
 }
 
 data class ActionPlayWeb(
-    val link: String,
-    val alias: String,
+    val link: Url.Absolute,
+    val alias: ReleaseAlias,
 )
 
 data class ActionPlayEpisode(

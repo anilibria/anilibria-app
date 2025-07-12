@@ -56,7 +56,6 @@ import ru.radiationx.data.api.auth.AuthHolder
 import ru.radiationx.data.api.auth.AuthRepository
 import ru.radiationx.data.api.auth.AuthStorage
 import ru.radiationx.data.api.auth.AuthTokenStorage
-import ru.radiationx.data.api.auth.legacy.AppCookieJar
 import ru.radiationx.data.api.auth.legacy.CookieHolder
 import ru.radiationx.data.api.auth.legacy.CookiesStorage
 import ru.radiationx.data.api.catalog.CatalogApiDataSource
@@ -154,6 +153,7 @@ import ru.radiationx.data.network.interceptors.AppInfoInterceptor
 import ru.radiationx.data.network.interceptors.AuthTokenInterceptor
 import ru.radiationx.data.network.interceptors.DynamicApiUrlInterceptor
 import ru.radiationx.data.network.interceptors.NetworkAvailableInterceptor
+import ru.radiationx.data.network.interceptors.SessionTransitionInterceptor
 import ru.radiationx.data.network.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.network.sslcompat.SslCompat
 import ru.radiationx.data.player.PlayerCacheDataSourceProvider
@@ -208,7 +208,6 @@ class DataModule(context: Context) : QuillModule() {
         singleImpl<UserHolder, UserStorage>()
         singleImpl<AuthHolder, AuthStorage>()
 
-        single<AppCookieJar>()
         single<UnauthorizedInterceptor>()
         single<AppInfoInterceptor>()
         single<UserAgentGenerator>()
@@ -302,6 +301,7 @@ class DataModule(context: Context) : QuillModule() {
         singleProvider<Retrofit, ApiRetrofitProvider>(ApiRetrofit::class)
 
         single<AuthTokenStorage>()
+        single<SessionTransitionInterceptor>()
         single<AuthTokenInterceptor>()
         single<DynamicApiUrlInterceptor>()
         single<NetworkAvailableInterceptor>()

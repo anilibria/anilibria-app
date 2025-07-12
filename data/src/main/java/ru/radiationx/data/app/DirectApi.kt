@@ -1,5 +1,6 @@
 package ru.radiationx.data.app
 
+import anilibria.api.auth.models.TokenResponse
 import anilibria.api.status.models.StatusResponse
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -7,6 +8,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 import retrofit2.http.Url
 import ru.radiationx.data.app.ads.remote.AdsConfigDataResponse
 import ru.radiationx.data.app.config.remote.AppConfigResponse
@@ -22,6 +24,12 @@ interface DirectApi {
 
     @GET
     suspend fun getApiStatus(@Url url: String): StatusResponse
+
+    @GET
+    suspend fun transitionSession(
+        @Url url: String,
+        @Query("session_id") sessionId: String,
+    ): TokenResponse
 
     @GET
     suspend fun getUpdate(@Url url: String): UpdateDataRootResponse

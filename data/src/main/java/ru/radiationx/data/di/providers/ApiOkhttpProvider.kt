@@ -15,6 +15,7 @@ import ru.radiationx.data.network.interceptors.AppInfoInterceptor
 import ru.radiationx.data.network.interceptors.AuthTokenInterceptor
 import ru.radiationx.data.network.interceptors.DynamicApiUrlInterceptor
 import ru.radiationx.data.network.interceptors.NetworkAvailableInterceptor
+import ru.radiationx.data.network.interceptors.SessionTransitionInterceptor
 import ru.radiationx.data.network.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.network.sslcompat.SslCompat
 import ru.radiationx.data.network.sslcompat.appendSslCompat
@@ -24,6 +25,7 @@ import javax.inject.Provider
 class ApiOkhttpProvider @Inject constructor(
     private val unauthorizedInterceptor: UnauthorizedInterceptor,
     private val authTokenInterceptor: AuthTokenInterceptor,
+    private val sessionTransitionInterceptor: SessionTransitionInterceptor,
     private val appInfoInterceptor: AppInfoInterceptor,
     private val dynamicApiUrlInterceptor: DynamicApiUrlInterceptor,
     private val appConfigInterceptor: AppConfigInterceptor,
@@ -45,6 +47,7 @@ class ApiOkhttpProvider @Inject constructor(
         .addInterceptor(AcceptJsonInterceptor())
         .addInterceptor(appInfoInterceptor)
         .addInterceptor(unauthorizedInterceptor)
+        .addInterceptor(sessionTransitionInterceptor)
         .addInterceptor(authTokenInterceptor)
         .apply {
             if (sharedBuildConfig.debug) {

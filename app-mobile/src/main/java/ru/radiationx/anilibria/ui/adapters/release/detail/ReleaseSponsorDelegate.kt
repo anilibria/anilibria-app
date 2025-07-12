@@ -9,6 +9,8 @@ import ru.radiationx.anilibria.databinding.ItemReleaseSponsorBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseSponsorListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.data.api.releases.models.ReleaseSponsor
 
 /**
@@ -33,7 +35,10 @@ class ReleaseSponsorDelegate(
 
         private val binding by viewBinding<ItemReleaseSponsorBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         fun bind(item: ReleaseSponsor) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemSponsorTitle.text = item.title
             binding.itemSponsorDesc.text = item.description
             binding.itemSponsorAction.text = item.urlTitle

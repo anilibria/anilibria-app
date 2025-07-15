@@ -18,6 +18,7 @@
 package ru.radiationx.anilibria.screen.player
 
 import android.content.Context
+import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.media.PlaybackTransportControlGlue
 import androidx.leanback.widget.Action
 import androidx.leanback.widget.ArrayObjectAdapter
@@ -52,6 +53,10 @@ import java.util.concurrent.TimeUnit
 @UnstableApi
 class VideoPlayerGlue(
     context: Context,
+    /**
+     * Ссылка на [VideoSupportFragment], чтобы можно было управлять оверлеем.
+     */
+    private val fragment: VideoSupportFragment,
     playerAdapter: LeanbackPlayerAdapter,
 ) : PlaybackTransportControlGlue<LeanbackPlayerAdapter>(context, playerAdapter) {
 
@@ -79,11 +84,6 @@ class VideoPlayerGlue(
     private val speedAction by lazy { SpeedAction(context) }
     private val episodesAction by lazy { EpisodesAction(context) }
 
-    override fun onUpdateProgress() {
-        super.onUpdateProgress()
-        playbackListener?.onUpdateProgress()
-    }
-
     init {
         isSeekEnabled = true
     }
@@ -91,14 +91,13 @@ class VideoPlayerGlue(
     override fun onCreatePrimaryActions(adapter: ArrayObjectAdapter) {
         super.onCreatePrimaryActions(adapter)
         adapter.add(previousAction)
-        //adapter.add(mRewindAction);
-        //adapter.add(mFastForwardAction);
         adapter.add(nextAction)
     }
 
     override fun onCreateSecondaryActions(adapter: ArrayObjectAdapter) {
         super.onCreateSecondaryActions(adapter)
-        qualityAction.index = 1
+        // По умолчанию иконка качества у нас стоит на HD
+        qualityAction.index = QualityAction.INDEX_HD
         adapter.add(qualityAction)
         adapter.add(speedAction)
         adapter.add(episodesAction)
@@ -107,13 +106,36 @@ class VideoPlayerGlue(
     override fun onActionClicked(action: Action) {
         if (shouldDispatchAction(action)) {
             dispatchAction(action)
-            return
+        } else {
+            super.onActionClicked(action)
         }
-        super.onActionClicked(action)
+    }
+
+    override fun onUpdateProgress() {
+        super.onUpdateProgress()
+        playbackListener?.onUpdateProgress()
+    }
+
+    /**
+     * Вызывается, когда переключаемся между Play/Pause.
+     * Если вы нажимаете аппаратную кнопку Play/Pause и `BasePlayerFragment` «глотает»
+     * это событие, Leanback может не запустить «автоскрытие» оверлея автоматически.
+     *
+     * Чтобы этого не случилось, мы явно перезапускаем показ + автоскрытие.
+     */
+    override fun onPlayStateChanged() {
+        super.onPlayStateChanged()
+        fragment.showControlsOverlay(false)
+        fragment.isControlsOverlayAutoHideEnabled = false
+        fragment.isControlsOverlayAutoHideEnabled = true
     }
 
     private fun shouldDispatchAction(action: Action): Boolean {
-        return action === rewindAction || action === forwardAction || action === qualityAction || action === speedAction || action === episodesAction
+        return action === rewindAction ||
+               action === forwardAction ||
+               action === qualityAction ||
+               action === speedAction ||
+               action === episodesAction
     }
 
     private fun dispatchAction(action: Action) {
@@ -125,21 +147,16 @@ class VideoPlayerGlue(
             action === episodesAction -> actionListener?.onEpisodesClick()
             action is MultiAction -> {
                 action.nextIndex()
-                // Notify adapter of action changes to handle secondary actions, such as, thumbs up/down
-                // and repeat.
-                controlsRow?.also {
-                    notifyActionChanged(
-                        action,
-                        it.secondaryActionsAdapter as ArrayObjectAdapter
-                    )
+                controlsRow?.let { row ->
+                    (row.secondaryActionsAdapter as? ArrayObjectAdapter)?.let { adapter ->
+                        notifyActionChanged(action, adapter)
+                    }
                 }
             }
         }
     }
 
-    private fun notifyActionChanged(
-        action: MultiAction, adapter: ArrayObjectAdapter,
-    ) {
+    private fun notifyActionChanged(action: MultiAction, adapter: ArrayObjectAdapter) {
         val index = adapter.indexOf(action)
         if (index >= 0) {
             adapter.notifyArrayItemRangeChanged(index, 1)
@@ -154,38 +171,37 @@ class VideoPlayerGlue(
         actionListener?.onPrevious()
     }
 
-    /** Skips backwards 10 seconds.  */
+    /** Skips backwards 10 seconds. */
     fun rewind() {
         var newPosition = currentPosition - TEN_SECONDS
-        newPosition = if (newPosition < 0) 0 else newPosition
-        playerAdapter!!.seekTo(newPosition)
+        if (newPosition < 0) newPosition = 0
+        playerAdapter?.seekTo(newPosition)
     }
 
-    /** Skips forward 10 seconds.  */
+    /** Skips forward 10 seconds. */
     fun fastForward() {
         if (duration > -1) {
             var newPosition = currentPosition + TEN_SECONDS
-            newPosition = if (newPosition > duration) duration else newPosition
-            playerAdapter!!.seekTo(newPosition)
+            if (newPosition > duration) newPosition = duration
+            playerAdapter?.seekTo(newPosition)
         }
     }
 
+    /** Установить иконку качества (SD / HD / FULLHD) в панель управления. */
     fun setQuality(quality: PlayerQuality) {
         qualityAction.index = when (quality) {
             PlayerQuality.SD -> QualityAction.INDEX_SD
             PlayerQuality.HD -> QualityAction.INDEX_HD
             PlayerQuality.FULLHD -> QualityAction.INDEX_FHD
         }
-        controlsRow?.also {
-            notifyActionChanged(
-                qualityAction,
-                it.secondaryActionsAdapter as ArrayObjectAdapter
-            )
+        controlsRow?.let { row ->
+            (row.secondaryActionsAdapter as? ArrayObjectAdapter)?.let { adapter ->
+                notifyActionChanged(qualityAction, adapter)
+            }
         }
     }
 
     companion object {
         private val TEN_SECONDS = TimeUnit.SECONDS.toMillis(10)
     }
-
 }

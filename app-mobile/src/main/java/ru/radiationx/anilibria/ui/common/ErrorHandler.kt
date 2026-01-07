@@ -2,7 +2,7 @@ package ru.radiationx.anilibria.ui.common
 
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.utils.messages.SystemMessenger
-import ru.radiationx.data.network.DataErrorMapper
+import ru.radiationx.data.network.errors.DataErrorMapper
 import timber.log.Timber
 import javax.inject.Inject
 

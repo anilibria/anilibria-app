@@ -21,6 +21,7 @@ import retrofit2.create
 import ru.radiationx.data.di.ApiClient
 import ru.radiationx.data.di.ApiRetrofit
 import ru.radiationx.data.network.interceptors.DynamicApiUrlInterceptor
+import ru.radiationx.data.network.errors.RetrofitCallErrorAdapterFactory
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -34,6 +35,7 @@ class ApiRetrofitProvider @Inject constructor(
             .client(okHttpClient)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create())
+            .addCallAdapterFactory(RetrofitCallErrorAdapterFactory())
             .build()
         return retrofit
     }

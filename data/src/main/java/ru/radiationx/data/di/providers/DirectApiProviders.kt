@@ -8,6 +8,7 @@ import retrofit2.create
 import ru.radiationx.data.app.DirectApi
 import ru.radiationx.data.di.DirectClient
 import ru.radiationx.data.di.DirectRetrofit
+import ru.radiationx.data.network.errors.RetrofitCallErrorAdapterFactory
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -21,6 +22,7 @@ class DirectRetrofitProvider @Inject constructor(
             .client(okHttpClient)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create())
+            .addCallAdapterFactory(RetrofitCallErrorAdapterFactory())
             .build()
         return retrofit
     }

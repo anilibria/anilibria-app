@@ -145,9 +145,10 @@ import ru.radiationx.data.di.providers.TeamsApiProvider
 import ru.radiationx.data.di.providers.TorrentsApiProvider
 import ru.radiationx.data.di.providers.VideosApiProvider
 import ru.radiationx.data.di.providers.ViewsApiProvider
-import ru.radiationx.data.network.DataErrorMapper
+import ru.radiationx.data.network.errors.DataErrorMapper
 import ru.radiationx.data.network.NetworkObserver
 import ru.radiationx.data.network.UserAgentGenerator
+import ru.radiationx.data.network.errors.OkHttpErrorInterceptor
 import ru.radiationx.data.network.interceptors.AppConfigInterceptor
 import ru.radiationx.data.network.interceptors.AppInfoInterceptor
 import ru.radiationx.data.network.interceptors.AuthTokenInterceptor
@@ -305,6 +306,7 @@ class DataModule(context: Context) : QuillModule() {
         single<AuthTokenInterceptor>()
         single<DynamicApiUrlInterceptor>()
         single<NetworkAvailableInterceptor>()
+        single<OkHttpErrorInterceptor>()
         single<AppConfigInterceptor>()
 
 

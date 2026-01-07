@@ -9,6 +9,7 @@ import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.SslCompatAnalytics
 import ru.radiationx.data.network.appendSslCompatAnalytics
 import ru.radiationx.data.network.appendTimeouts
+import ru.radiationx.data.network.errors.OkHttpErrorInterceptor
 import ru.radiationx.data.network.interceptors.AppInfoInterceptor
 import ru.radiationx.data.network.interceptors.NetworkAvailableInterceptor
 import ru.radiationx.data.network.sslcompat.SslCompat
@@ -22,7 +23,8 @@ class DirectOkHttpProvider @Inject constructor(
     private val sslCompat: SslCompat,
     private val sslCompatAnalytics: SslCompatAnalytics,
     private val appInfoInterceptor: AppInfoInterceptor,
-    private val networkAvailableInterceptor: NetworkAvailableInterceptor
+    private val networkAvailableInterceptor: NetworkAvailableInterceptor,
+    private val okHttpErrorInterceptor: OkHttpErrorInterceptor
 ) : Provider<OkHttpClient> {
 
     override fun get(): OkHttpClient = OkHttpClient.Builder()
@@ -32,6 +34,7 @@ class DirectOkHttpProvider @Inject constructor(
         .addInterceptor(networkAvailableInterceptor)
         .addInterceptor(BrotliInterceptor)
         .addInterceptor(appInfoInterceptor)
+        .addInterceptor(okHttpErrorInterceptor)
         .apply {
             if (sharedBuildConfig.debug) {
                 addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))

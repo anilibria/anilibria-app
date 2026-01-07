@@ -9,6 +9,7 @@ import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.SslCompatAnalytics
 import ru.radiationx.data.network.appendSslCompatAnalytics
 import ru.radiationx.data.network.appendTimeouts
+import ru.radiationx.data.network.errors.OkHttpErrorInterceptor
 import ru.radiationx.data.network.interceptors.AcceptJsonInterceptor
 import ru.radiationx.data.network.interceptors.AppConfigInterceptor
 import ru.radiationx.data.network.interceptors.AppInfoInterceptor
@@ -30,6 +31,7 @@ class ApiOkhttpProvider @Inject constructor(
     private val dynamicApiUrlInterceptor: DynamicApiUrlInterceptor,
     private val appConfigInterceptor: AppConfigInterceptor,
     private val networkAvailableInterceptor: NetworkAvailableInterceptor,
+    private val okHttpErrorInterceptor: OkHttpErrorInterceptor,
     private val context: Context,
     private val sharedBuildConfig: SharedBuildConfig,
     private val sslCompat: SslCompat,
@@ -49,6 +51,7 @@ class ApiOkhttpProvider @Inject constructor(
         .addInterceptor(unauthorizedInterceptor)
         .addInterceptor(sessionTransitionInterceptor)
         .addInterceptor(authTokenInterceptor)
+        .addInterceptor(okHttpErrorInterceptor)
         .apply {
             if (sharedBuildConfig.debug) {
                 addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))

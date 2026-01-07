@@ -1,4 +1,4 @@
-package ru.radiationx.data.network
+package ru.radiationx.data.network.errors
 
 import anilibria.api.shared.errors.ApiErrorParser
 import com.squareup.moshi.JsonDataException
@@ -19,8 +19,8 @@ class DataErrorMapper @Inject constructor(
 ) {
 
     fun handle(throwable: Throwable): String? {
-        return when (throwable) {
-            is HttpException -> userMessage(throwable)
+        return when (val networkCause = throwable.causeOfNetwork()) {
+            is HttpException -> userMessage(networkCause)
             is UnknownHostException,
             is ConnectException -> "Нет соединения с сервером"
 

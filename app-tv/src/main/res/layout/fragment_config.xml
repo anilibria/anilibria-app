@@ -34,7 +34,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/cd_config_logo"
         android:focusable="false"
-        android:src="@drawable/ic_anilibria_splash"
+        android:src="@drawable/alib_splash_fg"
         app:tint="?android:colorAccent" />
 
     <androidx.constraintlayout.widget.Barrier

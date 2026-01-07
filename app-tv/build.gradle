@@ -41,7 +41,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
-            def appName = "AniLibria_TV"
+            def appName = "AniLiberty"
             def versionName = variant.versionName
             outputFileName = "${appName}_v${versionName}.apk"
         }

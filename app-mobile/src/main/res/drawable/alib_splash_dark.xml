@@ -3,7 +3,7 @@
 
     <item>
         <shape>
-            <solid android:color="@color/light_cardBackground" />
+            <solid android:color="@color/dark_cardBackground" />
         </shape>
     </item>
 
@@ -11,7 +11,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ic_anilibria_splash" />
+            android:src="@drawable/alib_splash_fg" />
     </item>
 
 </layer-list>

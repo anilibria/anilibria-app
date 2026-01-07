@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AniLibria</string>
+    <string name="app_name">AniLiberty</string>
 
     <string name="fragment_title_releases">Релизы</string>
     <string name="fragment_title_other">Прочее</string>

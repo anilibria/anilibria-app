@@ -1,6 +1,10 @@
 package ru.radiationx.anilibria.ui.adapters.release.detail
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.view.View
+import android.widget.Toast
 import androidx.core.text.parseAsHtml
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
@@ -77,6 +81,13 @@ class ReleaseHeadDelegate(
             dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.fullTitle.text = state.titleRus
             binding.fullTitleEn.text = state.titleEng
+            binding.fullTitleEn.setOnClickListener {
+                val context = it.context
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("title", binding.fullTitleEn.text)
+                clipboard.setPrimaryClip(clip)
+                Toast.makeText(context, "Название скопировано в буфер обмена", Toast.LENGTH_SHORT).show()
+            }
             binding.fullUpdated.isVisible = state.updatedAt != null
             state.updatedAt?.also { updatedAt ->
                 binding.fullUpdated.text = updatedAt

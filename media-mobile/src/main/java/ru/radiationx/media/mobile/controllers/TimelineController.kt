@@ -4,6 +4,8 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
+import java.util.concurrent.TimeUnit
+import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +17,6 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.media.mobile.PlayerFlow
 import ru.radiationx.media.mobile.holder.PlayerAttachListener
 import ru.radiationx.media.mobile.models.TimelineState
-import ru.radiationx.media.mobile.utils.TimeFormatter
 
 internal class TimelineController(
     private val coroutineScope: CoroutineScope,
@@ -67,6 +68,14 @@ internal class TimelineController(
     }
 
     private fun TimelineState.formatTime(seek: Long?): String {
-        return "${TimeFormatter.format(seek ?: position)} / ${TimeFormatter.format(duration)}"
+        val hours = TimeUnit.MILLISECONDS.toHours(seek ?: position)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(seek ?: position) - TimeUnit.HOURS.toMinutes(hours)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(seek ?: position) - TimeUnit.MINUTES.toSeconds(minutes) - TimeUnit.HOURS.toSeconds(hours)
+
+        return if (hours > 0) {
+            String.format(Locale.US, "%d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            String.format(Locale.US, "%02d:%02d", minutes, seconds)
+        }
     }
 }

@@ -42,7 +42,7 @@ viewbindingpropertydelegate = "2.0.4"
 android-plugin = "8.10.0"
 ksp-plugin = "2.1.21-2.0.1"
 gms-plugin = "4.4.2"
-appmetrica-plugin = "1.0.1"
+appmetrica-plugin = "1.3.0"
 
 
 [libraries]

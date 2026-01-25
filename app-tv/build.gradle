@@ -38,6 +38,19 @@ android {
         }
     }
 
+    flavorDimensions = ["type"]
+    productFlavors {
+        app {
+            dimension "type"
+            buildConfigField "boolean", 'FOR_RUSTORE', 'false'
+        }
+
+        rustore {
+            dimension "type"
+            buildConfigField "boolean", 'FOR_RUSTORE', 'true'
+        }
+    }
+
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
             def appName = "AniLiberty"

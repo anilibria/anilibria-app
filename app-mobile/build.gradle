@@ -52,12 +52,20 @@ android {
         app {
             dimension "type"
             buildConfigField "boolean", 'HAS_ADS', 'true'
+            buildConfigField "boolean", 'FOR_RUSTORE', 'false'
+        }
+
+        rustore {
+            dimension "type"
+            buildConfigField "boolean", 'HAS_ADS', 'true'
+            buildConfigField "boolean", 'FOR_RUSTORE', 'true'
         }
 
         store {
             dimension "type"
             applicationId "tv.anilibria.store"
             buildConfigField "boolean", 'HAS_ADS', 'false'
+            buildConfigField "boolean", 'FOR_RUSTORE', 'false'
         }
     }
 

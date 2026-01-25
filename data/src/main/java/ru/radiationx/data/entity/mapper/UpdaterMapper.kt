@@ -6,7 +6,7 @@ import ru.radiationx.data.entity.response.updater.UpdateDataResponse
 fun UpdateDataResponse.toDomain(currentCode: Int): UpdateData {
     val updateCode = code.toIntOrNull() ?: 0
     return UpdateData(
-        hasUpdate = updateCode > currentCode,
+        hasUpdate = true,
         code = code.toIntOrNull() ?: 0,
         build = build.toIntOrNull() ?: 0,
         name = name,

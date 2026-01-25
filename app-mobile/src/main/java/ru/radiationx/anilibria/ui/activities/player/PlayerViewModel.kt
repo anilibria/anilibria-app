@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,16 +33,15 @@ import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.data.repository.ReleaseRepository
+import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared.ktx.coRunCatching
-import toothpick.InjectConstructor
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-@InjectConstructor
-class PlayerViewModel(
+class PlayerViewModel @Inject constructor(
     private val sharedPlayerData: SharedPlayerData,
     private val releaseInteractor: ReleaseInteractor,
-    private val releaseRepository: ReleaseRepository,
+    private val historyRepository: HistoryRepository,
     private val episodesCheckerHolder: EpisodesCheckerHolder,
     private val preferencesHolder: PreferencesHolder,
 ) : ViewModel() {
@@ -49,15 +50,6 @@ class PlayerViewModel(
         private val seekThreshold = TimeUnit.SECONDS.toMillis(10)
     }
 
-    val currentSpeed = preferencesHolder.playSpeed
-
-    val playerSkipsEnabled: StateFlow<Boolean> = preferencesHolder.playerSkips
-
-    val playerSkipsTimerEnabled: StateFlow<Boolean> = preferencesHolder.playerSkipsTimer
-
-    val inactiveTimerEnabled: StateFlow<Boolean> = preferencesHolder.playerInactiveTimer
-
-    val autoplayEnabled: StateFlow<Boolean> = preferencesHolder.playerAutoplay
 
     private val _episodeId = sharedPlayerData.episodeId
     val episodeId = _episodeId.asStateFlow()
@@ -82,6 +74,12 @@ class PlayerViewModel(
                 error = dataState.error
             )
         }.launchIn(viewModelScope)
+
+        episodeId
+            .map { it.releaseId }
+            .distinctUntilChanged()
+            .onEach { historyRepository.putReleaseId(it) }
+            .launchIn(viewModelScope)
 
         preferencesHolder
             .playerQuality
@@ -108,51 +106,10 @@ class PlayerViewModel(
         loadData(_episodeId.value)
     }
 
-    fun onSettingsClick() {
-        launchWithData { data ->
-            val episode = data.getEpisode(_episodeId.value) ?: return@launchWithData
-            val quality = preferencesHolder.playerQuality.value
-            val settingsState = PlayerSettingsState(
-                currentSpeed = preferencesHolder.playSpeed.value,
-                currentQuality = episode.qualityInfo.getActualFor(quality) ?: PlayerQuality.SD,
-                availableQualities = episode.qualityInfo.available,
-                skipsEnabled = preferencesHolder.playerSkips.value,
-                skipsTimerEnabled = preferencesHolder.playerSkipsTimer.value,
-                inactiveTimerEnabled = preferencesHolder.playerInactiveTimer.value,
-                autoplayEnabled = preferencesHolder.playerAutoplay.value
-            )
-            _actions.emit(PlayerAction.ShowSettings(settingsState))
-        }
-    }
-
     fun onPlaylistClick() {
         launchWithData {
             _actions.emit(PlayerAction.ShowPlaylist)
         }
-    }
-
-    fun onQualitySelected(quality: PlayerQuality) {
-        preferencesHolder.playerQuality.value = quality
-    }
-
-    fun onSpeedSelected(speed: Float) {
-        preferencesHolder.playSpeed.value = speed
-    }
-
-    fun onSkipsEnabledSelected(state: Boolean) {
-        preferencesHolder.playerSkips.value = state
-    }
-
-    fun onSkipsTimerEnabledChange(state: Boolean) {
-        preferencesHolder.playerSkipsTimer.value = state
-    }
-
-    fun onInactiveTimerEnabledChange(state: Boolean) {
-        preferencesHolder.playerInactiveTimer.value = state
-    }
-
-    fun onAutoplayEnabledChange(state: Boolean) {
-        preferencesHolder.playerAutoplay.value = state
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -170,6 +127,10 @@ class PlayerViewModel(
             val action = PlayerAction.PlayEpisode(episodeStates, episodeId, access?.seek ?: 0)
             _actions.emit(action)
         }
+    }
+
+    fun onEpisodeChanged(episodeId: EpisodeId) {
+        _episodeId.value = episodeId
     }
 
     fun onEpisodeTransition(episodeId: EpisodeId, duration: Long) {

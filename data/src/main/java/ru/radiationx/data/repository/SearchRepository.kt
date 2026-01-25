@@ -15,7 +15,7 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.data.entity.domain.search.SearchForm
-import ru.radiationx.data.entity.domain.search.SuggestionItem
+import ru.radiationx.data.entity.domain.search.Suggestions
 import ru.radiationx.data.entity.mapper.toDomain
 import ru.radiationx.data.entity.mapper.toGenreItem
 import ru.radiationx.data.entity.mapper.toSuggestionDomain
@@ -51,9 +51,9 @@ class SearchRepository @Inject constructor(
         }
     }
 
-    suspend fun fastSearch(query: String): List<SuggestionItem> = withContext(Dispatchers.IO) {
+    suspend fun fastSearch(query: String): Suggestions = withContext(Dispatchers.IO) {
         val releaseId = getQueryId(query)
-        if (releaseId != null) {
+        val items = if (releaseId != null) {
             releaseApi
                 .getReleasesByIds(listOf(releaseId))
                 .map { it.toSuggestionDomain(apiUtils, apiConfig) }
@@ -62,6 +62,7 @@ class SearchRepository @Inject constructor(
                 .fastSearch(query)
                 .map { it.toDomain(apiUtils, apiConfig) }
         }
+        Suggestions(query, items)
     }
 
     suspend fun searchReleases(form: SearchForm, page: Int): Paginated<Release> {

@@ -2,12 +2,14 @@ package ru.radiationx.anilibria.ui.adapters.global
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemLoadErrorBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 
 /**
  * Created by radiationx on 13.01.18.
@@ -29,7 +31,10 @@ class LoadErrorDelegate(
 
         private val binding by viewBinding<ItemLoadErrorBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         fun bind() {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemLoadErrorBtn.setOnClickListener {
                 listener.invoke()
             }

@@ -6,17 +6,17 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionManager
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentOtpBinding
-import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
+import taiwa.dialogs.TaiwaDialogFragment
 
-class OtpAcceptDialogFragment : AlertDialogFragment(R.layout.fragment_otp) {
+class OtpAcceptDialogFragment : TaiwaDialogFragment(R.layout.fragment_otp) {
 
     private val useTimeCounter by lazy {
         LifecycleTimeCounter(viewModel::submitUseTime)

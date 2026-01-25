@@ -4,47 +4,43 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.lapism.search.behavior.SearchBehavior
-import com.lapism.search.internal.SearchLayout
-import com.lapism.search.widget.SearchMenuItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
-import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
+import ru.radiationx.anilibria.ui.common.releaseItemDialog
+import ru.radiationx.anilibria.ui.fragments.BaseSearchItemFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.feed.FeedToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.utils.Dimensions
 import ru.radiationx.anilibria.utils.ToolbarHelper
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared.ktx.android.showWithLifecycle
+import ru.radiationx.shared_app.controllers.loaderpage.hasAnyLoading
 
 /**
  * Created by radiationx on 18.02.18.
  */
 class HistoryFragment :
-    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    BaseSearchItemFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
-    ReleasesAdapter.ItemListener,
     TopScroller {
 
     companion object {
@@ -63,8 +59,6 @@ class HistoryFragment :
         return sharedView
     }
 
-    private var searchView: SearchMenuItem? = null
-
     private val adapter = ReleasesAdapter(
         loadMoreListener = { viewModel.loadMore() },
         loadRetryListener = { viewModel.loadMore() },
@@ -74,7 +68,11 @@ class HistoryFragment :
         exportListener = {
             fileViewModel.onExportClick()
         },
-        listener = this,
+        clickListener = { item, view ->
+            this.sharedViewLocal = view
+            viewModel.onItemClick(item)
+        },
+        longClickListener = { item -> releaseDialog.show(item) },
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_history,
             R.string.placeholder_title_nodata_base,
@@ -88,7 +86,15 @@ class HistoryFragment :
     )
 
     private val searchAdapter = ListItemAdapter().apply {
-        addDelegate(ReleaseItemDelegate(this@HistoryFragment))
+        addDelegate(
+            ReleaseItemDelegate(
+                clickListener = { item, view ->
+                    sharedViewLocal = view
+                    viewModel.onItemClick(item)
+                },
+                longClickListener = { item -> releaseDialog.show(item) }
+            )
+        )
     }
 
     private val viewModel by viewModel<HistoryViewModel>()
@@ -99,6 +105,13 @@ class HistoryFragment :
             fileViewModel.onImportFileSelected(it)
         }
     }
+
+    private val releaseDialog by releaseItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) },
+        onShortcutClick = { viewModel.onShortcutClick(it) },
+        onDeleteClick = { viewModel.onDeleteClick(it) }
+    )
 
     override val statusBarVisible: Boolean = true
 
@@ -114,7 +127,6 @@ class HistoryFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
         ToolbarHelper.fixInsets(baseBinding.toolbar)
 
         baseBinding.toolbar.apply {
@@ -128,7 +140,7 @@ class HistoryFragment :
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
                     viewModel.onSearchClick()
-                    searchView?.requestFocus(it)
+                    baseBinding.searchView.show()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -151,28 +163,13 @@ class HistoryFragment :
             viewModel.refresh()
         }
 
-
-        baseBinding.coordinatorLayout.addView(searchView)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                width = CoordinatorLayout.LayoutParams.MATCH_PARENT
-                height = CoordinatorLayout.LayoutParams.WRAP_CONTENT
-                behavior = SearchBehavior<SearchMenuItem>()
+        baseBinding.searchView.apply {
+            setHint("Название релиза")
+            setOnQueryTextListener { newText ->
+                viewModel.localSearch(newText)
             }
-        searchView?.apply {
-            setTextHint("Название релиза")
-            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    return true
-                }
 
-                override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    viewModel.localSearch(newText.toString())
-                    return false
-                }
-            })
-
-            setAdapter(searchAdapter)
+            setContentAdapter(searchAdapter)
         }
 
         viewModel.state.onEach {
@@ -188,47 +185,16 @@ class HistoryFragment :
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                topMargin = dimensions.statusBar
-            }
-        searchView?.requestLayout()
+        baseBinding.searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            topMargin = dimensions.top
+        }
+        baseBinding.searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding.recyclerView.adapter = null
-        searchView?.setAdapter(null)
-        searchView = null
-    }
-
-    override fun onItemClick(item: ReleaseItemState, position: Int) {
-        viewModel.onItemClick(item)
-    }
-
-    override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        val titles =
-            arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран", "Удалить")
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                when (which) {
-                    0 -> {
-                        viewModel.onCopyClick(item)
-                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-
-                    1 -> viewModel.onShareClick(item)
-                    2 -> viewModel.onShortcutClick(item)
-                    3 -> viewModel.onDeleteClick(item)
-                }
-            }
-            .showWithLifecycle(viewLifecycleOwner)
-        return false
-    }
-
-    override fun onItemClick(position: Int, view: View) {
-        this.sharedViewLocal = view
+        baseBinding.searchView.setContentAdapter(null)
     }
 
     override fun scrollToTop() {
@@ -239,6 +205,7 @@ class HistoryFragment :
     private fun showState(state: HistoryScreenState) {
         binding.progressBarList.isVisible = state.data.emptyLoading
         binding.refreshLayout.isRefreshing = state.data.refreshLoading
+        baseBinding.searchView.setLoading(state.data.hasAnyLoading())
         adapter.bindState(state.data, withExport = true)
         searchAdapter.items = state.searchItems.map { ReleaseListItem(it) }
     }

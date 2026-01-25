@@ -2,17 +2,13 @@ package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.lapism.search.SearchUtils
-import com.lapism.search.behavior.SearchBehavior
-import com.lapism.search.internal.SearchLayout
-import com.lapism.search.widget.SearchView
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
@@ -20,21 +16,23 @@ import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
+import ru.radiationx.anilibria.ui.common.releaseItemDialog
+import ru.radiationx.anilibria.ui.common.youtubeItemDialog
+import ru.radiationx.anilibria.ui.fragments.BaseSearchFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchAdapter
 import ru.radiationx.anilibria.ui.fragments.search.FastSearchViewModel
-import ru.radiationx.anilibria.utils.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
-import ru.radiationx.shared.ktx.android.showWithLifecycle
+import searchbar.NavigationIcon
 
 
 /* Created by radiationx on 05.11.17. */
 
 class FeedFragment :
-    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    BaseSearchFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
     TopScroller {
 
@@ -60,10 +58,13 @@ class FeedFragment :
         }, releaseClickListener = { releaseItem, view ->
             this.sharedViewLocal = view
             viewModel.onItemClick(releaseItem)
-        }, releaseLongClickListener = { releaseItem, _ ->
+        }, releaseLongClickListener = { releaseItem ->
             releaseOnLongClick(releaseItem)
-        }, youtubeClickListener = { youtubeItem, _ ->
+        }, youtubeClickListener = { youtubeItem ->
             viewModel.onYoutubeClick(youtubeItem)
+        },
+        youtubeLongClickListener = {
+            youtubeDialog.show(it)
         }, scheduleClickListener = { feedScheduleItem, view, position ->
             this.sharedViewLocal = view
             viewModel.onScheduleItemClick(feedScheduleItem, position)
@@ -80,14 +81,24 @@ class FeedFragment :
 
     private val searchAdapter = FastSearchAdapter(
         clickListener = { searchViewModel.onItemClick(it) },
-        localClickListener = { searchViewModel.onLocalItemClick(it) }
+        localClickListener = { searchViewModel.onLocalItemClick(it) },
+        retryClickListener = { searchViewModel.refresh() }
     )
 
     private val viewModel by viewModel<FeedViewModel>()
 
     private val searchViewModel by viewModel<FastSearchViewModel>()
 
-    private var searchView: SearchView? = null
+    private val releaseDialog by releaseItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) },
+        onShortcutClick = { viewModel.onShortcutClick(it) }
+    )
+
+    private val youtubeDialog by youtubeItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) },
+    )
 
     override var sharedViewLocal: View? = null
 
@@ -111,7 +122,6 @@ class FeedFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchView(baseBinding.coordinatorLayout.context)
         binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
         binding.recyclerView.apply {
             adapter = this@FeedFragment.adapter
@@ -122,15 +132,6 @@ class FeedFragment :
         baseBinding.toolbar.apply {
             title = getString(R.string.fragment_title_releases)
             title = "Лента"
-            /*menu.add("Поиск")
-                    .setIcon(R.drawable.ic_toolbar_search)
-                    .setOnMenuItemClickListener {
-                        searchView?.open(true, it)
-                        false
-                    }
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)*/
-
-
         }
 
         FeedToolbarShadowController(
@@ -140,43 +141,23 @@ class FeedFragment :
             updateToolbarShadow(it)
         }
 
-
-        baseBinding.coordinatorLayout.addView(searchView)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                width =
-                    CoordinatorLayout.LayoutParams.MATCH_PARENT
-                height =
-                    CoordinatorLayout.LayoutParams.WRAP_CONTENT
-
-                behavior = SearchBehavior<SearchView>()
+        baseBinding.searchView.apply {
+            setHint("Поиск по названию")
+            setNavigationIcon(NavigationIcon.Search)
+            setOnFocusChangeListener { hasFocus ->
+                if (hasFocus) {
+                    setNavigationIcon(NavigationIcon.Arrow)
+                    viewModel.onFastSearchOpen()
+                    baseBinding.appbarLayout.setExpanded(true)
+                } else {
+                    setNavigationIcon(NavigationIcon.Search)
+                }
             }
-        searchView?.apply {
-            setTextHint("Поиск по названию")
-            navigationIconSupport = SearchUtils.NavigationIconSupport.SEARCH
-            setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
-                override fun onFocusChange(hasFocus: Boolean) {
-                    if (!hasFocus) {
-                        searchViewModel.onClose()
-                    } else {
-                        viewModel.onFastSearchOpen()
-                    }
-                }
-            })
-            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    return true
-                }
+            setOnQueryTextListener { newText ->
+                searchViewModel.onQueryChange(newText)
+            }
 
-                override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    searchViewModel.onQueryChange(newText.toString())
-                    return false
-                }
-            })
-
-            setAdapter(searchAdapter)
-
-
+            setContentAdapter(searchAdapter)
         }
 
         viewModel.state.onEach { state ->
@@ -186,17 +167,17 @@ class FeedFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         searchViewModel.state.onEach { state ->
+            baseBinding.searchView.setLoading(state.loaderState.loading)
             searchAdapter.bindItems(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as CoordinatorLayout.LayoutParams?)?.apply {
-                topMargin = dimensions.statusBar
-            }
-        searchView?.requestLayout()
+        baseBinding.searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            topMargin = dimensions.top
+        }
+        baseBinding.searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -213,8 +194,7 @@ class FeedFragment :
         super.onDestroyView()
         adapter.saveState(null)
         binding.recyclerView.adapter = null
-        searchView?.setAdapter(null)
-        searchView = null
+        baseBinding.searchView.setContentAdapter(null)
     }
 
     override fun scrollToTop() {
@@ -223,20 +203,6 @@ class FeedFragment :
     }
 
     private fun releaseOnLongClick(item: ReleaseItemState) {
-        val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                when (which) {
-                    0 -> {
-                        viewModel.onCopyClick(item)
-                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-
-                    1 -> viewModel.onShareClick(item)
-                    2 -> viewModel.onShortcutClick(item)
-                }
-            }
-            .showWithLifecycle(viewLifecycleOwner)
+        releaseDialog.show(item)
     }
 }

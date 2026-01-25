@@ -17,14 +17,15 @@ import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.interactors.ReleaseInteractor
+import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class PlayerViewModel(
+class PlayerViewModel @Inject constructor(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
+    private val historyRepository: HistoryRepository,
     private val preferencesHolder: PreferencesHolder,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController,
@@ -200,6 +201,9 @@ class PlayerViewModel(
         currentComplete = null
         updateQuality()
         updateEpisode(force)
+        viewModelScope.launch {
+            historyRepository.putReleaseId(episode.id.releaseId)
+        }
     }
 
     private fun updateQuality() {

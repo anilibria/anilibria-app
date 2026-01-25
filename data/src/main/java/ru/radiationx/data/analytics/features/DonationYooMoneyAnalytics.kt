@@ -6,10 +6,9 @@ import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toParam
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationAmountType
 import ru.radiationx.data.analytics.features.model.AnalyticsDonationPaymentType
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class DonationYooMoneyAnalytics(
+class DonationYooMoneyAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

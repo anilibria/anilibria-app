@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Rational
 import android.view.WindowManager
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -20,7 +21,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.combine
@@ -38,7 +39,7 @@ import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.activities.player.controllers.KeepScreenOnController
 import ru.radiationx.anilibria.ui.activities.player.controllers.OrientationController
 import ru.radiationx.anilibria.ui.activities.player.controllers.PictureInPictureController
-import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerDialogController
+import ru.radiationx.anilibria.ui.activities.player.controllers.PlayerSettingsController
 import ru.radiationx.anilibria.ui.activities.player.di.SharedPlayerData
 import ru.radiationx.anilibria.ui.activities.player.ext.getEpisode
 import ru.radiationx.anilibria.ui.activities.player.mappers.toPlaylistItem
@@ -56,6 +57,8 @@ import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
+import ru.radiationx.shared.ktx.android.launchInResumed
+import ru.radiationx.shared.ktx.android.launchInStarted
 import ru.radiationx.shared.ktx.android.startMainActivity
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -68,6 +71,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         fun newIntent(context: Context, episodeId: EpisodeId) =
             Intent(context, VideoPlayerActivity::class.java).apply {
                 putExtra(ARG_EPISODE_ID, episodeId)
+                R.attr.bgDonationIconDa
             }
     }
 
@@ -75,31 +79,31 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
     private val playAction = PictureInPictureController.Action(
         code = 1,
         title = "Пуск",
-        icRes = R.drawable.ic_media_play_arrow_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_play_arrow_24
     )
 
     private val pauseAction = PictureInPictureController.Action(
         code = 2,
         title = "Пауза",
-        icRes = R.drawable.ic_media_pause_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_pause_24
     )
 
     private val replayAction = PictureInPictureController.Action(
         code = 3,
         title = "Реплей",
-        icRes = R.drawable.ic_media_replay_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_replay_24
     )
 
     private val prevAction = PictureInPictureController.Action(
         code = 4,
         title = "Предыдущая",
-        icRes = R.drawable.ic_media_skip_previous_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_skip_previous_24
     )
 
     private val nextAction = PictureInPictureController.Action(
         code = 5,
         title = "Слудующая",
-        icRes = R.drawable.ic_media_skip_next_24
+        icRes = ru.radiationx.media.mobile.R.drawable.ic_media_skip_next_24
     )
 
     private val pipController by lazy { PictureInPictureController(this) }
@@ -108,13 +112,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     private val keepScreenOnController by lazy { KeepScreenOnController(this) }
 
-    private val dialogController by lazy {
-        PlayerDialogController(
-            context = this,
-            lifecycleOwner = this,
-            appThemeController = get()
-        )
-    }
+    private val settingsController by lazy { PlayerSettingsController(this) }
 
     private val binding by viewBinding<ActivityVideoplayerBinding>()
 
@@ -126,6 +124,8 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     private val viewModel by viewModel<PlayerViewModel>()
 
+    private val settingsViewModel by viewModel<PlayerSettingViewModel>()
+
     override fun attachBaseContext(newBase: Context?) {
         delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
         super.attachBaseContext(newBase)
@@ -133,7 +133,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
     @UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         if (isLaunchedFromHistory()) {
             get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
@@ -148,11 +148,8 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         initUiController()
         initFullscreenController()
         initPipController()
-        initDialogController()
-        player.init(this)
-        analyticsListener.transport = player.selectedTransport
-        player.getPlayer().addAnalyticsListener(analyticsListener)
-        binding.playerView.setPlayer(player.getPlayer())
+        initSettingsController()
+
 
         viewModel.actions.onEach { action ->
             when (action) {
@@ -177,10 +174,6 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
                     }
                 }
 
-                is PlayerAction.ShowSettings -> {
-                    dialogController.showSettingsDialog(action.state)
-                }
-
                 is PlayerAction.ShowPlaylist -> {
                     PlaylistDialogFragment().show(supportFragmentManager, "playlist")
                 }
@@ -199,21 +192,20 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             binding.dataErrorMessage.text = it.error?.message
         }.launchIn(lifecycleScope)
 
-        viewModel.currentSpeed.onEach {
-            binding.playerView.setSpeed(it)
+        settingsViewModel.actions.onEach {
+            settingsController.show()
         }.launchIn(lifecycleScope)
 
-        viewModel.playerSkipsEnabled.onEach {
-            binding.playerView.setSkipsEnabled(it)
+        settingsViewModel.settingsState.onEach {
+            settingsController.setState(it)
+            binding.playerView.setSpeed(it.currentSpeed)
+            binding.playerView.setSkipsEnabled(it.skipsEnabled)
+            binding.playerView.setSkipsTimerEnabled(it.skipsTimerEnabled)
         }.launchIn(lifecycleScope)
 
-        viewModel.playerSkipsTimerEnabled.onEach {
-            binding.playerView.setSkipsTimerEnabled(it)
-        }.launchIn(lifecycleScope)
-
-        viewModel.autoplayEnabled.onEach {
-            player.getPlayer().pauseAtEndOfMediaItems = !it
-        }.launchIn(lifecycleScope)
+        settingsViewModel.settingsState.onEach {
+            player.getPlayer().pauseAtEndOfMediaItems = !it.autoplayEnabled
+        }.launchInResumed(this)
 
         binding.playerView.timelineState
             .sample(10000)
@@ -230,6 +222,10 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
         binding.playerView.mediaItemTransitionFlow
             .onEach { binding.playerView.pause() }
+            .onEach { transition ->
+                val episode = transition.mediaItem?.getEpisode() ?: return@onEach
+                viewModel.onEpisodeChanged(episode.id)
+            }
             .mapLatest { transition ->
                 val timeline = binding.playerView.timelineState.first { it.duration > 0 }
                 transition to timeline
@@ -254,23 +250,31 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         }
     }
 
+    @UnstableApi
     override fun onStart() {
         super.onStart()
         analytics.screenStart()
-        player.startMediaSession(this)
+
+        player.attach(this)
+        analyticsListener.transport = player.selectedTransport
+        player.getPlayer().addAnalyticsListener(analyticsListener)
+        binding.playerView.setPlayer(player.getPlayer())
     }
 
     override fun onStop() {
         super.onStop()
         analytics.screenStop()
-        player.stopMediaSession()
-        binding.playerView.pause()
 
+        binding.playerView.pause()
         val timeline = binding.playerView.timelineState.value.takeIf { it.duration > 0 }
         val episode = binding.playerView.playlistState.value.currentItem?.getEpisode()
         if (timeline != null && episode != null) {
             viewModel.saveEpisodeSeek(episode.id, timeline.position)
         }
+
+        player.getPlayer().removeAnalyticsListener(analyticsListener)
+        binding.playerView.setPlayer(null)
+        player.detach()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -281,8 +285,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
     override fun onDestroy() {
         super.onDestroy()
         if (!isLaunchedFromHistory()) {
-            player.getPlayer().removeAnalyticsListener(analyticsListener)
-            binding.playerView.setPlayer(null)
+            binding.playerView.destroy()
             player.destroy()
         }
     }
@@ -309,29 +312,37 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         viewModel.initialPlayEpisode(episodeId)
     }
 
-    private fun initDialogController() {
-        dialogController.onQualitySelected = {
-            viewModel.onQualitySelected(it)
+    private fun initSettingsController() {
+        settingsController.onQualitySelected = {
+            settingsViewModel.onQualitySelected(it)
         }
 
-        dialogController.onSpeedSelected = {
-            viewModel.onSpeedSelected(it)
+        settingsController.onSpeedSelected = {
+            settingsViewModel.onSpeedSelected(it)
         }
 
-        dialogController.onSkipsSelected = {
-            viewModel.onSkipsEnabledSelected(it)
+        settingsController.onSkipsSelected = {
+            settingsViewModel.onSkipsEnabledSelected(it)
         }
 
-        dialogController.onSkipsTimerSelected = {
-            viewModel.onSkipsTimerEnabledChange(it)
+        settingsController.onSkipsTimerSelected = {
+            settingsViewModel.onSkipsTimerEnabledChange(it)
         }
 
-        dialogController.onInactiveTimerSelected = {
-            viewModel.onInactiveTimerEnabledChange(it)
+        settingsController.onInactiveTimerSelected = {
+            settingsViewModel.onInactiveTimerEnabledChange(it)
         }
 
-        dialogController.onAutoplaytSelected = {
-            viewModel.onAutoplayEnabledChange(it)
+        settingsController.onAutoplaySelected = {
+            settingsViewModel.onAutoplayEnabledChange(it)
+        }
+
+        binding.playerView.onSkipClick = {
+            settingsViewModel.onSkipsTimerEnabledChange(true)
+        }
+
+        binding.playerView.onCancelSkipClick = {
+            settingsViewModel.onSkipsTimerEnabledChange(false)
         }
     }
 
@@ -345,7 +356,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
         }
 
         binding.playerView.onSettingsClick = {
-            viewModel.onSettingsClick()
+            settingsViewModel.onSettingsClick()
         }
 
         binding.playerToolbarPlaylist.setOnClickListener {
@@ -407,8 +418,8 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
             binding.root.keepScreenOn = it
         }.launchIn(lifecycleScope)
 
-        viewModel.inactiveTimerEnabled.onEach {
-            keepScreenOnController.setTimerEnabled(it)
+        settingsViewModel.settingsState.onEach {
+            keepScreenOnController.setTimerEnabled(it.inactiveTimerEnabled)
         }.launchIn(lifecycleScope)
     }
 

@@ -4,9 +4,8 @@ import android.view.View
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.core.view.isVisible
-import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemReleaseEpisodeBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -14,6 +13,8 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodeListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
 import ru.radiationx.anilibria.ui.fragments.release.details.ReleaseEpisodeItemState
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 import ru.radiationx.shared.ktx.android.getCompatColor
@@ -45,6 +46,8 @@ class ReleaseEpisodeDelegate(
 
         private val binding by viewBinding<ItemReleaseEpisodeBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         private val viewedDrawable by lazy {
             val size = (binding.root.context.resources.displayMetrics.density * 18).roundToInt()
             binding.root.context
@@ -55,6 +58,7 @@ class ReleaseEpisodeDelegate(
         }
 
         fun bind(state: ReleaseEpisodeItemState, isEven: Boolean) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemTitle.text = buildSpannedString {
                 if (state.isViewed) {
                     inSpans(CompatDrawableSpan(viewedDrawable, CompatDrawableSpan.ALIGN_CENTER)) {
@@ -85,13 +89,12 @@ class ReleaseEpisodeDelegate(
                 binding.tvAction.text = state.actionTitle
                 val textColor = state.actionColorRes
                     ?.let { binding.tvAction.getCompatColor(it) }
-                    ?: binding.tvAction.context.getColorFromAttr(R.attr.colorAccent)
+                    ?: binding.tvAction.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent)
                 val iconDrawable =
                     state.actionIconRes?.let { binding.tvAction.getCompatDrawable(it) }
 
                 binding.tvAction.setTextColor(textColor)
-                TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    binding.tvAction,
+                binding.tvAction.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     null,
                     null,
                     iconDrawable,
@@ -100,7 +103,7 @@ class ReleaseEpisodeDelegate(
             }
 
             val bgColor = if (isEven) {
-                binding.root.context.getColorFromAttr(R.attr.colorSurface)
+                binding.root.context.getColorFromAttr(com.google.android.material.R.attr.colorSurface)
             } else {
                 binding.root.context.getColorFromAttr(R.attr.episode_even)
             }

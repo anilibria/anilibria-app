@@ -3,11 +3,10 @@ package ru.radiationx.anilibria
 import android.content.Context
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.migration.MigrationExecutor
-import toothpick.InjectConstructor
 import java.io.File
+import javax.inject.Inject
 
-@InjectConstructor
-class AppMigrationExecutor(
+class AppMigrationExecutor @Inject constructor(
     private val context: Context,
     private val appPreferences: PreferencesHolder
 ) : MigrationExecutor {

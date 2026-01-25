@@ -9,10 +9,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
-import ru.radiationx.data.downloader.DownloadedFile
 import ru.radiationx.data.downloader.LocalFile
-import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.RemoteFile
+import ru.radiationx.data.downloader.RemoteFileRepository
 import ru.radiationx.data.downloader.toLocalFile
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.data.repository.CheckerRepository
@@ -20,14 +19,13 @@ import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 data class CheckerExtra(
     val forceLoad: Boolean,
 ) : QuillExtra
 
-@InjectConstructor
-class CheckerViewModel(
+class CheckerViewModel @Inject constructor(
     private val argExtra: CheckerExtra,
     private val checkerRepository: CheckerRepository,
     private val errorHandler: IErrorHandler,

@@ -4,8 +4,8 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import com.google.firebase.messaging.FirebaseMessaging
-import com.yandex.metrica.YandexMetrica
-import com.yandex.metrica.YandexMetricaConfig
+import io.appmetrica.analytics.AppMetrica
+import io.appmetrica.analytics.AppMetricaConfig
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
@@ -19,8 +19,6 @@ import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.quill.Quill
 import ru.radiationx.quill.get
 import timber.log.Timber
-import toothpick.Toothpick
-import toothpick.configuration.Configuration
 
 /*  Created by radiationx on 05.11.17. */
 class App : Application() {
@@ -36,10 +34,12 @@ class App : Application() {
 
     private fun initYandexAppMetrica() {
         //if (BuildConfig.DEBUG) return
-        val config =
-            YandexMetricaConfig.newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603").build()
-        YandexMetrica.activate(applicationContext, config)
-        YandexMetrica.enableActivityAutoTracking(this)
+        val config = AppMetricaConfig
+            .newConfigBuilder("48d49aa0-6aad-407e-a738-717a6c77d603")
+            .withAnrMonitoring(true)
+            .build()
+        AppMetrica.activate(applicationContext, config)
+        AppMetrica.enableActivityAutoTracking(this)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -100,7 +100,6 @@ class App : Application() {
     }
 
     private fun initDependencies() {
-        Toothpick.setConfiguration(Configuration.forProduction())
         Quill.getRootScope().installModules(AppModule(this), DataModule(this))
     }
 

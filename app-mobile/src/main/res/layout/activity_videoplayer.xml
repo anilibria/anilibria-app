@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:theme="@style/MediaPlayerTheme">
 
     <ru.radiationx.media.mobile.PlayerView
         android:id="@+id/playerView"
@@ -68,8 +69,8 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/playerToolbarBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="?actionBarItemBackground"
             app:srcCompat="@drawable/ic_toolbar_arrow_back"
             app:tint="?colorOnSurface" />
@@ -78,9 +79,9 @@
             android:id="@+id/playerToolbarTitleContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
+            android:layout_marginStart="56dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="48dp"
+            android:layout_marginEnd="56dp"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -112,8 +113,8 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/playerToolbarPlaylist"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_gravity="end"
             android:background="?actionBarItemBackground"
             app:srcCompat="@drawable/ic_playlist_play_24"

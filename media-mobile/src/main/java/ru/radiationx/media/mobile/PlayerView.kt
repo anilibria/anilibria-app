@@ -9,11 +9,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
 import androidx.core.view.updatePadding
-import androidx.media3.common.Player
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -94,6 +94,7 @@ class PlayerView @JvmOverloads constructor(
     private val gestureController = GestureController(
         playerFlow = playerFlow,
         coroutineScope = coroutineScope,
+        fallbackTapView = binding.mediaScaleContainer,
         gestureView = binding.mediaGestures,
         seekerTime = binding.mediaSeekerTime,
         mediaAspectRatio = binding.mediaAspectRatio
@@ -135,6 +136,8 @@ class PlayerView @JvmOverloads constructor(
     var onPipClick: (() -> Unit)? = null
     var onSettingsClick: (() -> Unit)? = null
     var onFullscreenClick: (() -> Unit)? = null
+    var onSkipClick: (() -> Unit)? = null
+    var onCancelSkipClick: (() -> Unit)? = null
 
     init {
         attachControllers()
@@ -148,8 +151,12 @@ class PlayerView @JvmOverloads constructor(
         initInsets()
     }
 
-    fun setPlayer(player: Player?) {
+    fun setPlayer(player: PlayerProxy?) {
         holder.setPlayer(player)
+    }
+
+    fun destroy() {
+        coroutineScope.cancel()
     }
 
     fun prepare(
@@ -318,6 +325,14 @@ class PlayerView @JvmOverloads constructor(
         skipsController.currentSkip.onEach {
             uiVisbilityController.updateSkip(it != null)
         }.launchIn(coroutineScope)
+
+        skipsController.onSkipClick = {
+            onSkipClick?.invoke()
+        }
+
+        skipsController.onCancelSkipClick = {
+            onCancelSkipClick?.invoke()
+        }
     }
 
     private fun initOutput() {
@@ -338,7 +353,7 @@ class PlayerView @JvmOverloads constructor(
                 left = footerInsets.left,
                 top = footerInsets.top,
                 right = footerInsets.right,
-                bottom = footerInsets.bottom
+                bottom = maxOf(footerInsets.bottom, gesturesInsets.bottom)
             )
 
             binding.mediaLockContainer.updatePadding(

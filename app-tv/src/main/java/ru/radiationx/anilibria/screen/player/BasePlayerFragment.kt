@@ -11,6 +11,7 @@ import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -18,13 +19,15 @@ import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.leanback.LeanbackPlayerAdapter
+import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
+import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.quill.get
 
-@UnstableApi
 open class BasePlayerFragment : VideoSupportFragment() {
 
+    @UnstableApi
     protected var playerGlue: VideoPlayerGlue? = null
         private set
 
@@ -35,6 +38,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
         private set
 
     @SuppressLint("RestrictedApi")
+    @UnstableApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -43,6 +47,9 @@ open class BasePlayerFragment : VideoSupportFragment() {
 
         skipsPart = PlayerSkipsPart(
             parent = view as FrameLayout,
+            skipButtonText = getString(R.string.player_skip),
+            coroutineScope = viewLifecycleOwner.lifecycleScope,
+            playerSkipsTimer = get<PreferencesHolder>().playerSkipsTimer,
             onSeek = {
                 player?.seekTo(it)
             },
@@ -56,6 +63,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
         )
 
         playerGlue?.playbackListener = object : VideoPlayerGlue.PlaybackListener {
+            @UnstableApi
             override fun onUpdateProgress() {
                 skipsPart?.update(player?.currentPosition ?: 0)
             }
@@ -95,6 +103,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
     protected open fun onCompletePlaying() {}
     protected open fun onPreparePlaying() {}
 
+    @UnstableApi
     private fun initializeRows() {
         val playerGlue = this.playerGlue ?: return
         val controlsRow = playerGlue.controlsRow ?: return
@@ -110,6 +119,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
         adapter = rowsAdapter
     }
 
+    @UnstableApi
     private fun initializePlayer() {
         if (player != null) {
             throw RuntimeException("Player already initialized")

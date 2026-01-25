@@ -14,10 +14,9 @@ import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.FavoriteRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class MainFavoritesViewModel(
+class MainFavoritesViewModel @Inject constructor(
     private val releaseInteractor: ReleaseInteractor,
     private val favoriteRepository: FavoriteRepository,
     authRepository: AuthRepository,

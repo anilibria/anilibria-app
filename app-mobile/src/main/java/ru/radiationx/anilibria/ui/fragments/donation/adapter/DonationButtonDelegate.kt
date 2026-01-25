@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.ui.fragments.donation.adapter
 import android.content.res.ColorStateList
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemDonationButtonBinding
 import ru.radiationx.shared.ktx.android.getColorFromAttr
@@ -39,7 +39,7 @@ class DonationButtonDelegate(
 
             val textColor = data.brand?.asDataColorRes()
                 ?.let { binding.btAction.getCompatColor(it) }
-                ?: binding.btAction.context.getColorFromAttr(R.attr.colorAccent)
+                ?: binding.btAction.context.getColorFromAttr(androidx.appcompat.R.attr.colorAccent)
 
             binding.btAction.icon =
                 data.icon?.asDataIconRes()?.let { binding.btAction.getCompatDrawable(it) }

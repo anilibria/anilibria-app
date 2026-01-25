@@ -46,7 +46,8 @@ import ru.radiationx.data.analytics.features.UpdaterAnalytics
 import ru.radiationx.data.analytics.features.WebPlayerAnalytics
 import ru.radiationx.data.analytics.features.YoutubeAnalytics
 import ru.radiationx.data.analytics.features.YoutubeVideosAnalytics
-import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
+import ru.radiationx.data.analytics.profile.AnalyticsInstallerProfileDataSource
+import ru.radiationx.data.analytics.profile.AnalyticsMainProfileDataSource
 import ru.radiationx.data.datasource.holders.AuthHolder
 import ru.radiationx.data.datasource.holders.CookieHolder
 import ru.radiationx.data.datasource.holders.DonationHolder
@@ -114,6 +115,7 @@ import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.interactors.ReleaseUpdateMiddleware
 import ru.radiationx.data.migration.MigrationDataSource
 import ru.radiationx.data.migration.MigrationDataSourceImpl
+import ru.radiationx.data.player.PlayerCacheDataSourceProvider
 import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.CheckerRepository
@@ -133,7 +135,7 @@ import ru.radiationx.data.sslcompat.SslCompat
 import ru.radiationx.data.system.ApiUtils
 import ru.radiationx.data.system.AppCookieJar
 import ru.radiationx.quill.QuillModule
-import toothpick.InjectConstructor
+import javax.inject.Inject
 import javax.inject.Provider
 
 class DataModule(context: Context) : QuillModule() {
@@ -254,7 +256,8 @@ class DataModule(context: Context) : QuillModule() {
         /* Analytics */
         single<ActivityLaunchAnalytics>()
         single<SslCompatAnalytics>()
-        single<AnalyticsProfileDataSource>()
+        single<AnalyticsMainProfileDataSource>()
+        single<AnalyticsInstallerProfileDataSource>()
         single<AuthDeviceAnalytics>()
         single<AuthMainAnalytics>()
         single<AuthSocialAnalytics>()
@@ -289,11 +292,10 @@ class DataModule(context: Context) : QuillModule() {
 
         /* Player */
         single<PlayerDataSourceProvider>()
+        single<PlayerCacheDataSourceProvider>()
     }
 
-
-    @InjectConstructor
-    class PreferencesProvider(
+    class PreferencesProvider @Inject constructor(
         private val context: Context,
     ) : Provider<SharedPreferences> {
         @Suppress("DEPRECATION")
@@ -307,8 +309,7 @@ class DataModule(context: Context) : QuillModule() {
         }
     }
 
-    @InjectConstructor
-    class DataPreferencesProvider(
+    class DataPreferencesProvider @Inject constructor(
         private val context: Context,
     ) : Provider<SharedPreferences> {
         override fun get(): SharedPreferences {

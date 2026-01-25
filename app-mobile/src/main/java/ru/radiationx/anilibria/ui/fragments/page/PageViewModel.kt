@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.page
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -12,15 +13,13 @@ import ru.radiationx.data.entity.domain.page.PageLibria
 import ru.radiationx.data.repository.PageRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
 data class PageExtra(
     val path: String,
 ) : QuillExtra
 
-@InjectConstructor
-class PageViewModel(
+class PageViewModel @Inject constructor(
     argExtra: PageExtra,
     private val pageRepository: PageRepository,
     private val router: Router,
@@ -47,7 +46,7 @@ class PageViewModel(
             }.onSuccess { data ->
                 _state.update { it.copy(data = data) }
             }.onFailure {
-                pageAnalytics.error(it)
+                pageAnalytics.error()
                 errorHandler.handle(it)
             }
             _state.update { it.copy(loading = false) }

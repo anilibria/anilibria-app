@@ -12,10 +12,9 @@ import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.DonationHolder
 import ru.radiationx.data.entity.response.donation.DonationInfoResponse
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class DonationStorage(
+class DonationStorage @Inject constructor(
     private val moshi: Moshi,
     private val context: Context,
     @DataPreferences private val sharedPreferences: SharedPreferences

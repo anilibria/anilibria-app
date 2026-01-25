@@ -23,14 +23,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.leanback.widget.SearchOrbView
 import androidx.leanback.widget.TitleViewAdapter
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ViewTitleviewBinding
 
 open class BrowseTitleView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = R.attr.browseTitleViewStyle,
+    defStyleAttr: Int = androidx.leanback.R.attr.browseTitleViewStyle,
 ) : ConstraintLayout(context, attrs, defStyleAttr), TitleViewAdapter.Provider {
 
     private val binding by viewBinding<ViewTitleviewBinding>(attachToRoot = true)

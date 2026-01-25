@@ -9,10 +9,9 @@ import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.common.ConfigScreenState
 import ru.radiationx.data.interactors.ConfiguringInteractor
 import ru.radiationx.shared.ktx.EventFlow
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ConfiguringViewModel(
+class ConfiguringViewModel @Inject constructor(
     private val apiConfig: ApiConfig,
     private val configuringInteractor: ConfiguringInteractor
 ) : LifecycleViewModel() {

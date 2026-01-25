@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import com.yandex.mobile.ads.nativeads.template.HorizontalOffset
 import com.yandex.mobile.ads.nativeads.template.NativeBannerView
 import com.yandex.mobile.ads.nativeads.template.appearance.BannerAppearance
@@ -16,6 +16,8 @@ import ru.radiationx.anilibria.databinding.ItemNativeAdBinding
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.NativeAdListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared.ktx.android.getColorFromAttr
 
 /**
@@ -37,8 +39,10 @@ class NativeAdDelegate :
 
         private val binding by viewBinding<ItemNativeAdBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         private val appearance by lazy {
-            val backgroundColor = binding.root.context.getColorFromAttr(R.attr.colorSurface)
+            val backgroundColor = binding.root.context.getColorFromAttr(com.google.android.material.R.attr.colorSurface)
             val textDefaultColor = binding.root.context.getColorFromAttr(R.attr.textDefault)
             val textSecondColor = binding.root.context.getColorFromAttr(R.attr.textSecond)
             val textDefault = TextAppearance.Builder().setTextColor(textDefaultColor).build()
@@ -74,6 +78,7 @@ class NativeAdDelegate :
         }
 
         fun bind(item: NativeAdListItem) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             val adview = updateAdView()
             adview.applyAppearance(appearance)
             adview.setAd(item.nativeAd)

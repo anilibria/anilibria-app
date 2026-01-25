@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.leanback.app.BrowseSupportFragment
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.databinding.TestFragmentBinding
@@ -14,7 +14,7 @@ import ru.radiationx.anilibria.screen.TestScreen
 import ru.radiationx.quill.getScope
 import ru.radiationx.quill.inject
 import ru.radiationx.shared.ktx.android.attachBackPressed
-import ru.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Router
 
 class TestFragment : Fragment(R.layout.test_fragment),
     BrowseSupportFragment.MainFragmentAdapterProvider {

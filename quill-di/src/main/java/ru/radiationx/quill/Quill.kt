@@ -1,12 +1,14 @@
 package ru.radiationx.quill
 
 import toothpick.Toothpick
-import java.util.*
+import toothpick.configuration.Configuration
+import java.util.UUID
 
 
 object Quill {
 
-    private val scope by lazy(LazyThreadSafetyMode.NONE) {
+    private val scope by lazy {
+        Toothpick.setConfiguration(Configuration.forProduction())
         QuillScope(Toothpick.openRootScope())
     }
 

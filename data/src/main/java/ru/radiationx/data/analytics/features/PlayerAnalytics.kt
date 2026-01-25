@@ -13,18 +13,24 @@ import ru.radiationx.data.analytics.features.model.AnalyticsTransport
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.shared.ktx.asTimeSecString
 import timber.log.Timber
-import toothpick.InjectConstructor
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.security.cert.CertPathBuilderException
+import java.security.cert.CertPathValidatorException
+import java.security.cert.CertificateEncodingException
+import java.security.cert.CertificateException
+import java.security.cert.CertificateExpiredException
+import java.security.cert.CertificateNotYetValidException
+import java.security.cert.CertificateParsingException
 import java.util.Date
+import javax.inject.Inject
 import javax.net.ssl.SSLException
 import javax.net.ssl.SSLHandshakeException
 import javax.net.ssl.SSLKeyException
 import javax.net.ssl.SSLPeerUnverifiedException
 import javax.net.ssl.SSLProtocolException
 
-@InjectConstructor
-class PlayerAnalytics(
+class PlayerAnalytics @Inject constructor(
     private val sender: AnalyticsSender,
 ) {
 
@@ -112,6 +118,15 @@ class PlayerAnalytics(
                 is SSLKeyException -> "Grouped ssl key"
                 is SSLPeerUnverifiedException -> "Grouped ssl peer unverified"
                 is SSLException -> "Grouped other ssl"
+
+                is CertificateNotYetValidException -> "Grouped cert not yet valid"
+                is CertificateEncodingException -> "Grouped cert encoding"
+                is CertificateExpiredException -> "Grouped cert expired"
+                is CertificateParsingException -> "Grouped cert parsing"
+                is CertificateException -> "Grouped cert common"
+                is CertPathValidatorException -> "Grouped cert path validator"
+                is CertPathBuilderException -> "Grouped cer path builder"
+
                 else -> {
                     if (rootCause.message?.startsWith("Unexpected audio track timestamp discontinuity") == true) {
                         "Grouped Unexpected audio track timestamp discontinuity"

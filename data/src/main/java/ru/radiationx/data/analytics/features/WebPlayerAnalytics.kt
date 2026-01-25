@@ -2,14 +2,12 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.features.extensions.toErrorParam
 import ru.radiationx.data.analytics.features.extensions.toIdParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toTimeParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class WebPlayerAnalytics(
+class WebPlayerAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 
@@ -25,11 +23,8 @@ class WebPlayerAnalytics(
         sender.send(AnalyticsConstants.web_player_loaded)
     }
 
-    fun error(error: Throwable) {
-        sender.send(
-            AnalyticsConstants.web_player_error,
-            error.toErrorParam()
-        )
+    fun error() {
+        sender.send(AnalyticsConstants.web_player_error)
     }
 
     fun useTime(timeInMillis: Long) {

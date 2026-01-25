@@ -16,7 +16,7 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.subscribeTo
-import ru.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.NavigatorHolder
 
 class MainActivity : FragmentActivity() {
 
@@ -53,7 +53,7 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
     }

@@ -2,12 +2,14 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.features.extensions.*
+import ru.radiationx.data.analytics.features.extensions.toParam
+import ru.radiationx.data.analytics.features.extensions.toStateParam
+import ru.radiationx.data.analytics.features.extensions.toSuccessParam
+import ru.radiationx.data.analytics.features.extensions.toTimeParam
 import ru.radiationx.data.analytics.features.model.AnalyticsConfigState
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ConfiguringAnalytics(
+class ConfiguringAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 
@@ -116,4 +118,7 @@ class ConfiguringAnalytics(
             state.toStateParam()
         )
     }
+
+    private fun Throwable?.toErrorParam(name: String = "error") =
+        Pair(name, this?.javaClass?.simpleName.toString())
 }

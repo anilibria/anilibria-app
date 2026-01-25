@@ -1,6 +1,5 @@
 package ru.radiationx.anilibria.screen.player.episodes
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -15,11 +14,10 @@ import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.shared.ktx.asTimeSecString
-import toothpick.InjectConstructor
 import java.util.Date
+import javax.inject.Inject
 
-@InjectConstructor
-class PlayerEpisodesViewModel(
+class PlayerEpisodesViewModel @Inject constructor(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val guidedRouter: GuidedRouter,

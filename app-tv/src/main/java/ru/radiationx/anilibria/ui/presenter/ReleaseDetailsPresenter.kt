@@ -128,8 +128,11 @@ class LibriaReleaseViewHolder(
         } else {
             binding.rowReleaseFavoriteCount.getCompatDrawable(R.drawable.ic_details_favorite)
         }
-        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            binding.rowReleaseFavoriteCount, null, null, favoriteDrawable, null
+        binding.rowReleaseFavoriteCount.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            null,
+            null,
+            favoriteDrawable,
+            null
         )
         TextViewCompat.setCompoundDrawableTintList(
             binding.rowReleaseFavoriteCount,

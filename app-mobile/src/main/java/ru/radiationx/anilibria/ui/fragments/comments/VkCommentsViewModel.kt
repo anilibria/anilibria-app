@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,8 +13,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
@@ -27,12 +26,11 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.PageRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
+import ru.radiationx.shared_app.controllers.loadersingle.SingleLoader
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class VkCommentsViewModel(
+class VkCommentsViewModel @Inject constructor(
     private val argExtra: ReleaseExtra,
     authRepository: AuthRepository,
     private val pageRepository: PageRepository,
@@ -54,8 +52,8 @@ class VkCommentsViewModel(
     private var hasVkBlockedError = false
     private var vkBlockedErrorClosed = false
 
-    private val loadingController = DataLoadingController(viewModelScope) {
-        getDataSource().let { ScreenStateAction.Data(it, false) }
+    private val loader = SingleLoader(viewModelScope) {
+        getDataSource()
     }
 
     private val _state = MutableStateFlow(VkCommentsScreenState())
@@ -75,7 +73,7 @@ class VkCommentsViewModel(
             .onEach { _reloadEvent.set(Unit) }
             .launchIn(viewModelScope)
 
-        loadingController
+        loader
             .observeState()
             .onEach { loadingData ->
                 _state.update { it.copy(data = loadingData) }
@@ -94,12 +92,12 @@ class VkCommentsViewModel(
             }
         }
 
-        loadingController.refresh()
+        loader.refresh()
     }
 
 
     fun refresh() {
-        loadingController.refresh()
+        loader.refresh()
     }
 
     fun pageReload() {
@@ -121,7 +119,7 @@ class VkCommentsViewModel(
     }
 
     fun onPageCommitError(error: Exception) {
-        commentsAnalytics.error(error)
+        commentsAnalytics.error()
     }
 
     fun notifyNewJsError() {
@@ -166,17 +164,15 @@ class VkCommentsViewModel(
     private suspend fun getDataSource(): VkCommentsState {
         val commentsSource = flow { emit(pageRepository.getComments()) }
         val releaseSource = releaseInteractor.observeFull(argExtra.id, argExtra.code)
-        return try {
+        return coRunCatching {
             combine(releaseSource, commentsSource) { release, comments ->
                 VkCommentsState(
                     url = "${comments.baseUrl}release/${release.code.code}.html",
                     script = comments.script
                 )
             }.first()
-        } catch (ex: Throwable) {
-            commentsAnalytics.error(ex)
-            errorHandler.handle(ex)
-            throw ex
-        }
+        }.onFailure {
+            errorHandler.handle(it)
+        }.getOrThrow()
     }
 }

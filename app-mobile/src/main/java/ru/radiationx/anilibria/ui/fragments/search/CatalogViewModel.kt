@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -10,10 +11,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.PageLoadParams
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.mapData
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -37,15 +34,18 @@ import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.terrakok.cicerone.Router
-import toothpick.InjectConstructor
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderAction
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderParams
+import ru.radiationx.shared_app.controllers.loaderpage.mapData
+import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
+import javax.inject.Inject
 
 data class CatalogExtra(
     val genre: String?,
 ) : QuillExtra
 
-@InjectConstructor
-class CatalogViewModel(
+class CatalogViewModel @Inject constructor(
     argExtra: CatalogExtra,
     private val searchRepository: SearchRepository,
     private val router: Router,
@@ -66,7 +66,7 @@ class CatalogViewModel(
     private val remindText =
         "Если не удаётся найти нужный релиз, попробуйте искать через Google или Yandex c приставкой \"AniLibria\".\nПо ссылке в поисковике можно будет открыть приложение."
 
-    private val loadingController = DataLoadingController(viewModelScope) {
+    private val pageLoader = PageLoader(viewModelScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
     }
@@ -92,7 +92,7 @@ class CatalogViewModel(
         initSeasons()
         observeSearchRemind()
         observeLoadingState()
-        loadingController.refresh()
+        pageLoader.refresh()
     }
 
     private fun initGenres() {
@@ -153,7 +153,7 @@ class CatalogViewModel(
 
     private fun observeLoadingState() {
         combine(
-            loadingController.observeState(),
+            pageLoader.observeState(),
             releaseUpdateHolder.observeEpisodes()
         ) { loadingState, updates ->
             val updatesMap = updates.associateBy { it.id }
@@ -176,16 +176,12 @@ class CatalogViewModel(
         }
     }
 
-    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
+    private suspend fun getDataSource(params: PageLoaderParams<List<Release>>): PageLoaderAction.Data<List<Release>> {
         return coRunCatching {
             val form = filterState.value.form
-            searchRepository.searchReleases(form, params.page).let { paginated ->
-                val newItems = if (params.isFirstPage) {
-                    paginated.data
-                } else {
-                    loadingController.currentState.data.orEmpty() + paginated.data
-                }
-                ScreenStateAction.Data(newItems, paginated.data.isNotEmpty())
+            val result = searchRepository.searchReleases(form, params.page)
+            params.toDataAction(result.data.isNotEmpty()) {
+                it.orEmpty() + result.data
             }
         }.onFailure {
             if (params.isFirstPage) {
@@ -195,11 +191,11 @@ class CatalogViewModel(
     }
 
     fun refreshReleases() {
-        loadingController.refresh()
+        pageLoader.refresh()
     }
 
     fun loadMore() {
-        loadingController.loadMore()
+        pageLoader.loadMore()
     }
 
     fun showDialog() {
@@ -260,7 +256,7 @@ class CatalogViewModel(
     }
 
     private fun findRelease(id: ReleaseId): Release? {
-        return loadingController.currentState.data?.find { it.id == id }
+        return pageLoader.getData()?.find { it.id == id }
     }
 }
 

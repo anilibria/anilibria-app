@@ -25,12 +25,12 @@ fun <T : ViewModel> FragmentActivity.getViewModel(
 
 inline fun <reified T : ViewModel> Fragment.viewModel(
     noinline extraProvider: (() -> QuillExtra)? = null
-): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
+): Lazy<T> = lazy {
     getViewModel(T::class, extraProvider)
 }
 
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(
     noinline extraProvider: (() -> QuillExtra)? = null
-): Lazy<T> = lazy(LazyThreadSafetyMode.NONE) {
+): Lazy<T> = lazy {
     getViewModel(T::class, extraProvider)
 }

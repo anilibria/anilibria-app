@@ -76,7 +76,7 @@ class SuggestionsContentProvider : ContentProvider() {
     private fun search(query: String): Cursor {
         val result = runBlocking { searchRepository.fastSearch(query) }
         val matrixCursor = MatrixCursor(queryProjection)
-        result.forEach {
+        result.items.forEach {
             val entity = it.convertToEntity()
             val columns = appendProjectionColumns(entity.id, entity.getRow())
             matrixCursor.addRow(columns)

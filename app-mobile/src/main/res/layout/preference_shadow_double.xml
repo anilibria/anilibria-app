@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<View xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginBottom="2dp"
-        android:background="@drawable/pref_shadow_to_bottom" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_marginTop="2dp"
-        android:layout_height="2dp"
-        android:background="@drawable/pref_shadow_to_top" />
-</LinearLayout>
+    android:layout_height="8dp"
+    android:background="@drawable/pref_shadow_double" />

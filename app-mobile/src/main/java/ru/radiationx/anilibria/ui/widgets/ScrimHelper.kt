@@ -2,38 +2,30 @@ package ru.radiationx.anilibria.ui.widgets
 
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Created by radiationx on 26.08.17.
  */
 
-class ScrimHelper(appBarLayout: AppBarLayout, toolbarLayout: CollapsingToolbarLayout) {
-    private var scrimListener: ScrimListener? = null
-    private var scrim = false
+class ScrimHelper(
+    private val appBarLayout: AppBarLayout,
+    private val toolbarLayout: CollapsingToolbarLayout
+) {
+
+    val scrimState = MutableStateFlow(false)
 
     init {
-        appBarLayout.addOnOffsetChangedListener({ appBarLayout1, verticalOffset ->
-            scrimListener?.let {
-                if (appBarLayout1.height + verticalOffset <= toolbarLayout.scrimVisibleHeightTrigger) {
-                    if (!scrim) {
-                        scrim = true
-                        it.onScrimChanged(true)
-                    }
-                } else {
-                    if (scrim) {
-                        scrim = false
-                        it.onScrimChanged(false)
-                    }
-                }
+        appBarLayout.addOnOffsetChangedListener { _, verticalOffset ->
+            val newState = computeScrimState(verticalOffset)
+            if (newState == scrimState.value) {
+                return@addOnOffsetChangedListener
             }
-        })
+            scrimState.value = newState
+        }
     }
 
-    fun setScrimListener(scrimListener: ScrimListener?) {
-        this.scrimListener = scrimListener
-    }
-
-    interface ScrimListener {
-        fun onScrimChanged(scrim: Boolean)
+    private fun computeScrimState(offset: Int): Boolean {
+        return appBarLayout.height + offset <= toolbarLayout.scrimVisibleHeightTrigger
     }
 }

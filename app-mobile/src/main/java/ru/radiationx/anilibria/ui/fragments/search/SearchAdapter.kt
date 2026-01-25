@@ -1,13 +1,21 @@
 package ru.radiationx.anilibria.ui.fragments.search
 
-import ru.radiationx.anilibria.model.loading.needShowPlaceholder
-import ru.radiationx.anilibria.ui.adapters.*
+import android.view.View
+import ru.radiationx.anilibria.model.ReleaseItemState
+import ru.radiationx.anilibria.ui.adapters.ListItem
+import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
+import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
+import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
+import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
+import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.release.detail.ReleaseRemindDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
 import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
+import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
 /**
  * Created by radiationx on 04.03.18.
@@ -15,7 +23,8 @@ import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
 class SearchAdapter(
     private val loadMoreListener: () -> Unit,
     private val loadRetryListener: () -> Unit,
-    private val listener: ReleasesAdapter.ItemListener,
+    private val clickListener: (ReleaseItemState, View) -> Unit,
+    private val longClickListener: (ReleaseItemState) -> Unit,
     private val remindCloseListener: () -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem
@@ -24,7 +33,7 @@ class SearchAdapter(
     init {
         delegatesManager.run {
             addDelegate(ReleaseRemindDelegate(remindCloseListener))
-            addDelegate(ReleaseItemDelegate(listener))
+            addDelegate(ReleaseItemDelegate(clickListener, longClickListener))
             addDelegate(LoadMoreDelegate(loadMoreListener))
             addDelegate(LoadErrorDelegate(loadRetryListener))
             addDelegate(PlaceholderDelegate())
@@ -50,7 +59,7 @@ class SearchAdapter(
             newItems.addAll(data.map { ReleaseListItem(it) })
         }
 
-        if (loadingState.hasMorePages) {
+        if (loadingState.hasMoreData) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
             } else {

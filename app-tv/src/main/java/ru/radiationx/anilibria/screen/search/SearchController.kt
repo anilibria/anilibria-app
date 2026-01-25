@@ -5,10 +5,9 @@ import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.shared.ktx.EventFlow
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SearchController {
+class SearchController @Inject constructor() {
 
     val yearsEvent = EventFlow<Set<YearItem>>()
     val seasonsEvent = EventFlow<Set<SeasonItem>>()

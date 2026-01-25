@@ -9,6 +9,7 @@
     android:foreground="?selectableItemBackground">
 
     <TextView
+        android:id="@+id/kek"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingEnd="16dp"

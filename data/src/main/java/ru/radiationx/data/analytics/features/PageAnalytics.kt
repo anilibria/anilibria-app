@@ -2,11 +2,12 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.features.extensions.*
-import toothpick.InjectConstructor
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toParam
+import ru.radiationx.data.analytics.features.extensions.toTimeParam
+import javax.inject.Inject
 
-@InjectConstructor
-class PageAnalytics(
+class PageAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 
@@ -26,11 +27,8 @@ class PageAnalytics(
         sender.send(AnalyticsConstants.page_loaded)
     }
 
-    fun error(error: Throwable) {
-        sender.send(
-            AnalyticsConstants.page_error,
-            error.toErrorParam()
-        )
+    fun error() {
+        sender.send(AnalyticsConstants.page_error)
     }
 
     fun useTime(timeInMillis: Long) {

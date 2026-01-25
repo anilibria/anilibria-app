@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -13,10 +14,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.PageLoadParams
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.mapData
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.presentation.common.IErrorHandler
@@ -30,14 +27,17 @@ import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.terrakok.cicerone.Router
-import toothpick.InjectConstructor
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderAction
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderParams
+import ru.radiationx.shared_app.controllers.loaderpage.mapData
+import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 13.01.18.
  */
-@InjectConstructor
-class FavoritesViewModel(
+class FavoritesViewModel @Inject constructor(
     private val favoriteRepository: FavoriteRepository,
     private val router: Router,
     private val errorHandler: IErrorHandler,
@@ -48,7 +48,7 @@ class FavoritesViewModel(
     private val systemUtils: SystemUtils,
 ) : ViewModel() {
 
-    private val loadingController = DataLoadingController(viewModelScope) {
+    private val pageLoader = PageLoader(viewModelScope) {
         submitPageAnalytics(it.page)
         getDataSource(it)
     }
@@ -66,7 +66,7 @@ class FavoritesViewModel(
         }
 
         combine(
-            loadingController.observeState().mapNotNull { it.data }.distinctUntilChanged(),
+            pageLoader.observeState().mapNotNull { it.data }.distinctUntilChanged(),
             updatesMapFlow,
             queryState
         ) { currentItems, updates, query ->
@@ -80,7 +80,7 @@ class FavoritesViewModel(
             .launchIn(viewModelScope)
 
         combine(
-            loadingController.observeState(),
+            pageLoader.observeState(),
             updatesMapFlow,
         ) { loadingState, updates ->
             loadingState.mapData { items ->
@@ -98,11 +98,11 @@ class FavoritesViewModel(
     }
 
     fun refreshReleases() {
-        loadingController.refresh()
+        pageLoader.refresh()
     }
 
     fun loadMore() {
-        loadingController.loadMore()
+        pageLoader.loadMore()
     }
 
     fun deleteFav(id: ReleaseId) {
@@ -113,13 +113,13 @@ class FavoritesViewModel(
             }
             coRunCatching {
                 favoriteRepository.deleteFavorite(id)
-            }.onSuccess { deletedItem ->
-                loadingController.currentState.data?.also { dataState ->
-                    val newItems = dataState.toMutableList()
-                    newItems.find { it.id == deletedItem.id }?.also {
+            }.onSuccess {
+                pageLoader.modifyData { data ->
+                    val newItems = data.toMutableList()
+                    newItems.find { it.id == id }?.also {
                         newItems.remove(it)
                     }
-                    loadingController.modifyData(newItems)
+                    newItems
                 }
             }.onFailure {
                 errorHandler.handle(it)
@@ -168,7 +168,7 @@ class FavoritesViewModel(
     }
 
     private fun findRelease(id: ReleaseId): Release? {
-        return loadingController.currentState.data?.find { it.id == id }
+        return pageLoader.getData()?.find { it.id == id }
     }
 
     private fun submitPageAnalytics(page: Int) {
@@ -178,24 +178,15 @@ class FavoritesViewModel(
         }
     }
 
-    private suspend fun getDataSource(params: PageLoadParams): ScreenStateAction.Data<List<Release>> {
-        return try {
-            favoriteRepository
-                .getFavorites(params.page)
-                .let { paginated ->
-                    val newItems = if (params.isFirstPage) {
-                        paginated.data
-                    } else {
-                        loadingController.currentState.data.orEmpty() + paginated.data
-                    }
-                    ScreenStateAction.Data(newItems, !paginated.isEnd())
-                }
-        } catch (ex: Throwable) {
+    private suspend fun getDataSource(params: PageLoaderParams<List<Release>>): PageLoaderAction.Data<List<Release>> {
+        return coRunCatching {
+            val result = favoriteRepository.getFavorites(params.page)
+            params.toDataAction { it.orEmpty() + result.data }
+        }.onFailure {
             if (params.isFirstPage) {
-                errorHandler.handle(ex)
+                errorHandler.handle(it)
             }
-            throw ex
-        }
+        }.getOrThrow()
     }
 
     private fun List<Release>.filterByQuery(query: String): List<Release> {

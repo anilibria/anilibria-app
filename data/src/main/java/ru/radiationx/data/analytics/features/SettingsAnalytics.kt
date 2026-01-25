@@ -2,18 +2,21 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.features.extensions.*
+import ru.radiationx.data.analytics.features.extensions.toNavFromParam
+import ru.radiationx.data.analytics.features.extensions.toParam
+import ru.radiationx.data.analytics.features.extensions.toPlayerParam
+import ru.radiationx.data.analytics.features.extensions.toQualityParam
+import ru.radiationx.data.analytics.features.extensions.toThemeParam
 import ru.radiationx.data.analytics.features.model.AnalyticsAppTheme
 import ru.radiationx.data.analytics.features.model.AnalyticsPlayer
 import ru.radiationx.data.analytics.features.model.AnalyticsQuality
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SettingsAnalytics(
+class SettingsAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 
-    private companion object{
+    private companion object {
         const val PARAM_VALUE = "value"
     }
 

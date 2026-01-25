@@ -2,19 +2,19 @@ package ru.radiationx.shared_app.analytics.profile
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.radiationx.data.analytics.profile.AnalyticsInstallerProfileDataSource
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
-import ru.radiationx.data.analytics.profile.AnalyticsProfileDataSource
-import ru.radiationx.data.analytics.profile.ProfileConstants
-import ru.radiationx.shared_app.analytics.CodecsProfileAnalytics
+import ru.radiationx.data.analytics.profile.AnalyticsMainProfileDataSource
+import ru.radiationx.data.analytics.profile.ProfileAttribute
+import ru.radiationx.shared_app.analytics.AnalyticsCodecsProfileDataSource
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class LoggingAnalyticsProfile(
-    private val dataSource: AnalyticsProfileDataSource,
-    private val codecs: CodecsProfileAnalytics,
+class LoggingAnalyticsProfile @Inject constructor(
+    private val main: AnalyticsMainProfileDataSource,
+    private val codecs: AnalyticsCodecsProfileDataSource,
+    private val installer: AnalyticsInstallerProfileDataSource
 ) : AnalyticsProfile {
 
     override fun update() {
@@ -27,44 +27,24 @@ class LoggingAnalyticsProfile(
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun unsafeUpdate() {
-        val singleSources = with(dataSource) {
-            listOf(
-                getApiAddressTag().mapToAttr(ProfileConstants.address_tag),
-                getAppTheme().mapToAttr(ProfileConstants.app_theme),
-                getQualitySettings().mapToAttr(ProfileConstants.quality),
-                getPlaySpeedSettings().mapToAttr(ProfileConstants.play_speed),
-                getNotificationsAllSettings().mapToAttr(ProfileConstants.notification_all),
-                getNotificationsServiceSettings().mapToAttr(ProfileConstants.notification_service),
-                getEpisodeOrderSettings().mapToAttr(ProfileConstants.episode_order),
-                getAuthState().mapToAttr(ProfileConstants.auth_state),
-                getHistoryItemsCount().mapToAttr(ProfileConstants.history_count),
-                getEpisodesItemsCount().mapToAttr(ProfileConstants.episodes_count),
-                getReleasesItemsCount().mapToAttr(ProfileConstants.releases_count),
-                getDownloadsCount().mapToAttr(ProfileConstants.downloads_count),
-                getAppVersionsHistory().mapToAttr(ProfileConstants.app_versions)
-            )
-        }
-
         GlobalScope.launch {
-            flow {
-                emit(merge(*singleSources.toTypedArray()).toList())
-            }
-                .map { mainParams ->
-                    codecs
-                        .getCodecsInfo()
-                        .let { mainParams + it.toList() }
-                }
-                .catch {
-                    Timber.e(it)
-                }
-                .onEach {
-                    Timber.tag("LoggingAnalyticsProfile").d(it.toMap().toString())
-                }
-                .launchIn(GlobalScope)
-        }
-    }
+            val mainAttributes = main.getAttributes()
+            val codecAttributes = codecs.getAttributes()
+            val installerAttributes = installer.getAttributes()
+            val allAttributes = mainAttributes + codecAttributes + installerAttributes
+            allAttributes.forEach {
+                when (it) {
+                    is ProfileAttribute.Boolean,
+                    is ProfileAttribute.String,
+                    is ProfileAttribute.Number -> {
+                        Timber.tag("LoggingAnalyticsProfile").d(it.toString())
+                    }
 
-    private fun Flow<Any>.mapToAttr(name: String): Flow<Pair<String, Any>> = map {
-        Pair(name, it)
+                    is ProfileAttribute.Error -> {
+                        Timber.tag("LoggingAnalyticsProfile").e(it.toString())
+                    }
+                }
+            }
+        }
     }
 }

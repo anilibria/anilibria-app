@@ -28,11 +28,11 @@ class HistoryStorage @Inject constructor(
         loadAll()
     }
 
-    override suspend fun getEpisodes() = localReleasesRelay.getValue()
+    override suspend fun getIds() = localReleasesRelay.getValue()
 
-    override fun observeEpisodes(): Flow<List<ReleaseId>> = localReleasesRelay
+    override fun observeIds(): Flow<List<ReleaseId>> = localReleasesRelay
 
-    override suspend fun putRelease(id: ReleaseId) {
+    override suspend fun putId(id: ReleaseId) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             mutableLocalReleases
@@ -44,7 +44,7 @@ class HistoryStorage @Inject constructor(
         saveAll()
     }
 
-    override suspend fun putAllRelease(ids: List<ReleaseId>) {
+    override suspend fun putAllIds(ids: List<ReleaseId>) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             ids.forEach { id ->
@@ -58,7 +58,7 @@ class HistoryStorage @Inject constructor(
         saveAll()
     }
 
-    override suspend fun removerRelease(id: ReleaseId) {
+    override suspend fun removeId(id: ReleaseId) {
         localReleasesRelay.update { localReleases ->
             val mutableLocalReleases = localReleases.toMutableList()
             mutableLocalReleases.firstOrNull { it == id }?.also {

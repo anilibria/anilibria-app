@@ -4,16 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Spanned
+import androidx.activity.enableEdgeToEdge
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
@@ -69,7 +69,7 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         if (isLaunchedFromHistory()) {
             get<ActivityLaunchAnalytics>().launchFromHistory(this, savedInstanceState)
@@ -78,9 +78,20 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
             return
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-            val systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            binding.toolbar.updatePadding(top = systemBarInsets.top)
-            binding.updateContent.updatePadding(bottom = systemBarInsets.bottom)
+            val systemBarInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            binding.root.updatePadding(
+                top = systemBarInsets.top,
+                left = systemBarInsets.left,
+                right = systemBarInsets.right,
+            )
+            binding.updateRecycler.updatePadding(
+                bottom = systemBarInsets.bottom
+            )
+            binding.updatePlaceholder.updatePadding(
+                bottom = systemBarInsets.bottom
+            )
             insets
         }
         lifecycle.addObserver(useTimeCounter)

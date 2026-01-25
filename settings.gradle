@@ -1,3 +1,22 @@
-include ':app-mobile', ':bottomsheet', ':data', ':shared-ktx', ':shared-android-ktx', ':lapism-search', ':app-tv', ':shared-app'
+
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+}
+
+include ':app-mobile', ':data', ':shared-ktx', ':shared-android-ktx', ':searchbar', ':app-tv', ':shared-app'
 include ':quill-di'
 include ':media-mobile'
+include ':taiwa'
+include ':envoy'

@@ -3,41 +3,36 @@ package ru.radiationx.anilibria.ui.fragments.search
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.Insets
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.lapism.search.behavior.SearchBehavior
-import com.lapism.search.internal.SearchLayout
-import com.lapism.search.widget.SearchMenuItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
-import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
-import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
+import ru.radiationx.anilibria.ui.common.releaseItemDialog
+import ru.radiationx.anilibria.ui.fragments.BaseSearchItemFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
 import ru.radiationx.anilibria.ui.fragments.TopScroller
-import ru.radiationx.anilibria.ui.fragments.release.list.ReleasesAdapter
-import ru.radiationx.anilibria.utils.Dimensions
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared.ktx.android.showWithLifecycle
 
 
 class SearchCatalogFragment :
-    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    BaseSearchItemFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
     SharedProvider,
-    ReleasesAdapter.ItemListener,
     TopScroller {
 
     companion object {
@@ -52,7 +47,11 @@ class SearchCatalogFragment :
     private val adapter = SearchAdapter(
         loadMoreListener = { viewModel.loadMore() },
         loadRetryListener = { viewModel.loadMore() },
-        listener = this,
+        clickListener = { item, view ->
+            this.sharedViewLocal = view
+            viewModel.onItemClick(item)
+        },
+        longClickListener = { item -> releaseDialog.show(item) },
         remindCloseListener = { viewModel.onRemindClose() },
         emptyPlaceHolder = PlaceholderListItem(
             R.drawable.ic_toolbar_search,
@@ -68,7 +67,8 @@ class SearchCatalogFragment :
 
     private val fastSearchAdapter = FastSearchAdapter(
         clickListener = { searchViewModel.onItemClick(it) },
-        localClickListener = { searchViewModel.onLocalItemClick(it) }
+        localClickListener = { searchViewModel.onLocalItemClick(it) },
+        retryClickListener = { searchViewModel.refresh() }
     )
 
     private val searchViewModel by viewModel<FastSearchViewModel>()
@@ -77,7 +77,11 @@ class SearchCatalogFragment :
         CatalogExtra(genre = getExtra(ARG_GENRE))
     }
 
-    private var searchView: SearchMenuItem? = null
+    private val releaseDialog by releaseItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) },
+        onShortcutClick = { viewModel.onShortcutClick(it) }
+    )
 
     override var sharedViewLocal: View? = null
 
@@ -101,9 +105,11 @@ class SearchCatalogFragment :
             startPostponedEnterTransition()
         }
 
-        searchView = SearchMenuItem(baseBinding.coordinatorLayout.context)
-        genresDialog =
-            CatalogFilterDialog(requireContext(), object : CatalogFilterDialog.ClickListener {
+
+        genresDialog = CatalogFilterDialog(
+            requireContext(),
+            viewLifecycleOwner,
+            object : CatalogFilterDialog.ClickListener {
                 override fun onAccept(state: CatalogFilterState) {
                     viewModel.onAcceptDialog(state)
                 }
@@ -111,7 +117,8 @@ class SearchCatalogFragment :
                 override fun onClose() {
                     viewModel.onCloseDialog()
                 }
-            })
+            }
+        )
 
         binding.refreshLayout.setOnRefreshListener { viewModel.refreshReleases() }
 
@@ -140,7 +147,7 @@ class SearchCatalogFragment :
                 .setIcon(R.drawable.ic_toolbar_search)
                 .setOnMenuItemClickListener {
                     viewModel.onFastSearchClick()
-                    searchView?.requestFocus(it)
+                    baseBinding.searchView.show()
                     false
                 }
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -154,42 +161,22 @@ class SearchCatalogFragment :
         }
 
 
-        baseBinding.coordinatorLayout.addView(searchView)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-                width =
-                    androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.MATCH_PARENT
-                height =
-                    androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams.WRAP_CONTENT
-                behavior = SearchBehavior<SearchMenuItem>()
+        baseBinding.searchView.apply {
+            setHint("Название релиза")
+            setOnFocusChangeListener { hasFocus ->
+                if (hasFocus) {
+                    viewModel.onFastSearchOpen()
+                }
             }
-        (searchView as SearchLayout?)?.apply {
-            setTextHint("Название релиза")
-            setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
-                override fun onFocusChange(hasFocus: Boolean) {
-                    if (!hasFocus) {
-                        searchViewModel.onClose()
-                    } else {
-                        viewModel.onFastSearchOpen()
-                    }
-                }
+            setOnQueryTextListener { newText ->
+                searchViewModel.onQueryChange(newText)
+            }
 
-            })
-            setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    searchViewModel.onQueryChange(newText.toString())
-                    return false
-                }
-            })
-
-            setAdapter(fastSearchAdapter)
+            setContentAdapter(fastSearchAdapter)
         }
 
         searchViewModel.state.onEach { state ->
+            baseBinding.searchView.setLoading(state.loaderState.loading)
             fastSearchAdapter.bindItems(state)
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
@@ -213,51 +200,22 @@ class SearchCatalogFragment :
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.showFilterAction.observe().onEach { state ->
-            genresDialog.showDialog(state, viewLifecycleOwner)
+            genresDialog.showDialog(state)
         }.launchInResumed(viewLifecycleOwner)
     }
 
     override fun updateDimens(dimensions: Dimensions) {
         super.updateDimens(dimensions)
-        searchView?.layoutParams =
-            (searchView?.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams?)?.apply {
-                topMargin = dimensions.statusBar
-            }
-        searchView?.requestLayout()
+        baseBinding.searchView.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            topMargin = dimensions.top
+        }
+        baseBinding.searchView.setFieldInsets(Insets.of(dimensions.left, 0, dimensions.right, 0))
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding.recyclerView.adapter = null
-        searchView?.setAdapter(null)
-        searchView = null
-    }
-
-    override fun onItemClick(position: Int, view: View) {
-        sharedViewLocal = view
-    }
-
-    override fun onItemClick(item: ReleaseItemState, position: Int) {
-        viewModel.onItemClick(item)
-    }
-
-    override fun onItemLongClick(item: ReleaseItemState): Boolean {
-        val titles = arrayOf("Копировать ссылку", "Поделиться", "Добавить на главный экран")
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                when (which) {
-                    0 -> {
-                        viewModel.onCopyClick(item)
-                        Toast.makeText(requireContext(), "Ссылка скопирована", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-
-                    1 -> viewModel.onShareClick(item)
-                    2 -> viewModel.onShortcutClick(item)
-                }
-            }
-            .showWithLifecycle(viewLifecycleOwner)
-        return false
+        baseBinding.searchView.setContentAdapter(null)
     }
 
     override fun scrollToTop() {

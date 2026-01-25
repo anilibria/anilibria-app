@@ -8,5 +8,5 @@ interface LibriaImageLoader {
 
     fun showImage(imageView: ImageView, url: String?, config: ImageLoaderScopeConfig)
 
-    suspend fun loadImageBitmap(context: Context, url: String?): Bitmap
+    suspend fun loadImageBitmap(context: Context, url: String?): Bitmap?
 }

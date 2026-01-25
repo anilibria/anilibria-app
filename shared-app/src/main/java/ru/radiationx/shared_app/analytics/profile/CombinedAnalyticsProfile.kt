@@ -1,10 +1,9 @@
 package ru.radiationx.shared_app.analytics.profile
 
 import ru.radiationx.data.analytics.profile.AnalyticsProfile
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class CombinedAnalyticsProfile(
+class CombinedAnalyticsProfile @Inject constructor(
     private val appMetrica: AppMetricaAnalyticsProfile,
     private val logging: LoggingAnalyticsProfile
 ) : AnalyticsProfile {

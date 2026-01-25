@@ -1,13 +1,10 @@
 package ru.radiationx.anilibria.ui.fragments.release.details
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
@@ -28,9 +25,10 @@ import ru.radiationx.data.entity.domain.types.TorrentId
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.launchInResumed
-import ru.radiationx.shared.ktx.android.showWithLifecycle
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.radiationx.shared_app.imageloader.showImageUrl
+import taiwa.TaiwaAction
+import taiwa.alert.alert
+import taiwa.bottomsheet.bottomSheetTaiwa
 
 class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopScroller {
 
@@ -55,6 +53,49 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
     private val viewModel by viewModel<ReleaseInfoViewModel>()
 
     private val binding by viewBinding<FragmentListBinding>()
+
+
+    private val episodeMenuTaiwa by bottomSheetTaiwa {
+        body {
+            item {
+                icon(R.drawable.ic_baseline_done_all_24)
+                title("Отметить все как просмотренные")
+                action(TaiwaAction.Close)
+                onClick { viewModel.onCheckAllEpisodesHistoryClick() }
+            }
+            item {
+                icon(R.drawable.ic_baseline_remove_done_24)
+                title("Сбросить историю просмотров")
+                tint(androidx.appcompat.R.attr.colorError)
+                action(TaiwaAction.Close)
+                onClick { viewModel.onResetEpisodesHistoryClick() }
+            }
+        }
+    }
+
+    private val episodeTaiwa by bottomSheetTaiwa()
+
+    private val torrentTaiwa by bottomSheetTaiwa()
+
+    private val favoriteTaiwa by bottomSheetTaiwa {
+        body {
+            message {
+                text("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
+            }
+            buttons {
+                action(TaiwaAction.Close)
+                button {
+                    text("Да")
+                    onClick { viewModel.openAuth() }
+                }
+                button {
+                    text("Нет")
+                }
+            }
+        }
+    }
+
+    private val fileDonateAlert by alert()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -116,105 +157,89 @@ class ReleaseInfoFragment : BaseDimensionsFragment(R.layout.fragment_list), TopS
     }
 
     private fun showFileDonateDialog(url: String) {
-        val dialogBinding = DialogFileDownloadBinding.inflate(
-            LayoutInflater.from(requireView().context),
-            null,
-            false
-        )
-
-        dialogBinding.root.apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+        val dialogBinding = fileDonateAlert.setContentBinding {
+            DialogFileDownloadBinding.inflate(it, null, false)
         }
-
-        dialogBinding.dialogFileImage.showImageUrl("file:///android_asset/libria_tyan_type3.png")
-
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogBinding.root)
-            .showWithLifecycle(viewLifecycleOwner)
-
         dialogBinding.dialogFilePatreonBtn.setOnClickListener {
             viewModel.onDialogPatreonClick()
-            dialog.dismiss()
+            fileDonateAlert.close()
         }
         dialogBinding.dialogFileDonateBtn.setOnClickListener {
             viewModel.onDialogDonateClick()
-            dialog.dismiss()
+            fileDonateAlert.close()
         }
         dialogBinding.dialogFileDownloadBtn.setOnClickListener {
             viewModel.downloadFile(url)
-            dialog.dismiss()
+            fileDonateAlert.close()
         }
+        fileDonateAlert.show()
     }
 
     private fun showEpisodesMenuDialog() {
-        val items = arrayOf(
-            "Сбросить историю просмотров",
-            "Отметить все как просмотренные"
-        )
-        AlertDialog.Builder(requireContext())
-            .setItems(items) { _, which ->
-                when (which) {
-                    0 -> viewModel.onResetEpisodesHistoryClick()
-                    1 -> viewModel.onCheckAllEpisodesHistoryClick()
-                }
-            }
-            .showWithLifecycle(viewLifecycleOwner)
+        episodeMenuTaiwa.show()
     }
 
     private fun showLongPressEpisodeDialog(episode: Episode) {
-        val items = arrayOf(
-            "Отметить как непросмотренная"
-        )
-        AlertDialog.Builder(requireContext())
-            .setItems(items) { _, which ->
-                when (which) {
-                    0 -> viewModel.markEpisodeUnviewed(episode)
+        episodeTaiwa.setContent {
+            body {
+                item {
+                    icon(R.drawable.ic_baseline_remove_done_24)
+                    title("Отметить как непросмотренная")
+                    tint(androidx.appcompat.R.attr.colorError)
+                    action(TaiwaAction.Close)
+                    onClick { viewModel.markEpisodeUnviewed(episode) }
                 }
             }
-            .showWithLifecycle(viewLifecycleOwner)
+        }
+        episodeTaiwa.show()
     }
 
     private fun showTorrentDialog(id: TorrentId) {
-        val items = arrayOf(
-            "Открыть файл" to { viewModel.onTorrentClick(id, TorrentAction.Open) },
-            "Поделиться файлом" to { viewModel.onTorrentClick(id, TorrentAction.Share) },
-            "Открыть ссылку на файл" to { viewModel.onTorrentClick(id, TorrentAction.OpenUrl) },
-            "Поделиться ссылкой на файл" to {
-                viewModel.onTorrentClick(
-                    id,
-                    TorrentAction.ShareUrl
-                )
-            },
-        )
-        val titles = items.map { it.first }.toTypedArray()
-        AlertDialog.Builder(requireContext())
-            .setItems(titles) { _, which ->
-                items[which].second.invoke()
+        torrentTaiwa.setContent {
+            body {
+                item {
+                    icon(R.drawable.ic_outline_file_open_24)
+                    title("Открыть файл")
+                    action(TaiwaAction.Close)
+                    onClick { viewModel.onTorrentClick(id, TorrentAction.Open) }
+                }
+                item {
+                    icon(R.drawable.ic_baseline_share_24)
+                    title("Поделиться файлом")
+                    action(TaiwaAction.Close)
+                    onClick { viewModel.onTorrentClick(id, TorrentAction.Share) }
+                }
+                item {
+                    icon(R.drawable.ic_baseline_open_in_new_24)
+                    title("Открыть ссылку на файл")
+                    action(TaiwaAction.Close)
+                    onClick { viewModel.onTorrentClick(id, TorrentAction.OpenUrl) }
+                }
+                item {
+                    icon(R.drawable.ic_baseline_share_24)
+                    title("Поделиться ссылкой на файл")
+                    action(TaiwaAction.Close)
+                    onClick { viewModel.onTorrentClick(id, TorrentAction.ShareUrl) }
+                }
             }
-            .showWithLifecycle(viewLifecycleOwner)
+        }
+        torrentTaiwa.show()
     }
 
     private fun playEpisode(id: EpisodeId) {
         viewModel.submitPlayerOpenAnalytics(id)
-        val intent = Screens.Player(id).getActivityIntent(requireContext())
+        val intent = Screens.Player(id).createIntent(requireContext())
         startActivity(intent)
     }
 
     private fun playWeb(link: String, code: String) {
         viewModel.onWebPlayerClick()
-        val intent = Screens.WebPlayer(link, code).getActivityIntent(requireContext())
+        val intent = Screens.WebPlayer(link, code).createIntent(requireContext())
         startActivity(intent)
     }
 
     private fun showFavoriteDialog() {
-        AlertDialog.Builder(requireContext())
-            .setMessage("Для выполнения действия необходимо авторизоваться. Авторизоваться?")
-            .setPositiveButton("Да") { _, _ -> viewModel.openAuth() }
-            .setNegativeButton("Нет", null)
-            .showWithLifecycle(viewLifecycleOwner)
+        favoriteTaiwa.show()
     }
 
     private fun showTorrentInfoDialog() {

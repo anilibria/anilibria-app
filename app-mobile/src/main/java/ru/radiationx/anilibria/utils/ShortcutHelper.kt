@@ -8,22 +8,24 @@ import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.shared.ktx.android.asSoftware
 import ru.radiationx.shared.ktx.android.centerCrop
 import ru.radiationx.shared.ktx.android.createAvatar
 import ru.radiationx.shared.ktx.android.immutableFlag
+import ru.radiationx.shared.ktx.android.use
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.imageloader.loadImageBitmap
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 import kotlin.math.min
 
-@InjectConstructor
-class ShortcutHelper(
+class ShortcutHelper @Inject constructor(
     private val context: Context,
 ) {
 
@@ -31,12 +33,18 @@ class ShortcutHelper(
     fun addShortcut(data: Release) {
         GlobalScope.launch {
             coRunCatching {
-                val loadedImage = context.loadImageBitmap(data.poster)
+                val loadedImage = withContext(Dispatchers.IO) {
+                    context.loadImageBitmap(data.poster)
+                }?: return@coRunCatching
                 val minSize = min(loadedImage.width, loadedImage.height)
                 val desiredSize = Resources.getSystem().displayMetrics.density * 48
                 val scaleFactor = minSize / desiredSize
-                val bmp = loadedImage.asSoftware {
-                    it.centerCrop(minSize, minSize, scaleFactor).createAvatar(isCircle = true)
+                val bmp = withContext(Dispatchers.Default) {
+                    loadedImage.asSoftware {
+                        it.centerCrop(minSize, minSize, scaleFactor).use { cropper ->
+                            cropper.createAvatar(isCircle = true)
+                        }
+                    }
                 }
                 addShortcut(data, bmp)
             }.onFailure {
@@ -62,7 +70,7 @@ class ShortcutHelper(
         url: String,
         bitmap: Bitmap,
     ) {
-        val intent = Screens.IntentHandler(url).getActivityIntent(context)
+        val intent = Screens.IntentHandler(url).createIntent(context)
         val shortcut = ShortcutInfoCompat.Builder(context, id)
             .setShortLabel(shortLabel)
             .setLongLabel(longLabel)

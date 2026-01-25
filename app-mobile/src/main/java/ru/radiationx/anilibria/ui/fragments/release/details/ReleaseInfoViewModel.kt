@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.release.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,12 +58,10 @@ import ru.radiationx.data.repository.FavoriteRepository
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.terrakok.cicerone.Router
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ReleaseInfoViewModel(
+class ReleaseInfoViewModel @Inject constructor(
     private val argExtra: ReleaseExtra,
     private val releaseInteractor: ReleaseInteractor,
     private val authRepository: AuthRepository,
@@ -219,7 +218,7 @@ class ReleaseInfoViewModel(
     fun markEpisodeUnviewed(episode: Episode) {
         viewModelScope.launch {
             releaseAnalytics.historyResetEpisode()
-            releaseInteractor.markUnviewed(episode.id)
+            releaseInteractor.markUnViewed(episode.id)
         }
     }
 
@@ -319,7 +318,7 @@ class ReleaseInfoViewModel(
             releaseAnalytics.episodesContinueClick(release.id.id)
         })
         viewModelScope.launch {
-            releaseInteractor.getAccesses(release.id).maxByOrNull { it.lastAccess }?.also {
+            releaseInteractor.getAccesses(release.id).maxByOrNull { it.lastAccessRaw }?.also {
                 playEpisodeAction.set(ActionPlayEpisode(it.id))
             }
         }

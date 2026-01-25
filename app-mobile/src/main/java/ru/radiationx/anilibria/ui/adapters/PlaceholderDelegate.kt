@@ -2,10 +2,12 @@ package ru.radiationx.anilibria.ui.adapters
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemPlaceholderBinding
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared.ktx.android.setCompatDrawable
 import ru.radiationx.shared.ktx.android.setTintColorAttr
 
@@ -23,9 +25,12 @@ class PlaceholderDelegate :
 
         private val binding by viewBinding<ItemPlaceholderBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         fun bind(icRes: Int, titleRes: Int, descRes: Int) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemPlaceholderIcon.setCompatDrawable(icRes)
-            binding.itemPlaceholderIcon.setTintColorAttr(R.attr.colorOnSurface)
+            binding.itemPlaceholderIcon.setTintColorAttr(com.google.android.material.R.attr.colorOnSurface)
             binding.itemPlaceholderTitle.setText(titleRes)
             binding.itemPlaceholderDesc.setText(descRes)
         }

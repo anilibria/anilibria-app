@@ -2,13 +2,11 @@ package ru.radiationx.data.analytics.features
 
 import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
-import ru.radiationx.data.analytics.features.extensions.toErrorParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toTimeParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AuthVkAnalytics(
+class AuthVkAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 
@@ -19,11 +17,8 @@ class AuthVkAnalytics(
         )
     }
 
-    fun error(error: Throwable) {
-        sender.send(
-            AnalyticsConstants.auth_vk_error,
-            error.toErrorParam()
-        )
+    fun error() {
+        sender.send(AnalyticsConstants.auth_vk_error)
     }
 
     fun success() {

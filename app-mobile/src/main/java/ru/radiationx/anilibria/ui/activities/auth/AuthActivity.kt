@@ -3,32 +3,36 @@ package ru.radiationx.anilibria.ui.activities.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.view.WindowCompat
-import by.kirich1409.viewbindingdelegate.viewBinding
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
+import androidx.core.view.updatePadding
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ActivityAuthBinding
-import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.di.DimensionsModule
+import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.ui.activities.BaseActivity
 import ru.radiationx.anilibria.ui.common.BackButtonListener
-import ru.radiationx.anilibria.utils.DimensionsProvider
-import ru.radiationx.anilibria.utils.initInsets
 import ru.radiationx.quill.inject
+import ru.radiationx.quill.installModules
 import ru.radiationx.shared.ktx.android.getExtra
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
 
 
 /**
  * Created by radiationx on 30.12.17.
  */
-class AuthActivity : BaseActivity(R.layout.activity_main) {
+class AuthActivity : BaseActivity(R.layout.activity_auth) {
 
     companion object {
         private const val ARG_INIT_SCREEN = "arg_screen"
 
-        fun newIntent(context: Context, rootScreen: BaseAppScreen? = null): Intent =
+        fun newIntent(context: Context, rootScreen: BaseFragmentScreen? = null): Intent =
             Intent(context, AuthActivity::class.java).apply {
                 putExtra(ARG_INIT_SCREEN, rootScreen)
             }
@@ -40,17 +44,22 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
 
     private val navigationHolder by inject<NavigatorHolder>()
 
-    private val dimensionsProvider by inject<DimensionsProvider>()
+    private val navigatorNew by lazy {
+        object : AppNavigator(this, R.id.root_container) {
+
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.DayNightAppTheme_NoActionBar)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
+        installModules(DimensionsModule())
         super.onCreate(savedInstanceState)
 
-        binding.initInsets(dimensionsProvider)
+        binding.initInsets()
 
         if (savedInstanceState == null) {
-            val initScreen = getExtra<BaseAppScreen>(ARG_INIT_SCREEN) ?: Screens.AuthMain()
+            val initScreen = getExtra<BaseFragmentScreen>(ARG_INIT_SCREEN) ?: Screens.AuthMain()
             router.newRootScreen(initScreen)
         }
     }
@@ -84,9 +93,24 @@ class AuthActivity : BaseActivity(R.layout.activity_main) {
         }
     }
 
-    private val navigatorNew by lazy {
-        object : SupportAppNavigator(this, R.id.root_container) {
+    private fun ActivityAuthBinding.initInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            val contentInsets = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                    .or(WindowInsetsCompat.Type.displayCutout())
+                    .or(WindowInsetsCompat.Type.ime())
+            )
+            layoutActivityContainer.root.updatePadding(
+                top = contentInsets.top,
+                left = contentInsets.left,
+                right = contentInsets.right,
+                bottom = contentInsets.bottom
+            )
+            insets
+        }
 
+        root.doOnAttach {
+            it.requestApplyInsets()
         }
     }
 }

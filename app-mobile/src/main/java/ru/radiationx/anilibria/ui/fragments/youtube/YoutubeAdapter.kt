@@ -1,6 +1,6 @@
 package ru.radiationx.anilibria.ui.fragments.youtube
 
-import ru.radiationx.anilibria.model.loading.needShowPlaceholder
+import ru.radiationx.anilibria.model.YoutubeItemState
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.LoadErrorListItem
 import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
@@ -11,19 +11,21 @@ import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.youtube.YoutubeDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
 /* Created by radiationx on 31.10.17. */
 
 class YoutubeAdapter(
     loadMoreListener: () -> Unit,
     loadRetryListener: () -> Unit,
-    listener: ItemListener,
+    clickListener: (YoutubeItemState) -> Unit,
+    longClickListener: (YoutubeItemState) -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem,
 ) : ListItemAdapter() {
 
     init {
-        addDelegate(YoutubeDelegate(listener))
+        addDelegate(YoutubeDelegate(clickListener, longClickListener))
         addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(PlaceholderDelegate())
@@ -42,7 +44,7 @@ class YoutubeAdapter(
             newItems.addAll(data.map { YoutubeListItem(it) })
         }
 
-        if (loadingState.hasMorePages) {
+        if (loadingState.hasMoreData) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
             } else {
@@ -62,7 +64,5 @@ class YoutubeAdapter(
             else -> null
         }
     }
-
-    interface ItemListener : YoutubeDelegate.Listener
 
 }

@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.ui.fragments.auth.social
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,15 +15,14 @@ import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
-import ru.terrakok.cicerone.Router
-import toothpick.InjectConstructor
+import timber.log.Timber
+import javax.inject.Inject
 
 data class AuthSocialExtra(
     val key: String,
 ) : QuillExtra
 
-@InjectConstructor
-class AuthSocialViewModel(
+class AuthSocialViewModel @Inject constructor(
     private val argExtra: AuthSocialExtra,
     private val authRepository: AuthRepository,
     private val router: Router,
@@ -54,7 +54,6 @@ class AuthSocialViewModel(
                 detector.loadUrl(data.socialUrl)
                 _state.update { it.copy(data = data) }
             }.onFailure {
-                authSocialAnalytics.error(it)
                 errorHandler.handle(it)
             }
         }
@@ -77,7 +76,7 @@ class AuthSocialViewModel(
     }
 
     fun submitUseTime(time: Long) {
-        authSocialAnalytics.useTime(time)
+        authSocialAnalytics.useTime(argExtra.key, time)
     }
 
     fun onSuccessAuthResult(result: String) {
@@ -94,7 +93,8 @@ class AuthSocialViewModel(
     }
 
     fun sendAnalyticsPageError(error: Exception) {
-        authSocialAnalytics.error(error)
+        Timber.e(error, "sendAnalyticsPageError")
+        authSocialAnalytics.pageError(argExtra.key)
     }
 
     fun onPageStateChanged(pageState: WebPageViewState) {
@@ -109,10 +109,10 @@ class AuthSocialViewModel(
             coRunCatching {
                 authRepository.signInSocial(resultUrl, data)
             }.onSuccess {
-                authSocialAnalytics.success()
+                authSocialAnalytics.success(argExtra.key)
                 router.finishChain()
             }.onFailure {
-                authSocialAnalytics.error(it)
+                authSocialAnalytics.error(argExtra.key)
                 if (it is SocialAuthException) {
                     _errorEvent.set(Unit)
                 } else {

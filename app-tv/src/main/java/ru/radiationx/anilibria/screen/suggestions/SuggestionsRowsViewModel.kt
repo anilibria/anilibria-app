@@ -5,10 +5,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.BaseRowsViewModel
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SuggestionsRowsViewModel(
+class SuggestionsRowsViewModel @Inject constructor(
     suggestionsController: SuggestionsController,
 ) : BaseRowsViewModel() {
 

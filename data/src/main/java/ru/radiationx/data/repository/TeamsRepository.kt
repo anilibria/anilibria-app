@@ -9,10 +9,9 @@ import ru.radiationx.data.datasource.holders.TeamsHolder
 import ru.radiationx.data.datasource.remote.api.TeamsApi
 import ru.radiationx.data.entity.domain.team.Teams
 import ru.radiationx.data.entity.mapper.toDomain
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class TeamsRepository(
+class TeamsRepository @Inject constructor(
     private val teamsApi: TeamsApi,
     private val teamsHolder: TeamsHolder,
 ) {

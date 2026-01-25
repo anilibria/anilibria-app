@@ -2,10 +2,9 @@ package ru.radiationx.anilibria.screen.suggestions
 
 import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.shared.ktx.EventFlow
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SuggestionsController {
+class SuggestionsController @Inject constructor() {
 
     val resultEvent = EventFlow<SearchResult>()
 

@@ -4,10 +4,9 @@ import ru.radiationx.data.analytics.AnalyticsConstants
 import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toPositionParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class ScheduleAnalytics(
+class ScheduleAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

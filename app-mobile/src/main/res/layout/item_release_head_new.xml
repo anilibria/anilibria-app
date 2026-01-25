@@ -35,6 +35,7 @@
             android:layout_marginEnd="8dp"
             android:layout_toStartOf="@+id/full_fav_btn"
             android:textColor="?textDefault"
+            android:textIsSelectable="true"
             android:textSize="20sp"
             tools:text="Длинное название какого-то релиза в пару строк" />
 
@@ -47,6 +48,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:textColor="?textDefault"
+            android:textIsSelectable="true"
             android:textSize="14sp"
             tools:text="Typical short en title" />
 

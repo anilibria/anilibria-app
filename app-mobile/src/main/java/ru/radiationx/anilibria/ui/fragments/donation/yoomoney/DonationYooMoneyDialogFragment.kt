@@ -9,21 +9,21 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.DialogDonationYoomoneyBinding
-import ru.radiationx.anilibria.ui.fragments.AlertDialogFragment
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.addTextChangeListener
 import ru.radiationx.shared.ktx.android.bindOptionalViews
 import ru.radiationx.shared.ktx.android.launchInResumed
+import taiwa.dialogs.TaiwaDialogFragment
 
-class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donation_yoomoney) {
+class DonationYooMoneyDialogFragment : TaiwaDialogFragment(R.layout.dialog_donation_yoomoney) {
 
     private val binding by viewBinding<DialogDonationYoomoneyBinding>()
 
@@ -188,7 +188,7 @@ class DonationYooMoneyDialogFragment : AlertDialogFragment(R.layout.dialog_donat
                 val button = MaterialButton(
                     binding.yooMoneyAmounts.context,
                     null,
-                    R.attr.materialButtonOutlinedStyle
+                    com.google.android.material.R.attr.materialButtonOutlinedStyle
                 )
                 button.setPadding(0, 0, 0, 0)
                 val layoutParams = LinearLayout.LayoutParams(

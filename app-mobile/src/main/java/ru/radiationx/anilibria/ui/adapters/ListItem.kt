@@ -52,7 +52,10 @@ open class ListItem(private val idData: Any?) {
 
 data class ProfileListItem(val id: Any, val state: ProfileItemState) : ListItem(id)
 data class MenuListItem(val menuItem: OtherMenuItemState) : ListItem(menuItem.title)
-data class DividerShadowListItem(val id: Any) : ListItem(id)
+data class DividerShadowListItem(val direction: ShadowDirection, val id: Any) : ListItem(id)
+enum class ShadowDirection {
+    Top, Bottom, Double
+}
 
 
 /* Common */
@@ -116,7 +119,7 @@ data class YoutubeListItem(val state: YoutubeItemState) : ListItem(state.id)
 
 data class SocialAuthListItem(val state: SocialAuthItemState) : ListItem(state.key)
 
-data class FeedScheduleListItem(val state: ScheduleItemState) : ListItem(state.releaseId)
+data class FeedScheduleListItem(val state: ScheduleItemState) : ListItem(state.release.id)
 data class FeedSchedulesListItem(val id: Any, val items: List<ScheduleItemState>) : ListItem(id)
 data class FeedSectionListItem(
     val tag: String,

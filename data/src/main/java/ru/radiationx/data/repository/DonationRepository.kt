@@ -10,10 +10,9 @@ import ru.radiationx.data.datasource.remote.api.DonationApi
 import ru.radiationx.data.entity.domain.donation.DonationInfo
 import ru.radiationx.data.entity.domain.donation.yoomoney.YooMoneyDialog
 import ru.radiationx.data.entity.mapper.toDomain
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class DonationRepository(
+class DonationRepository @Inject constructor(
     private val donationApi: DonationApi,
     private val donationHolder: DonationHolder,
 ) {

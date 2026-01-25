@@ -1,8 +1,7 @@
 package ru.radiationx.anilibria.ui.fragments.release.list
 
+import android.view.View
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingState
-import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
 import ru.radiationx.anilibria.ui.adapters.FeedSectionListItem
 import ru.radiationx.anilibria.ui.adapters.ListItem
@@ -11,12 +10,15 @@ import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseListItem
+import ru.radiationx.anilibria.ui.adapters.ShadowDirection
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.adapters.release.list.ReleaseItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoaderState
+import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
 /* Created by radiationx on 31.10.17. */
 
@@ -25,7 +27,8 @@ class ReleasesAdapter(
     loadRetryListener: () -> Unit,
     importListener: (() -> Unit)? = null,
     exportListener: (() -> Unit)? = null,
-    listener: ItemListener,
+    clickListener: (ReleaseItemState, View) -> Unit,
+    longClickListener: (ReleaseItemState) -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem,
 ) : ListItemAdapter() {
@@ -36,7 +39,7 @@ class ReleasesAdapter(
     }
 
     init {
-        addDelegate(ReleaseItemDelegate(listener))
+        addDelegate(ReleaseItemDelegate(clickListener, longClickListener))
         addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(PlaceholderDelegate())
@@ -50,7 +53,7 @@ class ReleasesAdapter(
     }
 
     fun bindState(
-        loadingState: DataLoadingState<List<ReleaseItemState>>,
+        loadingState: PageLoaderState<List<ReleaseItemState>>,
         withExport: Boolean = false,
     ) {
         val newItems = mutableListOf<ListItem>()
@@ -65,12 +68,17 @@ class ReleasesAdapter(
 
         loadingState.data?.let { data ->
             if (withExport) {
-                newItems.add(DividerShadowListItem("history"))
+                val historyShadow = if (data.isEmpty()) {
+                    ShadowDirection.Bottom
+                } else {
+                    ShadowDirection.Double
+                }
+                newItems.add(DividerShadowListItem(historyShadow, "history"))
             }
             newItems.addAll(data.map { ReleaseListItem(it) })
         }
 
-        if (loadingState.hasMorePages) {
+        if (loadingState.hasMoreData) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
             } else {
@@ -82,7 +90,7 @@ class ReleasesAdapter(
     }
 
 
-    private fun getPlaceholder(loadingState: DataLoadingState<List<ReleaseItemState>>): PlaceholderListItem? {
+    private fun getPlaceholder(loadingState: PageLoaderState<List<ReleaseItemState>>): PlaceholderListItem? {
         val needPlaceholder = loadingState.needShowPlaceholder { it?.isNotEmpty() ?: false }
         return when {
             needPlaceholder && loadingState.error != null -> errorPlaceHolder
@@ -90,6 +98,4 @@ class ReleasesAdapter(
             else -> null
         }
     }
-
-    interface ItemListener : ReleaseItemDelegate.Listener
 }

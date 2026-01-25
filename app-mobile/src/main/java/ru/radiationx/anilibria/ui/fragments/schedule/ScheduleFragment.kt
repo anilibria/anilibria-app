@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.FragmentListRefreshBinding
 import ru.radiationx.anilibria.extension.disableItemChangeAnimation
+import ru.radiationx.anilibria.ui.common.releaseItemDialog
 import ru.radiationx.anilibria.ui.fragments.BaseToolbarFragment
 import ru.radiationx.anilibria.ui.fragments.SharedProvider
 import ru.radiationx.anilibria.ui.fragments.ToolbarShadowController
@@ -21,8 +22,9 @@ import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.postopneEnterTransitionWithTimout
 import ru.radiationx.shared.ktx.android.putExtra
 
-class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
-    SharedProvider, TopScroller{
+class ScheduleFragment :
+    BaseToolbarFragment<FragmentListRefreshBinding>(R.layout.fragment_list_refresh),
+    SharedProvider, TopScroller {
 
     companion object {
         private const val ARG_DAY = "arg day"
@@ -32,9 +34,12 @@ class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layou
     }
 
     private val scheduleAdapter = ScheduleAdapter(
-        scheduleClickListener = { item, view, position ->
+        clickListener = { item, view, position ->
             this.sharedViewLocal = view
             viewModel.onItemClick(item, position)
+        },
+        longClickListener = { item ->
+            releaseDialog.show(item.release)
         },
         scrollListener = { position ->
             viewModel.onHorizontalScroll(position)
@@ -44,6 +49,12 @@ class ScheduleFragment : BaseToolbarFragment<FragmentListRefreshBinding>(R.layou
     private val viewModel by viewModel<ScheduleViewModel> {
         ScheduleExtra(day = getExtra(ARG_DAY))
     }
+
+    private val releaseDialog by releaseItemDialog(
+        onCopyClick = { viewModel.onCopyClick(it) },
+        onShareClick = { viewModel.onShareClick(it) },
+        onShortcutClick = { viewModel.onShortcutClick(it) }
+    )
 
     override var sharedViewLocal: View? = null
 

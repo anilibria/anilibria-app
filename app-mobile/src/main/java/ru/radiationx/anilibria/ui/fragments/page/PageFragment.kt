@@ -37,6 +37,7 @@ import ru.radiationx.shared.ktx.android.toBase64
 import ru.radiationx.shared.ktx.android.toException
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
+import timber.log.Timber
 
 /**
  * Created by radiationx on 13.01.18.
@@ -129,7 +130,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
                 error: SslError,
             ) {
                 super.onReceivedSslError(view, handler, error)
-                pageAnalytics.error(error.toException())
+                onPageError(error.toException())
             }
 
             override fun onReceivedHttpError(
@@ -139,7 +140,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
             ) {
                 super.onReceivedHttpError(view, request, errorResponse)
                 if (view.url == request.url.toString()) {
-                    pageAnalytics.error(errorResponse.toException(request))
+                    onPageError(errorResponse.toException(request))
                 }
             }
 
@@ -150,7 +151,7 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
             ) {
                 super.onReceivedError(view, request, error)
                 if (view.url == request.url.toString()) {
-                    pageAnalytics.error(error.toException(request))
+                    onPageError(error.toException(request))
                 }
             }
         }
@@ -180,6 +181,11 @@ class PageFragment : BaseToolbarFragment<FragmentWebviewBinding>(R.layout.fragme
         viewModel.state.mapNotNull { it.data }.distinctUntilChanged().onEach { data ->
             binding.webView.evalJs("ViewModel.setText('content','${data.content.toBase64()}');")
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun onPageError(error:Exception){
+        Timber.e(error,"onPageError")
+        pageAnalytics.error()
     }
 
     override fun onResume() {

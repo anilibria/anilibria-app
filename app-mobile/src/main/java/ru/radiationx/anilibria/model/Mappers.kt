@@ -47,8 +47,7 @@ fun FeedItem.toState(updates: Map<ReleaseId, ReleaseUpdate>) = FeedItemState(
 )
 
 fun ScheduleItem.toState() = ScheduleItemState(
-    releaseId = releaseItem.id,
-    posterUrl = releaseItem.poster.orEmpty(),
+    release = releaseItem.toState(emptyMap()),
     isCompleted = completed
 )
 
@@ -92,9 +91,10 @@ fun SuggestionItem.toState(query: String): SuggestionItemState {
     }
 
     return SuggestionItemState(
-        id,
-        itemTitle,
-        poster.orEmpty(),
-        matchRanges
+        id = id,
+        code = code,
+        title = itemTitle,
+        poster = poster.orEmpty(),
+        matchRanges = matchRanges
     )
 }

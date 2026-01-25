@@ -12,7 +12,7 @@ class ImageLoaderScope {
         config = config.copy(onStart = listener)
     }
 
-    fun onSuccess(listener: (Bitmap) -> Unit) {
+    fun onSuccess(listener: (Bitmap?) -> Unit) {
         config = config.copy(onSuccess = listener)
     }
 
@@ -33,7 +33,7 @@ class ImageLoaderScope {
 
 data class ImageLoaderScopeConfig(
     val onStart: (() -> Unit)? = null,
-    val onSuccess: ((Bitmap) -> Unit)? = null,
+    val onSuccess: ((Bitmap?) -> Unit)? = null,
     val onError: ((Throwable) -> Unit)? = null,
     val onCancel: (() -> Unit)? = null,
     val onComplete: (() -> Unit)? = null,
@@ -45,6 +45,6 @@ fun ImageView.showImageUrl(url: String?, block: ImageLoaderScope.() -> Unit = {}
     LibriaImageLoaderRoot.getImpl().showImage(this, url, config)
 }
 
-suspend fun Context.loadImageBitmap(url: String?): Bitmap {
+suspend fun Context.loadImageBitmap(url: String?): Bitmap? {
     return LibriaImageLoaderRoot.getImpl().loadImageBitmap(this, url)
 }

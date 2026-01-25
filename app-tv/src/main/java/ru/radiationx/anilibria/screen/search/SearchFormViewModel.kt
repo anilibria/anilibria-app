@@ -12,10 +12,9 @@ import ru.radiationx.anilibria.screen.SearchSeasonGuidedScreen
 import ru.radiationx.anilibria.screen.SearchSortGuidedScreen
 import ru.radiationx.anilibria.screen.SearchYearGuidedScreen
 import ru.radiationx.data.entity.domain.search.SearchForm
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SearchFormViewModel(
+class SearchFormViewModel @Inject constructor(
     private val searchController: SearchController,
     private val guidedRouter: GuidedRouter,
 ) : LifecycleViewModel() {

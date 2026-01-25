@@ -6,12 +6,11 @@ import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.schedule.ScheduleDay
 import ru.radiationx.shared.ktx.capitalizeDefault
-import toothpick.InjectConstructor
 import java.text.NumberFormat
 import java.util.Calendar
+import javax.inject.Inject
 
-@InjectConstructor
-class DetailDataConverter {
+class DetailDataConverter @Inject constructor() {
 
     fun toDetail(
         releaseItem: Release,
@@ -68,12 +67,12 @@ class DetailDataConverter {
         Calendar.MONDAY,
         Calendar.TUESDAY,
         Calendar.THURSDAY,
-        -> "каждый"
+            -> "каждый"
 
         Calendar.WEDNESDAY,
         Calendar.FRIDAY,
         Calendar.SATURDAY,
-        -> "каждую"
+            -> "каждую"
 
         Calendar.SUNDAY -> "каждое"
         else -> throw Exception("Not found day by $this")

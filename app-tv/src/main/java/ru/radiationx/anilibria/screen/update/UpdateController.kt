@@ -2,10 +2,9 @@ package ru.radiationx.anilibria.screen.update
 
 import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.shared.ktx.EventFlow
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class UpdateController {
+class UpdateController @Inject constructor() {
 
     val downloadAction = EventFlow<UpdateData.UpdateLink>()
 }

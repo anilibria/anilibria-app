@@ -1,10 +1,9 @@
 package ru.radiationx.anilibria
 
 import ru.radiationx.data.migration.MigrationExecutor
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class AppMigrationExecutor : MigrationExecutor {
+class AppMigrationExecutor @Inject constructor() : MigrationExecutor {
 
     override fun execute(current: Int, lastSaved: Int, history: List<Int>) {
     }

@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.ui.widget
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.LinearLayoutCompat
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.databinding.ViewCardDescriptionBinding
 
 class CardDescriptionView @JvmOverloads constructor(

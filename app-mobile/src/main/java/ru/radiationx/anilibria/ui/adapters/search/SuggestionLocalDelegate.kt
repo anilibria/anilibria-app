@@ -3,7 +3,7 @@ package ru.radiationx.anilibria.ui.adapters.search
 import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemFastSearchBinding
 import ru.radiationx.anilibria.model.SuggestionLocalItemState
@@ -11,6 +11,8 @@ import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.adapters.SuggestionLocalListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.common.adapters.OptimizeDelegate
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared.ktx.android.setCompatDrawable
 import ru.radiationx.shared.ktx.android.setTintColorAttr
 
@@ -37,13 +39,16 @@ class SuggestionLocalDelegate(
 
         private val binding by viewBinding<ItemFastSearchBinding>()
 
+        private val dimensionsApplier by dimensionsApplier()
+
         init {
             binding.itemImage.scaleType = ImageView.ScaleType.CENTER
         }
 
         fun bind(item: SuggestionLocalItemState) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             binding.itemImage.setCompatDrawable(item.icRes)
-            binding.itemImage.setTintColorAttr(R.attr.colorOnSurface)
+            binding.itemImage.setTintColorAttr(com.google.android.material.R.attr.colorOnSurface)
             binding.itemImage.background = null
             binding.itemTitle.text = item.title
             binding.root.setOnClickListener {

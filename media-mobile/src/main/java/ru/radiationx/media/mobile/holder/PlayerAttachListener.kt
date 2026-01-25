@@ -1,8 +1,8 @@
 package ru.radiationx.media.mobile.holder
 
-import androidx.media3.common.Player
+import ru.radiationx.media.mobile.PlayerProxy
 
 internal interface PlayerAttachListener {
-    fun attachPlayer(player: Player) {}
-    fun detachPlayer(player: Player) {}
+    fun attachPlayer(player: PlayerProxy) {}
+    fun detachPlayer(player: PlayerProxy) {}
 }

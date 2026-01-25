@@ -1,17 +1,30 @@
 package ru.radiationx.shared.ktx.android
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
+import android.graphics.RectF
 import android.os.Build
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.scale
 
 fun <R> Bitmap.asSoftware(block: (Bitmap) -> R): R {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && config == Bitmap.Config.HARDWARE) {
-        val copyBitmap = copy(Bitmap.Config.ARGB_8888, true)
-        val result = block.invoke(copyBitmap)
-        copyBitmap.recycle()
-        result
+        copy(Bitmap.Config.ARGB_8888, true).use(block)
     } else {
         block.invoke(this)
     }
+}
+
+fun <R> Bitmap.use(block: (Bitmap) -> R): R {
+    val result = block.invoke(this)
+    this.recycle()
+    return result
 }
 
 fun Bitmap.createAvatar(
@@ -19,8 +32,8 @@ fun Bitmap.createAvatar(
     height: Int = this.height,
     isCircle: Boolean
 ): Bitmap = if (isCircle) {
-    val bitmap = Bitmap.createScaledBitmap(this, width, height, true)
-    val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+    val bitmap = scale(width, height)
+    val output = createBitmap(bitmap.width, bitmap.height)
     val canvas = Canvas(output)
 
     val color = Color.RED
@@ -37,7 +50,7 @@ fun Bitmap.createAvatar(
     canvas.drawBitmap(bitmap, rect, rect, paint)
     output
 } else {
-    Bitmap.createScaledBitmap(this, width, height, true)
+    scale(width, height)
 }
 
 
@@ -68,7 +81,7 @@ fun Bitmap.centerCrop(
     val srcY = (srcHeight * 0.5f - srcCroppedH / 2).toInt().let {
         Math.max(Math.min(it, srcHeight - srcCroppedH), 0)
     }
-    val overlay = Bitmap.createBitmap(srcCroppedW, srcCroppedH, Bitmap.Config.ARGB_8888)
+    val overlay = createBitmap(srcCroppedW, srcCroppedH)
     overlay.eraseColor(Color.WHITE)
     val canvas = Canvas(overlay)
     canvas.translate(-srcX / scaleFactor, -srcY / scaleFactor)

@@ -10,10 +10,9 @@ import ru.radiationx.data.entity.domain.release.SeasonItem
 import ru.radiationx.data.repository.SearchRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SearchSeasonViewModel(
+class SearchSeasonViewModel @Inject constructor(
     argExtra: SearchValuesExtra,
     private val searchRepository: SearchRepository,
     private val searchController: SearchController,

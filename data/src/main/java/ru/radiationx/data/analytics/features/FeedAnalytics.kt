@@ -5,10 +5,9 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toPageParam
 import ru.radiationx.data.analytics.features.extensions.toPositionParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class FeedAnalytics(
+class FeedAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

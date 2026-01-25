@@ -3,15 +3,43 @@ package ru.radiationx.anilibria.screen.player
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.radiationx.anilibria.databinding.ViewPlayerSkipsBinding
+import ru.radiationx.data.datasource.holders.AppPreference
 import ru.radiationx.data.entity.domain.release.PlayerSkips
 
+/**
+ * Обработчик пропуска опенингов
+ *
+ * @property parent корневой [android.view.ViewGroup]
+ * @property skipButtonText текст для кнопки пропуска
+ * @property coroutineScope скоуп для таймера
+ * @property playerSkipsTimer включен ли таймер для автопропуска опенинга
+ * @property onSeek функция для отлова намерения перемотки
+ * @property onSkipShow функция для отлова события показа кнопки пропуска
+ * @property onSkipHide функция для отлава события скрытия кнопки пропуска
+ */
 class PlayerSkipsPart(
     private val parent: FrameLayout,
+    private val skipButtonText: String,
+    private val coroutineScope: CoroutineScope,
+    private val playerSkipsTimer: AppPreference<Boolean>,
     private val onSeek: (Long) -> Unit,
     private val onSkipShow: () -> Unit,
     private val onSkipHide: () -> Unit,
 ) {
+
+    companion object {
+        private const val TIMER_SEC = 5
+    }
 
     private val binding = ViewPlayerSkipsBinding.inflate(
         LayoutInflater.from(parent.context),
@@ -19,20 +47,22 @@ class PlayerSkipsPart(
         true
     )
 
+    private val _timerFlow = MutableSharedFlow<Int?>(replay = 1)
+
     private var playerSkips: PlayerSkips? = null
     private val skippedList = mutableSetOf<PlayerSkips.Skip>()
     private var currentPosition = 0L
     private var currentSkipShow = false
+    private var timerJob: Job? = null
 
     init {
         binding.btSkipsCancel.setOnClickListener {
             cancelSkip()
+            onUserChoseWatchOpening()
         }
         binding.btSkipsSkip.setOnClickListener {
-            getCurrentSkip()?.also {
-                onSeek(it.end)
-            }
-            cancelSkip()
+            skip()
+            onUserChoseSkipOpening()
         }
         binding.root.isVisible = false
     }
@@ -50,6 +80,7 @@ class PlayerSkipsPart(
         binding.apply {
             if (hasSkip && (!btSkipsSkip.isFocused && !btSkipsCancel.isFocused)) {
                 btSkipsSkip.requestFocus()
+                startTimerIfNeed()
             }
         }
         if (hasSkip == currentSkipShow) {
@@ -90,4 +121,61 @@ class PlayerSkipsPart(
         getCurrentSkip()?.also { skippedList.add(it) }
     }
 
+    private suspend fun isAutoSkipEnabled(): Boolean = withContext(Dispatchers.IO) {
+        playerSkipsTimer.value
+    }
+
+    private fun onUserChoseSkipOpening() {
+        playerSkipsTimer.value = true
+    }
+
+    private fun onUserChoseWatchOpening() {
+        playerSkipsTimer.value = false
+    }
+
+    private fun skip() {
+        getCurrentSkip()?.also {
+            onSeek(it.end)
+        }
+        cancelSkip()
+    }
+
+    private fun observeSkipTimerState() {
+        _timerFlow
+            .onEach { remainingTimeSec ->
+                val text = if (remainingTimeSec != null) {
+                    "$skipButtonText ($remainingTimeSec)"
+                } else {
+                    skipButtonText
+                }
+                binding.btSkipsSkip.text = text
+            }.launchIn(coroutineScope)
+    }
+
+    private fun startTimerIfNeed() {
+        coroutineScope.launch {
+            if (isAutoSkipEnabled()) {
+                observeSkipTimerState()
+                startTimer()
+            }
+        }
+    }
+
+    private fun startTimer() {
+        stopTimer()
+        timerJob = coroutineScope.launch {
+            repeat(TIMER_SEC) { sec ->
+                _timerFlow.emit(TIMER_SEC - sec)
+                delay(1000)
+            }
+            _timerFlow.emit(null)
+            skip()
+        }
+    }
+
+    private fun stopTimer() {
+        timerJob?.cancel()
+        timerJob = null
+        _timerFlow.tryEmit(null)
+    }
 }

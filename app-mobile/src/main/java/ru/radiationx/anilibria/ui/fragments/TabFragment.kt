@@ -6,17 +6,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.transition.ArcMotion
+import com.github.terrakok.cicerone.Navigator
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialSharedAxis
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.di.MessengerModule
 import ru.radiationx.anilibria.di.RouterModule
-import ru.radiationx.anilibria.navigation.BaseAppScreen
+import ru.radiationx.anilibria.navigation.BaseFragmentScreen
 import ru.radiationx.anilibria.presentation.common.ILinkHandler
 import ru.radiationx.anilibria.ui.common.BackButtonListener
 import ru.radiationx.anilibria.ui.common.IntentHandler
@@ -26,19 +30,15 @@ import ru.radiationx.quill.inject
 import ru.radiationx.quill.installModules
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.putExtra
-import ru.radiationx.shared.ktx.android.showWithLifecycle
-import ru.terrakok.cicerone.Navigator
-import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
-import ru.terrakok.cicerone.android.support.SupportAppNavigator
-import ru.terrakok.cicerone.commands.Command
+import taiwa.TaiwaAction
+import taiwa.bottomsheet.bottomSheetTaiwa
 
 class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, TabResetter {
 
     companion object {
         private const val ARG_ROOT_SCREEN = "LOCAL_ROOT_SCREEN"
 
-        fun newInstance(rootScreen: BaseAppScreen) = TabFragment().putExtra {
+        fun newInstance(rootScreen: BaseFragmentScreen) = TabFragment().putExtra {
             putSerializable(ARG_ROOT_SCREEN, rootScreen)
         }
     }
@@ -51,11 +51,27 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
 
     private val navigatorHolder by inject<NavigatorHolder>()
 
-    private val localScreen: BaseAppScreen by lazy {
+    private val localScreen: BaseFragmentScreen by lazy {
         getExtraNotNull(ARG_ROOT_SCREEN)
     }
 
     private val navigationQueue = mutableListOf<Runnable>()
+
+    private val resetTabsTaiwa by bottomSheetTaiwa {
+        body {
+            message { text("Закрыть все экраны во вкладке?") }
+            buttons {
+                action(TaiwaAction.Close)
+                button {
+                    text("Да")
+                    onClick { router.backTo(localScreen) }
+                }
+                button {
+                    text("Нет")
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installModules(RouterModule(localScreen.screenKey), MessengerModule())
@@ -133,15 +149,7 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
         if (count == 0) {
             return
         }
-        AlertDialog.Builder(requireContext())
-            .setMessage("Закрыть все экраны во вкладке?")
-            .setPositiveButton("Да") { _, _ ->
-                router.backTo(localScreen)
-            }
-            .setNegativeButton("Нет") { _, _ ->
-                // do nothing
-            }
-            .showWithLifecycle(viewLifecycleOwner)
+        resetTabsTaiwa.show()
     }
 
     private fun needsToInitialScreen(): Boolean {
@@ -157,13 +165,13 @@ class TabFragment : Fragment(), BackButtonListener, IntentHandler, TopScroller, 
 
     private val navigatorLocal: Navigator by lazy {
         object :
-            SupportAppNavigator(requireActivity(), childFragmentManager, R.id.fragments_container) {
+            AppNavigator(requireActivity(), R.id.fragments_container, childFragmentManager) {
 
             override fun setupFragmentTransaction(
-                command: Command,
-                currentFragment: Fragment?,
-                nextFragment: Fragment?,
+                screen: FragmentScreen,
                 fragmentTransaction: FragmentTransaction,
+                currentFragment: Fragment?,
+                nextFragment: Fragment,
             ) {
                 if (currentFragment !is SharedProvider || nextFragment !is SharedReceiver) {
                     return

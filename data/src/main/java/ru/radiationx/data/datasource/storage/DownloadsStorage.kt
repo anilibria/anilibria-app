@@ -3,10 +3,9 @@ package ru.radiationx.data.datasource.storage
 import android.content.SharedPreferences
 import ru.radiationx.data.DataPreferences
 import ru.radiationx.data.datasource.holders.DownloadsHolder
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class DownloadsStorage(
+class DownloadsStorage @Inject constructor(
     @DataPreferences private val sharedPreferences: SharedPreferences
 ) : DownloadsHolder {
 

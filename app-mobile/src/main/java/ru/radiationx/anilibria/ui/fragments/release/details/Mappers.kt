@@ -114,7 +114,7 @@ fun Release.toEpisodeControlState(
     val hasWeb = !moonwalkLink.isNullOrEmpty()
     val continueTitle = if (hasViewed) {
         val lastViewed = episodes.maxByOrNull {
-            accesses[it.id]?.lastAccess ?: 0
+            accesses[it.id]?.lastValidAccess ?: 0
         }
         "Продолжить c ${lastViewed?.id?.id} серии"
     } else {
@@ -240,7 +240,8 @@ fun Episode.toState(
         null
     }
     val hasUpdate = updatedAt?.time?.let { updatedTime ->
-        access != null && updatedTime > access.lastAccess
+        val lastAccess = access?.lastValidAccess
+        lastAccess != null && (updatedTime) > lastAccess
     } ?: false
     return ReleaseEpisodeItemState(
         id = id,

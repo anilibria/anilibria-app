@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.databinding.ItemFeedSchedulesBinding
 import ru.radiationx.anilibria.extension.addItemsPositionListener
@@ -17,6 +17,8 @@ import ru.radiationx.anilibria.ui.adapters.IBundledViewHolder
 import ru.radiationx.anilibria.ui.adapters.ListItem
 import ru.radiationx.anilibria.ui.common.adapters.AppAdapterDelegate
 import ru.radiationx.anilibria.ui.fragments.feed.FeedSchedulesAdapter
+import ru.radiationx.anilibria.utils.dimensions.Side
+import ru.radiationx.anilibria.utils.dimensions.dimensionsApplier
 import ru.radiationx.shared.ktx.android.inflate
 
 /**
@@ -24,6 +26,7 @@ import ru.radiationx.shared.ktx.android.inflate
  */
 class FeedSchedulesDelegate(
     private val clickListener: (ScheduleItemState, View, Int) -> Unit,
+    private val longClickListener: (ScheduleItemState) -> Unit,
     private val scrollListener: (Int) -> Unit,
 ) : AppAdapterDelegate<FeedSchedulesListItem, ListItem, FeedSchedulesDelegate.ViewHolder>(
     R.layout.item_feed_schedules,
@@ -40,6 +43,7 @@ class FeedSchedulesDelegate(
         return ViewHolder(
             parent.inflate(layoutRes!!, false),
             clickListener,
+            longClickListener,
             scrollListener,
             viewPool
         )
@@ -48,14 +52,17 @@ class FeedSchedulesDelegate(
     class ViewHolder(
         itemView: View,
         clickListener: (ScheduleItemState, View, Int) -> Unit,
+        longClickListener: (ScheduleItemState) -> Unit,
         private val scrollListener: (Int) -> Unit,
         private val viewPool: RecyclerView.RecycledViewPool? = null,
     ) : RecyclerView.ViewHolder(itemView), IBundledViewHolder {
 
         private val binding by viewBinding<ItemFeedSchedulesBinding>()
 
+        private val dimensionsApplier by binding.itemFeedScheduleList.dimensionsApplier()
+
         private val currentItems = mutableListOf<ScheduleItemState>()
-        private val scheduleAdapter = FeedSchedulesAdapter(clickListener)
+        private val scheduleAdapter = FeedSchedulesAdapter(clickListener, longClickListener)
 
         init {
             binding.itemFeedScheduleList.apply {
@@ -78,6 +85,7 @@ class FeedSchedulesDelegate(
         }
 
         fun bind(items: List<ScheduleItemState>) {
+            dimensionsApplier.applyPaddings(Side.Left, Side.Right)
             currentItems.clear()
             currentItems.addAll(items)
             scheduleAdapter.bindItems(currentItems)

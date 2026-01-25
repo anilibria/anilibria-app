@@ -6,8 +6,9 @@ import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import by.kirich1409.viewbindingdelegate.viewBinding
+import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
@@ -17,7 +18,6 @@ import ru.radiationx.anilibria.apptheme.AppThemeController
 import ru.radiationx.anilibria.databinding.FragmentVkCommentsBinding
 import ru.radiationx.anilibria.extension.generateWithTheme
 import ru.radiationx.anilibria.extension.getWebStyleType
-import ru.radiationx.anilibria.model.loading.hasAnyLoading
 import ru.radiationx.anilibria.ui.common.Templates
 import ru.radiationx.anilibria.ui.common.webpage.WebPageStateWebViewClient
 import ru.radiationx.anilibria.ui.common.webpage.WebPageViewState
@@ -27,6 +27,7 @@ import ru.radiationx.anilibria.ui.fragments.TopScroller
 import ru.radiationx.anilibria.ui.fragments.comments.webview.VkWebChromeClient
 import ru.radiationx.anilibria.ui.fragments.comments.webview.VkWebViewClient
 import ru.radiationx.anilibria.ui.widgets.ExtendedWebView
+import ru.radiationx.anilibria.utils.dimensions.Dimensions
 import ru.radiationx.data.MainClient
 import ru.radiationx.data.datasource.remote.IClient
 import ru.radiationx.quill.get
@@ -79,7 +80,6 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
         }
 
         binding.webView.setJsLifeCycleListener(jsLifeCycleListener(binding.webView))
-        binding.webView.addJavascriptInterface(this, "KEK")
 
         binding.webView.settings.apply {
             this.databaseEnabled = true
@@ -121,6 +121,14 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
         }.launchInResumed(viewLifecycleOwner)
     }
 
+    override fun updateDimens(dimensions: Dimensions) {
+        super.updateDimens(dimensions)
+        binding.root.updatePadding(
+            left = dimensions.left,
+            right = dimensions.right
+        )
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (view != null) {
@@ -151,7 +159,7 @@ class VkCommentsFragment : BaseDimensionsFragment(R.layout.fragment_vk_comments)
     }
 
     private fun showState(state: VkCommentsScreenState) {
-        val anyLoading = state.data.hasAnyLoading() || state.pageState == WebPageViewState.Loading
+        val anyLoading = state.data.loading || state.pageState == WebPageViewState.Loading
         binding.progressBarWv.isVisible = anyLoading
 
         binding.webView.isVisible = state.pageState == WebPageViewState.Success && !anyLoading

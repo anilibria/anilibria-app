@@ -5,10 +5,9 @@ import ru.radiationx.data.analytics.AnalyticsSender
 import ru.radiationx.data.analytics.features.extensions.toIdParam
 import ru.radiationx.data.analytics.features.extensions.toNavFromParam
 import ru.radiationx.data.analytics.features.extensions.toVidParam
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class YoutubeAnalytics(
+class YoutubeAnalytics @Inject constructor(
     private val sender: AnalyticsSender
 ) {
 

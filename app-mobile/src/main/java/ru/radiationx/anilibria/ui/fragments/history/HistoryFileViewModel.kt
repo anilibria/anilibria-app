@@ -9,10 +9,9 @@ import ru.radiationx.anilibria.utils.messages.SystemMessenger
 import ru.radiationx.data.historyfile.HistoryFileRepository
 import ru.radiationx.shared.ktx.coRunCatching
 import ru.radiationx.shared_app.common.SystemUtils
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class HistoryFileViewModel(
+class HistoryFileViewModel @Inject constructor(
     private val historyFileRepository: HistoryFileRepository,
     private val systemUtils: SystemUtils,
     private val errorHandler: ErrorHandler,

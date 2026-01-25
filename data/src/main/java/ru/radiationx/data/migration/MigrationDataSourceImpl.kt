@@ -7,10 +7,9 @@ import android.widget.Toast
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.AnalyticsErrorReporter
 import timber.log.Timber
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class MigrationDataSourceImpl(
+class MigrationDataSourceImpl @Inject constructor(
     private val context: Context,
     private val defaultPreferences: SharedPreferences,
     private val sharedBuildConfig: SharedBuildConfig,

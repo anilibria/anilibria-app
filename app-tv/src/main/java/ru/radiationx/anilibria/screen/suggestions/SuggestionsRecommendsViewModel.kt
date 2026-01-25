@@ -7,10 +7,9 @@ import ru.radiationx.anilibria.common.LibriaCardRouter
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.interactors.ReleaseInteractor
 import ru.radiationx.data.repository.SearchRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class SuggestionsRecommendsViewModel(
+class SuggestionsRecommendsViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val releaseInteractor: ReleaseInteractor,
     private val converter: CardsDataConverter,

@@ -1,8 +1,8 @@
 package ru.radiationx.anilibria.ui.fragments.history
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -14,9 +14,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.model.ReleaseItemState
-import ru.radiationx.anilibria.model.loading.DataLoadingController
-import ru.radiationx.anilibria.model.loading.ScreenStateAction
-import ru.radiationx.anilibria.model.loading.mapData
 import ru.radiationx.anilibria.model.toState
 import ru.radiationx.anilibria.navigation.Screens
 import ru.radiationx.anilibria.utils.ShortcutHelper
@@ -28,14 +25,15 @@ import ru.radiationx.data.entity.domain.release.ReleaseUpdate
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.data.repository.HistoryRepository
 import ru.radiationx.shared_app.common.SystemUtils
-import ru.terrakok.cicerone.Router
-import toothpick.InjectConstructor
+import ru.radiationx.shared_app.controllers.loaderpage.PageLoader
+import ru.radiationx.shared_app.controllers.loaderpage.mapData
+import ru.radiationx.shared_app.controllers.loaderpage.toDataAction
+import javax.inject.Inject
 
 /**
  * Created by radiationx on 18.02.18.
  */
-@InjectConstructor
-class HistoryViewModel(
+class HistoryViewModel @Inject constructor(
     private val router: Router,
     private val historyRepository: HistoryRepository,
     private val historyAnalytics: HistoryAnalytics,
@@ -46,10 +44,10 @@ class HistoryViewModel(
 
     private fun pageToCount(page: Int) = page * 50
 
-    private val loadingController = DataLoadingController(viewModelScope) {
+    private val pageLoader = PageLoader(viewModelScope) {
         val count = pageToCount(it.page)
-        val items = historyRepository.getReleases(count)
-        ScreenStateAction.Data(items, items.size >= count)
+        val history = historyRepository.getReleases(count)
+        it.toDataAction(history.hasMore) { history.items }
     }
 
     private val _state = MutableStateFlow(HistoryScreenState())
@@ -60,12 +58,10 @@ class HistoryViewModel(
     private val updates = emptyMap<ReleaseId, ReleaseUpdate>()
 
     init {
-        loadingController
+        pageLoader
             .observeState()
-            .map { state ->
-                state.mapData { data ->
-                    data.map { it.toState(updates) }
-                }
+            .mapData { data ->
+                data.map { it.toState(updates) }
             }
             .onEach { loadingState ->
                 _state.update {
@@ -74,19 +70,19 @@ class HistoryViewModel(
             }
             .launchIn(viewModelScope)
 
-        loadingController
+        pageLoader
             .observePage()
             .flatMapLatest { page ->
                 historyRepository.observeReleases(pageToCount(page))
             }
-            .onEach { releases ->
-                loadingController.modifyData(releases)
+            .onEach { history ->
+                pageLoader.modifyData(history.hasMore) { history.items }
             }
             .launchIn(viewModelScope)
 
         combine(
             queryFlow,
-            loadingController.observeState().map { it.data.orEmpty() }.distinctUntilChanged()
+            pageLoader.observeState().map { it.data.orEmpty() }.distinctUntilChanged()
         ) { query, releases ->
             if (query.isEmpty()) {
                 return@combine emptyList()
@@ -104,7 +100,7 @@ class HistoryViewModel(
             }
             .launchIn(viewModelScope)
 
-        loadingController.refresh()
+        pageLoader.refresh()
     }
 
     fun onBackPressed() {
@@ -112,15 +108,15 @@ class HistoryViewModel(
     }
 
     fun refresh() {
-        loadingController.refresh()
+        pageLoader.refresh()
     }
 
     fun loadMore() {
-        loadingController.loadMore()
+        pageLoader.loadMore()
     }
 
     private fun findRelease(id: ReleaseId): Release? {
-        return loadingController.currentState.data?.find { it.id == id }
+        return pageLoader.getData()?.find { it.id == id }
     }
 
     fun localSearch(query: String) {

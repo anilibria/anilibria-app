@@ -26,6 +26,9 @@ internal object TimeFormatter {
                 append(hours)
                 append(':')
             }
+            if (minutes < 10) {
+                append(0)
+            }
             append(minutes)
             append(':')
             if (seconds < 10) {

@@ -17,6 +17,7 @@ import ru.radiationx.anilibria.ui.adapters.ReleaseEpisodesHeadListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseHeadListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseRemindListItem
 import ru.radiationx.anilibria.ui.adapters.ReleaseTorrentListItem
+import ru.radiationx.anilibria.ui.adapters.ShadowDirection
 import ru.radiationx.anilibria.ui.adapters.ads.NativeAdDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.FeedSectionDelegate
 import ru.radiationx.anilibria.ui.adapters.global.CommentRouteDelegate
@@ -104,16 +105,16 @@ class ReleaseInfoAdapter(
                 modifications
             )
         )
-        newItems.add(DividerShadowListItem("head"))
+        newItems.add(DividerShadowListItem(ShadowDirection.Double, "head"))
 
         if (releaseState.blockedInfo != null) {
             newItems.add(ReleaseBlockedListItem(releaseState.blockedInfo))
-            newItems.add(DividerShadowListItem("blocked"))
+            newItems.add(DividerShadowListItem(ShadowDirection.Double, "blocked"))
         }
 
         if (releaseState.blockedInfo == null && screenState.donationCardState != null) {
             newItems.add(ReleaseDonateListItem(screenState.donationCardState))
-            newItems.add(DividerShadowListItem("donate"))
+            newItems.add(DividerShadowListItem(ShadowDirection.Double, "donate"))
         }
 
         if (releaseState.torrents.isNotEmpty()) {
@@ -127,12 +128,12 @@ class ReleaseInfoAdapter(
                 )
             )
             newItems.addAll(releaseState.torrents.map { ReleaseTorrentListItem(it) })
-            newItems.add(DividerShadowListItem("torrents"))
+            newItems.add(DividerShadowListItem(ShadowDirection.Double, "torrents"))
         }
 
         if (releaseState.blockedInfo == null && screenState.remindText != null) {
             newItems.add(ReleaseRemindListItem(screenState.remindText))
-            newItems.add(DividerShadowListItem("remind"))
+            newItems.add(DividerShadowListItem(ShadowDirection.Double, "remind"))
         }
 
         if (releaseState.episodesControl != null) {
@@ -170,15 +171,20 @@ class ReleaseInfoAdapter(
             } else {
                 newItems.addAll(episodeListItems)
             }
+            newItems.add(DividerShadowListItem(ShadowDirection.Double, "episodes"))
         }
 
-        newItems.add(DividerShadowListItem("episodes"))
+        val commentsShadow = if (screenState.nativeAd != null) {
+            ShadowDirection.Double
+        } else {
+            ShadowDirection.Bottom
+        }
         newItems.add(CommentRouteListItem("comments"))
-        newItems.add(DividerShadowListItem("comments"))
+        newItems.add(DividerShadowListItem(commentsShadow, "comments"))
 
         if (screenState.nativeAd != null) {
             newItems.add(NativeAdListItem(screenState.nativeAd))
-            newItems.add(DividerShadowListItem("nativeAd"))
+            newItems.add(DividerShadowListItem(ShadowDirection.Bottom, "nativeAd"))
         }
 
         items = newItems

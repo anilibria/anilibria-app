@@ -1,6 +1,9 @@
 package ru.radiationx.data.datasource.storage
 
 import android.content.SharedPreferences
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.datasource.holders.AppPreference
 import ru.radiationx.data.datasource.holders.PreferencesHolder
@@ -34,6 +37,9 @@ class PreferencesStorage @Inject constructor(
 
         private val DONATION_THRESHOLD = TimeUnit.DAYS.toMillis(7)
     }
+
+    private val speeds = listOf(0.25f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f)
+    private val speedsState = MutableStateFlow(speeds)
 
     override val newDonationRemind: AppPreference<Boolean> = AppPreference(
         key = NEW_DONATION_REMIND_KEY,
@@ -87,13 +93,13 @@ class PreferencesStorage @Inject constructor(
         sharedPreferences = sharedPreferences,
         get = { key ->
             if (sharedBuildConfig.debug) {
-                PlayerTransport.OKHTTP
-            } else {
                 getString(key, null)?.asPlayerTransport() ?: PlayerTransport.OKHTTP
+            } else {
+                PlayerTransport.OKHTTP
             }
         },
         set = { key, value ->
-            if (!sharedBuildConfig.debug) {
+            if (sharedBuildConfig.debug) {
                 putString(key, value.asPrefString())
             }
         }
@@ -186,6 +192,8 @@ class PreferencesStorage @Inject constructor(
             putBoolean(key, value)
         }
     )
+
+    override val availableSpeeds: StateFlow<List<Float>> = speedsState.asStateFlow()
 
     private fun String.asPlayerQuality(): PlayerQuality? {
         return when (this) {

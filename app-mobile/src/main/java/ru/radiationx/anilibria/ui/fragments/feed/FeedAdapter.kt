@@ -1,12 +1,11 @@
 package ru.radiationx.anilibria.ui.fragments.feed
 
 import android.view.View
+import ru.radiationx.anilibria.ads.NativeAdItem
 import ru.radiationx.anilibria.model.DonationCardItemState
 import ru.radiationx.anilibria.model.ReleaseItemState
 import ru.radiationx.anilibria.model.ScheduleItemState
 import ru.radiationx.anilibria.model.YoutubeItemState
-import ru.radiationx.anilibria.ads.NativeAdItem
-import ru.radiationx.anilibria.model.loading.needShowPlaceholder
 import ru.radiationx.anilibria.ui.adapters.AppInfoCardListItem
 import ru.radiationx.anilibria.ui.adapters.AppWarningCardListItem
 import ru.radiationx.anilibria.ui.adapters.DividerShadowListItem
@@ -21,6 +20,7 @@ import ru.radiationx.anilibria.ui.adapters.LoadMoreListItem
 import ru.radiationx.anilibria.ui.adapters.NativeAdListItem
 import ru.radiationx.anilibria.ui.adapters.PlaceholderDelegate
 import ru.radiationx.anilibria.ui.adapters.PlaceholderListItem
+import ru.radiationx.anilibria.ui.adapters.ShadowDirection
 import ru.radiationx.anilibria.ui.adapters.ads.NativeAdDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.AppInfoCardDelegate
 import ru.radiationx.anilibria.ui.adapters.feed.AppWarningCardDelegate
@@ -34,6 +34,7 @@ import ru.radiationx.anilibria.ui.adapters.global.LoadErrorDelegate
 import ru.radiationx.anilibria.ui.adapters.global.LoadMoreDelegate
 import ru.radiationx.anilibria.ui.adapters.other.DividerShadowItemDelegate
 import ru.radiationx.anilibria.ui.common.adapters.ListItemAdapter
+import ru.radiationx.shared_app.controllers.loaderpage.needShowPlaceholder
 
 /* Created by radiationx on 31.10.17. */
 
@@ -48,8 +49,9 @@ class FeedAdapter(
     scheduleScrollListener: (Int) -> Unit,
     randomClickListener: () -> Unit,
     releaseClickListener: (ReleaseItemState, View) -> Unit,
-    releaseLongClickListener: (ReleaseItemState, View) -> Unit,
-    youtubeClickListener: (YoutubeItemState, View) -> Unit,
+    releaseLongClickListener: (ReleaseItemState) -> Unit,
+    youtubeClickListener: (YoutubeItemState) -> Unit,
+    youtubeLongClickListener: (YoutubeItemState) -> Unit,
     scheduleClickListener: (ScheduleItemState, View, Int) -> Unit,
     private val emptyPlaceHolder: PlaceholderListItem,
     private val errorPlaceHolder: PlaceholderListItem,
@@ -73,9 +75,15 @@ class FeedAdapter(
         addDelegate(LoadMoreDelegate(loadMoreListener))
         addDelegate(LoadErrorDelegate(loadRetryListener))
         addDelegate(FeedSectionDelegate(sectionClickListener))
-        addDelegate(FeedSchedulesDelegate(scheduleClickListener, scheduleScrollListener))
+        addDelegate(
+            FeedSchedulesDelegate(
+                scheduleClickListener,
+                { releaseLongClickListener.invoke(it.release) },
+                scheduleScrollListener
+            )
+        )
         addDelegate(FeedReleaseDelegate(releaseClickListener, releaseLongClickListener))
-        addDelegate(FeedYoutubeDelegate(youtubeClickListener))
+        addDelegate(FeedYoutubeDelegate(youtubeClickListener, youtubeLongClickListener))
         addDelegate(FeedRandomBtnDelegate(randomClickListener))
         addDelegate(DividerShadowItemDelegate())
         addDelegate(PlaceholderDelegate())
@@ -140,14 +148,19 @@ class FeedAdapter(
                     }
                 }
                 if (lastType != null && lastType != type) {
-                    newItems.add(DividerShadowListItem("$type, ${item.getItemId()}"))
+                    newItems.add(
+                        DividerShadowListItem(
+                            ShadowDirection.Double,
+                            "$type, ${item.getItemId()}"
+                        )
+                    )
                 }
                 newItems.add(item)
                 lastType = type
             }
         }
 
-        if (loadingState.hasMorePages) {
+        if (loadingState.hasMoreData) {
             if (loadingState.error != null) {
                 newItems.add(LoadErrorListItem("bottom"))
             } else {

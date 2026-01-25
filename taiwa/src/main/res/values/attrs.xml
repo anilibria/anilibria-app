@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="taiwaBottomSheetTheme" format="reference" />
+    <attr name="taiwaAlertTheme" format="reference" />
+    <attr name="taiwaButtonsOverlay" format="reference" />
+</resources>

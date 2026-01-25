@@ -9,10 +9,9 @@ import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.entity.common.AuthState
 import ru.radiationx.data.repository.AuthRepository
 import ru.radiationx.data.repository.HistoryRepository
-import toothpick.InjectConstructor
+import javax.inject.Inject
 
-@InjectConstructor
-class WatchingViewModel(
+class WatchingViewModel @Inject constructor(
     authRepository: AuthRepository,
     historyRepository: HistoryRepository,
     episodesCheckerHolder: EpisodesCheckerHolder,
@@ -34,7 +33,7 @@ class WatchingViewModel(
     init {
         combine(
             episodesCheckerHolder.observeEpisodes().map { it.isNotEmpty() },
-            historyRepository.observeReleases().map { it.isNotEmpty() },
+            historyRepository.observeReleases().map { it.items.isNotEmpty() },
             authRepository.observeAuthState().map { it == AuthState.AUTH }
         ) { hasContinue, hasHistory, hasAuth ->
             updateAvailableRow(CONTINUE_ROW_ID, hasContinue)

@@ -68,7 +68,7 @@ class MainPagesFragment : BrowseSupportFragment() {
                     }
                 )
                 badgeDrawable = if (withHeaders) {
-                    titleView.context.getCompatDrawable(R.drawable.ic_anilibria_splash)
+                    titleView.context.getCompatDrawable(R.drawable.alib_splash_fg)
                 } else {
                     null
                 }
@@ -80,7 +80,7 @@ class MainPagesFragment : BrowseSupportFragment() {
         //brandColor = resources.getColor(R.color.dark_colorAccent)
         title = getSelectedTitle()
         badgeDrawable = if (isShowingHeaders) {
-            requireContext().getCompatDrawable(R.drawable.ic_anilibria_splash)
+            requireContext().getCompatDrawable(R.drawable.alib_splash_fg)
         } else {
             null
         }
@@ -132,7 +132,7 @@ class MainPagesFragment : BrowseSupportFragment() {
     }
 
     private fun getSelectedTitle(): String {
-        var title = "AniLibria"
+        var title = getString(R.string.app_name)
         if (selectedPosition != -1) {
             MainPagesFragmentFactory.ids
                 .getOrNull(selectedPosition)

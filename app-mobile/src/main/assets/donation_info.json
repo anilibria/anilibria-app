@@ -13,7 +13,7 @@
       {
         "type": "header",
         "header": {
-          "text": "AniLibria – творческое объединение, занимающееся озвучиванием аниме"
+          "text": "AniLiberty – творческое объединение, занимающееся озвучиванием аниме"
         }
       },
       {
@@ -118,7 +118,7 @@
         "type": "button",
         "button": {
           "tag": "join_team_dialog",
-          "text": "Вступить в команду AniLibria",
+          "text": "Вступить в команду AniLiberty",
           "brand": "anilibria",
           "icon": "anilibria"
         }
@@ -193,7 +193,7 @@
           {
             "type": "section",
             "section": {
-              "title": "Вступить в команду AniLibria"
+              "title": "Вступить в команду AniLiberty"
             }
           },
           {

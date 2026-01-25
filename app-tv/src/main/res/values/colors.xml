@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="alib_red">#c40304</color>
+    <color name="alib_red">#FE3635</color>
     <color name="alib_gray">#383838</color>
     <color name="alib_gray_dark">#282828</color>
     <color name="alib_red_launcher">#8f2929</color>
@@ -15,7 +15,7 @@
     <color name="brand_telegram">#35a6de</color>
 
     <!-- DARK THEME -->
-    <color name="temp_red4">#8f2929</color>
+    <color name="temp_red4">#FE3635</color>
 
     <color name="temp_red_">@color/temp_red4</color>
     <color name="dark_colorPrimary">@color/dark_cardBackground</color>

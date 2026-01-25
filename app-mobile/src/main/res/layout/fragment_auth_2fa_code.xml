@@ -24,7 +24,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="40dp"
             android:contentDescription="@null"
-            app:srcCompat="@drawable/ic_anilibria"
+            app:srcCompat="@drawable/ic_logo_alib"
             app:tint="@color/alib_red" />
 
         <LinearLayout

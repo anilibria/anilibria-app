@@ -212,10 +212,10 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
             val mNotificationManager = NotificationManagerCompat.from(this)
 
-            mBuilder.setSmallIcon(R.drawable.ic_notify)
+            mBuilder.setSmallIcon(R.drawable.alib_notification)
             mBuilder.color = getCompatColor(R.color.alib_red)
 
-            mBuilder.setContentTitle("Обновление AniLibria")
+            mBuilder.setContentTitle("Обновление ${getString(R.string.app_name)}")
             mBuilder.setContentText("Новая версия: ${update.name}")
             mBuilder.setChannelId(channelId)
 

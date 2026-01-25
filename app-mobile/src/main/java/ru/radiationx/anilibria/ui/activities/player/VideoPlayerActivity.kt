@@ -57,6 +57,7 @@ import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtra
 import ru.radiationx.shared.ktx.android.getExtraNotNull
 import ru.radiationx.shared.ktx.android.isLaunchedFromHistory
+import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.launchInStarted
 import ru.radiationx.shared.ktx.android.startMainActivity
 
@@ -204,7 +205,7 @@ class VideoPlayerActivity : BaseActivity(R.layout.activity_videoplayer) {
 
         settingsViewModel.settingsState.onEach {
             player.getPlayer().pauseAtEndOfMediaItems = !it.autoplayEnabled
-        }.launchInStarted(this)
+        }.launchInResumed(this)
 
         binding.playerView.timelineState
             .sample(10000)

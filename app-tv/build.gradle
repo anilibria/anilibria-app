@@ -48,6 +48,7 @@ android {
         rustore {
             dimension "type"
             buildConfigField "boolean", 'FOR_RUSTORE', 'true'
+            versionName "${tv_version_name}-rustore"
         }
     }
 

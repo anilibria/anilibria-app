@@ -82,7 +82,7 @@ class UpdateViewModel @Inject constructor(
     }
 
     private fun startDownload(link: UpdateData.UpdateLink) {
-        if (sharedBuildConfig.forRustore) {
+        if (sharedBuildConfig.forRuStore) {
             guidedRouter.open(UpdateWarningScreen(link))
             return
         }

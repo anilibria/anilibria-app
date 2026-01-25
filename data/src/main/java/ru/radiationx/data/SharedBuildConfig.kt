@@ -8,5 +8,5 @@ interface SharedBuildConfig {
     val buildDate: String
     val debug: Boolean
     val hasAds: Boolean
-    val forRustore: Boolean
+    val forRuStore: Boolean
 }

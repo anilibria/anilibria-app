@@ -91,7 +91,7 @@ class CheckerViewModel @Inject constructor(
     }
 
     private fun downloadFile(link: UpdateData.UpdateLink) {
-        if (sharedBuildConfig.forRustore) {
+        if (sharedBuildConfig.forRuStore) {
             openStoreWarningAction.set(link)
             return
         }

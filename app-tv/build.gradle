@@ -34,6 +34,7 @@ android {
     Properties localProperties = new Properties()
     localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
     signingConfigs {
+        println(localProperties)
         release {
             storeFile file(localProperties['storeFile'])
             storePassword localProperties['storePassword']
@@ -44,6 +45,7 @@ android {
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }

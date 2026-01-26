@@ -20,15 +20,15 @@ class UpdateWarningViewModel @Inject constructor(
     fun onLinkClick(actionId: Long) {
         when (actionId) {
             ACTION_OPEN_STORE -> {
-                systemUtils.externalLink("https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app.tv")
+                systemUtils.open("https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app.tv")
             }
 
             ACTION_OPEN_STORE_SITE -> {
-                systemUtils.externalLink("rustore://apps.rustore.ru/app/ru.radiationx.anilibria.app.tv")
+                systemUtils.open("rustore://apps.rustore.ru/app/ru.radiationx.anilibria.app.tv")
             }
 
             ACTION_OPEN_FILE -> {
-                systemUtils.externalLink(extra.link.url)
+                systemUtils.open(extra.link.url)
             }
         }
         guidedRouter.close()

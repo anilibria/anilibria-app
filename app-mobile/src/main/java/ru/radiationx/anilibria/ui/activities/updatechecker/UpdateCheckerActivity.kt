@@ -23,7 +23,7 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.adapter.UpdateContent
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
-import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.data.app.updater.models.UpdateData
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
@@ -170,20 +170,20 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
                     iconWithoutTint()
                     title("Открыть в приложении RuStore")
                     action(TaiwaAction.Close)
-                    onClick { systemUtils.externalLink("rustore://apps.rustore.ru/app/ru.radiationx.anilibria.app") }
+                    onClick { systemUtils.open("rustore://apps.rustore.ru/app/ru.radiationx.anilibria.app") }
                 }
                 item {
                     icon(R.drawable.ic_logo_rustore)
                     iconWithoutTint()
                     title("Открыть на сайте RuStore")
                     action(TaiwaAction.Close)
-                    onClick { systemUtils.externalLink("https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app") }
+                    onClick { systemUtils.open("https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app") }
                 }
                 item {
                     icon(R.drawable.ic_link)
                     title("Открыть ссылку на файл")
                     action(TaiwaAction.Close)
-                    onClick { systemUtils.externalLink(link.url) }
+                    onClick { systemUtils.open(link.url) }
                 }
             }
         }

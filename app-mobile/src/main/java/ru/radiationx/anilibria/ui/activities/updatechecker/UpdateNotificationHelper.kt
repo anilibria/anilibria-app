@@ -50,10 +50,10 @@ object UpdateNotificationHelper {
 
         val mNotificationManager = NotificationManagerCompat.from(context)
 
-        mBuilder.setSmallIcon(R.drawable.ic_notify)
+        mBuilder.setSmallIcon(R.drawable.alib_notification)
         mBuilder.color = context.getCompatColor(R.color.alib_red)
 
-        mBuilder.setContentTitle("Обновление AniLibria")
+        mBuilder.setContentTitle("Обновление ${context.getString(R.string.app_name)}")
         mBuilder.setContentText("Новая версия: ${update.name}")
         mBuilder.setChannelId(channelId)
 

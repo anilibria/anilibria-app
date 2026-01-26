@@ -5,7 +5,7 @@ import android.view.View
 import androidx.leanback.widget.GuidanceStylist
 import androidx.leanback.widget.GuidedAction
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
-import ru.radiationx.data.entity.domain.updater.UpdateData
+import ru.radiationx.data.app.updater.models.UpdateData
 import ru.radiationx.quill.QuillExtra
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getExtraNotNull

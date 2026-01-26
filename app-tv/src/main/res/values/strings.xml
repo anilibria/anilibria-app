@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name">AniLibria TV</string>
+    <string name="app_name">AniLiberty</string>
     <string name="config_action_repeat">Повторить</string>
     <string name="config_action_skip">Пропустить</string>
     <string name="config_action_next">Следующий шаг</string>
     <string name="config_action_restart">Начать проверку заново</string>
     <string name="cd_config_logo">Логотип</string>
-    <string name="config_logo_name">AniLibria</string>
+    <string name="config_logo_name">AniLiberty</string>
 
     <string name="global_search_hint">Поиск аниме</string>
-    <string name="global_search_label">AniLibria TV</string>
-    <string name="global_search_settings_description">Аниме на AniLibria TV</string>
+    <string name="global_search_label">AniLiberty</string>
+    <string name="global_search_settings_description">Аниме на AniLiberty</string>
 
     <string name="player_skip">Пропустить</string>
 </resources>

@@ -5,7 +5,6 @@ plugins {
     alias libs.plugins.android.application
     alias libs.plugins.kotlin.android
     alias libs.plugins.ksp
-    alias libs.plugins.appmetrica
 }
 
 static def getDateTime() {
@@ -32,31 +31,62 @@ android {
         buildConfig true
     }
 
+    Properties localProperties = new Properties()
+    localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+    signingConfigs {
+        println(localProperties)
+        release {
+            storeFile file(localProperties['storeFile'])
+            storePassword localProperties['storePassword']
+            keyAlias localProperties['keyAlias']
+            keyPassword localProperties['keyPassword']
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
 
+    flavorDimensions = ["type"]
+    productFlavors {
+        app {
+            dimension "type"
+            buildConfigField "boolean", 'FOR_RUSTORE', 'false'
+        }
+
+        rustore {
+            dimension "type"
+            buildConfigField "boolean", 'FOR_RUSTORE', 'true'
+            versionName "${tv_version_name}-rustore"
+        }
+    }
+
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
-            def appName = "AniLibria_TV"
+            def appName = "AniLiberty_TV"
             def versionName = variant.versionName
             outputFileName = "${appName}_v${versionName}.apk"
+
+            if (variant.buildType.name == 'release') {
+                def buildName = variant.name.capitalize()
+                tasks.register("copy${buildName}Apk", Copy) {
+                    description = "Copies ${variant.name} APK to archive folder"
+                    group = "custom"
+                    from(variant.outputs.first().outputFile)
+                    into("${rootProject.rootDir}/release-apks/")
+                    dependsOn variant.assembleProvider
+                }
+            }
         }
     }
 }
 
 kotlin {
     jvmToolchain(jvm_toolchain_version)
-}
-
-appmetrica {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    String propApiKey = properties.get("appmetrica_post_api_key", "")
-    setPostApiKey(propApiKey)
 }
 
 dependencies {

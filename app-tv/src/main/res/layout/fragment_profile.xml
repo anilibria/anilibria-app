@@ -34,7 +34,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/AppTheme.CircleImageView"
                 tools:shapeAppearanceOverlay="@null"
-                tools:src="@drawable/ic_anilibria_splash" />
+                tools:src="@drawable/alib_splash_fg" />
 
             <TextView
                 android:id="@+id/profileNick"

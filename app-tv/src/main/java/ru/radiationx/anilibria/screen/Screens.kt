@@ -2,6 +2,7 @@ package ru.radiationx.anilibria.screen
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
+import com.github.terrakok.cicerone.androidx.FragmentScreen
 import ru.radiationx.anilibria.common.fragment.FakeGuidedStepFragment
 import ru.radiationx.anilibria.common.fragment.GuidedAppScreen
 import ru.radiationx.anilibria.screen.auth.credentials.AuthCredentialsGuidedFragment
@@ -30,10 +31,11 @@ import ru.radiationx.anilibria.screen.suggestions.SuggestionsFragment
 import ru.radiationx.anilibria.screen.trash.TestFragment
 import ru.radiationx.anilibria.screen.update.UpdateFragment
 import ru.radiationx.anilibria.screen.update.source.UpdateSourceGuidedFragment
+import ru.radiationx.anilibria.screen.update.warning.UpdateWarningGuidedFragment
 import ru.radiationx.data.entity.domain.search.SearchForm
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
-import com.github.terrakok.cicerone.androidx.FragmentScreen
+import ru.radiationx.data.entity.domain.updater.UpdateData
 
 class ConfigScreen : FragmentScreen {
     override fun createFragment(factory: FragmentFactory): Fragment {
@@ -65,8 +67,7 @@ class ScheduleScreen : FragmentScreen {
     }
 }
 
-class UpdateScreen
-    : FragmentScreen {
+class UpdateScreen : FragmentScreen {
     override fun createFragment(factory: FragmentFactory): Fragment {
         return UpdateFragment()
     }
@@ -75,6 +76,12 @@ class UpdateScreen
 class UpdateSourceScreen : GuidedAppScreen() {
     override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return UpdateSourceGuidedFragment()
+    }
+}
+
+class UpdateWarningScreen(private val link: UpdateData.UpdateLink) : GuidedAppScreen() {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
+        return UpdateWarningGuidedFragment.newInstance(link)
     }
 }
 

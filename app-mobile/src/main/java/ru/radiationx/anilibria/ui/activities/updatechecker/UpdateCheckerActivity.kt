@@ -23,6 +23,7 @@ import ru.radiationx.anilibria.ui.activities.updatechecker.adapter.UpdateContent
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.ActivityLaunchAnalytics
 import ru.radiationx.data.analytics.features.UpdaterAnalytics
+import ru.radiationx.data.entity.domain.updater.UpdateData
 import ru.radiationx.quill.get
 import ru.radiationx.quill.inject
 import ru.radiationx.quill.viewModel
@@ -32,6 +33,8 @@ import ru.radiationx.shared.ktx.android.launchInResumed
 import ru.radiationx.shared.ktx.android.startMainActivity
 import ru.radiationx.shared_app.analytics.LifecycleTimeCounter
 import ru.radiationx.shared_app.common.SystemUtils
+import taiwa.TaiwaAction
+import taiwa.bottomsheet.bottomSheetTaiwa
 
 class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
 
@@ -67,6 +70,8 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         actionClickListener = { viewModel.onLinkClick(it) },
         cancelClickListener = { viewModel.onCancelDownloadClick(it) }
     )
+
+    private val storeWarningTaiwa by bottomSheetTaiwa()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -120,6 +125,10 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         viewModel.openDownloadedFileAction.observe().onEach {
             systemUtils.openLocalFile(it)
         }.launchInResumed(this)
+
+        viewModel.openStoreWarningAction.observe().onEach {
+            showStoreWarning(it)
+        }.launchInResumed(this)
     }
 
     override fun onDestroy() {
@@ -148,5 +157,36 @@ class UpdateCheckerActivity : BaseActivity(R.layout.activity_updater) {
         appendLine()
         bold { append("Сборка от: ") }
         append(date)
+    }
+
+    private fun showStoreWarning(link: UpdateData.UpdateLink) {
+        storeWarningTaiwa.setContent {
+            body {
+                message {
+                    text("Установка файлов запрещена в версии для RuStore")
+                }
+                item {
+                    icon(R.drawable.ic_logo_rustore)
+                    iconWithoutTint()
+                    title("Открыть в приложении RuStore")
+                    action(TaiwaAction.Close)
+                    onClick { systemUtils.externalLink("rustore://apps.rustore.ru/app/ru.radiationx.anilibria.app") }
+                }
+                item {
+                    icon(R.drawable.ic_logo_rustore)
+                    iconWithoutTint()
+                    title("Открыть на сайте RuStore")
+                    action(TaiwaAction.Close)
+                    onClick { systemUtils.externalLink("https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app") }
+                }
+                item {
+                    icon(R.drawable.ic_link)
+                    title("Открыть ссылку на файл")
+                    action(TaiwaAction.Close)
+                    onClick { systemUtils.externalLink(link.url) }
+                }
+            }
+        }
+        storeWarningTaiwa.show()
     }
 }

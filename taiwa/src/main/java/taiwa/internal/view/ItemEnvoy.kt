@@ -34,6 +34,11 @@ internal fun itemEnvoy(
         val itemTint = base.tintAttrRes?.let {
             view.root.context.getColorFromAttr(it)
         }
+        val iconTint = if (base.isIconWithoutTint) {
+            null
+        } else {
+            itemTint ?: defaultIconTint
+        }
 
         view.itemIcon.visibility = when {
             base.iconRes != null -> View.VISIBLE
@@ -45,7 +50,7 @@ internal fun itemEnvoy(
         } else {
             view.itemIcon.setImageDrawable(null)
         }
-        ImageViewCompat.setImageTintList(view.itemIcon, itemTint ?: defaultIconTint)
+        ImageViewCompat.setImageTintList(view.itemIcon, iconTint)
 
         view.itemTitle.setStateText(base.title)
         view.itemSubtitle.setStateText(base.subtitle)

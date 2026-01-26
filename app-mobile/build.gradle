@@ -34,6 +34,17 @@ android {
         buildConfig true
     }
 
+    Properties localProperties = new Properties()
+    localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+    signingConfigs {
+        release {
+            storeFile file(localProperties['storeFile'])
+            storePassword localProperties['storePassword']
+            keyAlias localProperties['keyAlias']
+            keyPassword localProperties['keyPassword']
+        }
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
@@ -76,6 +87,17 @@ android {
             def appName = "AniLiberty"
             def versionName = variant.versionName
             outputFileName = "${appName}_v${versionName}.apk"
+
+            if (variant.buildType.name == 'release') {
+                def buildName = variant.name.capitalize()
+                tasks.register("copy${buildName}Apk", Copy) {
+                    description = "Copies ${variant.name} APK to archive folder"
+                    group = "custom"
+                    from(variant.outputs.first().outputFile)
+                    into("${rootProject.rootDir}/release-apks/")
+                    dependsOn variant.assembleProvider
+                }
+            }
         }
     }
 }

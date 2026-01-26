@@ -96,7 +96,7 @@
     <style name="PreferencesDayNightAppTheme" parent="BasePreferencesDayNightAppTheme" />
 
     <style name="BaseSplash.DayNightAppTheme" parent="DayNightAppTheme.NoActionBar">
-        <item name="android:windowBackground">@drawable/bg_splash_light</item>
+        <item name="android:windowBackground">@drawable/alib_splash_light</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>

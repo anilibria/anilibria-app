@@ -58,8 +58,7 @@ class ScheduleScreen : FragmentScreen {
     }
 }
 
-class UpdateScreen
-    : FragmentScreen {
+class UpdateScreen : FragmentScreen {
     override fun createFragment(factory: FragmentFactory): Fragment {
         return UpdateFragment()
     }
@@ -68,6 +67,12 @@ class UpdateScreen
 class UpdateSourceScreen : GuidedAppScreen() {
     override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
         return UpdateSourceGuidedFragment()
+    }
+}
+
+class UpdateWarningScreen(private val link: UpdateData.UpdateLink) : GuidedAppScreen() {
+    override fun createFragment(factory: FragmentFactory): FakeGuidedStepFragment {
+        return UpdateWarningGuidedFragment.newInstance(link)
     }
 }
 

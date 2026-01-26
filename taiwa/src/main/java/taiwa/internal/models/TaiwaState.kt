@@ -61,6 +61,7 @@ internal data class TaiwaItemState(
         @DrawableRes val iconRes: Int?,
         val isEmptyIcon: Boolean,
         @AttrRes val tintAttrRes: Int?,
+        val isIconWithoutTint: Boolean,
         val action: TaiwaAction?,
         val clickListener: ClickListener?,
     )

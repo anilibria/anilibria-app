@@ -154,7 +154,7 @@ class PlayerFlow(
     ) {
         withPlayer { player ->
             player.resetError()
-            val currentItem = startIndex?.let { playlist[it] }
+            val currentItem = startIndex?.let { playlist.getOrNull(it) }
             _playlistState.update { PlaylistState(items = playlist, currentItem = currentItem) }
             player.setMediaItems(
                 playlist.map { it.mediaItem },

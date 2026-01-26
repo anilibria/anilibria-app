@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">AniLibria TV</string>
+    <string name="app_name">AniLiberty</string>
 
     <string name="global_search_hint">Поиск аниме</string>
-    <string name="global_search_label">AniLibria TV</string>
-    <string name="global_search_settings_description">Аниме на AniLibria TV</string>
+    <string name="global_search_label">AniLiberty</string>
+    <string name="global_search_settings_description">Аниме на AniLiberty</string>
 
     <string name="player_skip">Пропустить</string>
 </resources>

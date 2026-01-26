@@ -21,7 +21,7 @@ fun String.asDataIconRes(): Int? = when (this) {
     DataIcons.DONATIONALERTS -> R.drawable.ic_logo_donationalerts
     DataIcons.BOOSTY -> R.drawable.ic_logo_boosty
     DataIcons.RUSTORE -> R.drawable.ic_logo_rustore
-    DataIcons.ANILIBRIA -> R.drawable.ic_anilibria
+    DataIcons.ANILIBRIA -> R.drawable.ic_logo_alib
     DataIcons.INFO -> R.drawable.ic_information
     DataIcons.RULES -> R.drawable.ic_book_open_variant
     DataIcons.PERSON -> R.drawable.ic_person

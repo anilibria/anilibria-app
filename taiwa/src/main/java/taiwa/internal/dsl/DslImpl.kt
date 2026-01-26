@@ -272,6 +272,7 @@ internal class TaiwaBaseItemScopeImpl(
     private var _iconRes: Int? = null
     private var _isEmptyIcon: Boolean = false
     private var _tintAttrRes: Int? = null
+    private var _isIconWithoutTint: Boolean = false
     private var _title: String? = null
     private var _subtitle: String? = null
     private var _action: TaiwaAction? = null
@@ -287,6 +288,10 @@ internal class TaiwaBaseItemScopeImpl(
 
     override fun tint(@AttrRes attrRes: Int) {
         _tintAttrRes = attrRes
+    }
+
+    override fun iconWithoutTint() {
+        _isIconWithoutTint = true
     }
 
     override fun title(value: String) {
@@ -312,6 +317,7 @@ internal class TaiwaBaseItemScopeImpl(
             subtitle = _subtitle,
             iconRes = _iconRes,
             isEmptyIcon = _isEmptyIcon,
+            isIconWithoutTint = _isIconWithoutTint,
             tintAttrRes = _tintAttrRes,
             action = _action,
             clickListener = _clickListener

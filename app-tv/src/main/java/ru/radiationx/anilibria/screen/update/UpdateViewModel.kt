@@ -9,6 +9,8 @@ import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.UpdateSourceScreen
+import ru.radiationx.anilibria.screen.UpdateWarningScreen
+import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.app.downloader.RemoteFileRepository
 import ru.radiationx.data.app.downloader.mapper.toLocalFile
 import ru.radiationx.data.app.downloader.models.RemoteFile
@@ -26,6 +28,7 @@ class UpdateViewModel @Inject constructor(
     private val updateController: UpdateController,
     private val remoteFileRepository: RemoteFileRepository,
     private val systemUtils: SystemUtils,
+    private val sharedBuildConfig: SharedBuildConfig
 ) : LifecycleViewModel() {
 
     private var downloadJob: Job? = null
@@ -50,7 +53,7 @@ class UpdateViewModel @Inject constructor(
         updateController
             .downloadAction
             .onEach {
-                startDownload(it.url)
+                startDownload(it)
             }
             .launchIn(viewModelScope)
     }
@@ -69,7 +72,7 @@ class UpdateViewModel @Inject constructor(
             guidedRouter.open(UpdateSourceScreen())
         } else {
             val link = data.links.firstOrNull() ?: return
-            startDownload(link.url)
+            startDownload(link)
         }
     }
 
@@ -79,7 +82,11 @@ class UpdateViewModel @Inject constructor(
         downloadProgressShowState.value = false
     }
 
-    private fun startDownload(url: Url) {
+    private fun startDownload(link: UpdateData.UpdateLink) {
+        if (sharedBuildConfig.forRuStore) {
+            guidedRouter.open(UpdateWarningScreen(link))
+            return
+        }
         if (downloadJob?.isActive == true) {
             return
         }
@@ -87,7 +94,7 @@ class UpdateViewModel @Inject constructor(
             downloadProgressShowState.value = true
             coRunCatching {
                 remoteFileRepository.loadFile(
-                    url,
+                    link.url,
                     RemoteFile.Bucket.AppUpdates,
                     downloadProgressData
                 )

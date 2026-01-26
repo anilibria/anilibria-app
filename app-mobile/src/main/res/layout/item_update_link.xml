@@ -17,7 +17,7 @@
         android:layout_weight="1"
         android:textColor="?textDefault"
         android:textSize="16sp"
-        tools:text="AniLibria Lite (Белая иконка)" />
+        tools:text="AniLiberty Lite (Белая иконка)" />
 
     <ru.radiationx.anilibria.ui.widgets.ProgressButton
         android:id="@+id/itemUpdateProgress"

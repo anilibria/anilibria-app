@@ -34,6 +34,17 @@ android {
         buildConfig true
     }
 
+    Properties localProperties = new Properties()
+    localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+    signingConfigs {
+        release {
+            storeFile file(localProperties['storeFile'])
+            storePassword localProperties['storePassword']
+            keyAlias localProperties['keyAlias']
+            keyPassword localProperties['keyPassword']
+        }
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
@@ -52,12 +63,22 @@ android {
         app {
             dimension "type"
             buildConfigField "boolean", 'HAS_ADS', 'true'
+            buildConfigField "boolean", 'FOR_RUSTORE', 'false'
+        }
+
+        rustore {
+            dimension "type"
+            buildConfigField "boolean", 'HAS_ADS', 'true'
+            buildConfigField "boolean", 'FOR_RUSTORE', 'true'
+            versionName "${mobile_version_name}-rustore"
         }
 
         store {
             dimension "type"
             applicationId "tv.anilibria.store"
             buildConfigField "boolean", 'HAS_ADS', 'false'
+            buildConfigField "boolean", 'FOR_RUSTORE', 'false'
+            versionName "${mobile_version_name}-lite"
         }
     }
 
@@ -66,6 +87,17 @@ android {
             def appName = "AniLiberty"
             def versionName = variant.versionName
             outputFileName = "${appName}_v${versionName}.apk"
+
+            if (variant.buildType.name == 'release') {
+                def buildName = variant.name.capitalize()
+                tasks.register("copy${buildName}Apk", Copy) {
+                    description = "Copies ${variant.name} APK to archive folder"
+                    group = "custom"
+                    from(variant.outputs.first().outputFile)
+                    into("${rootProject.rootDir}/release-apks/")
+                    dependsOn variant.assembleProvider
+                }
+            }
         }
     }
 }

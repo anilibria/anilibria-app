@@ -91,6 +91,7 @@ interface TaiwaButtonsScope {
 @ItemScopeMarker
 interface TaiwaBaseItemScope {
     fun icon(@DrawableRes iconRes: Int)
+    fun iconWithoutTint()
     fun emptyIcon()
     fun tint(@AttrRes attrRes: Int)
     fun title(value: String)

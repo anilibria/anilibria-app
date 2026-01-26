@@ -21,4 +21,6 @@ class AppBuildConfig @Inject constructor(
     override val debug: Boolean = BuildConfig.DEBUG
 
     override val hasAds: Boolean = BuildConfig.HAS_ADS
+
+    override val forRuStore: Boolean = BuildConfig.FOR_RUSTORE
 }

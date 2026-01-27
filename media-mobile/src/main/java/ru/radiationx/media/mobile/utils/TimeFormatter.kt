@@ -1,6 +1,7 @@
 package ru.radiationx.media.mobile.utils
 
 import java.util.concurrent.TimeUnit
+import java.util.Locale
 import kotlin.math.absoluteValue
 
 internal object TimeFormatter {
@@ -23,18 +24,10 @@ internal object TimeFormatter {
                 }
             }
             if (hours > 0) {
-                append(hours)
-                append(':')
+                append("%d:%02d:%02d".format(Locale.US, hours, minutes, seconds))
+            } else {
+                append("%02d:%02d".format(Locale.US, minutes, seconds))
             }
-            if (minutes < 10) {
-                append(0)
-            }
-            append(minutes)
-            append(':')
-            if (seconds < 10) {
-                append(0)
-            }
-            append(seconds)
         }
     }
 }

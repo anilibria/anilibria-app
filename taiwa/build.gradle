@@ -11,11 +11,16 @@ android {
 
     defaultConfig {
         minSdk app_min_sdk_version
-        targetSdk app_target_sdk_version
     }
 
     buildFeatures {
         viewBinding true
+    }
+    lint {
+        targetSdk 35
+    }
+    testOptions {
+        targetSdk 35
     }
 }
 

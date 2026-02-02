@@ -1,0 +1,124 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import java.io.FileInputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Properties
+
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.ksp)
+}
+
+fun getDateTime(): String {
+    val df = SimpleDateFormat("dd MMMMM yyyy")
+    return "${df.format(Date())} г."
+}
+
+android {
+    namespace = "ru.radiationx.anilibria"
+
+    compileSdk = libs.versions.app.compile.sdk.version.get().toInt()
+
+    defaultConfig {
+        applicationId = "ru.radiationx.anilibria.app.tv"
+        minSdk = libs.versions.tv.min.sdk.version.get().toInt()
+        targetSdk = libs.versions.app.target.sdk.version.get().toInt()
+        versionCode = libs.versions.tv.version.code.get().toInt()
+        versionName = libs.versions.tv.version.name.get()
+        buildConfigField("String", "BUILD_DATE", "\"${getDateTime()}\"")
+    }
+
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
+
+    val localProperties = Properties().apply {
+        load(FileInputStream(rootProject.file("local.properties")))
+    }
+    signingConfigs {
+        create("release") {
+            storeFile = file(localProperties.getProperty("storeFile"))
+            storePassword = localProperties.getProperty("storePassword")
+            keyAlias = localProperties.getProperty("keyAlias")
+            keyPassword = localProperties.getProperty("keyPassword")
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    flavorDimensions += listOf("type")
+    productFlavors {
+        create("app") {
+            dimension = "type"
+            buildConfigField("boolean", "FOR_RUSTORE", "false")
+        }
+
+        create("rustore") {
+            dimension = "type"
+            buildConfigField("boolean", "FOR_RUSTORE", "true")
+            versionName = "${libs.versions.tv.version.name.get()}-rustore"
+        }
+    }
+
+    applicationVariants.forEach { variant ->
+        variant.outputs.map { it as BaseVariantOutputImpl }.forEach { output ->
+            val appName = "AniLiberty_TV"
+            val versionName = variant.versionName
+            output.outputFileName = "${appName}_v${versionName}.apk"
+
+            if (variant.buildType.name == "release") {
+                val buildName = variant.name.capitalize()
+                tasks.register<Copy>("copy${buildName}Apk") {
+                    description = "Copies ${variant.name} APK to archive folder"
+                    group = "custom"
+                    from(variant.outputs.first().outputFile)
+                    into("${rootProject.rootDir}/release-apks/")
+                    dependsOn(variant.assembleProvider)
+                }
+            }
+        }
+    }
+}
+
+kotlin {
+    jvmToolchain(libs.versions.jvm.toolchain.version.get().toInt())
+}
+
+dependencies {
+    implementation(libs.kotlin.stdlib)
+
+    implementation(project(":data"))
+    implementation(project(":shared-android-ktx"))
+    implementation(project(":shared-app"))
+    implementation(project(":quill-di"))
+
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.leanback)
+    implementation(libs.androidx.leanback.preference)
+    implementation(libs.google.material)
+    implementation(libs.androidx.constraintlayout)
+
+    implementation(libs.cicerone)
+
+    compileOnly(libs.toothpick)
+    ksp(libs.toothpick.compiler)
+
+    implementation(libs.media3.ui.leanback)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.exoplayer.hls)
+
+    implementation(libs.mintpermissions)
+    implementation(libs.mintpermissions.flows)
+
+    implementation(libs.viewbindingpropertydelegate)
+}

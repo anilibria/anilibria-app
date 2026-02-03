@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -69,23 +68,39 @@ android {
             versionName = "${libs.versions.tv.version.name.get()}-rustore"
         }
     }
+}
 
-    applicationVariants.forEach { variant ->
-        variant.outputs.map { it as BaseVariantOutputImpl }.forEach { output ->
-            val appName = "AniLiberty_TV"
-            val versionName = variant.versionName
-            output.outputFileName = "${appName}_v${versionName}.apk"
-
-            if (variant.buildType.name == "release") {
-                val buildName = variant.name.capitalize()
-                tasks.register<Copy>("copy${buildName}Apk") {
-                    description = "Copies ${variant.name} APK to archive folder"
-                    group = "custom"
-                    from(variant.outputs.first().outputFile)
-                    into("${rootProject.rootDir}/release-apks/")
-                    dependsOn(variant.assembleProvider)
-                }
+androidComponents {
+    onVariants(selector().withBuildType("release")) { variant ->
+        val inputApkName = buildString {
+            append("${project.name}-")
+            variant.productFlavors.forEach { (dimension, flavor) ->
+                append("${flavor}-")
             }
+            variant.buildType?.also { append(it) }
+            append(".apk")
+        }
+        val inputApkPath = buildString {
+            append("outputs/apk/")
+            variant.flavorName?.also { append("$it/") }
+            variant.buildType?.also { append("$it/") }
+            append(inputApkName)
+        }
+        val inputPath = project.layout.buildDirectory.file(inputApkPath).get().asFile
+
+        val appName = "AniLiberty_TV"
+        val versionName = variant.outputs[0].versionName.get()
+        val outputApkName = "${appName}_v${versionName}.apk"
+
+        val buildName = variant.name.capitalize()
+        tasks.register<Copy>("copy${buildName}Apk") {
+            description = "Copies $buildName APK to another folder"
+            group = "custom"
+            from(inputPath) {
+                rename { outputApkName }
+            }
+            into("${rootProject.rootDir}/release-apks/")
+            dependsOn(tasks.named("assemble$buildName"))
         }
     }
 }

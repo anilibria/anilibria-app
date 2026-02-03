@@ -20,12 +20,12 @@ class NativeAdsRepository @Inject constructor(
     ): NativeAd = suspendCancellableCoroutine { continuation ->
         val loader = NativeAdLoader(context)
         loader.setNativeAdLoadListener(object : NativeAdLoadListener {
-            override fun onAdLoaded(p0: NativeAd) {
-                continuation.resume(p0)
+            override fun onAdLoaded(nativeAd: NativeAd) {
+                continuation.resume(nativeAd)
             }
 
-            override fun onAdFailedToLoad(p0: AdRequestError) {
-                continuation.resumeWithException(Exception("${p0.code}, ${p0.description}"))
+            override fun onAdFailedToLoad(error: AdRequestError) {
+                continuation.resumeWithException(Exception("${error.code}, ${error.description}"))
             }
         })
         continuation.invokeOnCancellation {

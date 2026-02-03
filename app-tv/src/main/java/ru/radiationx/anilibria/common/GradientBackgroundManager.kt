@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.palette.graphics.Palette
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -88,7 +87,6 @@ class GradientBackgroundManager @Inject constructor(
         }
     }
 
-    @OptIn(FlowPreview::class)
     private fun subscribeColorApplier() {
         colorApplierJob?.cancel()
         colorApplierJob = colorApplier

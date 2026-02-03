@@ -40,7 +40,7 @@ class BannerAdController(
             }
         }
 
-        override fun onAdFailedToLoad(adRequestError: AdRequestError) {
+        override fun onAdFailedToLoad(error: AdRequestError) {
             adContainer.isVisible = false
         }
 

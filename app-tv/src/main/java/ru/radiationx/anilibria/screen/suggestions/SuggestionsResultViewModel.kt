@@ -1,8 +1,6 @@
 package ru.radiationx.anilibria.screen.suggestions
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -16,7 +14,6 @@ import ru.radiationx.shared_app.controllers.loadersearch.SearchQuery
 import ru.radiationx.shared_app.controllers.loadersingle.mapData
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class SuggestionsResultViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val cardRouter: LibriaCardRouter,

@@ -3,8 +3,6 @@ package ru.radiationx.anilibria.ui.fragments.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -28,7 +26,6 @@ import ru.radiationx.shared_app.controllers.loadersingle.mapData
 import java.net.URLEncoder
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class FastSearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val router: Router,

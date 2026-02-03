@@ -16,10 +16,10 @@ android {
         viewBinding = true
     }
     lint {
-        targetSdk = 35
+        targetSdk = libs.versions.app.target.sdk.version.get().toInt()
     }
     testOptions {
-        targetSdk = 35
+        targetSdk = libs.versions.app.target.sdk.version.get().toInt()
     }
 }
 

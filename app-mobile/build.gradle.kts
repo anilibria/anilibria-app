@@ -195,4 +195,4 @@ dependencies {
     implementation(libs.yandex.mobileads)
 }
 
-apply(plugin = "com.google.gms.google-services")
+apply(plugin = libs.plugins.gms.get().pluginId)

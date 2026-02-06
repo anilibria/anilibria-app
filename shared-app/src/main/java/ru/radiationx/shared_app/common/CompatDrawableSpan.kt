@@ -19,6 +19,7 @@ class CompatDrawableSpan(
         const val ALIGN_CENTER = 2
     }
 
+    @Retention(AnnotationRetention.SOURCE)
     @IntDef(value = [ALIGN_BOTTOM, ALIGN_BASELINE, ALIGN_CENTER])
     annotation class AlignmentType
 

@@ -17,6 +17,7 @@
         tools:replace="android:allowBackup,android:theme">
         <activity
             android:name=".ui.activities.main.MainActivity"
+            android:enableOnBackInvokedCallback="false"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/Splash.DayNightAppTheme"
@@ -30,6 +31,7 @@
 
         <activity
             android:name=".ui.activities.main.IntentActivity"
+            android:enableOnBackInvokedCallback="false"
             android:exported="true"
             android:theme="@style/Splash.DayNightAppTheme">
             <intent-filter>
@@ -74,12 +76,14 @@
 
         <activity
             android:name=".ui.activities.SettingsActivity"
+            android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:label="Настройки"
             android:theme="@style/PreferencesDayNightAppTheme" />
 
         <activity
             android:name=".ui.activities.auth.AuthActivity"
+            android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:theme="@style/DayNightAppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
@@ -87,6 +91,7 @@
         <activity
             android:name=".ui.activities.player.VideoPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout|screenSize|uiMode"
+            android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:launchMode="singleTask"
             android:supportsPictureInPicture="true"
@@ -95,12 +100,14 @@
         <activity
             android:name=".ui.activities.WebPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:theme="@style/MediaPlayerTheme" />
 
         <activity
             android:name=".ui.activities.updatechecker.UpdateCheckerActivity"
             android:configChanges="orientation|keyboardHidden|screenLayout|screenSize"
+            android:enableOnBackInvokedCallback="false"
             android:exported="false"
             android:theme="@style/DayNightAppTheme.NoActionBar" />
 

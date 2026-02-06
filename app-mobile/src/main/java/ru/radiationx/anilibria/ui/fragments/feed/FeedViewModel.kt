@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.yandex.mobile.ads.nativeads.NativeAdRequestConfiguration
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -79,7 +78,6 @@ import javax.inject.Inject
 
 /* Created by radiationx on 05.11.17. */
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class FeedViewModel @Inject constructor(
     private val nativeAdsRepository: NativeAdsRepository,
     private val adsConfigRepository: AdsConfigRepository,

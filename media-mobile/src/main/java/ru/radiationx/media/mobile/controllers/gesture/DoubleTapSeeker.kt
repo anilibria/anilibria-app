@@ -3,7 +3,6 @@ package ru.radiationx.media.mobile.controllers.gesture
 import android.view.MotionEvent
 import android.view.View
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +15,6 @@ import kotlinx.coroutines.launch
 import ru.radiationx.media.mobile.PlayerFlow
 import java.util.concurrent.TimeUnit
 
-@OptIn(FlowPreview::class)
 internal class DoubleTapSeeker(
     private val playerFlow: PlayerFlow,
     private val coroutineScope: CoroutineScope,

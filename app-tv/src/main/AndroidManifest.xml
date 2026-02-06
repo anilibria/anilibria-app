@@ -27,6 +27,7 @@
 
         <activity
             android:name=".screen.launcher.MainActivity"
+            android:enableOnBackInvokedCallback="false"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"

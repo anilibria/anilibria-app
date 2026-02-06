@@ -22,7 +22,7 @@ class DonationContentAdapter(
     }
 
     fun bindState(content: List<DonationContentItem>) {
-        val newItems = content.mapNotNull {
+        val newItems = content.map {
             when (it) {
                 is DonationContentButton -> DonationButtonListItem(it)
                 is DonationContentCaption -> DonationCaptionListItem(it)
@@ -33,7 +33,6 @@ class DonationContentAdapter(
 
                 is DonationContentHeader -> DonationHeaderListItem(it)
                 is DonationContentSection -> DonationSectionListItem(it)
-                else -> null
             }
         }
         items = newItems

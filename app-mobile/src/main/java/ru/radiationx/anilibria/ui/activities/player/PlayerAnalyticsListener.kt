@@ -2,7 +2,6 @@ package ru.radiationx.anilibria.ui.activities.player
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.media3.common.C
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.NetworkTypeObserver
@@ -59,9 +58,10 @@ class PlayerAnalyticsListener @Inject constructor(
         eventTime: AnalyticsListener.EventTime,
         loadEventInfo: LoadEventInfo,
         mediaLoadData: MediaLoadData,
+        retryCount: Int
     ) {
         latestLoadData = loadEventInfo.toLoadData()
-        super.onLoadStarted(eventTime, loadEventInfo, mediaLoadData)
+        super.onLoadStarted(eventTime, loadEventInfo, mediaLoadData, retryCount)
     }
 
     @UnstableApi

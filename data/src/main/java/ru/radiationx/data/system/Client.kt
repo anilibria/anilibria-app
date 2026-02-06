@@ -77,7 +77,7 @@ open class Client @Inject constructor(
             callResponse.code,
             callResponse.message,
             callResponse.request.url.toString(),
-            callResponse.body?.string().orEmpty(),
+            callResponse.body.string(),
             callResponse.headers(HEADER_HOST_IP).firstOrNull()
         )
     }

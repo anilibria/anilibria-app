@@ -39,7 +39,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
 
         viewModel.profileData.onEach {
             if (!it?.avatarUrl.isNullOrEmpty()) {
-                binding.profileAvatar.showImageUrl(it?.avatarUrl)
+                binding.profileAvatar.showImageUrl(it.avatarUrl)
             }
             binding.profileNick.text = it?.nick
 

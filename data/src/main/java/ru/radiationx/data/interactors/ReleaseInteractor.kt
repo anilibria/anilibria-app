@@ -1,6 +1,5 @@
 package ru.radiationx.data.interactors
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -70,7 +69,6 @@ class ReleaseInteractor @Inject constructor(
         return releaseItems.mapNotNull { it.findRelease(releaseId, releaseCode) }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun observeFull(releaseId: ReleaseId? = null, releaseCode: ReleaseCode? = null): Flow<Release> {
         return flow {
             emit(updateIfNotExists(releaseId, releaseCode))

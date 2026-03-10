@@ -79,8 +79,10 @@ fun Release.toInfoState(): ReleaseInfoState {
 private fun Members.toInfo(): List<String> {
     return listOfNotNull(
         voicing.asMemberRole("Озвучка"),
-        timing.asMemberRole("Тайминг"),
-        (translating + editing + decorating).asMemberRole("Работа над субтитрами"),
+        timing.asMemberRole("Работа со звуком"),
+        translating.asMemberRole("Перевод и адаптация"),
+        editing.asMemberRole("Редактура"),
+        decorating.asMemberRole("Графическая локализация"),
     )
 }
 

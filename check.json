@@ -1,32 +1,28 @@
 {
   "update": {
-    "version_code": "70",
-    "version_name": "2.13.0",
+    "version_code": "73",
+    "version_name": "2.14.2",
     "version_build": "0",
-    "build_date": "19 апреля 2024 г.",
+    "build_date": "26 января 2026 г.",
     "links": [
       {
-        "name": "AniLibria App",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.13.0/AniLibria_v2.13.0.apk",
+        "name": "AniLiberty App",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.14.2/AniLiberty_v2.14.2.apk",
         "type": "file"
       },
       {
-        "name": "AniLibria Lite (Белая иконка)",
-        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.13.0/AniLibria_Lite_v2.13.0.apk",
+        "name": "AniLiberty Lite (Белая иконка)",
+        "url": "https://github.com/anilibria/anilibria-app/releases/download/2.14.2/AniLiberty_v2.14.2-lite.apk",
         "type": "file"
       }
     ],
     "important": [],
-    "added": [
-      "Сертификаты Let's Encrypt и Google для всех версий Android",
-      "Поддержка TLSv1.3 на всех версиях Android"
-    ],
+    "added": [],
     "fixed": [
-      "Плеер RuTube",
-      "Креш при перезапуске плеера",
-      "Креш на экране \"Команда проекта\"",
-      "Воспроизведение серий на Android 5-6"
+      "Исправление багов и повышение стабильности"
     ],
-    "changed": []
+    "changed": [
+      "Ребрендинг на AniLiberty"
+    ]
   }
 }

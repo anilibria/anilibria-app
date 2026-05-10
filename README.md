@@ -1,9 +1,13 @@
 # AniLibria
+
+<!-- public-repo-status -->
+> Status: Public source fork. Downloads and user support stay with the upstream official channels; this fork does not publish Android builds through GitHub Releases.
+
 Клиент для сайта [AniLibria.tv](https://anilibria.tv/)
 
-Мобильное приложение: [RuStore](https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app) | [Releases](https://github.com/anilibria/anilibria-app/releases?q=version)
+Мобильное приложение: [RuStore](https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app)
 
-Android TV приложение: [RuStore](https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app.tv) | [Releases](https://github.com/anilibria/anilibria-app/releases?q=tv)
+Android TV приложение: [RuStore](https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app.tv)
 
 # Лицензия #
 Исходный код распостраняется под лицензией GPL v3

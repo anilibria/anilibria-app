@@ -140,6 +140,7 @@ class PlayerProxy {
     private fun restoreState() {
         player.playWhenReady = commonState.playWhenReady
         player.pauseAtEndOfMediaItems = commonState.pauseAtEndOfMediaItems
+        player.setPlaybackSpeed(commonState.speed)
         player.setMediaItems(mediaItemsState.items, mediaItemsState.index, mediaItemsState.position)
         player.prepare()
     }

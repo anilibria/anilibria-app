@@ -1,4 +1,3 @@
-import java.io.FileInputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Properties
@@ -11,6 +10,17 @@ plugins {
 fun getDateTime(): String {
     val df = SimpleDateFormat("dd MMMMM yyyy")
     return "${df.format(Date())} г."
+}
+
+val localProperties = Properties().apply {
+    rootProject.file("local.properties")
+        .takeIf { it.isFile }
+        ?.inputStream()
+        ?.use { load(it) }
+}
+val releaseSigningProperties = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
+val hasReleaseSigningConfig = releaseSigningProperties.all {
+    !localProperties.getProperty(it).isNullOrBlank()
 }
 
 android {
@@ -32,21 +42,20 @@ android {
         buildConfig = true
     }
 
-    val localProperties = Properties().apply {
-        load(FileInputStream(rootProject.file("local.properties")))
-    }
     signingConfigs {
-        create("release") {
-            storeFile = file(localProperties.getProperty("storeFile"))
-            storePassword = localProperties.getProperty("storePassword")
-            keyAlias = localProperties.getProperty("keyAlias")
-            keyPassword = localProperties.getProperty("keyPassword")
+        if (hasReleaseSigningConfig) {
+            create("release") {
+                storeFile = file(localProperties.getProperty("storeFile"))
+                storePassword = localProperties.getProperty("storePassword")
+                keyAlias = localProperties.getProperty("keyAlias")
+                keyPassword = localProperties.getProperty("keyPassword")
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfigs.findByName("release")?.let { signingConfig = it }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

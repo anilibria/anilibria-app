@@ -5,6 +5,14 @@
 
 Android TV приложение: [RuStore](https://www.rustore.ru/catalog/app/ru.radiationx.anilibria.app.tv) | [Releases](https://github.com/anilibria/anilibria-app/releases?q=tv)
 
+## Сборка для разработки
+
+Debug-сборка не требует приватных ключей подписи:
+
+```shell
+./gradlew :media-mobile:assembleDebug :app-mobile:assembleDebug :app-tv:assembleDebug
+```
+
 # Лицензия #
 Исходный код распостраняется под лицензией GPL v3
 

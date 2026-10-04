@@ -1,6 +1,7 @@
 package ru.radiationx.anilibria.screen.player
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -41,6 +42,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
     @UnstableApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.setBackgroundColor(Color.BLACK)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         initializePlayer()
         initializeRows()

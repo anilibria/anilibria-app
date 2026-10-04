@@ -1,7 +1,10 @@
 package ru.radiationx.anilibria.screen.player
 
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -12,6 +15,7 @@ import ru.radiationx.anilibria.screen.PlayerEndSeasonGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerEpisodesGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerQualityGuidedScreen
 import ru.radiationx.anilibria.screen.PlayerSpeedGuidedScreen
+import ru.radiationx.anilibria.screen.player.quality.PlayerQualityPreference
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.data.entity.domain.release.Episode
@@ -22,6 +26,7 @@ import ru.radiationx.shared.ktx.EventFlow
 import ru.radiationx.shared.ktx.coRunCatching
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PlayerViewModel @Inject constructor(
     private val argExtra: PlayerExtra,
     private val releaseInteractor: ReleaseInteractor,
@@ -29,6 +34,7 @@ class PlayerViewModel @Inject constructor(
     private val preferencesHolder: PreferencesHolder,
     private val guidedRouter: GuidedRouter,
     private val playerController: PlayerController,
+    private val qualityPreference: PlayerQualityPreference,
 ) : LifecycleViewModel() {
 
     val videoData = MutableStateFlow<Video?>(null)
@@ -38,13 +44,12 @@ class PlayerViewModel @Inject constructor(
 
     private var currentEpisodes = mutableListOf<Episode>()
     private var currentReleases: List<Release>? = null
-    private var currentEpisode: Episode? = null
-    private var currentQuality: PlayerQuality? = null
+    private val currentEpisodeData = MutableStateFlow<Episode?>(null)
+    private val currentEpisode: Episode? get() = currentEpisodeData.value
     private var currentComplete: Boolean? = null
 
     init {
         playerController.reset()
-        qualityState.value = preferencesHolder.playerQuality.value
         speedState.value = preferencesHolder.playSpeed.value
 
         playerController
@@ -56,10 +61,10 @@ class PlayerViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
 
-        preferencesHolder
-            .playerQuality
+        currentEpisodeData
+            .filterNotNull()
+            .flatMapLatest { qualityPreference.forRelease(it.id.releaseId) }
             .onEach {
-                currentQuality = it
                 updateQuality()
                 updateEpisode()
             }
@@ -197,7 +202,7 @@ class PlayerViewModel @Inject constructor(
     }
 
     private fun playEpisode(episode: Episode, force: Boolean = false) {
-        currentEpisode = episode
+        currentEpisodeData.value = episode
         currentComplete = null
         updateQuality()
         updateEpisode(force)
@@ -207,14 +212,14 @@ class PlayerViewModel @Inject constructor(
     }
 
     private fun updateQuality() {
-        val quality = currentQuality ?: return
-        qualityState.value = currentEpisode?.qualityInfo?.getActualFor(quality) ?: quality
+        val episode = currentEpisode ?: return
+        qualityState.value = qualityPreference.resolve(episode.id.releaseId, episode.qualityInfo)
     }
 
     private fun updateEpisode(force: Boolean = false) {
         val release = getCurrentRelease() ?: return
         val episode = currentEpisode ?: return
-        val quality = currentQuality ?: return
+        val quality = qualityPreference.resolve(episode.id.releaseId, episode.qualityInfo) ?: return
         viewModelScope.launch {
             val newUrl = episode.qualityInfo.getSafeUrlFor(quality)
             val access = releaseInteractor.getAccess(episode.id)

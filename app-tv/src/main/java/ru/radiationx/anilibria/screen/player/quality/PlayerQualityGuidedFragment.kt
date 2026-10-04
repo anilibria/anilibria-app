@@ -6,6 +6,7 @@ import androidx.leanback.widget.GuidedAction
 import kotlinx.coroutines.flow.filterNotNull
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.screen.player.BasePlayerGuidedFragment
+import ru.radiationx.data.entity.common.PlayerQuality
 import ru.radiationx.quill.viewModel
 import ru.radiationx.shared.ktx.android.getCompatDrawable
 import ru.radiationx.shared.ktx.android.subscribeTo
@@ -13,6 +14,14 @@ import ru.radiationx.shared.ktx.android.subscribeTo
 class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
 
     private val viewModel by viewModel<PlayerQualityViewModel> { argExtra }
+
+    private val autoAction by lazy {
+        GuidedAction.Builder(requireContext())
+            .id(PlayerQualityViewModel.AUTO_ACTION_ID)
+            .title(autoTitle(null))
+            .icon(requireContext().getCompatDrawable(R.drawable.ic_quality_auto_base))
+            .build()
+    }
 
     private val sdAction by lazy {
         GuidedAction.Builder(requireContext())
@@ -45,6 +54,13 @@ class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
 
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
+        subscribeTo(viewModel.automaticQualityData) { quality ->
+            autoAction.title = autoTitle(quality)
+            findActionPositionById(PlayerQualityViewModel.AUTO_ACTION_ID)
+                .takeIf { it >= 0 }
+                ?.also { notifyActionChanged(it) }
+        }
+
         subscribeTo(viewModel.availableData) {
             actions = it.mapNotNull { id -> getActionById(id) }
         }
@@ -59,9 +75,17 @@ class PlayerQualityGuidedFragment : BasePlayerGuidedFragment() {
     }
 
     private fun getActionById(id: Long): GuidedAction? = when (id) {
+        PlayerQualityViewModel.AUTO_ACTION_ID -> autoAction
         PlayerQualityViewModel.SD_ACTION_ID -> sdAction
         PlayerQualityViewModel.HD_ACTION_ID -> hdAction
         PlayerQualityViewModel.FULL_HD_ACTION_ID -> fullHdAction
         else -> null
+    }
+
+    private fun autoTitle(quality: PlayerQuality?): String = when (quality) {
+        PlayerQuality.SD -> "480p"
+        PlayerQuality.HD -> "720p"
+        PlayerQuality.FULLHD -> "1080p"
+        null -> "Авто"
     }
 }

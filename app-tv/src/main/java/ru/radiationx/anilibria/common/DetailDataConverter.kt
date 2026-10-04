@@ -49,10 +49,13 @@ class DetailDataConverter @Inject constructor() {
             val scheduleAnnounce = days.firstOrNull()?.toAnnounce2().orEmpty()
             originalAnnounce ?: scheduleAnnounce
         }
-        val episodesWarning = if (episodes.isEmpty()) {
-            "Нет доступных для просмотра серий"
-        } else {
-            null
+        val episodesWarning = when {
+            blockedInfo.isBlocked -> blockedInfo.reason
+                ?.trim()
+                ?.takeIf { it.isNotEmpty() }
+                ?: "Контент заблокирован"
+            episodes.isEmpty() -> "Нет доступных для просмотра серий"
+            else -> null
         }
         return listOfNotNull(announceText, episodesWarning).joinToString(" • ")
     }

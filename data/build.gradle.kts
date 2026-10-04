@@ -25,6 +25,9 @@ kotlin {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("com.squareup.okhttp3:mockwebserver")
+
     implementation(project(":shared-android-ktx"))
     implementation(project(":quill-di"))
 

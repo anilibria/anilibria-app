@@ -8,6 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import ru.radiationx.data.SharedBuildConfig
 import ru.radiationx.data.analytics.features.SslCompatAnalytics
 import ru.radiationx.data.datasource.remote.address.ApiConfig
+import ru.radiationx.data.datasource.remote.interceptors.SessionCookieInterceptor
 import ru.radiationx.data.datasource.remote.interceptors.UnauthorizedInterceptor
 import ru.radiationx.data.sslcompat.SslCompat
 import ru.radiationx.data.sslcompat.appendSslCompat
@@ -83,6 +84,8 @@ class ApiOkHttpProvider @Inject constructor(
             }
 
             addInterceptor(unauthorizedInterceptor)
+
+            addNetworkInterceptor(SessionCookieInterceptor())
 
             cookieJar(appCookieJar)
         }

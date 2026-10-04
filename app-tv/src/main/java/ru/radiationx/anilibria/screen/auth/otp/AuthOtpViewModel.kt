@@ -11,6 +11,7 @@ import ru.radiationx.data.entity.domain.auth.OtpInfo
 import ru.radiationx.data.entity.domain.auth.OtpNotAcceptedException
 import ru.radiationx.data.entity.domain.auth.OtpNotFoundException
 import ru.radiationx.data.repository.AuthRepository
+import ru.radiationx.data.system.HttpException
 import ru.radiationx.shared.ktx.coRunCatching
 import timber.log.Timber
 import javax.inject.Inject
@@ -81,7 +82,12 @@ class AuthOtpViewModel @Inject constructor(
             is OtpNotAcceptedException -> ButtonState.COMPLETE
             else -> ButtonState.REPEAT
         }
-        updateState(buttonState, false, error.message.orEmpty())
+        val message = when (error) {
+            is HttpException -> "Сервер вернул ошибку HTTP ${error.code}. Повторите попытку."
+            else -> error.message?.takeIf { it.isNotBlank() }
+                ?: "Не удалось выполнить вход. Повторите попытку."
+        }
+        updateState(buttonState, false, message)
     }
 
     private fun startTimer(otpInfo: OtpInfo) {

@@ -16,14 +16,25 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DataSource
+import androidx.media3.common.C
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.LoadEventInfo
+import androidx.media3.exoplayer.source.MediaLoadData
+import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy
+import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
 import androidx.media3.ui.leanback.LeanbackPlayerAdapter
+import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.ui.presenter.cust.CustomListRowPresenter
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.player.PlayerDataSourceProvider
 import ru.radiationx.quill.get
+import timber.log.Timber
+import java.util.concurrent.atomic.AtomicBoolean
 
 open class BasePlayerFragment : VideoSupportFragment() {
 
@@ -127,16 +138,68 @@ open class BasePlayerFragment : VideoSupportFragment() {
 
         val dataSourceProvider = get<PlayerDataSourceProvider>()
         val dataSourceType = dataSourceProvider.get()
-        val dataSourceFactory = DefaultDataSource.Factory(requireContext(), dataSourceType.factory)
+        val targetBufferBytes = PlayerBufferPolicy.targetBufferBytes(Runtime.getRuntime().maxMemory())
+        val loadControl = DefaultLoadControl.Builder()
+            .setTargetBufferBytes(targetBufferBytes)
+            .setPrioritizeTimeOverSizeThresholds(false)
+            .build()
+        val playbackPaused = AtomicBoolean(true)
+        val readGate = BufferReadGate(
+            limitBytes = targetBufferBytes * 2,
+            allocatedBytes = { loadControl.allocator.totalBytesAllocated },
+            isPlaybackPaused = { playbackPaused.get() },
+        )
+        val upstreamFactory = DefaultDataSource.Factory(requireContext(), dataSourceType.factory)
+        val dataSourceFactory = DataSource.Factory {
+            HlsBufferingDataSource(upstreamFactory.createDataSource(), readGate)
+        }
         val mediaSourceFactory = DefaultMediaSourceFactory(requireContext()).apply {
             setDataSourceFactory(dataSourceFactory)
+            setLoadErrorHandlingPolicy(object : DefaultLoadErrorHandlingPolicy() {
+                override fun getRetryDelayMsFor(loadErrorInfo: LoadErrorHandlingPolicy.LoadErrorInfo): Long =
+                    if (loadErrorInfo.exception is BufferCapacityException) C.TIME_UNSET
+                    else super.getRetryDelayMsFor(loadErrorInfo)
+            })
         }
         val player = ExoPlayer.Builder(requireContext())
             .setMediaSourceFactory(mediaSourceFactory)
+            .setLoadControl(loadControl)
             .setHandleAudioBecomingNoisy(true)
             .build()
 
+        if (BuildConfig.DEBUG) {
+            player.addAnalyticsListener(object : AnalyticsListener {
+                override fun onLoadCompleted(
+                    eventTime: AnalyticsListener.EventTime,
+                    loadEventInfo: LoadEventInfo,
+                    mediaLoadData: MediaLoadData,
+                ) {
+                    val runtime = Runtime.getRuntime()
+                    Timber.tag("TvPlayerBuffer").d(
+                        "positionMs=%d bufferedMs=%d allocatedBytes=%d heapUsedBytes=%d " +
+                            "heapMaxBytes=%d targetBufferBytes=%d gateWaitCount=%d " +
+                            "gatePeakAllocatedBytes=%d loadedBytes=%d video=%dx%d",
+                        player.currentPosition,
+                        player.totalBufferedDuration,
+                        loadControl.allocator.totalBytesAllocated,
+                        runtime.totalMemory() - runtime.freeMemory(),
+                        runtime.maxMemory(),
+                        targetBufferBytes,
+                        readGate.waitCount.get(),
+                        readGate.peakAllocatedBytes.get(),
+                        loadEventInfo.bytesLoaded,
+                        player.videoSize.width,
+                        player.videoSize.height,
+                    )
+                }
+            })
+        }
+
         player.addListener(object : Player.Listener {
+            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                playbackPaused.set(!playWhenReady)
+            }
+
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)

@@ -1,181 +1,261 @@
 package ru.radiationx.anilibria.screen.player
 
+import android.os.SystemClock
+import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.radiationx.anilibria.BuildConfig
 import ru.radiationx.anilibria.databinding.ViewPlayerSkipsBinding
 import ru.radiationx.data.datasource.holders.AppPreference
 import ru.radiationx.data.entity.domain.release.PlayerSkips
+import timber.log.Timber
 
-/**
- * Обработчик пропуска опенингов
- *
- * @property parent корневой [android.view.ViewGroup]
- * @property skipButtonText текст для кнопки пропуска
- * @property coroutineScope скоуп для таймера
- * @property playerSkipsTimer включен ли таймер для автопропуска опенинга
- * @property onSeek функция для отлова намерения перемотки
- * @property onSkipShow функция для отлова события показа кнопки пропуска
- * @property onSkipHide функция для отлава события скрытия кнопки пропуска
- */
 class PlayerSkipsPart(
-    private val parent: FrameLayout,
+    parent: FrameLayout,
     private val skipButtonText: String,
     private val coroutineScope: CoroutineScope,
     private val playerSkipsTimer: AppPreference<Boolean>,
     private val onSeek: (Long) -> Unit,
+    private val onPlayPause: () -> Unit,
     private val onSkipShow: () -> Unit,
     private val onSkipHide: () -> Unit,
 ) {
-
-    companion object {
-        private const val TIMER_SEC = 5
-    }
-
-    private val binding = ViewPlayerSkipsBinding.inflate(
-        LayoutInflater.from(parent.context),
-        parent,
-        true
-    )
-
-    private val _timerFlow = MutableSharedFlow<Int?>(replay = 1)
-
-    private var playerSkips: PlayerSkips? = null
-    private val skippedList = mutableSetOf<PlayerSkips.Skip>()
-    private var currentPosition = 0L
-    private var currentSkipShow = false
+    private val binding = ViewPlayerSkipsBinding.inflate(LayoutInflater.from(parent.context), parent, true)
+    private val skipState = PlayerSkipState()
+    private val playbackState = PlayerSkipPlaybackState()
+    private val countdown = PlayerSkipCountdown()
+    val isSeeking: Boolean get() = skipState.isSeeking
+    private var activeSkip: PlayerSkips.Skip? = null
+    private var isSkipVisible = false
+    private var isHiding = false
+    private var appearanceFinished = false
+    private var autoSkipEnabled = false
+    private var disposed = false
     private var timerJob: Job? = null
+    private var lastTimerText: String? = null
 
     init {
+        binding.root.isVisible = false
+        binding.btSkipsSkip.text = skipButtonText
         binding.btSkipsCancel.setOnClickListener {
-            cancelSkip()
-            onUserChoseWatchOpening()
+            if (!appearanceFinished) return@setOnClickListener
+            dismissSkip()
+            playerSkipsTimer.value = false
         }
         binding.btSkipsSkip.setOnClickListener {
+            if (!appearanceFinished) return@setOnClickListener
             skip()
-            onUserChoseSkipOpening()
+            playerSkipsTimer.value = true
         }
-        binding.root.isVisible = false
+        binding.btSkipsCancel.setOnFocusChangeListener { _, focused ->
+            trace("watchFocus=$focused")
+            updateCountdown()
+        }
+        // These buttons are outside Leanback's grid, which normally routes media keys.
+        listOf(binding.btSkipsSkip, binding.btSkipsCancel).forEach { button ->
+            button.setOnKeyListener { _, keyCode, event ->
+                if (keyCode != KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) return@setOnKeyListener false
+                if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) onPlayPause()
+                true
+            }
+        }
     }
 
     fun setSkips(skips: PlayerSkips?) {
-        playerSkips = skips
-        skippedList.clear()
+        hidePrompt(immediate = true)
+        resetTimer()
+        activeSkip = null
+        skipState.reset(skips)
+        update(0)
+    }
+
+    fun onVideoLoading() {
+        hidePrompt(immediate = true)
+        playbackState.framePending()
+        playbackState.update(isReady = false, isPlaying = false)
+        resetTimer()
+        activeSkip = null
+        trace("videoLoading")
+        update(skipState.currentPosition)
+    }
+
+    fun onFramePending(position: Long, positionChanged: Boolean) {
+        playbackState.framePending(positionChanged)
+        if (positionChanged) trace("framePending")
+        update(position)
+    }
+
+    fun onFrameRendered(position: Long) {
+        playbackState.frameRendered()
+        trace("frameRendered")
+        update(position)
+    }
+
+    fun onPlaybackChanged(isReady: Boolean, isPlaying: Boolean, position: Long) {
+        if (playbackState.isReady != isReady || playbackState.isPlaying != isPlaying) {
+            trace("playback ready=$isReady playing=$isPlaying")
+        }
+        playbackState.update(isReady, isPlaying)
+        update(position)
+    }
+
+    fun onSeekStarted() {
+        skipState.startSeek()
+        update(skipState.currentPosition)
+    }
+
+    fun onSeekFinished(position: Long, cancelled: Boolean) {
+        skipState.finishSeek(position, cancelled)
+        update(position)
     }
 
     fun update(position: Long) {
-        currentPosition = position
-        autoCancel()
-        val skip = getCurrentSkip()
-        val hasSkip = skip != null
-        binding.apply {
-            if (hasSkip && (!btSkipsSkip.isFocused && !btSkipsCancel.isFocused)) {
-                btSkipsSkip.requestFocus()
-                startTimerIfNeed()
+        if (disposed) return
+        skipState.update(position)
+        val skip = skipState.currentSkip
+        if (skip != activeSkip) {
+            hidePrompt()
+            resetTimer()
+            activeSkip = skip
+            if (skip != null) startTimer()
+        }
+        if (skip != null && playbackState.canShow) showPrompt() else hidePrompt()
+        updateCountdown()
+    }
+
+    private fun showPrompt() {
+        if (isSkipVisible) return
+        binding.root.animate().withEndAction(null).cancel()
+        isHiding = false
+        isSkipVisible = true
+        appearanceFinished = false
+        if (!binding.root.isVisible) binding.root.alpha = 0f
+        binding.root.isVisible = true
+        setButtonsEnabled(true)
+        onSkipShow()
+        binding.btSkipsSkip.requestFocus()
+        trace("appearanceStarted skipFocused=${binding.btSkipsSkip.hasFocus()}")
+        binding.root.animate()
+            .alpha(1f)
+            .setDuration(250)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                if (disposed || !isSkipVisible) return@withEndAction
+                appearanceFinished = true
+                trace("appearanceFinished")
+                updateCountdown()
             }
-        }
-        if (hasSkip == currentSkipShow) {
-            return
-        }
-        currentSkipShow = hasSkip
-        if (hasSkip) {
-            onSkipShow.invoke()
+            .start()
+    }
+
+    private fun hidePrompt(immediate: Boolean = false) {
+        if (!isSkipVisible && (!immediate || !isHiding)) return
+        val notifyHide = isSkipVisible
+        isSkipVisible = false
+        appearanceFinished = false
+        binding.root.animate().withEndAction(null).cancel()
+        countdown.setRunning(false, SystemClock.uptimeMillis())
+        isHiding = !immediate
+        if (immediate) {
+            binding.root.isVisible = false
+            binding.root.alpha = 0f
+            setButtonsEnabled(false)
+            trace("hiddenImmediately")
         } else {
-            onSkipHide.invoke()
+            // Clicks and the countdown are already blocked; keep styling/text during the fade.
+            trace("disappearanceStarted")
+            binding.root.animate()
+                .alpha(0f)
+                .setDuration(250)
+                .setInterpolator(DecelerateInterpolator())
+                .withEndAction {
+                    if (disposed || !isHiding || isSkipVisible) return@withEndAction
+                    isHiding = false
+                    binding.root.isVisible = false
+                    setButtonsEnabled(false)
+                    trace("disappearanceFinished")
+                }
+                .start()
         }
-        binding.root.isVisible = hasSkip
+        if (notifyHide) onSkipHide()
     }
 
-    private fun getCurrentSkip(): PlayerSkips.Skip? {
-        return playerSkips?.opening?.takeIf { checkSkip(it) }
-            ?: playerSkips?.ending?.takeIf { checkSkip(it) }
+    private fun setButtonsEnabled(enabled: Boolean) {
+        binding.btSkipsSkip.isEnabled = enabled
+        binding.btSkipsCancel.isEnabled = enabled
     }
 
-    private fun checkSkip(skip: PlayerSkips.Skip): Boolean {
-        return !skippedList.contains(skip) && currentPosition >= skip.start && currentPosition <= skip.end
-    }
-
-    private fun autoCancel() {
-        val opening = playerSkips?.opening
-        val ending = playerSkips?.ending
-
-        if (opening != null && opening !in skippedList && opening.end < currentPosition) {
-            skippedList.add(opening)
-        }
-
-        if (ending != null && ending !in skippedList && ending.end < currentPosition) {
-            skippedList.add(ending)
-        }
-    }
-
-    private fun cancelSkip() {
-        getCurrentSkip()?.also { skippedList.add(it) }
-    }
-
-    private suspend fun isAutoSkipEnabled(): Boolean = withContext(Dispatchers.IO) {
-        playerSkipsTimer.value
-    }
-
-    private fun onUserChoseSkipOpening() {
-        playerSkipsTimer.value = true
-    }
-
-    private fun onUserChoseWatchOpening() {
-        playerSkipsTimer.value = false
+    private fun dismissSkip() {
+        skipState.dismissCurrentSkip()
+        update(skipState.currentPosition)
     }
 
     private fun skip() {
-        getCurrentSkip()?.also {
-            onSeek(it.end)
-        }
-        cancelSkip()
-    }
-
-    private fun observeSkipTimerState() {
-        _timerFlow
-            .onEach { remainingTimeSec ->
-                val text = if (remainingTimeSec != null) {
-                    "$skipButtonText ($remainingTimeSec)"
-                } else {
-                    skipButtonText
-                }
-                binding.btSkipsSkip.text = text
-            }.launchIn(coroutineScope)
-    }
-
-    private fun startTimerIfNeed() {
-        coroutineScope.launch {
-            if (isAutoSkipEnabled()) {
-                observeSkipTimerState()
-                startTimer()
-            }
-        }
+        val skip = skipState.currentSkip ?: return
+        dismissSkip()
+        onSeek(skip.end)
     }
 
     private fun startTimer() {
-        stopTimer()
         timerJob = coroutineScope.launch {
-            repeat(TIMER_SEC) { sec ->
-                _timerFlow.emit(TIMER_SEC - sec)
-                delay(1000)
+            autoSkipEnabled = withContext(Dispatchers.IO) { playerSkipsTimer.value }
+            while (true) {
+                updateCountdown()
+                delay(100)
             }
-            _timerFlow.emit(null)
-            skip()
         }
     }
 
-    private fun stopTimer() {
+    private fun updateCountdown() {
+        val canCount = !disposed && isSkipVisible && autoSkipEnabled &&
+            playbackState.canCount(appearanceFinished, binding.btSkipsCancel.hasFocus())
+        countdown.setRunning(canCount, SystemClock.uptimeMillis())
+        if (isHiding) return
+        val text = if (autoSkipEnabled && isSkipVisible) {
+            "$skipButtonText (${countdown.remainingSeconds})"
+        } else skipButtonText
+        if (text != lastTimerText) {
+            binding.btSkipsSkip.text = text
+            lastTimerText = text
+            trace("timer seconds=${countdown.remainingSeconds} running=$canCount")
+        }
+        if (canCount && countdown.isFinished) skip()
+    }
+
+    private fun resetTimer() {
         timerJob?.cancel()
         timerJob = null
-        _timerFlow.tryEmit(null)
+        autoSkipEnabled = false
+        countdown.reset()
+        if (!isHiding) {
+            binding.btSkipsSkip.text = skipButtonText
+            lastTimerText = skipButtonText
+        }
+    }
+
+    fun dispose() {
+        disposed = true
+        isHiding = false
+        isSkipVisible = false
+        resetTimer()
+        binding.root.animate().withEndAction(null).cancel()
+        binding.btSkipsCancel.onFocusChangeListener = null
+        binding.btSkipsSkip.setOnKeyListener(null)
+        binding.btSkipsCancel.setOnKeyListener(null)
+        binding.root.isVisible = false
+    }
+
+    private fun trace(event: String) {
+        if (BuildConfig.DEBUG) {
+            Timber.tag("TvPlayerSkips").d("%s positionMs=%d remainingMs=%d", event, skipState.currentPosition, countdown.remainingMs)
+        }
     }
 }

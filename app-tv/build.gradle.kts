@@ -119,6 +119,8 @@ kotlin {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+
     implementation(libs.kotlin.stdlib)
 
     implementation(project(":data"))

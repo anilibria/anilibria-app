@@ -13,7 +13,11 @@ class CardsDataConverter(
     private val context: Context,
 ) {
 
-    fun toCard(releaseItem: Release) = releaseItem.run {
+    fun toCard(
+        releaseItem: Release,
+        showFavoriteBadge: Boolean = true,
+        description: String? = null,
+    ) = releaseItem.run {
         val torrentDate = torrentUpdate.takeIf { it != 0 }?.let { Date(it * 1000L) }
         val seasonText = "${year.orEmpty()} ${season.orEmpty()}"
         val genreText = genres.firstOrNull()?.capitalizeDefault()
@@ -24,10 +28,10 @@ class CardsDataConverter(
         val descItems = listOfNotNull(seasonText, genreText, seriesText, updateText)
         LibriaCard(
             title.orEmpty(),
-            descItems.joinToString(" • "),
+            description ?: descItems.joinToString(" • "),
             poster.orEmpty(),
             LibriaCard.Type.Release(releaseItem.id)
-        )
+        ).withReleaseStatus(blockedInfo, favoriteInfo, showFavoriteBadge)
     }
 
     fun toCard(youtubeItem: YoutubeItem) = youtubeItem.run {

@@ -106,6 +106,13 @@ abstract class BaseCardsViewModel : LifecycleViewModel() {
                 if (needsModify) {
                     currentPage = requestPage
                     currentCards.addAll(newCards)
+                } else {
+                    // Keep the row order and loaded pages, but refresh poster status and text.
+                    val refreshedCards = newCards.associateBy { it.getId() }
+                    currentCards.indices.forEach { index ->
+                        currentCards[index] = refreshedCards[currentCards[index].getId()]
+                            ?: currentCards[index]
+                    }
                 }
 
                 if (hasMoreCards(newCards, currentCards)) {

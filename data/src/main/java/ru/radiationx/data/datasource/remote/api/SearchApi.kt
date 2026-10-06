@@ -38,7 +38,7 @@ class SearchApi @Inject constructor(
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "search",
             "search" to name,
-            "filter" to "id,code,names,poster"
+            "filter" to "id,code,names,poster,favorite,blockedInfo"
         )
         return client.post(apiConfig.apiUrl, args)
             .fetchListApiResponse(moshi)
@@ -63,7 +63,7 @@ class SearchApi @Inject constructor(
             "xpage" to "catalog",
             "sort" to sort,
             "page" to page.toString(),
-            "filter" to "id,torrents,playlist,externalPlaylist,favorite,moon,blockedInfo",
+            "filter" to "id,torrents,playlist,externalPlaylist,moon",
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)

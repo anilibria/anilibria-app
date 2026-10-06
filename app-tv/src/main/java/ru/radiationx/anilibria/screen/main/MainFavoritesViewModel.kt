@@ -49,7 +49,9 @@ class MainFavoritesViewModel @Inject constructor(
         .getFavorites(requestPage)
         .also { releaseInteractor.updateItemsCache(it.data) }
         .let { favoriteItems ->
-            favoriteItems.data.sortedByDescending { it.torrentUpdate }.map { converter.toCard(it) }
+            favoriteItems.data.sortedByDescending { it.torrentUpdate }.map {
+                converter.toCard(it, showFavoriteBadge = false)
+            }
         }
 
     override fun onLibriaCardClick(card: LibriaCard) {

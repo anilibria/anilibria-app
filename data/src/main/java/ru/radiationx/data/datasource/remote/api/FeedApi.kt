@@ -18,7 +18,7 @@ class FeedApi @Inject constructor(
         val args: MutableMap<String, String> = mutableMapOf(
             "query" to "feed",
             "page" to page.toString(),
-            "filter" to "id,torrents,playlist,externalPlaylist,favorite,moon,blockedInfo",
+            "filter" to "id,torrents,playlist,externalPlaylist,moon",
             "rm" to "true"
         )
         return client.post(apiConfig.apiUrl, args)

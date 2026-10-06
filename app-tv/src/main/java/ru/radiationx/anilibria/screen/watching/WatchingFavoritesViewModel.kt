@@ -51,7 +51,7 @@ class WatchingFavoritesViewModel @Inject constructor(
             releaseInteractor.updateItemsCache(it.data)
         }
         .let { favoriteItems ->
-            favoriteItems.data.map { converter.toCard(it) }
+            favoriteItems.data.map { converter.toCard(it, showFavoriteBadge = false) }
         }
 
     override fun onLibriaCardClick(card: LibriaCard) {

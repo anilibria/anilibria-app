@@ -2,6 +2,8 @@ package ru.radiationx.data.entity.mapper
 
 import ru.radiationx.data.datasource.remote.address.ApiConfig
 import ru.radiationx.data.entity.domain.release.GenreItem
+import ru.radiationx.data.entity.domain.release.BlockedInfo
+import ru.radiationx.data.entity.domain.release.FavoriteInfo
 import ru.radiationx.data.entity.domain.release.YearItem
 import ru.radiationx.data.entity.domain.search.SuggestionItem
 import ru.radiationx.data.entity.domain.types.ReleaseCode
@@ -20,7 +22,9 @@ fun SuggestionResponse.toDomain(
     names = names.map {
         apiUtils.escapeHtml(it).toString()
     },
-    poster = poster?.appendBaseUrl(apiConfig.baseImagesUrl)
+    poster = poster?.appendBaseUrl(apiConfig.baseImagesUrl),
+    blockedInfo = blockedInfo?.toDomain() ?: BlockedInfo(false, null),
+    favoriteInfo = favorite?.toDomain() ?: FavoriteInfo(0, false),
 )
 
 fun ReleaseResponse.toSuggestionDomain(
@@ -32,7 +36,9 @@ fun ReleaseResponse.toSuggestionDomain(
     names = names.orEmpty().map {
         apiUtils.escapeHtml(it).toString()
     },
-    poster = poster?.appendBaseUrl(apiConfig.baseImagesUrl)
+    poster = poster?.appendBaseUrl(apiConfig.baseImagesUrl),
+    blockedInfo = blockedInfo?.toDomain() ?: BlockedInfo(false, null),
+    favoriteInfo = favorite?.toDomain() ?: FavoriteInfo(0, false),
 )
 
 fun String.toYearItem(): YearItem = YearItem(

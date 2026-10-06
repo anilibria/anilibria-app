@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
+import ru.radiationx.anilibria.common.withReleaseStatus
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.data.entity.domain.search.Suggestions
 import ru.radiationx.data.repository.SearchRepository
@@ -58,7 +59,7 @@ class SuggestionsResultViewModel @Inject constructor(
                 it.names.getOrNull(1).orEmpty(),
                 it.poster.orEmpty(),
                 LibriaCard.Type.Release(it.id)
-            )
+            ).withReleaseStatus(it.blockedInfo, it.favoriteInfo)
         }
     }
 

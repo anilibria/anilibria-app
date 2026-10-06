@@ -46,8 +46,10 @@ class WatchingContinueViewModel @Inject constructor(
         }
         .let { pairs ->
             pairs.sortedByDescending { it.second?.lastAccessRaw }.map {
-                converter.toCard(it.first)
-                    .copy(description = "Вы остановились на ${it.second?.id?.id} серии")
+                converter.toCard(
+                    it.first,
+                    description = "Вы остановились на ${it.second?.id?.id} серии",
+                )
             }
         }
 

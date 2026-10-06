@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.DetailDataConverter
 import ru.radiationx.anilibria.common.DetailsState
@@ -52,14 +53,13 @@ class DetailHeaderViewModel @Inject constructor(
 
     init {
         updateProgress()
-        releaseInteractor.getItem(releaseId)?.also {
-            updateRelease(it, emptyList())
-        }
         combine(
-            releaseInteractor.observeFull(releaseId),
+            releaseInteractor.observeFull(releaseId)
+                .onEach { isFullLoaded = true }
+                .onStart { releaseInteractor.getItem(releaseId)?.let { emit(it) } }
+                .withFavoriteChanges(favoriteRepository.observeFavoriteChanges(releaseId)),
             releaseInteractor.observeAccesses(releaseId)
         ) { release, accesses ->
-            isFullLoaded = true
             updateRelease(release, accesses)
         }.launchIn(viewModelScope)
     }

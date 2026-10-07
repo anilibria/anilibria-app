@@ -1,11 +1,10 @@
 package ru.radiationx.anilibria.common
 
 import android.animation.ValueAnimator
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import androidx.annotation.ColorInt
+import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.FragmentActivity
 import androidx.leanback.app.BackgroundManager
 import androidx.lifecycle.lifecycleScope
@@ -38,25 +37,17 @@ class GradientBackgroundManager @Inject constructor(
     private val defaultColor = activity.getCompatColor(R.color.dark_colorAccent)
     private val foregroundColor = activity.getCompatColor(R.color.dark_windowBackground)
 
-    private val backgroundDrawable = ColorDrawable(defaultColor)
+    private var backgroundColor = defaultColor
     private val foregroundDrawable = ColorDrawable(foregroundColor)
-    private val classicGradientDrawable = GradientDrawable(
-        GradientDrawable.Orientation.BL_TR,
-        intArrayOf(
-            Color.parseColor("#ee000000"),
-            Color.parseColor("#55000000")
-        )
-    )
-    private val customGradientDrawable = LinearGradientDrawable(
+    // Dither the final opaque colors, rather than a black alpha mask that is
+    // blended with the poster color after the gradient has been quantized.
+    private val backgroundDrawable = LinearGradientDrawable(
         190f,
-        intArrayOf(
-            Color.parseColor("#ee000000"),
-            Color.parseColor("#55000000")
-        )
+        gradientColors(defaultColor)
     )
     private val layerDrawable = LayerDrawable(
         arrayOf(
-            backgroundDrawable, customGradientDrawable, foregroundDrawable
+            backgroundDrawable, foregroundDrawable
         )
     )
 
@@ -73,6 +64,11 @@ class GradientBackgroundManager @Inject constructor(
     }
 
     private val defaultColorModifier = { color: Int -> color }
+
+    private fun gradientColors(@ColorInt color: Int): IntArray = intArrayOf(
+        ColorUtils.compositeColors(0xee000000.toInt(), color),
+        ColorUtils.compositeColors(0x55000000, color)
+    )
 
     init {
         if (!backgroundManager.isAttached) {
@@ -168,11 +164,13 @@ class GradientBackgroundManager @Inject constructor(
             instantApplyForeground(false)
         }
         primaryColorAnimator = ValueAnimator
-            .ofObject(colorEvaluator, backgroundDrawable.color, color)
+            .ofObject(colorEvaluator, backgroundColor, color)
             .apply {
                 duration = 500
                 addUpdateListener {
-                    backgroundDrawable.color = it.animatedValue as Int
+                    backgroundColor = it.animatedValue as Int
+                    val colors = gradientColors(backgroundColor)
+                    backgroundDrawable.setColors(colors[0], colors[1])
                 }
                 start()
             }

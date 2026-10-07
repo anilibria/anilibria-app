@@ -42,7 +42,7 @@ class LinearGradientDrawable(
     private var radius: Float = 0f
     private var centerPoint: PointF = PointF()
     private var startPoint: PointF = PointF()
-    private val gradientPaint = Paint()
+    private val gradientPaint = Paint(Paint.DITHER_FLAG)
 
 
     private val blue = Paint().apply {

@@ -62,6 +62,9 @@ class GradientBackgroundManager @Inject constructor(
 
     private var primaryColorAnimator: ValueAnimator? = null
     private var foregroundColorAnimator: ValueAnimator? = null
+
+    val isAnimating: Boolean
+        get() = primaryColorAnimator?.isRunning == true || foregroundColorAnimator?.isRunning == true
     private var imageApplierJob: Job? = null
     private var colorApplierJob: Job? = null
     private val colorApplier = MutableStateFlow(defaultColor)

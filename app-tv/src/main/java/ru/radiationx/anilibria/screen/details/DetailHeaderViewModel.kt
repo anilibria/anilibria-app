@@ -52,9 +52,6 @@ class DetailHeaderViewModel @Inject constructor(
 
     init {
         updateProgress()
-        releaseInteractor.getItem(releaseId)?.also {
-            updateRelease(it, emptyList())
-        }
         combine(
             releaseInteractor.observeFull(releaseId),
             releaseInteractor.observeAccesses(releaseId)

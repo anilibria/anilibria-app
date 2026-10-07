@@ -1,11 +1,14 @@
 package ru.radiationx.anilibria.screen.player
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.annotation.OptIn
+import androidx.core.net.toUri
 import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
@@ -14,6 +17,7 @@ import androidx.leanback.widget.ListRow
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -37,47 +41,100 @@ open class BasePlayerFragment : VideoSupportFragment() {
     protected var skipsPart: PlayerSkipsPart? = null
         private set
 
+    private var isPlayPausePressed = false
+    private var upNavigationFocus: View? = null
+
     @SuppressLint("RestrictedApi")
-    @UnstableApi
+    @OptIn(UnstableApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        isControlsOverlayAutoHideEnabled = true
+        isShowOrHideControlsOverlayOnUserInteraction = true
+
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         initializePlayer()
         initializeRows()
+
+        // Attach after the glue host, which installs its own key listener during initialization.
+        setOnKeyInterceptListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                when (event.action) {
+                    KeyEvent.ACTION_DOWN -> {
+                        if (!isPlayPausePressed && event.repeatCount == 0) {
+                            if (playerGlue?.isPlaying == true) {
+                                playerGlue?.pause()
+                            } else {
+                                playerGlue?.play()
+                            }
+                        }
+                        isPlayPausePressed = true
+                    }
+                    KeyEvent.ACTION_UP -> isPlayPausePressed = false
+                }
+                true
+            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                when (event.action) {
+                    KeyEvent.ACTION_DOWN -> {
+                        if (event.repeatCount == 0) {
+                            val focusedView = view.findFocus()
+                            upNavigationFocus = focusedView?.takeIf {
+                                isControlsOverlayVisible &&
+                                    isShowOrHideControlsOverlayOnUserInteraction &&
+                                    // Up is intentionally consumed while the seek bar is seeking.
+                                    it.id != androidx.leanback.R.id.playback_progress
+                            }
+                        }
+                        false
+                    }
+                    KeyEvent.ACTION_UP -> {
+                        val previousFocus = upNavigationFocus
+                        upNavigationFocus = null
+                        if (previousFocus != null && previousFocus === view.findFocus() &&
+                            isControlsOverlayVisible && isShowOrHideControlsOverlayOnUserInteraction
+                        ) {
+                            // Leanback shows the overlay on key-down events, so hide on release.
+                            hideControlsOverlay(true)
+                            true
+                        } else {
+                            false
+                        }
+                    }
+                    else -> false
+                }
+            } else {
+                playerGlue?.onKey(view, keyCode, event) == true
+            }
+        }
 
         skipsPart = PlayerSkipsPart(
             parent = view as FrameLayout,
             skipButtonText = getString(R.string.player_skip),
             coroutineScope = viewLifecycleOwner.lifecycleScope,
             playerSkipsTimer = get<PreferencesHolder>().playerSkipsTimer,
-            onSeek = {
-                player?.seekTo(it)
-            },
+            onSeek = { position -> player?.seekTo(position) },
             onSkipShow = {
                 isShowOrHideControlsOverlayOnUserInteraction = false
+                isControlsOverlayAutoHideEnabled = false
                 hideControlsOverlay(false)
             },
             onSkipHide = {
                 isShowOrHideControlsOverlayOnUserInteraction = true
+                isControlsOverlayAutoHideEnabled = playerGlue?.isPlaying == true
+                if (playerGlue?.isPlaying == true) {
+                    hideControlsOverlay(false)
+                } else {
+                    showControlsOverlay(false)
+                }
             }
         )
 
         playerGlue?.playbackListener = object : VideoPlayerGlue.PlaybackListener {
-            @UnstableApi
             override fun onUpdateProgress() {
                 skipsPart?.update(player?.currentPosition ?: 0)
             }
         }
 
-        fadeCompleteListener = object : OnFadeCompleteListener() {
-
-            override fun onFadeInComplete() {
-                super.onFadeInComplete()
-                // workaround for hiding controls when user click "enter"
-                isControlsOverlayAutoHideEnabled = false
-                isControlsOverlayAutoHideEnabled = true
-            }
-        }
     }
 
     override fun onVideoSizeChanged(videoWidth: Int, videoHeight: Int) {
@@ -88,16 +145,21 @@ open class BasePlayerFragment : VideoSupportFragment() {
     }
 
     override fun onPause() {
+        isPlayPausePressed = false
+        upNavigationFocus = null
         super.onPause()
         playerGlue?.pause()
     }
 
+    @OptIn(UnstableApi::class)
     override fun onDestroyView() {
         super.onDestroyView()
+        upNavigationFocus = null
         skipsPart = null
         playerGlue?.playbackListener = null
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         releasePlayer()
+        playerGlue = null
     }
 
     protected open fun onCompletePlaying() {}
@@ -121,9 +183,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
 
     @UnstableApi
     private fun initializePlayer() {
-        if (player != null) {
-            throw RuntimeException("Player already initialized")
-        }
+        check(player == null) { "Player already initialized" }
 
         val dataSourceProvider = get<PlayerDataSourceProvider>()
         val dataSourceType = dataSourceProvider.get()
@@ -131,36 +191,40 @@ open class BasePlayerFragment : VideoSupportFragment() {
         val mediaSourceFactory = DefaultMediaSourceFactory(requireContext()).apply {
             setDataSourceFactory(dataSourceFactory)
         }
-        val player = ExoPlayer.Builder(requireContext())
+        player = ExoPlayer.Builder(requireContext())
             .setMediaSourceFactory(mediaSourceFactory)
             .setHandleAudioBecomingNoisy(true)
             .build()
-
-        player.addListener(object : Player.Listener {
-
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                super.onPlaybackStateChanged(playbackState)
-                when (playbackState) {
-                    Player.STATE_ENDED -> onCompletePlaying()
-                    Player.STATE_READY -> onPreparePlaying()
-                    Player.STATE_BUFFERING -> {
+            .apply {
+                addListener(object : Player.Listener {
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        super.onPlaybackStateChanged(playbackState)
+                        when (playbackState) {
+                            Player.STATE_ENDED -> onCompletePlaying()
+                            Player.STATE_READY -> onPreparePlaying()
+                            Player.STATE_BUFFERING, Player.STATE_IDLE -> {}
+                        }
                     }
-
-                    Player.STATE_IDLE -> {
+                    override fun onPlayerError(error: PlaybackException) {
+                        super.onPlayerError(error)
+                        Toast.makeText(
+                            requireContext(),
+                            "Ошибка при воспроизведении: ${error.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                }
+                })
             }
-        })
 
+        val playerAdapter = LeanbackPlayerAdapter(requireContext(), player!!, 500)
 
-        val playerAdapter = LeanbackPlayerAdapter(requireContext(), player, 500)
-
-        val playerGlue = VideoPlayerGlue(requireContext(), playerAdapter).apply {
+        playerGlue = VideoPlayerGlue(
+            context = requireContext(),
+            fragment = this,
+            playerAdapter = playerAdapter
+        ).apply {
             host = VideoSupportFragmentGlueHost(this@BasePlayerFragment)
         }
-
-        this.player = player
-        this.playerGlue = playerGlue
     }
 
     private fun releasePlayer() {
@@ -169,7 +233,7 @@ open class BasePlayerFragment : VideoSupportFragment() {
     }
 
     protected fun preparePlayer(url: String) {
-        player?.setMediaItem(MediaItem.fromUri(Uri.parse(url)), false)
+        player?.setMediaItem(MediaItem.fromUri(url.toUri()), false)
         player?.prepare()
     }
 

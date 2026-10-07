@@ -78,6 +78,8 @@ class LibriaReleaseViewHolder(
         binding.rowReleaseActionOther.setOnClickListener { otherClickListener.invoke() }
         binding.rowReleaseActionFavorite.setOnClickListener { favoriteClickListener.invoke() }
         binding.rowReleaseDescriptionCard.setOnClickListener { descriptionClickListener.invoke() }
+        // Запускаем бегущую строку без передачи ей фокуса пульта.
+        binding.rowReleaseExtra.isSelected = true
         binding.root.updateLayoutParams {
             height =
                 binding.root.resources.displayMetrics.heightPixels - 1 // Шобы следующая строка подгрузилась при открытии
@@ -149,11 +151,19 @@ class LibriaReleaseViewHolder(
             "Добавить в избранное"
         }
 
-        if (details.hasViewed) {
-            binding.rowReleaseActionContinue.requestFocus()
-        } else {
-            binding.rowReleaseActionPlay.requestFocus()
+        val firstAction = when {
+            details.hasViewed -> binding.rowReleaseActionContinue
+            details.hasEpisodes -> binding.rowReleaseActionPlay
+            else -> binding.rowReleaseActionFavorite
         }
+        binding.rowReleaseDescriptionCard.nextFocusDownId = firstAction.id
+        binding.rowReleaseDescriptionCard.nextFocusLeftId = firstAction.id
+        binding.rowReleaseDescriptionCard.nextFocusRightId = if (binding.rowReleaseActionOther.isVisible) {
+            binding.rowReleaseActionOther.id
+        } else {
+            binding.rowReleaseActionFavorite.id
+        }
+        firstAction.requestFocus()
 
         binding.rowReleaseImageCard.showImageUrl(details.image)
     }

@@ -80,8 +80,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
-        android:ellipsize="end"
-        android:maxLines="1"
+        android:ellipsize="marquee"
+        android:focusable="false"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
         android:textColor="@color/dark_textDefault"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/rowReleaseHQMarker"
@@ -103,6 +105,7 @@
         app:layout_constraintEnd_toStartOf="@id/rowReleaseFavoriteCount"
         app:layout_constraintStart_toEndOf="@id/rowReleaseExtra"
         app:layout_constraintTop_toTopOf="@id/rowReleaseExtra"
+        app:layout_constraintVertical_bias="0"
         app:tint="@color/dark_textDefault"
         tools:visibility="visible" />
 
@@ -123,6 +126,7 @@
         app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
         app:layout_constraintStart_toEndOf="@id/rowReleaseHQMarker"
         app:layout_constraintTop_toTopOf="@id/rowReleaseExtra"
+        app:layout_constraintVertical_bias="0"
         tools:text="13 999"
         tools:visibility="visible" />
 
@@ -149,20 +153,20 @@
         tools:visibility="visible" />
 
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <ru.radiationx.anilibria.ui.widget.DescriptionScrollView
         android:id="@+id/rowReleaseDescriptionCard"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="?browsePaddingEnd"
         android:layout_marginBottom="16dp"
         android:background="@drawable/bg_details_description"
         android:clickable="false"
-        android:focusable="false"
+        android:focusable="true"
         android:focusableInTouchMode="false"
-        android:nextFocusDown="@id/rowReleaseActions"
-        android:orientation="vertical"
-        app:layout_constrainedHeight="true"
+        android:padding="8dp"
+        android:scrollbarStyle="insideInset"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@id/rowReleaseActions"
         app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
         app:layout_constraintStart_toStartOf="@id/guideline_left"
@@ -173,17 +177,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha="0.8"
-            android:ellipsize="end"
             android:lineSpacingMultiplier="1.33"
-            android:maxLines="4"
+            android:paddingEnd="4dp"
             android:textColor="@color/dark_textDefault"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/rowReleaseImageCard"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rowReleaseExtra"
             tools:text="@tools:sample/lorem/random" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </ru.radiationx.anilibria.ui.widget.DescriptionScrollView>
 
 
     <androidx.appcompat.widget.LinearLayoutCompat

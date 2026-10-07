@@ -12,7 +12,8 @@ import ru.radiationx.shared.ktx.android.putExtra
 
 data class PlayerExtra(
     val releaseId: ReleaseId,
-    val episodeId: EpisodeId?
+    val episodeId: EpisodeId?,
+    val restart: Boolean = false,
 ) : QuillExtra
 
 abstract class BasePlayerGuidedFragment : FakeGuidedStepFragment() {

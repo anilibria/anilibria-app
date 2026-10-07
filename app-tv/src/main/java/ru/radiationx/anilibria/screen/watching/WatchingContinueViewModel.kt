@@ -27,7 +27,8 @@ class WatchingContinueViewModel @Inject constructor(
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> = episodesCheckerHolder
         .getEpisodes()
         .let { episodeAccesses ->
-            episodeAccesses.sortedByDescending { it.lastAccessRaw }.map { it.id.releaseId }
+            episodeAccesses.filter { it.hasProgress }
+                .sortedByDescending { it.lastAccessRaw }.map { it.id.releaseId }
         }
         .let { ids ->
             if (ids.isEmpty()) {
@@ -40,7 +41,8 @@ class WatchingContinueViewModel @Inject constructor(
         .let { releases ->
             releases.map { release ->
                 val lastEpisode =
-                    releaseInteractor.getAccesses(release.id).maxByOrNull { it.lastAccessRaw }
+                    releaseInteractor.getAccesses(release.id).filter { it.hasProgress }
+                        .maxByOrNull { it.lastAccessRaw }
                 Pair(release, lastEpisode)
             }
         }

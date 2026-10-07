@@ -2,9 +2,12 @@ package ru.radiationx.anilibria.screen.player.episodes
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import ru.radiationx.anilibria.common.fragment.GuidedRouter
 import ru.radiationx.anilibria.screen.LifecycleViewModel
 import ru.radiationx.anilibria.screen.player.PlayerController
@@ -13,8 +16,6 @@ import ru.radiationx.data.entity.domain.release.EpisodeAccess
 import ru.radiationx.data.entity.domain.release.Release
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.interactors.ReleaseInteractor
-import ru.radiationx.shared.ktx.asTimeSecString
-import java.util.Date
 import javax.inject.Inject
 
 class PlayerEpisodesViewModel @Inject constructor(
@@ -26,19 +27,24 @@ class PlayerEpisodesViewModel @Inject constructor(
 
     val episodesData = MutableStateFlow<List<Group>>(emptyList())
     val selectedAction = MutableStateFlow<Action?>(null)
+    private var selectionInitialized = false
 
     init {
         val playerData = playerController.data.value
-        if (playerData != null) {
-            updateEpisodes(playerData)
-        } else {
-            releaseInteractor
-                .observeFull(argExtra.releaseId)
-                .onEach {
-                    updateEpisodes(listOf(it))
-                }
-                .launchIn(viewModelScope)
-        }
+        val releases = playerData?.let { flowOf(it) }
+            ?: releaseInteractor.observeFull(argExtra.releaseId).map { listOf(it) }
+        releases.flatMapLatest { items ->
+            combine(items.map { releaseInteractor.observeAccesses(it.id) }) { accesses ->
+                items to accesses.flatMap { it }.associateBy { it.id }
+            }
+        }.onEach { (items, accesses) ->
+            val groups = items.toGroups(accesses)
+            episodesData.value = groups
+            if (!selectionInitialized) {
+                selectedAction.value = groups.findAction { it.episodeId == argExtra.episodeId }
+                selectionInitialized = true
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun applyEpisode(actionId: Long) {
@@ -46,17 +52,6 @@ class PlayerEpisodesViewModel @Inject constructor(
         val action = episodesData.value.findAction { it.id == actionId }
         if (action != null) {
             playerController.selectEpisodeRelay.emit(action.episodeId)
-        }
-    }
-
-    private fun updateEpisodes(releases: List<Release>) {
-        viewModelScope.launch {
-            val accesses = releases
-                .flatMap { releaseInteractor.getAccesses(it.id) }
-                .associateBy { it.id }
-            val groups = releases.toGroups(accesses)
-            episodesData.value = groups
-            selectedAction.value = groups.findAction { it.episodeId == argExtra.episodeId }
         }
     }
 
@@ -76,16 +71,12 @@ class PlayerEpisodesViewModel @Inject constructor(
             val groupId = id++
             val actions = release.episodes.asReversed().map { episode ->
                 val access = accesses[episode.id]
-                val description = if (access != null && access.isViewed && access.seek > 0) {
-                    "Остановлена на ${Date(access.seek).asTimeSecString()}"
-                } else {
-                    null
-                }
                 Action(
                     id = id++,
                     episodeId = episode.id,
                     title = episode.title.orEmpty(),
-                    description = description
+                    description = access.progressDescription(),
+                    isViewed = access?.isViewed == true,
                 )
             }
             Group(
@@ -107,5 +98,6 @@ class PlayerEpisodesViewModel @Inject constructor(
         val episodeId: EpisodeId,
         val title: String,
         val description: String?,
+        val isViewed: Boolean,
     )
 }

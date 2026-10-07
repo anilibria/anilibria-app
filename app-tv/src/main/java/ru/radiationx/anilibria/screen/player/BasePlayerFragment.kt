@@ -11,6 +11,8 @@ import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.ArrayObjectAdapter
 import androidx.leanback.widget.ClassPresenterSelector
 import androidx.leanback.widget.ListRow
+import androidx.leanback.widget.PlaybackSeekDataProvider
+import androidx.leanback.widget.PlaybackSeekUi
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -37,10 +39,14 @@ open class BasePlayerFragment : VideoSupportFragment() {
     protected var skipsPart: PlayerSkipsPart? = null
         private set
 
+    protected var isPlaybackSeeking = false
+        private set
+
     @SuppressLint("RestrictedApi")
     @UnstableApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isPlaybackSeeking = false
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         initializePlayer()
         initializeRows()
@@ -156,7 +162,32 @@ open class BasePlayerFragment : VideoSupportFragment() {
         val playerAdapter = LeanbackPlayerAdapter(requireContext(), player, 500)
 
         val playerGlue = VideoPlayerGlue(requireContext(), playerAdapter).apply {
-            host = VideoSupportFragmentGlueHost(this@BasePlayerFragment)
+            host = object : VideoSupportFragmentGlueHost(this@BasePlayerFragment) {
+                override fun setPlaybackSeekUiClient(client: PlaybackSeekUi.Client?) {
+                    super.setPlaybackSeekUiClient(client?.let { delegate ->
+                        object : PlaybackSeekUi.Client() {
+                            override fun isSeekEnabled(): Boolean = delegate.isSeekEnabled
+
+                            override fun getPlaybackSeekDataProvider(): PlaybackSeekDataProvider? =
+                                delegate.playbackSeekDataProvider
+
+                            override fun onSeekStarted() {
+                                isPlaybackSeeking = true
+                                delegate.onSeekStarted()
+                            }
+
+                            override fun onSeekPositionChanged(pos: Long) {
+                                delegate.onSeekPositionChanged(pos)
+                            }
+
+                            override fun onSeekFinished(cancelled: Boolean) {
+                                delegate.onSeekFinished(cancelled)
+                                isPlaybackSeeking = false
+                            }
+                        }
+                    })
+                }
+            }
         }
 
         this.player = player

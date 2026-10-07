@@ -19,6 +19,15 @@ data class EpisodeAccess(
     @IgnoredOnParcel
     val lastValidAccess = lastAccessRaw.takeIf { it > 0L }
 
+    @IgnoredOnParcel
+    val hasProgress: Boolean get() = seek > 0L
+
+    fun withPlaybackProgress(seek: Long, lastAccess: Long, isViewed: Boolean): EpisodeAccess =
+        copy(seek = seek, lastAccess = lastAccess, isViewed = isViewed)
+
+    fun forPlaybackStart(lastAccess: Long, restart: Boolean = false): EpisodeAccess =
+        if (restart || isViewed) withPlaybackProgress(0L, lastAccess, false) else this
+
     companion object {
         fun createDefault(id: EpisodeId): EpisodeAccess {
             return EpisodeAccess(id, 0L, false, 0L)

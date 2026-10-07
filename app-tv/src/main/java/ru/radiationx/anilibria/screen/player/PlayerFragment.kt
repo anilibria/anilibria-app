@@ -4,7 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.Player
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import ru.radiationx.data.entity.domain.types.EpisodeId
 import ru.radiationx.data.entity.domain.types.ReleaseId
 import ru.radiationx.quill.viewModel
@@ -19,20 +26,24 @@ class PlayerFragment : BasePlayerFragment() {
 
         private const val ARG_RELEASE_ID = "release id"
         private const val ARG_EPISODE_ID = "episode id"
+        private const val ARG_RESTART = "restart"
 
         fun newInstance(
             releaseId: ReleaseId,
             episodeId: EpisodeId?,
+            restart: Boolean = false,
         ): PlayerFragment = PlayerFragment().putExtra {
             putParcelable(ARG_RELEASE_ID, releaseId)
             putParcelable(ARG_EPISODE_ID, episodeId)
+            putBoolean(ARG_RESTART, restart)
         }
     }
 
     private val viewModel by viewModel<PlayerViewModel> {
         PlayerExtra(
             releaseId = getExtraNotNull(ARG_RELEASE_ID),
-            episodeId = getExtra(ARG_EPISODE_ID)
+            episodeId = getExtra(ARG_EPISODE_ID),
+            restart = arguments?.getBoolean(ARG_RESTART) ?: false,
         )
     }
 
@@ -41,6 +52,22 @@ class PlayerFragment : BasePlayerFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (isActive) {
+                    val currentPlayer = player
+                    val video = viewModel.videoData.value
+                    if (currentPlayer != null && video != null && !isPlaybackSeeking &&
+                        currentPlayer.playbackState == Player.STATE_READY &&
+                        currentPlayer.currentMediaItem?.localConfiguration?.uri?.toString() == video.url
+                    ) {
+                        viewModel.onPlaybackProgress(video.episodeId, currentPlayer.currentPosition, currentPlayer.duration)
+                    }
+                    delay(1000L)
+                }
+            }
+        }
 
         playerGlue?.actionListener = object : VideoPlayerGlue.OnActionClickedListener {
 
@@ -83,7 +110,7 @@ class PlayerFragment : BasePlayerFragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.onPauseClick(getPosition())
+        if (!isPlaybackSeeking) viewModel.onPauseClick(getPosition())
     }
 
     override fun onCompletePlaying() {

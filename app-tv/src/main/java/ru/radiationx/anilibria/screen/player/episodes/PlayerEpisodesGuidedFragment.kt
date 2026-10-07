@@ -24,7 +24,13 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
         viewLifecycleOwner.lifecycle.addObserver(viewModel)
 
         subscribeTo(viewModel.episodesData) {
+            val selectedId = actions.getOrNull(selectedActionPosition)?.id
             actions = createGroupedActions(it)
+            selectedId?.let { id ->
+                actions.indexOfFirst { it.id == id }.takeIf { it >= 0 }?.let { position ->
+                    selectedActionPosition = position
+                }
+            }
         }
 
         subscribeTo(viewModel.selectedAction.filterNotNull()) { action ->
@@ -60,6 +66,7 @@ class PlayerEpisodesGuidedFragment : BasePlayerGuidedFragment() {
                 .id(action.id)
                 .title(action.title)
                 .description(action.description)
+                .apply { if (action.isViewed) icon(R.drawable.ic_episode_viewed) }
                 .build()
         }
     }

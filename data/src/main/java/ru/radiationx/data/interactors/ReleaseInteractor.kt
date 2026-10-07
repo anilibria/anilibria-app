@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import ru.radiationx.data.datasource.holders.EpisodesCheckerHolder
 import ru.radiationx.data.datasource.holders.PreferencesHolder
 import ru.radiationx.data.entity.domain.release.EpisodeAccess
@@ -32,6 +34,7 @@ class ReleaseInteractor @Inject constructor(
     private val releases = MutableStateFlow<List<Release>>(emptyList())
 
     private val sharedRequests = SharedRequests<RequestKey, Release>()
+    private val episodeUpdateMutex = Mutex()
 
     suspend fun getRandomRelease(): RandomRelease = releaseRepository.getRandomRelease()
 
@@ -146,19 +149,31 @@ class ReleaseInteractor @Inject constructor(
     }
 
     suspend fun setAccessSeek(id: EpisodeId, seek: Long) {
+        // Keep the existing mobile player's contract; TV supplies its completion decision.
+        setPlaybackProgress(id, seek, isViewed = true)
+    }
+
+    suspend fun setPlaybackProgress(id: EpisodeId, seek: Long, isViewed: Boolean) {
+        if (seek < 0L) return
         updateEpisode(id) {
-            it.copy(
-                seek = seek,
-                lastAccess = System.currentTimeMillis(),
-                isViewed = true
-            )
+            it.withPlaybackProgress(seek, System.currentTimeMillis(), isViewed)
+        }
+    }
+
+    suspend fun startPlayback(id: EpisodeId, restart: Boolean = false) {
+        episodeUpdateMutex.withLock {
+            val access = episodesCheckerStorage.getEpisode(id) ?: EpisodeAccess.createDefault(id)
+            val startedAccess = access.forPlaybackStart(System.currentTimeMillis(), restart)
+            if (startedAccess != access) episodesCheckerStorage.putEpisode(startedAccess)
         }
     }
 
     private suspend fun updateEpisode(id: EpisodeId, block: (EpisodeAccess) -> EpisodeAccess) {
-        val access = episodesCheckerStorage.getEpisode(id) ?: EpisodeAccess.createDefault(id)
-        val newAccess = block.invoke(access)
-        episodesCheckerStorage.putEpisode(newAccess)
+        episodeUpdateMutex.withLock {
+            val access = episodesCheckerStorage.getEpisode(id) ?: EpisodeAccess.createDefault(id)
+            val newAccess = block.invoke(access)
+            episodesCheckerStorage.putEpisode(newAccess)
+        }
     }
 
     private suspend fun updateEpisodes(

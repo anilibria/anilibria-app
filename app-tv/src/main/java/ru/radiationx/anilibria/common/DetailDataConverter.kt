@@ -17,6 +17,7 @@ class DetailDataConverter @Inject constructor() {
         isFull: Boolean,
         accesses: List<EpisodeAccess>,
     ): LibriaDetails = releaseItem.run {
+        val playback = ReleasePlaybackState.resolve(episodes.asReversed().map { it.id }, accesses)
         LibriaDetails(
             id = id,
             titleRu = title.orEmpty(),
@@ -35,7 +36,8 @@ class DetailDataConverter @Inject constructor() {
             hasFullHd = episodes.any { PlayerQuality.FULLHD in it.qualityInfo },
             isFavorite = favoriteInfo.isAdded,
             hasEpisodes = episodes.isNotEmpty(),
-            hasViewed = accesses.any { it.isViewed },
+            showPlayAction = playback.showPlayAction,
+            continueText = playback.continueText,
             hasWebPlayer = moonwalkLink != null
         )
     }

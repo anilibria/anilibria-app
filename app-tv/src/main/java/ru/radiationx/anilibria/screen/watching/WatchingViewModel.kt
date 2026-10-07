@@ -32,7 +32,7 @@ class WatchingViewModel @Inject constructor(
 
     init {
         combine(
-            episodesCheckerHolder.observeEpisodes().map { it.isNotEmpty() },
+            episodesCheckerHolder.observeEpisodes().map { it.any { access -> access.hasProgress } },
             historyRepository.observeReleases().map { it.items.isNotEmpty() },
             authRepository.observeAuthState().map { it == AuthState.AUTH }
         ) { hasContinue, hasHistory, hasAuth ->

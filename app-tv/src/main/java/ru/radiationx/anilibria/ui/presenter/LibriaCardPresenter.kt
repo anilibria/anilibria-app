@@ -1,7 +1,7 @@
 package ru.radiationx.anilibria.ui.presenter
 
 import android.view.ViewGroup
-import androidx.leanback.widget.ImageCardView
+import ru.radiationx.anilibria.ui.widget.WatchedPosterCardView
 import androidx.leanback.widget.Presenter
 import ru.radiationx.anilibria.R
 import ru.radiationx.anilibria.common.LibriaCard
@@ -10,7 +10,7 @@ import ru.radiationx.shared_app.imageloader.showImageUrl
 class LibriaCardPresenter : Presenter() {
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        val cardView = ImageCardView(parent.context)
+        val cardView = WatchedPosterCardView(parent.context)
         return LibriaCardViewHolder(cardView)
     }
 
@@ -28,7 +28,7 @@ class LibriaCardPresenter : Presenter() {
 }
 
 class LibriaCardViewHolder(
-    private val containerView: ImageCardView,
+    private val containerView: WatchedPosterCardView,
 ) : Presenter.ViewHolder(containerView) {
 
     private val cardHeight by lazy {
@@ -42,6 +42,7 @@ class LibriaCardViewHolder(
     }
 
     fun bind(item: LibriaCard) {
+        containerView.bindWatchedRelease((item.type as? LibriaCard.Type.Release)?.releaseId, item.releaseSeries)
         when (item.type) {
             is LibriaCard.Type.Release -> containerView.setMainImageDimensions(
                 cardReleaseWidth,
@@ -57,6 +58,8 @@ class LibriaCardViewHolder(
     }
 
     fun unbind() {
+        containerView.bindWatchedRelease(null)
+        containerView.mainImageView?.showImageUrl(null)
 
     }
 }

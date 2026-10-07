@@ -154,9 +154,10 @@ class AuthOtpGuidedScreen : GuidedAppScreen() {
 class PlayerScreen(
     private val releaseId: ReleaseId,
     private val episodeId: EpisodeId?,
+    private val restart: Boolean = false,
 ) : FragmentScreen {
     override fun createFragment(factory: FragmentFactory): Fragment {
-        return PlayerFragment.newInstance(releaseId, episodeId)
+        return PlayerFragment.newInstance(releaseId, episodeId, restart)
     }
 }
 

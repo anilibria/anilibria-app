@@ -35,16 +35,18 @@ class EndSeasonViewModel @Inject constructor(
     fun onReplayEpisodeClick() {
         val episode = currentEpisode ?: return
         viewModelScope.launch {
-            releaseInteractor.setAccessSeek(episode.id, 0)
+            releaseInteractor.startPlayback(episode.id, restart = true)
             playerController.selectEpisodeRelay.emit(episode.id)
             guidedRouter.close()
         }
     }
 
     fun onReplaySeasonClick() {
-        guidedRouter.close()
-        currentEpisodes.firstOrNull()?.also { firstEpisode ->
+        val firstEpisode = currentEpisodes.firstOrNull() ?: return
+        viewModelScope.launch {
+            releaseInteractor.startPlayback(firstEpisode.id, restart = true)
             playerController.selectEpisodeRelay.emit(firstEpisode.id)
+            guidedRouter.close()
         }
     }
 

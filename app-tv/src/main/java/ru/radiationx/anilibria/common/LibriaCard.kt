@@ -6,7 +6,8 @@ data class LibriaCard(
     val title: String,
     val description: String,
     val image: String,
-    val type: Type
+    val type: Type,
+    val releaseSeries: String? = null,
 ) : CardItem {
 
     override fun getId(): Int {

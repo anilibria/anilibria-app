@@ -1,11 +1,15 @@
 package ru.radiationx.anilibria.common
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import androidx.annotation.ColorInt
+import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.FragmentActivity
 import androidx.leanback.app.BackgroundManager
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +41,7 @@ class GradientBackgroundManager @Inject constructor(
 
     private val defaultColor = activity.getCompatColor(R.color.dark_colorAccent)
     private val foregroundColor = activity.getCompatColor(R.color.dark_windowBackground)
+    private val loadingColor = ColorUtils.blendARGB(foregroundColor, defaultColor, 0.35f)
 
     private val backgroundDrawable = ColorDrawable(defaultColor)
     private val foregroundDrawable = ColorDrawable(foregroundColor)
@@ -54,14 +59,30 @@ class GradientBackgroundManager @Inject constructor(
             Color.parseColor("#55000000")
         )
     )
-    private val layerDrawable = LayerDrawable(
+    private var defaultRevealStart: Runnable? = null
+    private var defaultRevealPosted = false
+    private val layerDrawable = object : LayerDrawable(
         arrayOf(
             backgroundDrawable, customGradientDrawable, foregroundDrawable
         )
-    )
+    ) {
+        override fun draw(canvas: Canvas) {
+            super.draw(canvas)
+            val revealStart = defaultRevealStart ?: return
+            // Leanback can delay installation and temporarily change our alpha.
+            // Start after an actual fully opaque neutral frame has been drawn.
+            if (!defaultRevealPosted && foregroundDrawable.alpha == 255) {
+                defaultRevealPosted = true
+                activity.window.decorView.postOnAnimation(revealStart)
+            }
+        }
+    }
 
     private var primaryColorAnimator: ValueAnimator? = null
     private var foregroundColorAnimator: ValueAnimator? = null
+    private var defaultColorReveal: ValueAnimator? = null
+    private var pendingRevealColor: Int? = null
+    private var loadingBackgroundShown = false
     private var imageApplierJob: Job? = null
     private var colorApplierJob: Job? = null
     private val colorApplier = MutableStateFlow(defaultColor)
@@ -100,6 +121,9 @@ class GradientBackgroundManager @Inject constructor(
     fun clearGradient() {
         imageApplierJob?.cancel()
         colorApplierJob?.cancel()
+        defaultRevealStart?.let { activity.window.decorView.removeCallbacks(it) }
+        defaultRevealStart = null
+        pendingRevealColor = null
         instantApplyForeground(true)
     }
 
@@ -107,18 +131,59 @@ class GradientBackgroundManager @Inject constructor(
         applyColor(defaultColor)
     }
 
+    fun showDefaultWhileLoading() {
+        if (loadingBackgroundShown) return
+        loadingBackgroundShown = true
+        if (foregroundDrawable.alpha != 255) return
+        imageApplierJob?.cancel()
+        colorApplierJob?.cancel()
+        primaryColorAnimator?.cancel()
+        backgroundDrawable.color = loadingColor
+        defaultRevealPosted = false
+        defaultRevealStart = Runnable {
+            defaultRevealStart = null
+            startDefaultReveal()
+        }
+        layerDrawable.invalidateSelf()
+    }
+
+    private fun startDefaultReveal() {
+        instantApplyForeground(false)
+        val reveal = foregroundColorAnimator ?: return
+        defaultColorReveal = reveal
+        reveal.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationCancel(animation: Animator) {
+                if (defaultColorReveal === animation) {
+                    defaultColorReveal = null
+                    pendingRevealColor = null
+                }
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                if (defaultColorReveal !== animation) return
+                defaultColorReveal = null
+                val nextColor = pendingRevealColor
+                pendingRevealColor = null
+                nextColor?.let { instantApplyColor(it) }
+            }
+        })
+    }
+
     fun applyImage(
         url: String,
         colorSelector: (Palette) -> Int? = defaultColorSelector,
         colorModifier: (Int) -> Int = defaultColorModifier,
     ) {
+        // A newly selected image supersedes any palette waiting for the reveal.
+        pendingRevealColor = null
+        colorApplierJob?.cancel()
+        imageApplierJob?.cancel()
         val color = urlColorMap[url]
         if (colorSelector == defaultColorSelector && color != null) {
             applyColor(color, colorModifier)
             return
         }
 
-        imageApplierJob?.cancel()
         imageApplierJob = activity.lifecycleScope.launch {
             coRunCatching {
                 val bitmap = withContext(Dispatchers.IO) {
@@ -162,8 +227,19 @@ class GradientBackgroundManager @Inject constructor(
     }
 
     private fun instantApplyColor(@ColorInt color: Int) {
+        if (defaultRevealStart != null || defaultColorReveal?.isRunning == true) {
+            pendingRevealColor = color
+            return
+        }
         imageApplierJob?.cancel()
         primaryColorAnimator?.cancel()
+        if (foregroundDrawable.alpha == 255) {
+            // Prepare the target while the neutral foreground still covers it.
+            // Revealing and recoloring together would expose the previous color.
+            backgroundDrawable.color = color
+            instantApplyForeground(false)
+            return
+        }
         if (foregroundDrawable.alpha != 0) {
             instantApplyForeground(false)
         }

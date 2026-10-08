@@ -49,6 +49,8 @@ class MainFragment : RowsSupportFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        backgroundManager.showDefaultWhileLoading()
+
         viewLifecycleOwner.lifecycle.addObserver(mainViewModel)
         viewLifecycleOwner.lifecycle.addObserver(feedViewModel)
         viewLifecycleOwner.lifecycle.addObserver(scheduleViewModel)

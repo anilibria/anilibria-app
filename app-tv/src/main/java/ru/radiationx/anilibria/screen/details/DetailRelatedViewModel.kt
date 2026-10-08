@@ -9,6 +9,7 @@ import ru.radiationx.anilibria.common.BaseCardsViewModel
 import ru.radiationx.anilibria.common.CardsDataConverter
 import ru.radiationx.anilibria.common.LibriaCard
 import ru.radiationx.anilibria.common.LibriaCardRouter
+import ru.radiationx.anilibria.common.franchiseOrder
 import ru.radiationx.data.interactors.ReleaseInteractor
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class DetailRelatedViewModel @Inject constructor(
         cardsData.value = listOf(loadingCard)
         releaseInteractor
             .observeFull(releaseId)
-            .map { it.description.orEmpty() }
+            .map { it.franchises }
             .distinctUntilChanged()
             .onEach {
                 onRefreshClick()
@@ -38,15 +39,35 @@ class DetailRelatedViewModel @Inject constructor(
     }
 
     override suspend fun getLoader(requestPage: Int): List<LibriaCard> {
-        val releases = releaseInteractor.loadWithFranchises(releaseId).filter { it.id != releaseId }
+        val root = requireNotNull(releaseInteractor.getFull(releaseId))
+        val releases = releaseInteractor.loadWithFranchises(releaseId)
         releaseInteractor.updateItemsCache(releases)
-        return releases.map { converter.toCard(it) }
+        val byId = releases.associateBy { it.id }
+        val franchiseName = root.franchises.singleOrNull()?.info?.name
+        rowTitle.value = listOfNotNull(defaultTitle, "Порядок просмотра", franchiseName)
+            .joinToString(" • ")
+        return franchiseOrder(root.franchises).mapNotNull { entry ->
+            byId[entry.release.id]?.let { release ->
+                val current = release.id == releaseId
+                converter.toCard(release).let { card ->
+                    card.copy(
+                        description = listOfNotNull(
+                            "№${entry.ordinal} в порядке просмотра",
+                            "Открыт сейчас".takeIf { current },
+                            card.description,
+                        ).joinToString(" • "),
+                        franchiseOrdinal = entry.ordinal,
+                        isCurrentRelease = current,
+                    )
+                }
+            }
+        }
     }
 
     override fun hasMoreCards(newCards: List<LibriaCard>, allCards: List<LibriaCard>): Boolean =
         false
 
     override fun onLibriaCardClick(card: LibriaCard) {
-        cardRouter.navigate(card)
+        if (!card.isCurrentRelease) cardRouter.navigate(card)
     }
 }

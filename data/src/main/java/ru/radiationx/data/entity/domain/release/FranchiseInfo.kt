@@ -22,4 +22,5 @@ data class FranchiseRelease(
     val id: ReleaseId,
     val names: List<String>,
     val code: ReleaseCode,
+    val ordinal: Int? = null,
 ) : Parcelable

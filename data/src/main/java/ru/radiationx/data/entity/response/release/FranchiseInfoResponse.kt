@@ -22,4 +22,5 @@ data class FranchiseReleaseResponse(
     @Json(name = "ename") val ename: String,
     @Json(name = "aname") val aname: String?,
     @Json(name = "alias") val alias: String,
+    @Json(name = "ordinal") val ordinal: Int? = null,
 )

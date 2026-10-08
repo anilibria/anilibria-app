@@ -25,6 +25,7 @@ kotlin {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
     implementation(project(":shared-android-ktx"))
     implementation(project(":quill-di"))
 

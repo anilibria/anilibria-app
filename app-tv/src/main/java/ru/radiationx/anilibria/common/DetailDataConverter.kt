@@ -28,7 +28,7 @@ class DetailDataConverter @Inject constructor() {
                 "Серии: ${series?.trim() ?: "Не доступно"}"
             ).joinToString(" • "),
             description = description.orEmpty().parseAsHtml().toString().trim()
-                .trim('"')/*.replace('\n', ' ')*/,
+                .trim('"').withoutFranchiseOrder(franchises),
             announce = getAnnounce(isFull),
             image = poster.orEmpty(),
             favoriteCount = NumberFormat.getNumberInstance().format(favoriteInfo.rating),

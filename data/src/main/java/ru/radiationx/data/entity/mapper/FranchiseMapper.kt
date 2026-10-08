@@ -22,5 +22,6 @@ fun FranchiseInfoResponse.toDomain() = FranchiseInfo(
 fun FranchiseReleaseResponse.toDomain() = FranchiseRelease(
     id = ReleaseId(id),
     names = listOfNotNull(name, ename, aname),
-    code = ReleaseCode(alias)
+    code = ReleaseCode(alias),
+    ordinal = ordinal,
 )

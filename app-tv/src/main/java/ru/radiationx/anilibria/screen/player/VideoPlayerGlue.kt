@@ -27,9 +27,11 @@ import androidx.leanback.widget.PlaybackControlsRow.MultiAction
 import androidx.leanback.widget.PlaybackControlsRow.RewindAction
 import androidx.leanback.widget.PlaybackControlsRow.SkipNextAction
 import androidx.leanback.widget.PlaybackControlsRow.SkipPreviousAction
+import androidx.leanback.widget.PlaybackRowPresenter
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.leanback.LeanbackPlayerAdapter
 import ru.radiationx.data.entity.common.PlayerQuality
+import ru.radiationx.data.entity.domain.release.PlayerSkips
 import java.util.concurrent.TimeUnit
 
 /**
@@ -70,6 +72,20 @@ class VideoPlayerGlue(
     var actionListener: OnActionClickedListener? = null
     var playbackListener: PlaybackListener? = null
 
+    private var timelinePresenter: PlayerTimelineRowPresenter? = null
+    private var timelineSkips: PlayerSkips? = null
+
+    override fun onCreateRowPresenter(): PlaybackRowPresenter =
+        PlayerTimelineRowPresenter(this).also {
+            timelinePresenter = it
+            it.setSkips(timelineSkips)
+        }
+
+    fun setTimelineSkips(skips: PlayerSkips?) {
+        timelineSkips = skips
+        timelinePresenter?.setSkips(skips)
+    }
+
     private val previousAction by lazy { SkipPreviousAction(context) }
     private val nextAction by lazy { SkipNextAction(context) }
     private val forwardAction by lazy { FastForwardAction(context) }
@@ -81,6 +97,7 @@ class VideoPlayerGlue(
 
     override fun onUpdateProgress() {
         super.onUpdateProgress()
+        timelinePresenter?.setDuration(duration)
         playbackListener?.onUpdateProgress()
     }
 

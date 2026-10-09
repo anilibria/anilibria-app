@@ -56,6 +56,7 @@ class PlayerFragment : BasePlayerFragment() {
         subscribeTo(viewModel.videoData.filterNotNull()) {
             progressBarManager.hide()
             playerGlue?.apply {
+                setTimelineSkips(it.skips)
                 title = it.title
                 subtitle = it.subtitle
                 seekTo(it.seek)

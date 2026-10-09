@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_timeline_opening">Опенинг</string>
+    <string name="player_timeline_ending">Эндинг</string>
+    <string name="player_timeline_range">%1$s: %2$s–%3$s</string>
+    <color name="player_timeline_marker">#B8B8B8</color>
+    <color name="player_timeline_marker_played">#8F1F1F</color>
+</resources>

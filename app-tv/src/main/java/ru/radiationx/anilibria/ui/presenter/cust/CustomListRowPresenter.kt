@@ -14,12 +14,37 @@ open class CustomListRowPresenter @JvmOverloads constructor(
 
     override fun onRowViewExpanded(holder: RowPresenter.ViewHolder, expanded: Boolean) {
         super.onRowViewExpanded(holder, expanded)
-        (holder as CustomListRowViewHolder).isExpanded = expanded
+        val rowHolder = holder as CustomListRowViewHolder
+        updateExpandedPadding(rowHolder)
+        rowHolder.isExpanded = expanded
     }
 
     override fun onRowViewSelected(holder: RowPresenter.ViewHolder, selected: Boolean) {
         super.onRowViewSelected(holder, selected)
-        (holder as CustomListRowViewHolder).isSelected = selected
+        val rowHolder = holder as CustomListRowViewHolder
+        updateExpandedPadding(rowHolder)
+        rowHolder.isSelected = selected
+    }
+
+    private fun updateExpandedPadding(holder: CustomListRowViewHolder) {
+        if (!holder.isExpanded) return
+        val grid = holder.gridView
+        val spaceUnderBaseline = holder.headerViewHolder?.let { header ->
+            headerPresenter?.getSpaceUnderBaseline(header) ?: header.view.paddingBottom
+        } ?: 0
+        // Keep room for the focused poster throughout both focus animations.
+        // Leanback otherwise changes this padding immediately on row selection.
+        val paddingTop = grid.resources.getDimensionPixelSize(
+            androidx.leanback.R.dimen.lb_browse_expanded_selected_row_top_padding
+        ) - spaceUnderBaseline
+        if (grid.paddingTop != paddingTop) {
+            grid.setPadding(grid.paddingLeft, paddingTop, grid.paddingRight, grid.paddingBottom)
+        }
+    }
+
+    override fun onSelectLevelChanged(holder: RowPresenter.ViewHolder) {
+        super.onSelectLevelChanged(holder)
+        (holder as CustomListRowViewHolder).updateDescriptionHeight()
     }
 
     override fun createRowViewHolder(parent: ViewGroup): RowPresenter.ViewHolder {

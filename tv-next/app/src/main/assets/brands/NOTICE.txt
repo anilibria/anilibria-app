@@ -1,0 +1,5 @@
+Shikimori and MyAnimeList SVG icons from Simple Icons (CC0-1.0).
+https://github.com/simple-icons/simple-icons
+https://github.com/simple-icons/simple-icons/blob/develop/LICENSE.md
+Only the monochrome fill was changed to white for display on the dark TV interface.
+Brand names and trademarks belong to their respective owners.

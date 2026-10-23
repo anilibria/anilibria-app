@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Project TV adapter derived from original archived website values -->
+    <color name="al_background">#121212</color>
+    <color name="al_surface">#212121</color>
+    <color name="al_surface_light">#424242</color>
+    <color name="al_accent">#FE3635</color>
+    <color name="al_text">#FFFFFF</color>
+    <color name="al_text_secondary">#B4B4B4</color>
+    <color name="al_focus_stroke">#FFFFFF</color>
+    <color name="al_scrim">#B3121212</color>
+    <color name="al_success">#4CAF50</color>
+    <color name="al_error">#CF6679</color>
+</resources>

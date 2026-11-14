@@ -10,7 +10,7 @@ on:
         required: false
         type: string
       apk_name:
-        description: 'APK filename (empty uses AniLiberty_TV.apk)'
+        description: 'APK filename (empty keeps the project default)'
         required: false
         type: string
 
@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 30
     env:
       APP_NAME: ${{ inputs.app_name || '' }}
-      APK_NAME: ${{ inputs.apk_name || 'AniLiberty_TV.apk' }}
+      APK_NAME: ${{ inputs.apk_name || '' }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
@@ -31,20 +31,9 @@ jobs:
           distribution: temurin
           java-version: '17'
       - name: Build TV release APK
-        run: ./gradlew :app-tv:assembleAppRelease
-      - name: Prepare APK
-        run: |
-          case "$APK_NAME" in
-            *.apk) ;;
-            *) echo 'APK filename must end in .apk' >&2; exit 1;;
-          esac
-          case "$APK_NAME" in
-            *[!a-zA-Z0-9._-]*|.*) echo 'Invalid APK filename' >&2; exit 1;;
-          esac
-          mkdir -p artifact
-          cp app-tv/build/outputs/apk/app/release/*-unsigned.apk "artifact/$APK_NAME"
+        run: ./gradlew :app-tv:copyAppReleaseApk
       - uses: actions/upload-artifact@v7
         with:
           name: android-tv-release-unsigned
-          path: artifact/*.apk
+          path: release-apks/*.apk
           if-no-files-found: error

@@ -4,6 +4,15 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      app_name:
+        description: 'TV application name (empty keeps the original)'
+        required: false
+        type: string
+      apk_name:
+        description: 'APK filename (empty uses AniLiberty_TV.apk)'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -12,17 +21,43 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      APP_NAME: ${{ inputs.app_name || '' }}
+      APK_NAME: ${{ inputs.apk_name || 'AniLiberty_TV.apk' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - name: Build TV debug APK
-        run: ./gradlew :app-tv:assembleAppDebug
-      - uses: actions/upload-artifact@v4
+      - name: Apply optional application name
+        if: env.APP_NAME != ''
+        run: |
+          python3 - <<'PY'
+          import os, xml.etree.ElementTree as ET
+          path = 'app-tv/src/main/res/values/strings.xml'
+          tree = ET.parse(path)
+          element = tree.find("string[@name='app_name']")
+          if element is None:
+              raise SystemExit('app_name resource not found')
+          element.text = os.environ['APP_NAME']
+          tree.write(path, encoding='unicode')
+          PY
+      - name: Build TV release APK
+        run: ./gradlew :app-tv:assembleAppRelease
+      - name: Prepare APK
+        run: |
+          case "$APK_NAME" in
+            *.apk) ;;
+            *) echo 'APK filename must end in .apk' >&2; exit 1;;
+          esac
+          case "$APK_NAME" in
+            *[!a-zA-Z0-9._-]*|.*) echo 'Invalid APK filename' >&2; exit 1;;
+          esac
+          mkdir -p artifact
+          cp app-tv/build/outputs/apk/app/release/*-unsigned.apk "artifact/$APK_NAME"
+      - uses: actions/upload-artifact@v7
         with:
-          name: android-tv-debug-apk
-          path: app-tv/build/outputs/apk/app/debug/*.apk
+          name: android-tv-release-unsigned
+          path: artifact/*.apk
           if-no-files-found: error

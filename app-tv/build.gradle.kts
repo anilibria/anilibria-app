@@ -30,6 +30,7 @@ android {
 
     defaultConfig {
         applicationId = "ru.radiationx.anilibria.app.tv"
+        manifestPlaceholders["appLabel"] = System.getenv("APP_NAME")?.takeIf { it.isNotBlank() } ?: "@string/app_name"
         minSdk = libs.versions.tv.min.sdk.version.get().toInt()
         targetSdk = libs.versions.app.target.sdk.version.get().toInt()
         versionCode = libs.versions.tv.version.code.get().toInt()

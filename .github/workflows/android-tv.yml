@@ -30,19 +30,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Apply optional application name
-        if: env.APP_NAME != ''
-        run: |
-          python3 - <<'PY'
-          import os, xml.etree.ElementTree as ET
-          path = 'app-tv/src/main/res/values/strings.xml'
-          tree = ET.parse(path)
-          element = tree.find("string[@name='app_name']")
-          if element is None:
-              raise SystemExit('app_name resource not found')
-          element.text = os.environ['APP_NAME']
-          tree.write(path, encoding='unicode')
-          PY
       - name: Build TV release APK
         run: ./gradlew :app-tv:assembleAppRelease
       - name: Prepare APK

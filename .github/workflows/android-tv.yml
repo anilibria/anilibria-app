@@ -30,26 +30,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Configure optional signing
-        env:
-          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-        run: |
-          if [ -n "$KEYSTORE" ] && [ -n "$PASSWORD" ]; then
-            printf '%s' "$KEYSTORE" | base64 --decode > "$RUNNER_TEMP/release.jks"
-            echo "ANDROID_KEYSTORE_FILE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
-          elif [ -z "$KEYSTORE" ] && [ -z "$PASSWORD" ]; then
-            echo "::warning::No signing key configured; APK will be unsigned."
-          else
-            echo "::error::Both signing secrets are required."
-            exit 1
-          fi
       - name: Build TV release APK
-        env:
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: ./gradlew :app-tv:copyAppReleaseApk
       - uses: actions/upload-artifact@v7
         with:
-          name: android-tv-release
+          name: android-tv-release-unsigned
           path: release-apks/*.apk
           if-no-files-found: error

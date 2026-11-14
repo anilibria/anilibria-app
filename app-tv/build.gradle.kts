@@ -18,8 +18,11 @@ val localProperties = Properties().apply {
         ?.inputStream()
         ?.use { load(it) }
 }
+val signingFile = System.getenv("ANDROID_KEYSTORE_FILE")
+val signingPassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
 val releaseSigningProperties = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
-val hasReleaseSigningConfig = releaseSigningProperties.all {
+val hasEnvironmentSigning = !signingFile.isNullOrBlank() && !signingPassword.isNullOrBlank()
+val hasReleaseSigningConfig = hasEnvironmentSigning || releaseSigningProperties.all {
     !localProperties.getProperty(it).isNullOrBlank()
 }
 
@@ -46,10 +49,10 @@ android {
     signingConfigs {
         if (hasReleaseSigningConfig) {
             create("release") {
-                storeFile = file(localProperties.getProperty("storeFile"))
-                storePassword = localProperties.getProperty("storePassword")
-                keyAlias = localProperties.getProperty("keyAlias")
-                keyPassword = localProperties.getProperty("keyPassword")
+                storeFile = file(if (hasEnvironmentSigning) signingFile!! else localProperties.getProperty("storeFile"))
+                storePassword = if (hasEnvironmentSigning) signingPassword else localProperties.getProperty("storePassword")
+                keyAlias = if (hasEnvironmentSigning) "aniliberty-tv" else localProperties.getProperty("keyAlias")
+                keyPassword = if (hasEnvironmentSigning) signingPassword else localProperties.getProperty("keyPassword")
             }
         }
     }

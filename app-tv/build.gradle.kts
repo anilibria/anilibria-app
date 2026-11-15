@@ -30,6 +30,7 @@ android {
 
     defaultConfig {
         applicationId = "ru.radiationx.anilibria.app.tv"
+        manifestPlaceholders["appLabel"] = System.getenv("APP_NAME")?.takeIf { it.isNotBlank() } ?: "@string/app_name"
         minSdk = libs.versions.tv.min.sdk.version.get().toInt()
         targetSdk = libs.versions.app.target.sdk.version.get().toInt()
         versionCode = libs.versions.tv.version.code.get().toInt()
@@ -87,6 +88,7 @@ androidComponents {
                 append("${flavor}-")
             }
             variant.buildType?.also { append(it) }
+            if (!hasReleaseSigningConfig) append("-unsigned")
             append(".apk")
         }
         val inputApkPath = buildString {
@@ -99,7 +101,8 @@ androidComponents {
 
         val appName = "AniLiberty_TV"
         val versionName = variant.outputs[0].versionName.get()
-        val outputApkName = "${appName}_v${versionName}.apk"
+        val outputApkName = System.getenv("APK_NAME")?.takeIf { it.isNotBlank() } ?: "${appName}_v${versionName}.apk"
+        require(outputApkName.matches(Regex("[A-Za-z0-9_][A-Za-z0-9._-]*\\.apk"))) { "Invalid APK filename" }
 
         val buildName = variant.name.capitalize()
         tasks.register<Copy>("copy${buildName}Apk") {

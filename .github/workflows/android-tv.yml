@@ -1,0 +1,39 @@
+name: Build Android TV APK
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: 'TV application name (empty keeps the original)'
+        required: false
+        type: string
+      apk_name:
+        description: 'APK filename (empty keeps the project default)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      APP_NAME: ${{ inputs.app_name || '' }}
+      APK_NAME: ${{ inputs.apk_name || '' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Build TV release APK
+        run: ./gradlew :app-tv:copyAppReleaseApk
+      - uses: actions/upload-artifact@v7
+        with:
+          name: android-tv-release-unsigned
+          path: release-apks/*.apk
+          if-no-files-found: error
